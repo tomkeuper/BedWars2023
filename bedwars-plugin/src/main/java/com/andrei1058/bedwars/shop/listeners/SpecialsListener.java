@@ -37,6 +37,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Set;
+
 import static com.andrei1058.bedwars.BedWars.nms;
 
 public class SpecialsListener implements Listener {
@@ -77,7 +79,7 @@ public class SpecialsListener implements Listener {
                     e.setCancelled(true);
                     ITeam playerTeam = a.getTeam(p);
                     PlayerDreamDefenderSpawnEvent event = new PlayerDreamDefenderSpawnEvent(p, playerTeam, a);
-                    nms.spawnIronGolem(p.getLocation().add(0, 1, 0), playerTeam, BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_SPEED),
+                    nms.spawnIronGolem(p.getTargetBlock((Set<Material>) null, 5).getLocation().add(0, 1, 0), playerTeam, BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_SPEED),
                             BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_HEALTH), BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DESPAWN));
                     Bukkit.getPluginManager().callEvent(event);
                     if (!nms.isProjectile(i)) {
