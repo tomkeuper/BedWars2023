@@ -188,7 +188,7 @@ public class SpectatorListeners implements Listener {
         IArena a = Arena.getArenaByPlayer(p);
         if (a == null) return;
         if (a.isSpectator(p) && p.getSpectatorTarget() != null) {
-            p.setGameMode(GameMode.ADVENTURE);
+            p.setGameMode(GameMode.SURVIVAL);
             p.setAllowFlight(true);
             p.setFlying(true);
             SpectatorFirstPersonLeaveEvent event = new SpectatorFirstPersonLeaveEvent(p, a, player -> getMsg(player, Messages.ARENA_SPECTATOR_FIRST_PERSON_LEAVE_TITLE), player -> getMsg(player, Messages.ARENA_SPECTATOR_FIRST_PERSON_LEAVE_SUBTITLE));
@@ -206,7 +206,7 @@ public class SpectatorListeners implements Listener {
             if (!(e.getTo().getWorld().equals(e.getPlayer().getWorld())) && e.getCause() == PlayerTeleportEvent.TeleportCause.SPECTATE) {
                 Player p = e.getPlayer();
                 e.setCancelled(true);
-                p.setGameMode(GameMode.ADVENTURE);
+                p.setGameMode(GameMode.SURVIVAL);
                 p.setAllowFlight(true);
                 p.setFlying(true);
                 SpectatorFirstPersonLeaveEvent event = new SpectatorFirstPersonLeaveEvent(p, Arena.getArenaByPlayer(p), player -> getMsg(player, Messages.ARENA_SPECTATOR_FIRST_PERSON_LEAVE_TITLE), player -> getMsg(player, Messages.ARENA_SPECTATOR_FIRST_PERSON_LEAVE_SUBTITLE));
@@ -222,7 +222,7 @@ public class SpectatorListeners implements Listener {
         for (Player p : e.getArena().getSpectators()) {
             if (p.getSpectatorTarget() == null) continue;
             if (p.getSpectatorTarget() == e.getVictim()) {
-                p.setGameMode(GameMode.ADVENTURE);
+                p.setGameMode(GameMode.SURVIVAL);
                 p.setAllowFlight(true);
                 p.setFlying(true);
                 SpectatorFirstPersonLeaveEvent event = new SpectatorFirstPersonLeaveEvent(p, e.getArena(), player -> getMsg(player, Messages.ARENA_SPECTATOR_FIRST_PERSON_LEAVE_TITLE), player -> getMsg(player, Messages.ARENA_SPECTATOR_FIRST_PERSON_LEAVE_SUBTITLE));

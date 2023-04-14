@@ -661,7 +661,7 @@ public class Arena implements IArena {
                 }
             }
 
-            p.setGameMode(GameMode.ADVENTURE);
+            p.setGameMode(GameMode.SURVIVAL);
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if(leaving.contains(p)) return;
@@ -705,7 +705,7 @@ public class Arena implements IArena {
                 /* Spectator items */
                 sendSpectatorCommandItems(p);
                 // make invisible because it is annoying whene there are many spectators around the map
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, true));
 
                 p.getInventory().setArmorContents(null);
             });

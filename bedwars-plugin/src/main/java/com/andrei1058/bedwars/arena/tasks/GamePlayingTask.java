@@ -35,6 +35,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -227,6 +228,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                             String.valueOf(e.getValue())), 0, 30, 10);
                     e.getKey().sendMessage(getMsg(e.getKey(), Messages.PLAYER_DIE_RESPAWN_CHAT).replace("{time}", String.valueOf(e.getValue())));
                     getArena().getRespawnSessions().replace(e.getKey(), e.getValue() - 1);
+                    e.getKey().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, true));
                 }
             }
         }
