@@ -23,13 +23,16 @@ package com.andrei1058.bedwars.listeners;
 import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.GameState;
 import com.andrei1058.bedwars.api.arena.IArena;
+import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.events.gameplay.GameStateChangeEvent;
+import com.andrei1058.bedwars.api.events.shop.ShopBuyEvent;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.ServerType;
 import com.andrei1058.bedwars.api.server.SetupType;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.SetupSession;
+import com.andrei1058.bedwars.configuration.Sounds;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -229,5 +232,14 @@ public class Inventory implements Listener {
     public void onGameEnd(GameStateChangeEvent e) {
         if(e.getNewState() != GameState.restarting) return;
         e.getArena().getPlayers().forEach(Player::closeInventory); // close any open guis when the game ends (e.g. shop)
+    }
+
+    @EventHandler
+    public void onShopBuy(ShopBuyEvent e) {
+        Player p = e.getBuyer();
+        if (p.getInventory().firstEmpty() == -1) {
+            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
+            e.setCancelled(true);
+        }
     }
 }
