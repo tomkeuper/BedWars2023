@@ -276,6 +276,7 @@ public class English extends Language {
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_TITLE, "&cYOU DIED!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_SUBTITLE, "&eYou will respawn in &c{time} &eseconds!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_CHAT, "{prefix}&eYou will respawn in &c{time} &eseconds!");
+        yml.addDefault(Messages.PLAYER_DIE_RESPAWNED_TEXT, "&eYou have respawned!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWNED_TITLE, "&aRESPAWNED!");
         yml.addDefault(Messages.PLAYER_DIE_ELIMINATED_CHAT, "{prefix}&cYou have been eliminated!");
         yml.addDefault(Messages.PLAYER_HIT_BOW, "{prefix}{TeamColor}{PlayerName} &7is on &c{amount} &7HP!");
