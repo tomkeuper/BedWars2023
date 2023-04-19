@@ -277,6 +277,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.PLAYER_DIE_RESPAWNED_TITLE, "&a已重生！");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_CHAT, "{prefix}&eYou will respawn in &c{time} &eseconds!");
         yml.addDefault(Messages.PLAYER_DIE_ELIMINATED_CHAT, "{prefix}&c你已被淘汰！");
+        yml.addDefault(Messages.ARENA_BUILD_LIMIT_REACHED, "&cBuild height limit reached!");
         yml.addDefault(Messages.PLAYER_HIT_BOW, "{prefix}{TeamColor}{PlayerName}&7还有 &e{amount} &c生命值！");
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&l游戏结束！");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&l胜利！");

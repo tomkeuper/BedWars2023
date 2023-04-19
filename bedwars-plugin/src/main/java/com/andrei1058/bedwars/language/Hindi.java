@@ -278,6 +278,7 @@ public class Hindi extends Language {
         yml.addDefault(Messages.PLAYER_DIE_ELIMINATED_CHAT, "{prefix}&cAp eliminate ho gaye!");
         yml.addDefault(Messages.PLAYER_HIT_BOW, "{prefix}{TeamColor}{PlayerName} &7Ka &c{amount} &7HP baki hai!");
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&lGAME KHATAM HO GAYA!");
+        yml.addDefault(Messages.ARENA_BUILD_LIMIT_REACHED, "&cBuild height limit reached!");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&lVIJAY!");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "{prefix}{TeamColor}{TeamName} &ateam game jeete!");
         yml.addDefault(Messages.FORMATTING_EACH_WINNER, "{player}");

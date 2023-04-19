@@ -275,6 +275,7 @@ public class Portuguese extends Language {
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_CHAT, "{prefix}&eVocê irá renascer em &c{time} &esegundos.");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWNED_TITLE, "&aRENASCIDO!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_CHAT, "{prefix}&eYou will respawn in &c{time} &eseconds!");
+        yml.addDefault(Messages.ARENA_BUILD_LIMIT_REACHED, "&cBuild height limit reached!");
         yml.addDefault(Messages.PLAYER_DIE_ELIMINATED_CHAT, "{prefix}&cVocê foi eliminado!");
         yml.addDefault(Messages.PLAYER_HIT_BOW, "{prefix}{TeamColor}{PlayerName} &7está com &c{amount} &7de vida!");
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&lFIM DE JOGO!");

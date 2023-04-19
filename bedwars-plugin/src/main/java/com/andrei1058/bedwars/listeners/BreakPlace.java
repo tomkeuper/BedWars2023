@@ -158,6 +158,7 @@ public class BreakPlace implements Listener {
                 return;
             }
             if (e.getBlockPlaced().getLocation().getBlockY() >= a.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y)) {
+                p.sendMessage(getMsg(p, Messages.ARENA_BUILD_LIMIT_REACHED));
                 e.setCancelled(true);
                 return;
             }
@@ -486,6 +487,7 @@ public class BreakPlace implements Listener {
                 return;
             }
             if (e.getBlockClicked().getLocation().getBlockY() >= a.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y)) {
+                p.sendMessage(getMsg(p, Messages.ARENA_BUILD_LIMIT_REACHED));
                 e.setCancelled(true);
                 return;
             }
