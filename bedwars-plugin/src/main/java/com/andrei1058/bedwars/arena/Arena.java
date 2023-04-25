@@ -42,6 +42,7 @@ import com.andrei1058.bedwars.api.events.player.PlayerReJoinEvent;
 import com.andrei1058.bedwars.api.events.server.ArenaDisableEvent;
 import com.andrei1058.bedwars.api.events.server.ArenaEnableEvent;
 import com.andrei1058.bedwars.api.events.server.ArenaRestartEvent;
+import com.andrei1058.bedwars.api.events.server.ArenaSpectateEvent;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.region.Region;
@@ -713,6 +714,13 @@ public class Arena implements IArena {
             leaving.remove(p);
 
             p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_SPECTATOR_MSG).replace("{arena}", this.getDisplayName()));
+
+            ArenaSpectateEvent spectateEvent = new ArenaSpectateEvent(p, this);
+            Bukkit.getPluginManager().callEvent(spectateEvent);
+            if (spectateEvent.isCancelled()) {
+                spectateEvent.setCancelled(true);
+                return true;
+            }
 
             /* update generator holograms for spectators */
             String iso = Language.getPlayerLanguage(p).getIso();
