@@ -146,6 +146,8 @@ public class Messages {
     public static String ARENA_SPECTATOR_FIRST_PERSON_ENTER_SUBTITLE = "spectator-first-person-enter-subtitle";
     public static String ARENA_SPECTATOR_FIRST_PERSON_LEAVE_TITLE = "spectator-first-person-quit-title";
     public static String ARENA_SPECTATOR_FIRST_PERSON_LEAVE_SUBTITLE = "spectator-first-person-quit-subtitle";
+    public static String ARENA_MAX_BUILD_LIMIT_REACHED = "build-max-height-limit-reached";
+    public static String ARENA_MIN_BUILD_LIMIT_REACHED = "build-min-height-limit-reached";
 
     /** Stats related */
     public static String PLAYER_STATS_GUI_PATH = "stats";
