@@ -29,6 +29,8 @@ import com.andrei1058.bedwars.api.arena.generator.IGenerator;
 import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.api.configuration.ConfigPath;
 import com.andrei1058.bedwars.api.events.gameplay.GeneratorUpgradeEvent;
+import com.andrei1058.bedwars.api.events.gameplay.GeneratorDropEvent;
+import com.andrei1058.bedwars.api.events.shop.ShopBuyEvent;
 import com.andrei1058.bedwars.api.language.Language;
 import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.region.Cuboid;
@@ -145,7 +147,15 @@ public class OreGenerator implements IGenerator {
         if (arena.getStatus() != GameState.playing){
             return;
         }
+
         if (disabled) return;
+
+        GeneratorDropEvent event;
+        Bukkit.getPluginManager().callEvent(event = new GeneratorDropEvent(this));
+
+        if (event.isCancelled()){
+            return;
+        }
         if (lastSpawn == 0) {
             lastSpawn = delay;
 
