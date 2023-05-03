@@ -715,12 +715,9 @@ public class Arena implements IArena {
 
             p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_SPECTATOR_MSG).replace("{arena}", this.getDisplayName()));
 
-            ArenaSpectateEvent spectateEvent = new ArenaSpectateEvent(p, this);
-            Bukkit.getPluginManager().callEvent(spectateEvent);
-            if (spectateEvent.isCancelled()) {
-                spectateEvent.setCancelled(true);
-                return true;
-            }
+            ArenaSpectateEvent ev = new ArenaSpectateEvent(p, this);
+            Bukkit.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) return false;
 
             /* update generator holograms for spectators */
             String iso = Language.getPlayerLanguage(p).getIso();
