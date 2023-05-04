@@ -150,14 +150,15 @@ public class OreGenerator implements IGenerator {
 
         if (disabled) return;
 
-        GeneratorDropEvent event;
-        Bukkit.getPluginManager().callEvent(event = new GeneratorDropEvent(this));
-
-        if (event.isCancelled()){
-            return;
-        }
         if (lastSpawn == 0) {
             lastSpawn = delay;
+
+            GeneratorDropEvent event;
+            Bukkit.getPluginManager().callEvent(event = new GeneratorDropEvent(this));
+
+            if (event.isCancelled()){
+                return;
+            }
 
             if (spawnLimit != 0) {
                 int oreCount = 0;
@@ -173,6 +174,7 @@ public class OreGenerator implements IGenerator {
                 }
                 lastSpawn = delay;
             }
+
             if (bwt == null) {
                 dropItem(location);
                 return;
