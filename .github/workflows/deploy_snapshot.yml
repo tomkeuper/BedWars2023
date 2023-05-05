@@ -21,6 +21,9 @@ jobs:
         with:
           java-version: '17.0.5'
           distribution: 'adopt'
+      - name: Compile code
+        run: |
+          mvn clean install
       - name: Publish Package
         run: mvn --batch-mode deploy
         env:
