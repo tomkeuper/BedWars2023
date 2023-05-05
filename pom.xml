@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.andrei1058.bedwars</groupId>
-    <artifactId>BedWars1058</artifactId>
+    <artifactId>bedwars1058</artifactId>
     <packaging>pom</packaging>
     <version>23.3.1-BETA2</version>
 
