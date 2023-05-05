@@ -285,7 +285,8 @@ public class v1_19_R3 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
-        p.setHealth(0);
+        EntityPlayer player = getPlayer(p);
+        player.a(player.dG().m(), 1000);
     }
 
     @Override
