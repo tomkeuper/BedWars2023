@@ -620,6 +620,11 @@ public class Arena implements IArena {
      */
     public boolean addSpectator(@NotNull Player p, boolean playerBefore, Location staffTeleport) {
         if (allowSpectate || playerBefore || staffTeleport != null) {
+
+            ArenaSpectateEvent spectateEvent = new ArenaSpectateEvent(p, this);
+            Bukkit.getPluginManager().callEvent(spectateEvent);
+            if (spectateEvent.isCancelled()) return false;
+
             debug("Spectator added: " + p.getName() + " arena: " + getArenaName());
 
             if (!playerBefore) {
@@ -714,10 +719,6 @@ public class Arena implements IArena {
             leaving.remove(p);
 
             p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_SPECTATOR_MSG).replace("{arena}", this.getDisplayName()));
-
-            ArenaSpectateEvent ev = new ArenaSpectateEvent(p, this);
-            Bukkit.getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) return false;
 
             /* update generator holograms for spectators */
             String iso = Language.getPlayerLanguage(p).getIso();
