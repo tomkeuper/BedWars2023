@@ -112,12 +112,13 @@
 
     <distributionManagement>
         <repository>
-            <id>ftp-repo</id>
-            <url>ftp://andrei1058.dev/releases</url>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/tomkeuper/BedWars2023</url>
         </repository>
         <snapshotRepository>
             <id>ftp-repo</id>
-            <url>ftp://andrei1058.dev/snapshots</url>
+            <url>https://maven.pkg.github.com/tomkeuper/BedWars2023-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 </project>
