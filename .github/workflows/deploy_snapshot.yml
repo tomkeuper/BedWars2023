@@ -35,16 +35,15 @@ jobs:
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
         with:
           ref: 'api-fixes'
-      - name: Set up JDK 17.0.5
-        uses: actions/setup-java@v3
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: 1.8
 
       - name: Deploy Package
         run: mvn --batch-mode -DskipTests -DuseGitHubPackages deploy
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPLOY_GITHUB_TOKEN }}
