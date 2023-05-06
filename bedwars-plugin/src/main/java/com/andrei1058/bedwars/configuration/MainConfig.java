@@ -191,11 +191,6 @@ public class MainConfig extends ConfigManager {
         yml.options().copyDefaults(true);
         save();
 
-        //remove old config
-        //Convert old configuration
-
-        yml.set("formatChat", null);
-        yml.set("globalChat", null);
 
         if (yml.get("bungee-settings.lobby-servers") != null) {
             List<String> sockets = new ArrayList<>(yml.getStringList("bungee-settings.lobby-servers"));
