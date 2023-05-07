@@ -2,7 +2,7 @@ name: Deploy snapshot package to GitHub Packages
 
 on:
   workflow_run:
-    workflows: [ "compile snapshot" ]
+    workflows: [ "Compile snapshot with Maven" ]
     branches:
       - master
       - development
