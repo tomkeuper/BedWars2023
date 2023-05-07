@@ -1,4 +1,4 @@
-name: Deploy with Maven
+name: Create a release
 
 on:
   push:
@@ -22,7 +22,6 @@ jobs:
       - name: Package with Maven
         run: |
           mvn clean package
-          ls
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
