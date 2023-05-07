@@ -1,14 +1,6 @@
 name: Deploy snapshot package to GitHub Packages
 
-on:
-  workflow_run:
-    workflows: [ "Compile snapshot with Maven" ]
-    branches:
-      - master
-      - development
-      - api-fixes
-    types:
-      - completed
+on: workflow_dispatch
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -17,7 +9,6 @@ jobs:
   publish:
     name: Deploy to GitHub
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: write
