@@ -1,6 +1,9 @@
 name: Deploy snapshot package to GitHub Packages
 
-on: workflow_dispatch
+#on: workflow_dispatch (required to be on default branch)
+on:
+  push:
+    branches: [api-fixes]
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
