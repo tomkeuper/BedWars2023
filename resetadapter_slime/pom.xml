@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.andrei1058.bedwars</groupId>
             <artifactId>bedwars-api</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

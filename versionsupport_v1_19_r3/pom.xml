@@ -21,14 +21,14 @@
         <dependency>
             <groupId>com.andrei1058.bedwars</groupId>
             <artifactId>bedwars-api</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.andrei1058.bedwars</groupId>
             <artifactId>versionsupport-common</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
