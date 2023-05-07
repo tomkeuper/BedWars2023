@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: development
-      url: https://repo.andrei1058.dev
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
