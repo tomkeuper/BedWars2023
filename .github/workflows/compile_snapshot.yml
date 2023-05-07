@@ -26,6 +26,6 @@ jobs:
         with:
           java-version: '17.0.5'
           distribution: 'adopt'
-      - name: Deploy snapshot with Maven
+      - name: Compiling snapshot with Maven
         run: |
-          mvn clean install
+          mvn clean compile
