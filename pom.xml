@@ -161,11 +161,7 @@
     </modules>
 
     <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/tomkeuper/BedWars2023</url>
-        </repository>
+
     </distributionManagement>
 
     <scm>
