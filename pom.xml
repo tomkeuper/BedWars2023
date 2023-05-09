@@ -161,7 +161,11 @@
     </modules>
 
     <distributionManagement>
-
+        <repository>
+            <id>bedwars-repo</id>
+            <name>BedWars Maven Repository</name>
+            <url>https://repo.tomkeuper.com/repository/bedwars-snapshots/</url>
+        </repository>
     </distributionManagement>
 
     <scm>
