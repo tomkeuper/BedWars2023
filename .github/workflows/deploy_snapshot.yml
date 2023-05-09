@@ -34,6 +34,4 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Deploy Package
-        run: mvn --batch-mode -DskipTests -DuseGitHubPackages deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: mvn --batch-mode -DskipTests clean deploy -s settings.xml
