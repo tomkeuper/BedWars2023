@@ -71,6 +71,7 @@ public class ConfigPath {
 
     public static final String GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH = "allow-fire-extinguish";
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
+    public static final String GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN = "enable-generator-replace-air-sudden-death";
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
     public static final String GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER = "use-experimental-team-assigner";
@@ -109,6 +110,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_HALF = "countdowns.game-start-half-arena";
     public static final String GENERAL_CONFIGURATION_RESTART = "countdowns.game-restart";
     public static final String GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN = "countdowns.player-re-spawn";
+    public static final String GENERAL_CONFIGURATION_REJOIN_RE_SPAWN_COUNTDOWN = "countdowns.player-rejoin-re-spawn";
     public static final String GENERAL_CONFIGURATION_BEDS_DESTROY_COUNTDOWN = "countdowns.next-event-beds-destroy";
     public static final String GENERAL_CONFIGURATION_DRAGON_SPAWN_COUNTDOWN = "countdowns.next-event-dragon-spawn";
     public static final String GENERAL_CONFIGURATION_GAME_END_COUNTDOWN = "countdowns.next-event-game-end";
