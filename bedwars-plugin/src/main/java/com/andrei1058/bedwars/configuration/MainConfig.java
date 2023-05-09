@@ -230,8 +230,6 @@ public class MainConfig extends ConfigManager {
             set("fireball.damage-multiplier", null);
         }
 
-        set("arenaGui", null);
-
         if (getYml().get("npcLoc") != null) {
             set(ConfigPath.GENERAL_CONFIGURATION_NPC_LOC_STORAGE, getYml().getString("npcLoc"));
         }
@@ -275,47 +273,7 @@ public class MainConfig extends ConfigManager {
                 }
             }
         }
-
-        if (yml.get("server-name") != null) {
-            set(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID, yml.get("server-name"));
-        }
-        if (yml.get("lobby-scoreboard") != null) {
-            set(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR, yml.getBoolean("lobby-scoreboard"));
-            set("lobby-scoreboard", null);
-        }
-        if (yml.get("game-scoreboard") != null) {
-            set(ConfigPath.SB_CONFIG_SIDEBAR_USE_GAME_SIDEBAR, yml.getBoolean("game-scoreboard"));
-            set("game-scoreboard", null);
-        }
-        if (yml.get("enable-party-cmd") != null) {
-            set(ConfigPath.GENERAL_ENABLE_PARTY_CMD, yml.getBoolean("enable-party-cmd"));
-            set("enable-party-cmd", null);
-        }
-        if (yml.get("allow-parties") != null) {
-            set(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PARTIES, yml.getBoolean("allow-parties"));
-            set("allow-parties", null);
-        }
-        set("server-name", null);
-        set("statsGUI", null);
-        set("startItems", null);
-        set("generators", null);
-        set("bedsDestroyCountdown", null);
-        set("dragonSpawnCountdown", null);
-        set("gameEndCountdown", null);
-        set("npcLoc", null);
-        set("blockedCmds", null);
-        set("lobbyScoreboard", null);
-        set("arenaGui.settings.startSlot", null);
-        set("arenaGui.settings.endSlot", null);
-        set("items", null);
-        set("start-items-per-arena", null);
-        set("safeMode", null);
-        set("disableCrafting", null);
-        set("performance-settings.disable-armor-packets", null);
-        set("performance-settings.disable-respawn-packets", null);
-
-        //Finished old configuration conversion
-
+        
         //set default server language
         String whatLang = "en";
         File[] langs = new File(plugin.getDataFolder(), "/Languages").listFiles();
