@@ -38,5 +38,4 @@ jobs:
           REPO_PASS: ${{ secrets.REPO_PASS }}
         run: |
          ls
-         echo "${env.REPO_USER}"
          mvn --batch-mode -DskipTests clean deploy -s settings.xml
