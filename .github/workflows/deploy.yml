@@ -113,5 +113,4 @@ jobs:
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
-        run: |
-          mvn --batch-mode -DskipTests clean deploy -s settings.xml
+        run: mvn --batch-mode -DskipTests clean deploy -s settings.xml
