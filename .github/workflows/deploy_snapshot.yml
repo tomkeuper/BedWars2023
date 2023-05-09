@@ -37,5 +37,5 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Deploy Package
         run: |
-         echo ""
+         echo "${env.REPO_USER}"
          mvn --batch-mode -DskipTests clean deploy -s settings.xml
