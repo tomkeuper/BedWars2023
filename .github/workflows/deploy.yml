@@ -112,3 +112,7 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      - name: Deploy Package
+        run: |
+          echo ""
+          mvn --batch-mode -DskipTests clean deploy -s settings.xml
