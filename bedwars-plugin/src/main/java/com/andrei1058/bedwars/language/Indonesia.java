@@ -463,6 +463,7 @@ public class Indonesia extends Language {
                 "&7detik setelah diminum.", "", "{quick_buy}", "{buy_status}"));
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Spons", Arrays.asList("&7Biaya: {cost} {currency}", "", "&7Bagus untuk menyerap air.",
                 "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Compact Pop-up Tower", Arrays.asList("&7Cost: %bw_cost% %bw_currency%", "", "&7Place a pop-up defence!", "", "%bw_quick_buy%", "%bw_buy_status%"));
 
         //
         yml.addDefault(Messages.MEANING_NO_TRAP, "Tidak ada Perangkap!");

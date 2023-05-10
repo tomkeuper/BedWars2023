@@ -465,6 +465,7 @@ public class Turkish extends Language {
                 "&7boyunca düşman tuzaklarından korur.", "", "{quick_buy}", "{buy_status}"));
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Sünger", Arrays.asList("&7Ücret: {cost} {currency}", "", "&7Suyu yok etmenin basit bir yolu.",
                 "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Compact Pop-up Tower", Arrays.asList("&7Cost: %bw_cost% %bw_currency%", "", "&7Place a pop-up defence!", "", "%bw_quick_buy%", "%bw_buy_status%"));
 
         //
         yml.addDefault(Messages.MEANING_NO_TRAP, "Tuzak yok!");

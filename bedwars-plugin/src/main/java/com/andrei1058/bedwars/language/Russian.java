@@ -331,6 +331,7 @@ public class Russian extends Language{
                 "&7поставленных на базу противника, в течении 60 секунд.", "", "{quick_buy}", "{buy_status}"));
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Губка", Arrays.asList("&7Cost: {cost} {currency}", "", "&7Вжимает в себя воду.",
                 "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Compact Pop-up Tower", Arrays.asList("&7Cost: %bw_cost% %bw_currency%", "", "&7Place a pop-up defence!", "", "%bw_quick_buy%", "%bw_buy_status%"));
 
 
         yml.addDefault(Messages.MEANING_FULL, "Полный");
