@@ -48,6 +48,7 @@ public class SQLite implements Database {
         }
         File dataFolder = new File(folder.getPath() + "/player_data.db");
         
+        // TODO Remove at V2.0
         if (dataFolder.getPath().equals(folder.getPath() + "/shop.db")) {
             dataFolder.renameTo(new File(folder.getPath() + "/player_data.db"));
         }
