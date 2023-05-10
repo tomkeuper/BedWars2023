@@ -468,8 +468,8 @@ public class SimplifiedChinese extends Language {
                 "&7喝下后 60 秒内不会触发陷阱", "", "%bw_quick_buy%", "%bw_buy_status%"));
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%海绵", Arrays.asList("&7花费：%bw_cost% %bw_currency%", "",
                 "&7用来吸水不错", "", "%bw_quick_buy%", "%bw_buy_status%"));
-        addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%袖珍弹出塔", Arrays.asList("&花费: %bw_cost% %bw_currency%", "",
-                "&7放置一个袖珍弹出塔", "&7塔防！", "", "%bw_quick_buy%", "%bw_buy_status%"));
+        addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Compact Pop-up Tower", Arrays.asList("&7Cost: %bw_cost% %bw_currency%", "", "&7Place a pop-up defence!", "", "{quick_buy}", "{buy_status}"));
+
 
         yml.addDefault(Messages.MEANING_NO_TRAP, "无陷阱！");
         yml.addDefault(Messages.FORMAT_UPGRADE_TRAP_COST, "&7花费：%bw_currency_color%%bw_cost% %bw_currency%");
