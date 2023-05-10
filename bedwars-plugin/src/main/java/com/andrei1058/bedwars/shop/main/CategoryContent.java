@@ -140,7 +140,11 @@ public class CategoryContent implements ICategoryContent {
         IContentTier ct;
 
         //check weight
-        if (shopCache.getCategoryWeight(father) > weight) return;
+        if (shopCache.getCategoryWeight(father) > weight) {
+            player.sendMessage(getMsg(player, Messages.SHOP_ALREADY_HIGHER_TIER));
+            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+            return;
+        }
 
         if (shopCache.getContentTier(getIdentifier()) > contentTiers.size()) {
             Bukkit.getLogger().severe("Wrong tier order at: " + getIdentifier());
@@ -201,7 +205,14 @@ public class CategoryContent implements ICategoryContent {
                 player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("{item}", displayItem.getItemMeta().getDisplayName()));
             }
         } else {
-            player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("{item}", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("{color}", "").replace("{tier}", ""));
+            ItemStack displayItem = ct.getItemStack();
+            if (nms.isTool(displayItem)) {
+                int tierI = ct.getValue();
+                String tier = getRomanNumber(tierI);
+                player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("{item}", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("{color}", "").replace("{tier}", tier));
+            } else {
+                player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("{item}", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("{color}", "").replace("{tier}", ""));
+            }
         }
 
 
