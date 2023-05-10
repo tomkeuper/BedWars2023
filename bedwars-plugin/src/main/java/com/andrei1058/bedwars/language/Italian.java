@@ -444,6 +444,7 @@ public class Italian extends Language {
         addContentMessages(yml, "invisibility", ConfigPath.SHOP_PATH_CATEGORY_POTIONS, "%bw_color%Pozione Invisibilità (30 secondi)", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "%bw_quick_buy%", "%bw_buy_status%"));
 
         addCategoryMessages(yml, ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "&8Utilità", "&aUtilità", Collections.singletonList("&eClicca per sfogliare!"));
+<<<<<<< Updated upstream
         addContentMessages(yml, "golden-apple", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Mela D'oro", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "&7Mela rigeneratrice di vita.", "", "%bw_quick_buy%", "%bw_buy_status%"));
         addContentMessages(yml, "bedbug", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%BedBug", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "&7Spawna un silverfish dove arriva", "&7la palla di neve, per distrare", "&7gli avversari. Vive 15 secondi.", "", "%bw_quick_buy%", "%bw_buy_status%"));
         addContentMessages(yml, "dream-defender", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Dream Defender", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "&7Iron Golem che ti aiuta a proteggere", "&7la tua base. Vive 4 minuti.", "", "%bw_quick_buy%", "%bw_buy_status%"));
@@ -455,6 +456,19 @@ public class Italian extends Language {
         addContentMessages(yml, "magic-milk", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Latte Magico", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "&7Evita le trappole per 60 secondi", "&7dopo averlo consumato.", "", "%bw_quick_buy%", "%bw_buy_status%"));
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Spugna", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "&7Utile per succhiare l'acqua :)).", "", "%bw_quick_buy%", "%bw_buy_status%"));
         addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Torre Pop-up Compatta", Arrays.asList("&7Costo: %bw_cost% %bw_currency%", "", "&7Piazza una Torre Pop-up", "&7compatta per difenderti!", "", "%bw_quick_buy%", "%bw_buy_status%"));
+=======
+        addContentMessages(yml, "golden-apple", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Mela D'oro", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Mela rigeneratrice di vita.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "bedbug", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}BedBug", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Spawna un silverfish dove arriva", "&7la palla di neve, per distrare", "&7gli avversari. Vive 15 secondi.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "dream-defender", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Dream Defender", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Iron Golem che ti aiuta a proteggere", "&7la tua base. Vive 4 minuti.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "fireball", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Fireball", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Click-destro per lanciare! Ottima per", "&7spingere gli avversari che camminano", "&7sui ponti", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "tnt", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}TNT", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Si accende instantaneamente, utile per", "&7far esplodere cose!", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "ender-pearl", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Ender Pearl", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Il metodo pià veloce per invadere", "&7la base degli avversari.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "water-bucket", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Secchio D'acqua", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Utile per rallentare gli", "&7inamici. Può anche proteggere", "&7dalla TNT.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "bridge-egg", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Bridge Egg", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Questo uovo crea un ponte in sua", "&7direzione dopo averlo lanciato.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "magic-milk", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Latte Magico", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Evita le trappole per 60 secondi", "&7dopo averlo consumato.", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Spugna", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Utile per succhiare l'acqua :)).", "", "{quick_buy}", "{buy_status}"));
+        addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "{color}Torre Pop-up Compatta", Arrays.asList("&7Costo: {cost} {currency}", "", "&7Piazza una Torre Pop-up", "&7compatta per difenderti!", "", "{quick_buy}", "{buy_status}"));
+>>>>>>> Stashed changes
 
         yml.addDefault(Messages.MEANING_NO_TRAP, "Nessuna Trappola!");
         yml.addDefault(Messages.FORMAT_UPGRADE_TRAP_COST, "&7Costo: %bw_currency_color%%bw_cost% %bw_currency%");
