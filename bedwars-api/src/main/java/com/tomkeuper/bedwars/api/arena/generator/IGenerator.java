@@ -27,6 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 
@@ -125,8 +126,18 @@ public interface IGenerator {
      * Get the team assigned to this generator.
      *
      * @return null if this is not a team generator.
+     * @deprecated replaced by getBedWarsTeam()
      */
+    @Deprecated(since = "1.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0")
     ITeam getBwt();
+
+    /**
+     * Get the team assigned to this generator.
+     *
+     * @return null if this is not a team generator.
+     */
+    ITeam getBedWarsTeam();
 
     /**
      * Get generator hologram holder (armor stand) containing the rotating item.

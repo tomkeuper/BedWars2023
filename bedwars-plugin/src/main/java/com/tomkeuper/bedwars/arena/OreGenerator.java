@@ -42,6 +42,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -482,7 +484,13 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
+    @Deprecated(since = "1.0", forRemoval = true)
+    @ApiStatus.ScheduledForRemoval(inVersion = "2.0")
     public ITeam getBwt() {
+        return bwt;
+    }
+    @Override
+    public ITeam getBedWarsTeam() {
         return bwt;
     }
 

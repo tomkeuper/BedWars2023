@@ -1180,7 +1180,7 @@ public class Arena implements IArena {
             sc.getCachedItems().add(ci);
         }
 
-        reJoin.getBwt().reJoin(p, ev.getRespawnTime());
+        reJoin.getBedWarsTeam().reJoin(p, ev.getRespawnTime());
         reJoin.destroy(false);
         Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
             BoardManager.getInstance().giveTabFeatures(p, this, true);
@@ -2116,7 +2116,7 @@ public class Arena implements IArena {
             emeraldTier = 2;
             sendEmeraldsUpgradeMessages();
             for (IGenerator o : getOreGenerators()) {
-                if (o.getType() == GeneratorType.EMERALD && o.getBwt() == null) {
+                if (o.getType() == GeneratorType.EMERALD && o.getBedWarsTeam() == null) {
                     o.upgrade();
                 }
             }
@@ -2134,7 +2134,7 @@ public class Arena implements IArena {
             diamondTier = 2;
             sendDiamondsUpgradeMessages();
             for (IGenerator o : getOreGenerators()) {
-                if (o.getType() == GeneratorType.DIAMOND && o.getBwt() == null) {
+                if (o.getType() == GeneratorType.DIAMOND && o.getBedWarsTeam() == null) {
                     o.upgrade();
                 }
             }
@@ -2149,7 +2149,7 @@ public class Arena implements IArena {
                 setNextEvent(NextEvent.BEDS_DESTROY);
             }
             for (IGenerator o : getOreGenerators()) {
-                if (o.getType() == GeneratorType.EMERALD && o.getBwt() == null) {
+                if (o.getType() == GeneratorType.EMERALD && o.getBedWarsTeam() == null) {
                     o.upgrade();
                 }
             }
@@ -2164,7 +2164,7 @@ public class Arena implements IArena {
                 setNextEvent(NextEvent.BEDS_DESTROY);
             }
             for (IGenerator o : getOreGenerators()) {
-                if (o.getType() == GeneratorType.DIAMOND && o.getBwt() == null) {
+                if (o.getType() == GeneratorType.DIAMOND && o.getBedWarsTeam() == null) {
                     o.upgrade();
                 }
             }

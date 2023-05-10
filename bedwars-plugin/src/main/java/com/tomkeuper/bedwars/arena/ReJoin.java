@@ -189,7 +189,7 @@ public class ReJoin {
     /**
      * Get player team
      */
-    public ITeam getBwt() {
+    public ITeam getBedWarsTeam() {
         return bwt;
     }
 
