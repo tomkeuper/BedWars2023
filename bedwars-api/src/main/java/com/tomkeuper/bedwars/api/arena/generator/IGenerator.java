@@ -95,6 +95,12 @@ public interface IGenerator {
      * Get the generator location.
      */
     Location getLocation();
+    /**
+     * set the generator location.
+     *
+     * @param location new generator drop location.
+     */
+    void setLocation(Location location);
 
     /**
      * Get generator ore.

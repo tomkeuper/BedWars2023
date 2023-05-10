@@ -384,6 +384,11 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    @Override
     public ItemStack getOre() {
         return ore;
     }
