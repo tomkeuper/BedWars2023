@@ -192,17 +192,11 @@ public class Messages {
     public static String FORMATTING_SIDEBAR_TAB_FOOTER_PLAYING = "format-sb-tab-footer.playing";
     public static String FORMATTING_SIDEBAR_TAB_FOOTER_RESTARTING = "format-sb-tab-footer.restarting";
     public static String FORMATTING_SIDEBAR_TAB_FOOTER_SPECTATOR = "format-sb-tab-footer.spectator";
-    @Deprecated
-    public static String FORMATTING_SCOREBOARD_TAB_PREFIX_PRESTARTING = "format-sb-tab-prefix.restarting";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING = "format-sb-tab-prefix.restarting";
-    @Deprecated
-    public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_PRESTARTING = "format-sb-tab-suffix.restarting";
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING = "format-sb-tab-suffix.restarting";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR = "format-sb-tab-prefix.spectator";
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR = "format-sb-tab-suffix.spectator";
     public static String FORMATTING_SPECTATOR_TEAM = "format-spectator-team";
-    @Deprecated
-    public static String FORMATTING_SPECTATOR_COLOR = "format-spectator-color";
 
     public static String FORMATTING_SCOREBOARD_TEAM_ELIMINATED = "format-sb-team-eliminated";
     public static String FORMATTING_SCOREBOARD_BED_DESTROYED = "format-sb-bed-destroyed";
@@ -213,7 +207,6 @@ public class Messages {
     public static String FORMATTING_TEAM_WINNER_FORMAT = "format-winner-team";
     public static String FORMATTING_SOLO_WINNER_FORMAT = "format-winner-solo";
     public static String FORMATTING_EACH_WINNER = "format-each-winner";
-    //public static String FORMATTING_TAB_LIST = "format.tablist";
     public static String FORMATTING_GENERATOR_TIER1 = "format-tier1";
     public static String FORMATTING_GENERATOR_TIER2 = "format-tier2";
     public static String FORMATTING_GENERATOR_TIER3 = "format-tier3";

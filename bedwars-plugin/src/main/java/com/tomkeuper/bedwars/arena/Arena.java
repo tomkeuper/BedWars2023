@@ -783,7 +783,6 @@ public class Arena implements IArena {
                 if (t.isMember(p)) {
                     team = t;
                     t.getMembers().remove(p);
-                    //noinspection deprecation
                     t.destroyBedHolo(p);
                 }
             }
@@ -1902,21 +1901,6 @@ public class Arena implements IArena {
     }
 
     /**
-     * Get arena by player name.
-     * Used to get the team for a player that has left the arena.
-     * Make sure the player is in this arena first.
-     */
-    @Deprecated
-    public ITeam getPlayerTeam(String playerCache) {
-        for (ITeam t : getTeams()) {
-            for (Player p : t.getMembersCache()) {
-                if (p.getName().equals(playerCache)) return t;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Check winner. You can always do that.
      * It will manage the arena restart and the needed stuff.
      */
@@ -2049,7 +2033,7 @@ public class Arena implements IArena {
                 }
                 if (winner != null) {
                     //noinspection deprecation
-                    for (Player p : winner.getMembersCache()) {
+                    for (Player p : winner.getMembers()) {
                         winners.add(p.getUniqueId());
                     }
                 }

@@ -47,13 +47,6 @@ public interface Database {
     PlayerStats fetchStats(UUID uuid);
 
     /**
-     * Set quick buy slot value.
-     */
-    @Deprecated
-    @SuppressWarnings("unused")
-    void setQuickBuySlot(UUID uuid, String shopPath, int slot);
-
-    /**
      * Get quick buy slot value.
      */
     String getQuickBuySlots(UUID uuid, int slot);

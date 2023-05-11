@@ -304,14 +304,6 @@ public interface IArena {
     void changeStatus(GameState status);
 
     /**
-     * Check if target player is in re-spawning screen.
-     */
-    @Deprecated
-    default boolean isRespawning(Player p) {
-        return isReSpawning(p);
-    }
-
-    /**
      * Add a join sign for the arena.
      */
     void addSign(Location loc);
@@ -330,15 +322,6 @@ public interface IArena {
      * Add a destroyed bed point to the player temp stats.
      */
     void addPlayerBedDestroyed(Player p);
-
-
-    /**
-     * Get arena by player name.
-     * Used to get the team for a player that has left the arena.
-     * Make sure the player is in this arena first.
-     */
-    @Deprecated
-    ITeam getPlayerTeam(String playerName);
 
     /**
      * Check winner. Will check if the game has a winner in certain conditions. Manage your win conditions.

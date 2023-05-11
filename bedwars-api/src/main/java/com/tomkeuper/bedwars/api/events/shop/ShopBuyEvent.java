@@ -38,18 +38,6 @@ public class ShopBuyEvent extends Event implements Cancellable {
 
     /**
      * Triggered when a player buys from the shop
-     * 
-     * @deprecated Use {@link #ShopBuyEvent(Player, IArena, ICategoryContent)}
-     */
-    @Deprecated
-    public ShopBuyEvent(Player buyer, ICategoryContent categoryContent) {
-        this.categoryContent = categoryContent;
-        this.buyer = buyer;
-        this.arena = null;
-    }
-
-    /**
-     * Triggered when a player buys from the shop
      */
     public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent) {
         this.categoryContent = categoryContent;

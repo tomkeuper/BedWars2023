@@ -749,32 +749,6 @@ public class BedWarsTeam implements ITeam {
 
     }
 
-    @Deprecated
-    public IGenerator getIronGenerator() {
-        IGenerator[] gens = (IGenerator[]) generators.stream().filter(f -> f.getType() == GeneratorType.IRON).toArray();
-        if (gens.length == 0) return null;
-        return gens[0];
-    }
-
-    @Deprecated
-    public IGenerator getGoldGenerator() {
-        IGenerator[] gens = (IGenerator[]) generators.stream().filter(f -> f.getType() == GeneratorType.GOLD).toArray();
-        if (gens.length == 0) return null;
-        return gens[0];
-    }
-
-    @Deprecated
-    public IGenerator getEmeraldGenerator() {
-        IGenerator[] gens = (IGenerator[]) generators.stream().filter(f -> f.getType() == GeneratorType.EMERALD).toArray();
-        if (gens.length == 0) return null;
-        return gens[0];
-    }
-
-    @Deprecated
-    public void setEmeraldGenerator(IGenerator emeraldGenerator) {
-        generators.add(emeraldGenerator);
-    }
-
     @Override
     public List<IGenerator> getGenerators() {
         return generators;

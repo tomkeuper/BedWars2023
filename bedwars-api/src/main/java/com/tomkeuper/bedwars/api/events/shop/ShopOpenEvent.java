@@ -35,17 +35,6 @@ public class ShopOpenEvent extends Event {
 
     /**
      * Triggered when the shop NPS is clicked.
-     * 
-     * @deprecated Use {@link #ShopOpenEvent(Player, IArena)}
-     */
-    @Deprecated
-    public ShopOpenEvent(Player player) {
-        this.player = player;
-        this.arena = null;
-    }
-
-    /**
-     * Triggered when the shop NPS is clicked.
      */
     public ShopOpenEvent(Player player, IArena arena) {
         this.player = player;

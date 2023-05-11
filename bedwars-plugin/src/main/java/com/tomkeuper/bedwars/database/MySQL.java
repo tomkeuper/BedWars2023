@@ -240,34 +240,6 @@ public class MySQL implements Database {
     }
 
     @Override
-    public void setQuickBuySlot(UUID uuid, String shopPath, int slot) {
-        String sql = "SELECT uuid FROM quick_buy_2 WHERE uuid = ?;";
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, uuid.toString());
-                try (ResultSet result = statement.executeQuery()) {
-                    if (!result.next()) {
-                        sql = "INSERT INTO quick_buy_2 VALUES(0, ?, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');";
-                        try (PreparedStatement statement2 = connection.prepareStatement(sql)) {
-                            statement2.setString(1, uuid.toString());
-                            statement2.executeUpdate();
-                        }
-                    }
-                    BedWars.debug("UPDATE SET SLOT " + slot + " identifier " + shopPath);
-                    sql = "UPDATE quick_buy_2 SET slot_" + slot + " = ? WHERE uuid = ?;";
-                    try (PreparedStatement statement2 = connection.prepareStatement(sql)) {
-                        statement2.setString(1, shopPath);
-                        statement2.setString(2, uuid.toString());
-                        statement2.executeUpdate();
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
     public String getQuickBuySlots(UUID uuid, int slot) {
         String sql = "SELECT slot_" + slot + " FROM quick_buy_2 WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {

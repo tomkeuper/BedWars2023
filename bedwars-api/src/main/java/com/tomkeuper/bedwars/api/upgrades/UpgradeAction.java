@@ -28,14 +28,6 @@ public interface UpgradeAction {
 
     /**
      * Apply action to team.
-     */
-    @Deprecated
-    default void onBuy(ITeam bwt) {
-        onBuy(null, bwt);
-    }
-
-    /**
-     * Apply action to team.
      *
      * @param player buyer.
      * @param bwt    team receiver.

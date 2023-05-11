@@ -260,38 +260,6 @@ public interface ITeam {
     void setBedDestroyed(boolean bedDestroyed);
 
     /**
-     * Get team iron generator.
-     *
-     * @return generator.
-     */
-    @Deprecated
-    IGenerator getIronGenerator();
-
-    /**
-     * Get team gold generator.
-     *
-     * @return generator.
-     */
-    @Deprecated
-    IGenerator getGoldGenerator();
-
-    /**
-     * Get team emerald generator.
-     *
-     * @return NULL if team does not have an emerald generator yet.
-     */
-    @Deprecated
-    IGenerator getEmeraldGenerator();
-
-    /**
-     * Set a team emerald generator.
-     *
-     * @param emeraldGenerator generator.
-     */
-    @Deprecated
-    void setEmeraldGenerator(IGenerator emeraldGenerator);
-
-    /**
      * Get team generators.
      *
      * @return team generators.
@@ -308,7 +276,9 @@ public interface ITeam {
      */
     void setDragons(int amount);
 
-    @Deprecated
+    /**
+     * Get all players from team
+     */
     List<Player> getMembersCache();
 
     /**
@@ -322,7 +292,6 @@ public interface ITeam {
      *
      * @param player target player.
      */
-    @Deprecated
     void destroyBedHolo(Player player);
 
     /**

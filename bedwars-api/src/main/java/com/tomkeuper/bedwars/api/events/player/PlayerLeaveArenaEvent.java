@@ -47,11 +47,6 @@ public class PlayerLeaveArenaEvent extends Event {
         this.lastDamager = lastDamager;
     }
 
-    @Deprecated
-    public PlayerLeaveArenaEvent(Player p, IArena arena) {
-        this(p, arena, null);
-    }
-
     public Player getPlayer() {
         return player;
     }
