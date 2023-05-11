@@ -13,7 +13,7 @@ env:
 
 jobs:
   publish:
-    name: Deploy to GitHub
+    name: Deploy to repo
     runs-on: ubuntu-latest
     permissions:
       contents: read

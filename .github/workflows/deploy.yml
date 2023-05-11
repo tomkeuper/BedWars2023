@@ -1,4 +1,4 @@
-name: Create a release
+name: Create a release + deploy to repo
 
 on:
   push:
@@ -78,7 +78,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "Github Actions"
-      - name: Merge master back to dev
+      - name: Merge production into master
         run: |
           git fetch --unshallow
           git checkout master
