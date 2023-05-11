@@ -62,7 +62,6 @@ public class GeneratorEditAction implements UpgradeAction {
                     gen.setOre(new ItemStack(Material.EMERALD));
                     gen.setType(GeneratorType.EMERALD);
                     bwt.getGenerators().add(gen);
-                    //bwt.getArena().getOreGenerators().add(gen);
                     generator.add(gen);
                 }
             } else {
@@ -70,7 +69,6 @@ public class GeneratorEditAction implements UpgradeAction {
                 gen.setOre(new ItemStack(Material.EMERALD));
                 gen.setType(GeneratorType.EMERALD);
                 bwt.getGenerators().add(gen);
-                //bwt.getArena().getOreGenerators().add(gen);
                 generator.add(gen);
             }
         }
