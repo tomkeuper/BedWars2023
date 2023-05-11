@@ -212,7 +212,7 @@ public class CategoryContent implements ICategoryContent {
             }
         } else {
             ItemStack displayItem = ct.getItemStack();
-            if (nms.isTool(displayItem)) {
+            if (BedWars.nms.isTool(displayItem)) {
                 int tierI = ct.getValue();
                 String tier = getRomanNumber(tierI);
                 player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", tier));
