@@ -28,6 +28,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -37,7 +38,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
 import static com.tomkeuper.bedwars.BedWars.plugin;
@@ -48,49 +51,44 @@ import static com.tomkeuper.bedwars.BedWars.plugin;
  */
 public class InvisibilityPotionListener implements Listener {
 
-    private HashMap<Player, Boolean> invisibilityMap = new HashMap<>();
-    private int amount = 6;
+    private final List<Player> invisiblePlayers = new ArrayList<>();
+    private int cd = 6;
 
     @EventHandler
     public void onPotion(@NotNull PlayerInvisibilityPotionEvent e) {
         if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
-            this.invisibilityMap.put(e.getPlayer(), true);
+            this.invisiblePlayers.add(e.getPlayer());
         } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
-            this.invisibilityMap.remove(e.getPlayer());
+            this.invisiblePlayers.remove(e.getPlayer());
         }
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if (!this.invisibilityMap.containsKey(e.getPlayer())) {
-            return;
-        }
-        if (this.invisibilityMap.get(e.getPlayer())) {
+        if (!this.invisiblePlayers.contains(e.getPlayer())) return;
+        else {
             Player p = e.getPlayer();
-            if (p.isSneaking()) {
+            if (p.isSneaking())
                 return;
-            }
             Location from = e.getFrom();
             Location to = e.getTo();
             if (from.getBlock() != to.getBlock()) {
-                if (!p.isOnGround()) {
+                if (!p.isOnGround())
                     return;
-                }
-                if (this.amount == 3) {
-                    p.getWorld().playEffect(p.getLocation().add(0.0, 0.01, 0.4), Effect.FOOTSTEP, 1);
-                    --this.amount;
-                }
-                else if (this.amount <= 0) {
-                    p.getWorld().playEffect(p.getLocation().add(0.4, 0.01, 0.0), Effect.FOOTSTEP, 1);
-                    this.amount = 6;
-                }
-                else {
-                    --this.amount;
+                Location loc = from.subtract(0.0D, 1.0D, 0.0D);
+                Block b = loc.getBlock();
+                if (this.cd == 3) {
+                    p.getWorld().playEffect(p.getLocation().add(0.0D, 0.01D, 0.4D), Effect.FOOTSTEP, 1);
+                    this.cd--;
+                } else if (this.cd <= 0) {
+                    p.getWorld().playEffect(p.getLocation().add(0.4D, 0.01D, 0.0D), Effect.FOOTSTEP, 1);
+                    this.cd = 6;
+                } else {
+                    this.cd--;
                 }
             }
         }
     }
-
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
         IArena a = Arena.getArenaByPlayer(e.getPlayer());
