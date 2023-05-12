@@ -25,13 +25,19 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
 import static com.tomkeuper.bedwars.BedWars.plugin;
@@ -41,6 +47,49 @@ import static com.tomkeuper.bedwars.BedWars.plugin;
  * potion or when the potion is gone. It is required because it is related to scoreboards.
  */
 public class InvisibilityPotionListener implements Listener {
+
+    private HashMap<Player, Boolean> invisibilityMap = new HashMap<>();
+    private int amount = 6;
+
+    @EventHandler
+    public void onPotion(@NotNull PlayerInvisibilityPotionEvent e) {
+        if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
+            this.invisibilityMap.put(e.getPlayer(), true);
+        } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
+            this.invisibilityMap.remove(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        if (!this.invisibilityMap.containsKey(e.getPlayer())) {
+            return;
+        }
+        if (this.invisibilityMap.get(e.getPlayer())) {
+            Player p = e.getPlayer();
+            if (p.isSneaking()) {
+                return;
+            }
+            Location from = e.getFrom();
+            Location to = e.getTo();
+            if (from.getBlock() != to.getBlock()) {
+                if (!p.isOnGround()) {
+                    return;
+                }
+                if (this.amount == 3) {
+                    p.getWorld().playEffect(p.getLocation().add(0.0, 0.01, 0.4), Effect.FOOTSTEP, 1);
+                    --this.amount;
+                }
+                else if (this.amount <= 0) {
+                    p.getWorld().playEffect(p.getLocation().add(0.4, 0.01, 0.0), Effect.FOOTSTEP, 1);
+                    this.amount = 6;
+                }
+                else {
+                    --this.amount;
+                }
+            }
+        }
+    }
 
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
