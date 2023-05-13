@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
+import com.tomkeuper.bedwars.arena.PlayerGoods;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.CmdStats;
@@ -49,6 +50,10 @@ public class QuitAndTeleportListener implements Listener {
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
         Player p = e.getPlayer();
+        PlayerGoods pg = PlayerGoods.getPlayerGoods(p);
+        if (pg != null && pg.getQuitTask() != null) {
+            Bukkit.getScheduler().cancelTask(pg.getQuitTask().getTaskId());
+        }
         // Remove from arena
         IArena a = Arena.getArenaByPlayer(p);
         if (a != null) {

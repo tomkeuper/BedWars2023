@@ -100,6 +100,8 @@ public class Messages {
     public static String COMMAND_FORCESTART_SUCCESS = "cmd-start";
     public static String COMMAND_FORCESTART_NO_PERM = "cmd-start-no-perm";
     public static String COMMAND_COOLDOWN = "cmd-cooldown";
+    public static String LEAVE_STARTED = "leave-started";
+    public static String LEAVE_CANCEL = "leave-cancel";
 
     /** Arena join/ leave related */
     public static String ARENA_JOIN_VIP_KICK = "arena-kicked-by-vip";
