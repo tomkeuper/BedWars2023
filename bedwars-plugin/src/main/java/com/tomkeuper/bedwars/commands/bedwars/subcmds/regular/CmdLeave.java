@@ -66,8 +66,6 @@ public class CmdLeave extends SubCommand {
             Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
             return true;
         } else {
-            if (cancel(p.getUniqueId())) return true;
-            update(p.getUniqueId());
             IArena a = Arena.getArenaByPlayer(p);
             if (a == null) {
                 p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
