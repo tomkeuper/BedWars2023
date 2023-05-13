@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.command.SubCommand;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
@@ -42,6 +43,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+
+import static com.tomkeuper.bedwars.BedWars.config;
 
 public class CmdLeave extends SubCommand {
 
@@ -80,13 +83,13 @@ public class CmdLeave extends SubCommand {
                 p.sendMessage(Language.getMsg(p, Messages.LEAVE_CANCEL));
                 return true;
             }
-            p.sendMessage(Language.getMsg(p, Messages.LEAVE_STARTED));
+            p.sendMessage(Language.getMsg(p, Messages.LEAVE_STARTED).replace("%bw_leave_delay_seconds%", String.valueOf(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME))));
             BukkitTask task = new BukkitRunnable() {
                 public void run() {
                     Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
                     pg.setQuitTask(null);
                 }
-            }.runTaskLater(BedWars.plugin, 60L);
+            }.runTaskLater(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME) * 20L);
             pg.setQuitTask(task);
             return true;
         }
