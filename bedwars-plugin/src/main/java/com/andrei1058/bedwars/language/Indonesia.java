@@ -135,6 +135,8 @@ public class Indonesia extends Language {
         yml.addDefault(Messages.COMMAND_FORCESTART_SUCCESS, "§c▪ §7Hitung mundur dipersingkat!");
         yml.addDefault(Messages.COMMAND_FORCESTART_NO_PERM, "{prefix}&7Anda tidak dapat memaksa memulai arena.\n§7Harap pertimbangkan untuk menyumbang untuk fitur VIP.");
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&cAnda belum bisa melakukannya! Tunggu {seconds} detik lagi!");
+        yml.addDefault(Messages.LEAVE_STARTED, "&a&lTeleporting you to the lobby in 3 seconds... Right-click again to cancel the teleport!");
+        yml.addDefault(Messages.LEAVE_CANCEL, "&c&lTeleport cancelled!");
         yml.addDefault(Messages.ARENA_JOIN_VIP_KICK, "{prefix}&cMaaf, tapi Anda dikeluarkan karena donatur bergabung ke arena.\n&aHarap pertimbangkan untuk menyumbang untuk lebih banyak fitur. &7&o(click)");
         yml.addDefault(Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT, "{prefix}§cTidak ada cukup pemain! Hitung mundur dihentikan!");
         yml.addDefault(Messages.ARENA_RESTART_PLAYER_KICK, "{prefix}&eArena tempat Anda berada sedang dimulai ulang.");

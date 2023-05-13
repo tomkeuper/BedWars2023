@@ -137,6 +137,8 @@ public class Turkish extends Language {
         yml.addDefault(Messages.COMMAND_FORCESTART_SUCCESS, "§c▪ §7Geris sayım kısaltıldı!");
         yml.addDefault(Messages.COMMAND_FORCESTART_NO_PERM, "{prefix}&7Bu işlemi uygulamak için bağışçı olman lazım!");
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&cŞu anda bunu yapamazsın! {seconds} saniye sonra tekrar dene.");
+        yml.addDefault(Messages.LEAVE_STARTED, "&a&lTeleporting you to the lobby in 3 seconds... Right-click again to cancel the teleport!");
+        yml.addDefault(Messages.LEAVE_CANCEL, "&c&lTeleport cancelled!");
         yml.addDefault(Messages.ARENA_JOIN_VIP_KICK, "{prefix}&cÜzgünüm, bir bağışçı haritaya katılmaya çalıştığı için haritadan atıldın!");
         yml.addDefault(Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT, "{prefix}§cOyun başlamıyor! §7Yeterli oyuncu yok!");
         yml.addDefault(Messages.ARENA_RESTART_PLAYER_KICK, "{prefix}&eBulunduğun harita yeniden başlatılıyor");

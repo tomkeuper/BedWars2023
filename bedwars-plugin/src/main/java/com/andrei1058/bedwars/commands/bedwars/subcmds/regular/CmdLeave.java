@@ -24,14 +24,20 @@ import com.andrei1058.bedwars.BedWars;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.command.ParentCommand;
 import com.andrei1058.bedwars.api.command.SubCommand;
+import com.andrei1058.bedwars.api.language.Language;
+import com.andrei1058.bedwars.api.language.Messages;
 import com.andrei1058.bedwars.api.server.ServerType;
 import com.andrei1058.bedwars.arena.Arena;
 import com.andrei1058.bedwars.arena.Misc;
+import com.andrei1058.bedwars.arena.PlayerGoods;
 import com.andrei1058.bedwars.arena.SetupSession;
 import com.andrei1058.bedwars.commands.bedwars.MainCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.List;
@@ -52,13 +58,37 @@ public class CmdLeave extends SubCommand {
     public boolean execute(String[] args, CommandSender s) {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
-
+        if (p.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
+            if (cancel(p.getUniqueId())) return true;
+            update(p.getUniqueId());
+            IArena a = Arena.getArenaByPlayer(p);
+            Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+            return true;
+        } else {
         if (cancel(p.getUniqueId())) return true;
         update(p.getUniqueId());
-        IArena a = Arena.getArenaByPlayer(p);
-
-        Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
-        return true;
+            IArena a = Arena.getArenaByPlayer(p);
+            if (a == null) {
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
+                return true;
+            }
+            PlayerGoods pg = PlayerGoods.getPlayerGoods(p);
+            if (pg != null && pg.getQuitTask() != null) {
+                Bukkit.getScheduler().cancelTask(pg.getQuitTask().getTaskId());
+                pg.setQuitTask(null);
+                p.sendMessage(Language.getMsg(p, Messages.LEAVE_CANCEL));
+                return true;
+            }
+            p.sendMessage(Language.getMsg(p, Messages.LEAVE_STARTED));
+            BukkitTask task = new BukkitRunnable() {
+                public void run() {
+                    Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+                    pg.setQuitTask(null);
+                }
+            }.runTaskLater(BedWars.plugin, 60L);
+            pg.setQuitTask(task);
+            return true;
+        }
     }
 
     @Override

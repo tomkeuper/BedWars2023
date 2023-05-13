@@ -27,6 +27,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -35,7 +36,7 @@ import static com.andrei1058.bedwars.BedWars.plugin;
 /**
  * This is where player stuff are stored so he can have them back after a game
  */
-class PlayerGoods {
+public class PlayerGoods {
 
     private UUID uuid;
     private int level, foodLevel;
@@ -48,6 +49,8 @@ class PlayerGoods {
     private GameMode gamemode;
     private boolean allowFlight, flying;
     private String displayName, tabName;
+
+    private BukkitTask quitTask;
 
     PlayerGoods(Player p, boolean prepare){
         this(p, prepare, false);
@@ -131,7 +134,7 @@ class PlayerGoods {
     /**
      * get a player vault
      */
-    static PlayerGoods getPlayerGoods(Player p) {
+    public static PlayerGoods getPlayerGoods(Player p) {
         return playerGoods.get(p.getUniqueId());
     }
 
@@ -199,4 +202,10 @@ class PlayerGoods {
         enderchest = null;
     }
 
+    public void setQuitTask(BukkitTask quitTask) {
+        this.quitTask = quitTask;
+    }
+    public BukkitTask getQuitTask() {
+        return this.quitTask;
+    }
 }
