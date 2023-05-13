@@ -720,4 +720,9 @@ public class v1_18_R2 extends VersionSupport {
     public void playVillagerEffect(@NotNull Player player, Location location){
         player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
     }
+
+    @Override
+    public void playFootStepEffect(@NotNull Player player){
+        player.spawnParticle(Particle.EXPLOSION_NORMAL, player.getLocation().add(0.0D, 0.01D, 0.4D), 1);
+    }
 }

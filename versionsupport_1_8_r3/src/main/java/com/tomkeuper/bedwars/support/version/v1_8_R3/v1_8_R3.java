@@ -33,6 +33,7 @@ import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Color;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -51,6 +52,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -770,5 +772,10 @@ public class v1_8_R3 extends VersionSupport {
     public void playVillagerEffect(Player player, Location location){
         PacketPlayOutWorldParticles pwp = new PacketPlayOutWorldParticles(EnumParticle.VILLAGER_HAPPY, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) 0, (float) 0, (float) 0, (float) 0, 1);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(pwp);
+    }
+
+    @Override
+    public void playFootStepEffect(@NotNull Player player){
+        player.getWorld().playEffect(player.getLocation().add(0.0D, 0.01D, 0.4D), Effect.FOOTSTEP, 1);
     }
 }

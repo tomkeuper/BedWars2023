@@ -54,6 +54,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -733,5 +734,10 @@ public class v1_12_R1 extends VersionSupport {
     @Override
     public void playVillagerEffect(Player player, Location location){
         player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
+    }
+
+    @Override
+    public void playFootStepEffect(@NotNull Player player){
+        player.spawnParticle(Particle.FOOTSTEP, player.getLocation().add(0.0D, 0.01D, 0.4D), 1);
     }
 }
