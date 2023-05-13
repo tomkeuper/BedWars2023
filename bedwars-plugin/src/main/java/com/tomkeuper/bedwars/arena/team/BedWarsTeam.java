@@ -615,6 +615,7 @@ public class BedWarsTeam implements ITeam {
                 }
             }
             p.updateInventory();
+            swordPlayers.add(p);
         }
     }
 
