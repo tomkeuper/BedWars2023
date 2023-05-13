@@ -63,6 +63,7 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 public class BedWarsTeam implements ITeam {
 
     private List<Player> members = new ArrayList<>();
+    private List<Player> swordPlayers = new ArrayList<>();
     private TeamColor color;
     private Location spawn, bed, shop, teamUpgrades;
     //private IGenerator ironGenerator = null, goldGenerator = null, emeraldGenerator = null;
@@ -221,6 +222,11 @@ public class BedWarsTeam implements ITeam {
                     ItemMeta im = i.getItemMeta();
                     if (parm.length > 3) {
                         im.setDisplayName(ChatColor.translateAlternateColorCodes('&', parm[3]));
+                    }
+                    if (swordPlayers.contains(p)) {
+                        if (nms.isSword(i)) {
+                            im.addEnchant(Enchantment.DAMAGE_ALL, 1, true);
+                        }
                     }
                     nms.setUnbreakable(im);
                     i.setItemMeta(im);
@@ -798,6 +804,7 @@ public class BedWarsTeam implements ITeam {
 
     public void destroyData() {
         members = null;
+        swordPlayers = null;
         spawn = null;
         bed = null;
         shop = null;
