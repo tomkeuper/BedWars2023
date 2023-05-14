@@ -72,6 +72,8 @@ public interface ITeam {
      */
     List<Player> getMembers();
 
+    List<Player> getSwordPlayers();
+
     /**
      * Restore lost default sword.
      *

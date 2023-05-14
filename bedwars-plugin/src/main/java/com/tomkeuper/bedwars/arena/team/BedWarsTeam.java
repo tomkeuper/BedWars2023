@@ -722,6 +722,10 @@ public class BedWarsTeam implements ITeam {
         return members;
     }
 
+    public List<Player> getSwordPlayers() {
+        return swordPlayers;
+    }
+
     public Location getBed() {
         return bed;
     }
