@@ -400,7 +400,9 @@ public class OreGenerator implements IGenerator {
             for (IGenHolo a : armorStands.values()) {
                 a.destroy();
             }
-            item.remove();
+            if (item != null) {
+                item.remove();
+            }
             armorStands.clear();
         }
         disabled = true;
