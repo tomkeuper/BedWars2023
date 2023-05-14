@@ -239,6 +239,11 @@ public class ConfigPath {
     private static final String GENERAL_CONFIGURATION_HEAL_POOL = GENERAL_CONFIGURATION_PERFORMANCE_PATH+".heal-pool";
     public static final String GENERAL_CONFIGURATION_HEAL_POOL_ENABLE = GENERAL_CONFIGURATION_HEAL_POOL+".enable";
     public static final String GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY = GENERAL_CONFIGURATION_HEAL_POOL+".seen-by-team-only";
+
+    public static final String GENERAL_CONFIGURATION_FOOTSTEPS_ON_INVISIBILITY = GENERAL_CONFIGURATION_PERFORMANCE_PATH +".footsteps-on-invisibility";
+
+    private static final String GENERAL_FOOTSTEPS_ON_INVISIBILITY_PATH = "footsteps-on-invisibility";
+    public static final String GENERAL_FOOTSTEPS_ON_INVISIBILITY_PARTICLE = GENERAL_FOOTSTEPS_ON_INVISIBILITY_PATH + ".particle";
     public static final String SHOP_SETTINGS_PATH = "shop-settings";
     public static final String SHOP_SPECIALS_PATH = "shop-specials";
     public static final String SHOP_QUICK_DEFAULTS_PATH = "quick-buy-defaults";

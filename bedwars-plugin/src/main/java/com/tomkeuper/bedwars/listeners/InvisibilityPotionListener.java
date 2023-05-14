@@ -20,18 +20,25 @@
 
 package com.tomkeuper.bedwars.listeners;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
 import static com.tomkeuper.bedwars.BedWars.plugin;
@@ -41,6 +48,45 @@ import static com.tomkeuper.bedwars.BedWars.plugin;
  * potion or when the potion is gone. It is required because it is related to scoreboards.
  */
 public class InvisibilityPotionListener implements Listener {
+
+    private final List<Player> invisiblePlayers = new ArrayList<>();
+    private final boolean footstepsEnabled = BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_FOOTSTEPS_ON_INVISIBILITY);
+    private int cd = 6;
+
+    @EventHandler
+    public void onPotion(PlayerInvisibilityPotionEvent e) {
+        if (!footstepsEnabled) return;
+        if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
+            this.invisiblePlayers.add(e.getPlayer());
+        } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
+            this.invisiblePlayers.remove(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        if (!footstepsEnabled) return;
+        if (!this.invisiblePlayers.contains(e.getPlayer())) return;
+
+        Player p = e.getPlayer();
+        if (p.isSneaking())
+            return;
+        Location from = e.getFrom();
+        Location to = e.getTo();
+        if (from.getBlock() != to.getBlock()) {
+            if (!p.isOnGround())
+                return;
+            if (this.cd == 3) {
+                nms.playFootStepEffect(p);
+                this.cd--;
+            } else if (this.cd <= 0) {
+                nms.playFootStepEffect(p);
+                this.cd = 6;
+            } else {
+                this.cd--;
+            }
+        }
+    }
 
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {

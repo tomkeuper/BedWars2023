@@ -4,6 +4,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -832,6 +833,6 @@ public class v1_19_R3 extends VersionSupport {
 
     @Override
     public void playFootStepEffect(@NotNull Player player){
-        player.spawnParticle(Particle.EXPLOSION_NORMAL, player.getLocation().add(0.0D, 0.01D, 0.4D), 1);
+        player.spawnParticle(Particle.valueOf(ConfigPath.GENERAL_FOOTSTEPS_ON_INVISIBILITY_PARTICLE), player.getLocation().add(0.0D, 0.01D, 0.4D), 1);
     }
 }
