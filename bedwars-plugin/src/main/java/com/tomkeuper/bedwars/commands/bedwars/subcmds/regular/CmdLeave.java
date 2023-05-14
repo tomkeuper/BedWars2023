@@ -76,23 +76,27 @@ public class CmdLeave extends SubCommand {
                 p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
                 return true;
             }
-            PlayerGoods pg = PlayerGoods.getPlayerGoods(p);
-            if (pg != null && pg.getQuitTask() != null) {
-                Bukkit.getScheduler().cancelTask(pg.getQuitTask().getTaskId());
-                pg.setQuitTask(null);
-                p.sendMessage(Language.getMsg(p, Messages.LEAVE_CANCEL));
-                return true;
-            }
-            p.sendMessage(Language.getMsg(p, Messages.LEAVE_STARTED).replace("%bw_leave_delay_seconds%", String.valueOf(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME))));
-            BukkitTask task = new BukkitRunnable() {
-                public void run() {
-                    Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+            if (config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME) == 0) {
+                Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+            } else {
+                PlayerGoods pg = PlayerGoods.getPlayerGoods(p);
+                if (pg != null && pg.getQuitTask() != null) {
+                    Bukkit.getScheduler().cancelTask(pg.getQuitTask().getTaskId());
                     pg.setQuitTask(null);
+                    p.sendMessage(Language.getMsg(p, Messages.LEAVE_CANCEL));
+                    return true;
                 }
-            }.runTaskLater(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME) * 20L);
-            pg.setQuitTask(task);
-            return true;
+                p.sendMessage(Language.getMsg(p, Messages.LEAVE_STARTED).replace("%bw_leave_delay_seconds%", String.valueOf(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME))));
+                BukkitTask task = new BukkitRunnable() {
+                    public void run() {
+                        Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+                        pg.setQuitTask(null);
+                    }
+                }.runTaskLater(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY_TIME) * 20L);
+                pg.setQuitTask(task);
+            }
         }
+        return true;
     }
 
     @Override
