@@ -221,6 +221,7 @@ public class Messages {
     public static String FORMAT_UPGRADE_COLOR_CAN_AFFORD = "format-upgrade-color-can-afford";
     public static String FORMAT_UPGRADE_COLOR_UNLOCKED = "format-upgrade-color-unlocked";
     public static String FORMAT_UPGRADE_TRAP_COST = "format-upgrade-trap-cost";
+    public static String FORMAT_TEAM_ENDERDRAGON_NAME = "format-team-enderdragon-name";
 
     /** Meaning/ Translations */
     public static String MEANING_FULL = "meaning-full";

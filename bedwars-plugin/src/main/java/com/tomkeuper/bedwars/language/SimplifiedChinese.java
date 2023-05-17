@@ -220,6 +220,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM, "%bw_team_color%[%bw_team_name%]");
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_SHOUT, "&6[公屏]");
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_SPECTATOR, "&7[旁观者]");
+        yml.addDefault(Messages.FORMAT_TEAM_ENDERDRAGON_NAME, "%bw_team_color%%bw_team_name% Dragon");
         yml.addDefault(Messages.MEANING_FULL, "已满");
         yml.addDefault(Messages.MEANING_SHOUT, "公屏");
         yml.addDefault(Messages.MEANING_NOBODY, "无玩家");

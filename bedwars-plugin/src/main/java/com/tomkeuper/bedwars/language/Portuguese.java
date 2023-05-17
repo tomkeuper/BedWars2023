@@ -219,6 +219,7 @@ public class Portuguese extends Language {
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM, "%bw_team_color%[%bw_team_name%]");
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_SHOUT, "&6[SHOUT]");
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_SPECTATOR, "&7[ESPECTADOR]");
+        yml.addDefault(Messages.FORMAT_TEAM_ENDERDRAGON_NAME, "%bw_team_color%%bw_team_name% Dragon");
         yml.addDefault(Messages.MEANING_FULL, "Lotado");
         yml.addDefault(Messages.MEANING_SHOUT, "shout");
         yml.addDefault(Messages.MEANING_NOBODY, "Ninguém");

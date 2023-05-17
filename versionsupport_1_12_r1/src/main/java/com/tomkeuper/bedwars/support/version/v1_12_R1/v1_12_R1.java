@@ -59,6 +59,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.logging.Level;
 
+import static com.tomkeuper.bedwars.api.language.Language.getMsg;
+
 @SuppressWarnings("unused")
 public class v1_12_R1 extends VersionSupport {
 
@@ -329,7 +331,11 @@ public class v1_12_R1 extends VersionSupport {
             return;
         }
         EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
-        ed.setPhase(EnderDragon.Phase.CIRCLING);
+        for (Player p : bwt.getMembers()) {
+            ed.setCustomName(getMsg(p, Messages.FORMAT_TEAM_ENDERDRAGON_NAME).replace("%bw_team_color%", bwt.getColor().chat().toString()).replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p))));
+            ed.setCustomNameVisible(true);
+            ed.setPhase(EnderDragon.Phase.CIRCLING);
+        }
     }
 
     @Override

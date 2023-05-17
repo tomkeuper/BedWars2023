@@ -380,7 +380,15 @@ public class v1_8_R3 extends VersionSupport {
 
     @Override
     public void spawnDragon(Location l, ITeam bwt) {
-        l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
+        if (l == null || l.getWorld() == null) {
+            getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
+            return;
+        }
+        EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
+        for (Player p : bwt.getMembers()) {
+            ed.setCustomName(getMsg(p, Messages.FORMAT_TEAM_ENDERDRAGON_NAME).replace("%bw_team_color%", bwt.getColor().chat().toString()).replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p))));
+            ed.setCustomNameVisible(true);
+        }
     }
 
     @Override
