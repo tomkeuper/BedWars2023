@@ -193,7 +193,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                                 .replace("%bw_distance%", t.getColor().chat().toString() + distance).replace("&", "§"));
                     }
                 }
-        }
+       
 
         /* AFK SYSTEM FOR PLAYERS */
         int current = 0;
