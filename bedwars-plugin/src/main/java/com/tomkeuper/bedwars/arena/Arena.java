@@ -572,7 +572,7 @@ public class Arena implements IArena {
             for (PotionEffect pf : p.getActivePotionEffects()) {
                 p.removePotionEffect(pf.getType());
             }
-        } else if (status == GameState.playing) {
+        } else if (status == GameState.playing || status == GameState.starting && (startingTask != null && startingTask.getCountdown() <= 1)) {
             addSpectator(p, false, null);
             /* stop code if status playing*/
             return false;
@@ -1361,7 +1361,12 @@ public class Arena implements IArena {
         if (arena == null) return null;
         Language language = Language.getPlayerLanguage(player);
         String genericTeamFormat = language.m(Messages.FORMATTING_SCOREBOARD_TEAM_GENERIC);
-        ITeam team = arena.getTeams().get(teamNumber-1);
+        ITeam team;
+        try {
+            team = arena.getTeams().get(teamNumber-1);
+        } catch (NullPointerException ignored){
+            return null;
+        }
         String teamName = team.getDisplayName(language);
         if (arena.getTeams().size() >= teamNumber) {
             return genericTeamFormat

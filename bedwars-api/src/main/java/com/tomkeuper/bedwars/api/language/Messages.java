@@ -69,6 +69,8 @@ public class Messages {
     public static String REJOIN_ALLOWED = "cmd-rejoin-allowed";
     public static String COMMAND_REJOIN_PLAYER_RECONNECTED = "cmd-rejoin-player-reconnected";
     public static String COMMAND_LEAVE_MSG = "cmd-leave";
+    public static String COMMAND_LEAVE_STARTED = "leave-started";
+    public static String COMMAND_LEAVE_CANCELED = "leave-canceled";
     public static String COMMAND_NOT_ALLOWED_IN_GAME = "cmd-blocked-in-game";
     public static String COMMAND_LEAVE_DENIED_NOT_IN_ARENA = "cmd-not-in-arena";
     public static String COMMAND_PARTY_HELP = "cmd-party-help";
@@ -108,6 +110,7 @@ public class Messages {
     public static String ARENA_RESTART_PLAYER_KICK = "arena-restart-kick";
     public static String ARENA_JOIN_DENIED_SELECTOR = "arena-join-denied-selector";
     public static String ARENA_JOIN_DENIED_NO_PROXY = "arena-join-denied-no-bwp";
+    public static String ARENA_JOIN_DENIED_NO_TIME = "arena-join-denied-no-time";
     public static String ARENA_SPECTATE_DENIED_SELECTOR = "arena-spectate-denied-selector";
     public static String ARENA_LEAVE_PARTY_DISBANDED = "arena-leave-party-disbanded";
 
@@ -196,7 +199,6 @@ public class Messages {
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING = "format-sb-tab-suffix.restarting";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR = "format-sb-tab-prefix.spectator";
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR = "format-sb-tab-suffix.spectator";
-    public static String FORMATTING_SPECTATOR_TEAM = "format-spectator-team";
 
     public static String FORMATTING_SCOREBOARD_TEAM_ELIMINATED = "format-sb-team-eliminated";
     public static String FORMATTING_SCOREBOARD_BED_DESTROYED = "format-sb-bed-destroyed";
