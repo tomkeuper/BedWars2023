@@ -194,19 +194,19 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                     }
                 }
             }
+        }
 
-            /* AFK SYSTEM FOR PLAYERS */
-            int current = 0;
-            for (Player p : getArena().getPlayers()) {
-                if (Arena.afkCheck.get(p.getUniqueId()) == null) {
-                    Arena.afkCheck.put(p.getUniqueId(), current);
-                } else {
-                    current = Arena.afkCheck.get(p.getUniqueId());
-                    current++;
-                    Arena.afkCheck.replace(p.getUniqueId(), current);
-                    if (current == 45) {
-                        BedWars.getAPI().getAFKUtil().setPlayerAFK(p, true);
-                    }
+        /* AFK SYSTEM FOR PLAYERS */
+        int current = 0;
+        for (Player p : getArena().getPlayers()) {
+            if (Arena.afkCheck.get(p.getUniqueId()) == null) {
+                Arena.afkCheck.put(p.getUniqueId(), current);
+            } else {
+                current = Arena.afkCheck.get(p.getUniqueId());
+                current++;
+                Arena.afkCheck.replace(p.getUniqueId(), current);
+                if (current == 45) {
+                    BedWars.getAPI().getAFKUtil().setPlayerAFK(p, true);
                 }
             }
         }
