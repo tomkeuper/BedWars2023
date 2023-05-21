@@ -3,6 +3,7 @@ package com.tomkeuper.bedwars.sidebar;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
@@ -14,6 +15,8 @@ import com.tomkeuper.bedwars.levels.internal.PlayerLevel;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabConstants;
 import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.bossbar.BossBar;
+import me.neznamy.tab.api.bossbar.BossBarManager;
 import me.neznamy.tab.api.event.player.PlayerLoadEvent;
 import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.scoreboard.Scoreboard;
@@ -29,6 +32,7 @@ import java.util.*;
 import java.text.SimpleDateFormat;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
+import static com.tomkeuper.bedwars.api.language.Language.getPlayerLanguage;
 
 public class BoardManager implements IScoreboardService {
     private static ScoreboardManager scoreboardManager;
@@ -536,5 +540,17 @@ public class BoardManager implements IScoreboardService {
     @Override
     public @Nullable Scoreboard getScoreboard(@NotNull Player player) {
         return scoreboardManager.getActiveScoreboard(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+    }
+
+    public void createTeamDragonBossBar(ITeam team) {
+        BossBarManager bm = TabAPI.getInstance().getBossBarManager();
+        if (bm == null) {
+            BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.");
+            return;
+        }
+        for (Player player : team.getArena().getPlayers()){
+            BossBar bb = bm.createBossBar(team.getDisplayName(getPlayerLanguage(player)) + " Dragon", "50", "PURPLE", "PROGRESS");
+            bb.addPlayer(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+        }
     }
 }

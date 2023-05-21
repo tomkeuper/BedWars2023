@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.sidebar.BoardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -163,6 +164,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         if (t.getMembers().isEmpty()) continue;
                         for (int x = 0; x < t.getDragons(); x++) {
                             BedWars.nms.spawnDragon(getArena().getConfig().getArenaLoc("waiting.Loc").add(0, 10, 0), t);
+                            BoardManager.getInstance().createTeamDragonBossBar(t);
                         }
                     }
                 }
