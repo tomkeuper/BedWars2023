@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.tasks.StartingTask;
+import com.tomkeuper.bedwars.arena.Announcement;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.LegacyTeamAssigner;
@@ -50,9 +51,11 @@ public class GameStartingTask implements Runnable, StartingTask {
     private int countdown;
     private final IArena arena;
     private final BukkitTask task;
+    private Announcement announcement;
 
     public GameStartingTask(Arena arena) {
         this.arena = arena;
+        this.announcement = new Announcement(arena);
         countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR);
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
     }
@@ -174,6 +177,7 @@ public class GameStartingTask implements Runnable, StartingTask {
                 for (String tut : getList(p, Messages.ARENA_STATUS_START_PLAYER_TUTORIAL)) {
                     p.sendMessage(SupportPAPI.getSupportPAPI().replace(p, tut));
                 }
+                announcement.loadMessages(p);
             }
         }
     }
