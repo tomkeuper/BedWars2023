@@ -34,7 +34,9 @@ public class Announcement {
             this.task.cancel();
         }
         if (!this.messages.isEmpty()) {
-            this.start();
+            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE)) {
+                this.start();
+            }
         }
     }
 
@@ -57,6 +59,6 @@ public class Announcement {
                 }
                 ++this.index;
             }
-        }.runTaskTimer(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_ANNOUNCEMENT_SEND_EVERY), config.getInt(ConfigPath.GENERAL_CONFIGURATION_ANNOUNCEMENT_SEND_EVERY));
+        }.runTaskTimer(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) * 20L, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) *20L);
     }
 }
