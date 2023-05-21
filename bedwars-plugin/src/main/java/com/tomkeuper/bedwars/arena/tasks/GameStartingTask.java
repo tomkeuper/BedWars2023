@@ -43,6 +43,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 
+import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.api.language.Language.getList;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
@@ -56,7 +57,7 @@ public class GameStartingTask implements Runnable, StartingTask {
     public GameStartingTask(Arena arena) {
         this.arena = arena;
         this.announcement = new Announcement(arena);
-        countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR);
+        countdown = config.getInt(ConfigPath.GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR);
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
     }
 
@@ -94,7 +95,7 @@ public class GameStartingTask implements Runnable, StartingTask {
     @Override
     public void run() {
         if (countdown == 0) {
-            if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER)) {
+            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER)) {
                 getArena().getTeamAssigner().assignTeams(getArena());
             } else {
                 LegacyTeamAssigner.assignTeams(getArena());
@@ -177,7 +178,9 @@ public class GameStartingTask implements Runnable, StartingTask {
                 for (String tut : getList(p, Messages.ARENA_STATUS_START_PLAYER_TUTORIAL)) {
                     p.sendMessage(SupportPAPI.getSupportPAPI().replace(p, tut));
                 }
-                announcement.loadMessages(p);
+                if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE)) {
+                    announcement.loadMessages(p);
+                }
             }
         }
     }

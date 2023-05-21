@@ -34,9 +34,7 @@ public class Announcement {
             this.task.cancel();
         }
         if (!this.messages.isEmpty()) {
-            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE)) {
-                this.start();
-            }
+            this.start();
         }
     }
 
