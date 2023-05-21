@@ -27,7 +27,7 @@ public class Announcement {
     }
 
     public void loadMessages(Player p) {
-        for (String announcement : Language.getList(p, Messages.ARENA_ANNOUNCEMENT)) {
+        for (String announcement : Language.getList(p, Messages.ARENA_IN_GAME_ANNOUNCEMENT)) {
             this.messages.add(announcement);
         }
         if (this.task != null) {
@@ -57,6 +57,6 @@ public class Announcement {
                 }
                 ++this.index;
             }
-        }.runTaskTimer(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) * 20L, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) *20L);
+        }.runTaskTimerAsynchronously(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) * 20L, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) *20L);
     }
 }
