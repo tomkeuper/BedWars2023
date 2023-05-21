@@ -194,6 +194,22 @@ public class InventoryListener implements Listener {
     }
 
     @EventHandler
+    public void onClick(InventoryClickEvent e) {
+        Player p = (Player) e.getWhoClicked();
+        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        if (sc == null) return;
+        if (e.getView().getTopInventory().getType() == InventoryType.CRAFTING && e.getView().getBottomInventory().getType() == InventoryType.PLAYER)
+            return;
+        if (e.getCurrentItem() != null) {
+            if (e.getCurrentItem().getType() != Material.AIR) {
+                if (shouldCancelMovement(e.getCurrentItem(), sc)) {
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onShopClose(InventoryCloseEvent e) {
         ShopIndex.indexViewers.remove(e.getPlayer().getUniqueId());
         ShopCategory.categoryViewers.remove(e.getPlayer().getUniqueId());
