@@ -275,6 +275,11 @@ public class BoardManager implements IScoreboardService {
 
         TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
 
+        if (TabAPI.getInstance().getNameTagManager() == null || tabPlayer == null) {
+            BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player");
+            return;
+        }
+
         String scoreboardName = "bw_lobby_" + Language.getPlayerLanguage(player).getIso();
         // set sidebar lines based on game state or lobby
         if (null != arena){
