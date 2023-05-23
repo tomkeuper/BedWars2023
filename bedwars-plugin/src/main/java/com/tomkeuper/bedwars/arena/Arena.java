@@ -70,8 +70,11 @@ import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.vault.WithEconomy;
 import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.placeholder.PlayerPlaceholder;
+import me.neznamy.tab.api.placeholder.ServerPlaceholder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -127,6 +130,8 @@ public class Arena implements IArena {
     private LinkedList<org.bukkit.util.Vector> placed = new LinkedList<>();
     private List<String> nextEvents = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
+    private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
+    private List<PlayerPlaceholder> playerPlaceholders = new ArrayList<>();
     private int renderDistance;
 
     private final List<Player> leaving = new ArrayList<>();
@@ -415,7 +420,7 @@ public class Arena implements IArena {
         PlaceholderManager pm = TabAPI.getInstance().getPlaceholderManager();
         for (int i = 1; i <= teams.size(); i++) {
             int finalI = i;
-            pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI));
+            playerPlaceholders.add(pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI)));
         }
 
         //register scoreboards
@@ -2492,6 +2497,14 @@ public class Arena implements IArena {
                 despawnable.destroy();
             }
         }
+        for (ServerPlaceholder placeholder : serverPlaceholders){
+            BedWars.debug("unloading placeholder: " + placeholder.getIdentifier());
+            TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
+        }
+        for (PlayerPlaceholder placeholder : playerPlaceholders){
+            BedWars.debug("unloading placeholder: " + placeholder.getIdentifier());
+            TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
+        }
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
@@ -2770,6 +2783,20 @@ public class Arena implements IArena {
             } else {
                 PaperSupport.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
             }
+        }
+    }
+
+    public void createTeamDragonBossBar(ITeam team, int dragonNumber) {
+        if (TabAPI.getInstance().getBossBarManager() == null) {
+            BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want");
+            return;
+        }
+        String dragonPlaceholderName = "%bw_"+team.getArena().getWorldName()+"_"+team.getName() + "+" + dragonNumber + "%";
+        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500,  () -> team.getDragons().get(dragonNumber).getHealth()/team.getDragons().get(dragonNumber).getMaxHealth()*100);
+        serverPlaceholders.add(dragonPlaceholder);
+        for (Player player : team.getArena().getPlayers()){
+            BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar(team.getDisplayName(getPlayerLanguage(player)) + " Dragon", dragonPlaceholderName, "PURPLE", "PROGRESS");
+            bb.addPlayer(TabAPI.getInstance().getPlayer(player.getUniqueId()));
         }
     }
 }
