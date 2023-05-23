@@ -18,10 +18,10 @@ import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.bossbar.BossBarManager;
 import me.neznamy.tab.api.event.player.PlayerLoadEvent;
+import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.scoreboard.Scoreboard;
 import me.neznamy.tab.api.scoreboard.ScoreboardManager;
-import me.neznamy.tab.api.team.UnlimitedNametagManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -43,7 +43,7 @@ public class BoardManager implements IScoreboardService {
 
 
     public static boolean init(){
-        if (!TabAPI.getInstance().getFeatureManager().isFeatureEnabled(TabConstants.Feature.SCOREBOARD)) return false;
+        if (TabAPI.getInstance().getScoreboardManager() == null) return false;
         if (null == instance) {
             instance = new BoardManager();
             instance.registerPlaceholders();
@@ -340,18 +340,18 @@ public class BoardManager implements IScoreboardService {
         if (null != arena){
             if (arena.getStatus() == GameState.waiting) {
                 scoreboardName = "bw_" + arena.getGroup() + "_waiting_" + Language.getPlayerLanguage(player).getIso();
-                tabPlayer.resetTemporaryGroup();
+                tabPlayer.setTemporaryGroup(null);
             } else if (arena.getStatus() == GameState.starting) {
                 scoreboardName = "bw_" + arena.getGroup() + "_starting_" + Language.getPlayerLanguage(player).getIso();
-                tabPlayer.resetTemporaryGroup();
+                tabPlayer.setTemporaryGroup(null);
             } else if (arena.getStatus() == GameState.playing || arena.getStatus() == GameState.restarting) {
                 scoreboardName = "bw_" + arena.getGroup() + "_playing_" + Language.getPlayerLanguage(player).getIso();
                 tabPlayer.setTemporaryGroup(arena.getTeam(player) != null ? arena.getTeam(player).getName() : "");
             }
         }
         if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME)){
-            if (TabAPI.getInstance().getTeamManager() instanceof UnlimitedNametagManager) {
-                UnlimitedNametagManager unm = (UnlimitedNametagManager) TabAPI.getInstance().getTeamManager();
+            if (TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager) {
+                UnlimitedNameTagManager unm = (UnlimitedNameTagManager) TabAPI.getInstance().getNameTagManager();
                 if (null == unm) Bukkit.getLogger().warning("Below name health is enabled in BedWars config but unlimited nametags is disabled in TAB config!");
                 unm.setLine(tabPlayer,"belowname", "%bw_tab_health%");
             }
@@ -365,8 +365,8 @@ public class BoardManager implements IScoreboardService {
         TabAPI.getInstance().getTablistFormatManager().setPrefix(tabPlayer, "%bw_prefix%");
         TabAPI.getInstance().getTablistFormatManager().setSuffix(tabPlayer, "%bw_suffix%");
 
-        TabAPI.getInstance().getTeamManager().setPrefix(tabPlayer, "%bw_prefix%");
-        TabAPI.getInstance().getTeamManager().setSuffix(tabPlayer, "%bw_suffix%");
+        TabAPI.getInstance().getNameTagManager().setPrefix(tabPlayer, "%bw_prefix%");
+        TabAPI.getInstance().getNameTagManager().setSuffix(tabPlayer, "%bw_suffix%");
     }
 
     @Override
