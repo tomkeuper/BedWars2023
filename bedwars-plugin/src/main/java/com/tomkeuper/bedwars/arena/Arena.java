@@ -2503,6 +2503,11 @@ public class Arena implements IArena {
         for (PlayerPlaceholder placeholder : playerPlaceholders){
             TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
         }
+        if (TabAPI.getInstance().getBossBarManager() != null){
+            for (BossBar bossBar : TabAPI.getInstance().getBossBarManager().getRegisteredBossBars().values()){
+                bossBar.getPlayers().forEach(bossBar::removePlayer);
+            }
+        }
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
@@ -2794,7 +2799,7 @@ public class Arena implements IArena {
         serverPlaceholders.add(dragonPlaceholder);
         for (Player player : team.getArena().getPlayers()){
             String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
-            BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar( name + "", dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
+            BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar( name, dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
             bb.addPlayer(TabAPI.getInstance().getPlayer(player.getUniqueId()));
         }
     }
