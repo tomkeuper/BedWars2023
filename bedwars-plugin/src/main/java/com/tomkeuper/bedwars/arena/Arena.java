@@ -2498,11 +2498,9 @@ public class Arena implements IArena {
             }
         }
         for (ServerPlaceholder placeholder : serverPlaceholders){
-            BedWars.debug("unloading placeholder: " + placeholder.getIdentifier());
             TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
         }
         for (PlayerPlaceholder placeholder : playerPlaceholders){
-            BedWars.debug("unloading placeholder: " + placeholder.getIdentifier());
             TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
         }
         arenaByName.remove(arenaName);
