@@ -4,17 +4,16 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
-import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.levels.internal.LevelListeners;
 import com.tomkeuper.bedwars.levels.internal.PlayerLevel;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
-import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.bossbar.BossBarManager;
 import me.neznamy.tab.api.event.player.PlayerLoadEvent;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
@@ -24,7 +23,6 @@ import me.neznamy.tab.api.scoreboard.ScoreboardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -49,6 +47,7 @@ public class BoardManager implements IScoreboardService {
             instance.registerPlaceholders();
             instance.registerLoadEvent();
             instance.registerLobbyScoreboards();
+            Bukkit.getPluginManager().registerEvents(new BoardListener(), BedWars.plugin);
         }
         return instance != null;
     }
@@ -550,14 +549,5 @@ public class BoardManager implements IScoreboardService {
     @Override
     public @Nullable Scoreboard getScoreboard(@NotNull Player player) {
         return scoreboardManager.getActiveScoreboard(TabAPI.getInstance().getPlayer(player.getUniqueId()));
-    }
-
-    @EventHandler
-    public void onArenaLeave(PlayerLeaveArenaEvent event){
-        if (TabAPI.getInstance().getBossBarManager() != null){
-            for (BossBar bossBar : Arena.getArenaByPlayer(event.getPlayer()).getDragonBossbars()){
-                bossBar.removePlayer(Objects.requireNonNull(TabAPI.getInstance().getPlayer(event.getPlayer().getUniqueId())));
-            }
-        }
     }
 }
