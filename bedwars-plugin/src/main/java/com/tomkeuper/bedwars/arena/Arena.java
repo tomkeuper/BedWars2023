@@ -132,6 +132,7 @@ public class Arena implements IArena {
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<PlayerPlaceholder> playerPlaceholders = new ArrayList<>();
+    private List<BossBar> dragonBossbars = new ArrayList<>();
     private int renderDistance;
 
     private final List<Player> leaving = new ArrayList<>();
@@ -2504,9 +2505,10 @@ public class Arena implements IArena {
             TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
         }
         if (TabAPI.getInstance().getBossBarManager() != null){
-            for (BossBar bossBar : TabAPI.getInstance().getBossBarManager().getRegisteredBossBars().values()){
+            for (BossBar bossBar : dragonBossbars){
                 bossBar.getPlayers().forEach(bossBar::removePlayer);
             }
+            dragonBossbars = null;
         }
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
@@ -2766,6 +2768,11 @@ public class Arena implements IArena {
         return leaving;
     }
 
+    @Override
+    public List<BossBar> getDragonBossbars(){
+        return dragonBossbars;
+    }
+
     /**
      * Remove player from world.
      * Contains fall-backs.
@@ -2801,6 +2808,7 @@ public class Arena implements IArena {
             String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
             BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar( name, dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
             bb.addPlayer(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+            dragonBossbars.add(bb);
         }
     }
 }
