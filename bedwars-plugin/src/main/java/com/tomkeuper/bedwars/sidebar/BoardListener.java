@@ -1,6 +1,5 @@
 package com.tomkeuper.bedwars.sidebar;
 
-import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import me.neznamy.tab.api.TabAPI;
@@ -14,9 +13,7 @@ public class BoardListener implements Listener {
     @EventHandler
     public void onArenaLeave(PlayerLeaveArenaEvent event){
         if (TabAPI.getInstance().getBossBarManager() != null){
-            BedWars.debug("Player Left Arena");
             for (BossBar bossBar : Arena.getArenaByPlayer(event.getPlayer()).getDragonBossbars()){
-                BedWars.debug("removed player bossbar");
                 bossBar.removePlayer(Objects.requireNonNull(TabAPI.getInstance().getPlayer(event.getPlayer().getUniqueId())));
             }
         }

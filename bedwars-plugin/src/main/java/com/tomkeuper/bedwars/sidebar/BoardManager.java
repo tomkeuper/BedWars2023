@@ -10,7 +10,6 @@ import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
-import com.tomkeuper.bedwars.levels.internal.LevelListeners;
 import com.tomkeuper.bedwars.levels.internal.PlayerLevel;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
