@@ -1,6 +1,7 @@
 package com.tomkeuper.bedwars.money.internal;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.events.player.PlayerMoneyGainEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -28,8 +29,11 @@ public class MoneyPerMinuteTask {
                 return;
             }
             for (Player p : arena.getPlayers()) {
-                BedWars.getEconomy().giveMoney(p, money);
-                p.sendMessage(Language.getMsg(p, Messages.MONEY_REWARD_PER_MINUTE).replace("%bw_money%", String.valueOf(money)));
+                PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(p, money, PlayerMoneyGainEvent.MoneySource.PER_MINUTE);
+                Bukkit.getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
+                BedWars.getEconomy().giveMoney(p, event.getAmount());
+                p.sendMessage(Language.getMsg(p, Messages.MONEY_REWARD_PER_MINUTE).replace("%bw_money%", String.valueOf(event.getAmount())));
             }
         }, 60 * 20, 60 * 20);
     }

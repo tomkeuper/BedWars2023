@@ -62,6 +62,15 @@ public class PlayerXpGainEvent extends Event {
     }
 
     /**
+     * Set a custom amount on the xp received
+     * This can be used for boosters
+     * @param amount - amount of xp
+     */
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    /**
      * Get xp source
      */
     public XpSource getXpSource() {
