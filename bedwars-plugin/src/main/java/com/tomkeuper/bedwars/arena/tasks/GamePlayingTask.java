@@ -31,7 +31,6 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
-import com.tomkeuper.bedwars.sidebar.BoardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -167,7 +166,11 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                             EnderDragon dragon = BedWars.nms.spawnDragon(getArena().getConfig().getArenaLoc("waiting.Loc").add(0, 10, 0), t);
                             if (dragon != null){
                                 t.addDragon(dragon);
-                                arena.createTeamDragonBossBar(t,x);
+                                if (BedWars.nms.getVersion() == 0){
+                                    arena.set1_8BossBarName(t, dragon);
+                                } else{
+                                    arena.createTABTeamDragonBossBar(t,x);
+                                }
                             }
                         }
                     }

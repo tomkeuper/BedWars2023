@@ -81,10 +81,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -2796,7 +2793,22 @@ public class Arena implements IArena {
         }
     }
 
-    public void createTeamDragonBossBar(ITeam team, int dragonNumber) {
+    /**
+     * Dragon bossbar custom names
+     * Use only for 1.8 servers as they don't support BossBar packets
+     */
+    public void set1_8BossBarName(ITeam team, EnderDragon dragon) {
+        for (Player player : team.getArena().getPlayers()){
+            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
+            dragon.setCustomName(name);
+        }
+    }
+
+    /**
+     * TAB V4 Custom Bossbar naming
+     * Can be used on all versions but will show double bossbars on 1.8 servers as vanilla bossbar is client sided
+     */
+    public void createTABTeamDragonBossBar(ITeam team, int dragonNumber) {
         if (TabAPI.getInstance().getBossBarManager() == null) {
             BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want");
             return;
