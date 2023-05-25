@@ -165,8 +165,10 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         if (t.getMembers().isEmpty()) continue;
                         for (int x = 0; x < t.getDragonAmount(); x++) {
                             EnderDragon dragon = BedWars.nms.spawnDragon(getArena().getConfig().getArenaLoc("waiting.Loc").add(0, 10, 0), t);
-                            t.addDragon(dragon);
-                            arena.createTeamDragonBossBar(t,x);
+                            if (dragon != null){
+                                t.addDragon(dragon);
+                                arena.createTeamDragonBossBar(t,x);
+                            }
                         }
                     }
                 }
