@@ -31,9 +31,11 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.sidebar.BoardManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
@@ -130,7 +132,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         BedWars.nms.sendTitle(p, getMsg(p, Messages.NEXT_EVENT_TITLE_ANNOUNCE_SUDDEN_DEATH), getMsg(p, Messages.NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH), 0, 40, 10);
                         for (ITeam t : getArena().getTeams()) {
                             if (t.getMembers().isEmpty()) continue;
-                            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("%bw_dragons_amount%", String.valueOf(t.getDragons()))
+                            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("%bw_dragons_amount%", String.valueOf(t.getDragonAmount()))
                                     .replace("%bw_team_color%", t.getColor().chat().toString()).replace("%bw_team_name%", t.getDisplayName(Language.getPlayerLanguage(p))));
                         }
                     }
@@ -138,7 +140,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         BedWars.nms.sendTitle(p, getMsg(p, Messages.NEXT_EVENT_TITLE_ANNOUNCE_SUDDEN_DEATH), getMsg(p, Messages.NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH), 0, 40, 10);
                         for (ITeam t : getArena().getTeams()) {
                             if (t.getMembers().isEmpty()) continue;
-                            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("%bw_dragons_amount%", String.valueOf(t.getDragons()))
+                            p.sendMessage(getMsg(p, Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH).replace("%bw_dragons_amount%", String.valueOf(t.getDragonAmount()))
                                     .replace("%bw_team_color%", t.getColor().chat().toString()).replace("%bw_team_name%", t.getDisplayName(Language.getPlayerLanguage(p))));
                         }
                     }
@@ -161,8 +163,10 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                     }
                     for (ITeam t : getArena().getTeams()) {
                         if (t.getMembers().isEmpty()) continue;
-                        for (int x = 0; x < t.getDragons(); x++) {
-                            BedWars.nms.spawnDragon(getArena().getConfig().getArenaLoc("waiting.Loc").add(0, 10, 0), t);
+                        for (int x = 0; x < t.getDragonAmount(); x++) {
+                            EnderDragon dragon = BedWars.nms.spawnDragon(getArena().getConfig().getArenaLoc("waiting.Loc").add(0, 10, 0), t);
+                            t.addDragon(dragon);
+                            arena.createTeamDragonBossBar(t,x);
                         }
                     }
                 }

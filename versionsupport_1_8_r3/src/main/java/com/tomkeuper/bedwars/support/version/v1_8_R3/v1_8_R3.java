@@ -379,8 +379,13 @@ public class v1_8_R3 extends VersionSupport {
     }
 
     @Override
-    public void spawnDragon(Location l, ITeam bwt) {
-        l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
+    public EnderDragon spawnDragon(Location l, ITeam bwt) {
+        if (l == null || l.getWorld() == null) {
+            getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
+            return null;
+        }
+        EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
+        return ed;
     }
 
     @Override
