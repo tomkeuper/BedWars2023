@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+import static com.tomkeuper.bedwars.BedWars.plugin;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class BoardManager implements IScoreboardService {
@@ -108,28 +109,28 @@ public class BoardManager implements IScoreboardService {
 
         int placeholderRefresh = BedWars.config.getInt(ConfigPath.SB_CONFIG_SIDEBAR_PLACEHOLDERS_REFRESH_INTERVAL);
         if (placeholderRefresh < 50) {
-            BedWars.plugin.getLogger().warning("Placeholder refresh interval is set to `" + placeholderRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
+            plugin.getLogger().warning("Placeholder refresh interval is set to `" + placeholderRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
             BedWars.config.set(ConfigPath.SB_CONFIG_SIDEBAR_PLACEHOLDERS_REFRESH_INTERVAL, 100);
             placeholderRefresh = 100;
         }
 
         int PrefixRefresh = BedWars.config.getInt(ConfigPath.SB_CONFIG_SIDEBAR_PREFIX_REFRESH_INTERVAL);
         if (PrefixRefresh < 50) {
-            BedWars.plugin.getLogger().warning("Prefix Suffix refresh interval is set to `" + PrefixRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
+            plugin.getLogger().warning("Prefix Suffix refresh interval is set to `" + PrefixRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
             BedWars.config.set(ConfigPath.SB_CONFIG_SIDEBAR_PREFIX_REFRESH_INTERVAL, 100);
             PrefixRefresh = 100;
         }
 
         int SuffixRefresh = BedWars.config.getInt(ConfigPath.SB_CONFIG_SIDEBAR_SUFFIX_REFRESH_INTERVAL);
         if (SuffixRefresh < 50) {
-            BedWars.plugin.getLogger().warning("Prefix Suffix refresh interval is set to `" + SuffixRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
+            plugin.getLogger().warning("Prefix Suffix refresh interval is set to `" + SuffixRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
             BedWars.config.set(ConfigPath.SB_CONFIG_SIDEBAR_SUFFIX_REFRESH_INTERVAL, 100);
             SuffixRefresh = 100;
         }
 
         int titleRefresh = BedWars.config.getInt(ConfigPath.SB_CONFIG_SIDEBAR_TITLE_REFRESH_INTERVAL);
         if (titleRefresh < 50) {
-            BedWars.plugin.getLogger().warning("Scoreboard title refresh interval is set to `" + titleRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
+            plugin.getLogger().warning("Scoreboard title refresh interval is set to `" + titleRefresh + "` but cannot be lower than 50! Overriding to 100 now...");
             BedWars.config.set(ConfigPath.SB_CONFIG_SIDEBAR_TITLE_REFRESH_INTERVAL, 100);
             titleRefresh = 100;
         }
@@ -140,7 +141,7 @@ public class BoardManager implements IScoreboardService {
         pm.registerPlayerPlaceholder("%bw_player%", placeholderRefresh, player -> ((Player) player.getPlayer()).getDisplayName());
         pm.registerPlayerPlaceholder("%bw_money%", placeholderRefresh, player -> BedWars.getEconomy().getMoney((Player) player.getPlayer()));
         pm.registerServerPlaceholder("%bw_server_ip%", placeholderRefresh, () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP));
-        pm.registerServerPlaceholder("%bw_version%", placeholderRefresh, () -> BedWars.plugin.getDescription().getVersion());
+        pm.registerServerPlaceholder("%bw_version%", placeholderRefresh, () -> plugin.getDescription().getVersion());
         pm.registerServerPlaceholder("%bw_server_id%", placeholderRefresh, () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
         pm.registerPlayerPlaceholder("%bw_date%", placeholderRefresh, player -> getDateFormat((Player) player.getPlayer()).format(new Date(System.currentTimeMillis())));
         pm.registerPlayerPlaceholder("%bw_progress%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getProgress());
@@ -464,32 +465,35 @@ public class BoardManager implements IScoreboardService {
             return;
         }
 
-        String headerPath = null;
-        String footerPath = null;
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
-        switch (arena.getStatus()) {
-            case waiting:
-                headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_WAITING;
-                footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_WAITING;
-                break;
-            case starting:
-                headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_STARTING;
-                footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_STARTING;
-                break;
-            case playing:
-                headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_PLAYING;
-                footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_PLAYING;
-                break;
-            case restarting:
-                headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_RESTARTING;
-                footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_RESTARTING;
-                break;
-        }
+            String headerPath = null;
+            String footerPath = null;
 
-        TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
-                player, lang.m(headerPath),
-                lang.m(footerPath).replace("%bw_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), false))).replace("%bw_final_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), true))).replace("%bw_beds%", String.valueOf(arena.getPlayerBedsDestroyed(((Player) player.getPlayer()).getPlayer())))
-        );
+            switch (arena.getStatus()) {
+                case waiting:
+                    headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_WAITING;
+                    footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_WAITING;
+                    break;
+                case starting:
+                    headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_STARTING;
+                    footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_STARTING;
+                    break;
+                case playing:
+                    headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_PLAYING;
+                    footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_PLAYING;
+                    break;
+                case restarting:
+                    headerPath = Messages.FORMATTING_SIDEBAR_TAB_HEADER_RESTARTING;
+                    footerPath = Messages.FORMATTING_SIDEBAR_TAB_FOOTER_RESTARTING;
+                    break;
+            }
+
+            TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
+                    player, lang.m(headerPath),
+                    lang.m(footerPath).replace("%bw_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), false))).replace("%bw_final_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), true))).replace("%bw_beds%", String.valueOf(arena.getPlayerBedsDestroyed(((Player) player.getPlayer()).getPlayer())))
+            );
+        }, 0, 2L);
     }
 
     /**
