@@ -157,11 +157,11 @@ public class Arena implements IArena {
      * temp stats. some of them use player name as key to keep names of players who left. at checkWinners for example.
      * Those maps are not used for db stats but is for internal use only.
      */
-    private HashMap<String, Integer> playerKills = new HashMap<>();
-    private HashMap<Player, Integer> playerBedsDestroyed = new HashMap<>();
-    private HashMap<Player, Integer> playerFinalKills = new HashMap<>();
-    private HashMap<Player, Integer> playerDeaths = new HashMap<>();
-    private HashMap<Player, Integer> playerFinalKillDeaths = new HashMap<>();
+    private final HashMap<String, Integer> playerKills = new HashMap<>();
+    private final HashMap<Player, Integer> playerBedsDestroyed = new HashMap<>();
+    private final HashMap<Player, Integer> playerFinalKills = new HashMap<>();
+    private final HashMap<Player, Integer> playerDeaths = new HashMap<>();
+    private final HashMap<Player, Integer> playerFinalKillDeaths = new HashMap<>();
 
 
     /* ARENA TASKS */
@@ -2519,11 +2519,11 @@ public class Arena implements IArena {
         regionsList = null;
         respawnSessions = null;
         showTime = null;
-        playerKills = null;
-        playerBedsDestroyed = null;
-        playerFinalKills = null;
-        playerDeaths = null;
-        playerFinalKillDeaths = null;
+        playerKills.clear();
+        playerBedsDestroyed.clear();
+        playerFinalKills.clear();
+        playerDeaths.clear();
+        playerFinalKillDeaths.clear();
         startingTask = null;
         playingTask = null;
         restartingTask = null;

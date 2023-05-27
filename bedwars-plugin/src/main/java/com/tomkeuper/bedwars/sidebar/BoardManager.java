@@ -459,7 +459,7 @@ public class BoardManager implements IScoreboardService {
         if (arena.isSpectator((Player) player.getPlayer())) {
             TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
                     player, lang.m(Messages.FORMATTING_SIDEBAR_TAB_HEADER_SPECTATOR),
-                    lang.m(Messages.FORMATTING_SIDEBAR_TAB_FOOTER_SPECTATOR)
+                    lang.m(Messages.FORMATTING_SIDEBAR_TAB_FOOTER_SPECTATOR).replace("%bw_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), false))).replace("%bw_final_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), true))).replace("%bw_beds%", String.valueOf(arena.getPlayerBedsDestroyed(((Player) player.getPlayer()).getPlayer())))
             );
             return;
         }
@@ -488,7 +488,7 @@ public class BoardManager implements IScoreboardService {
 
         TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
                 player, lang.m(headerPath),
-                lang.m(footerPath)
+                lang.m(footerPath).replace("%bw_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), false))).replace("%bw_final_kills%", String.valueOf(arena.getPlayerKills(((Player) player.getPlayer()).getPlayer(), true))).replace("%bw_beds%", String.valueOf(arena.getPlayerBedsDestroyed(((Player) player.getPlayer()).getPlayer())))
         );
     }
 
