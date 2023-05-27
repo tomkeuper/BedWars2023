@@ -112,7 +112,7 @@ public class Arena implements IArena {
     public static HashMap<UUID, Integer> magicMilk = new HashMap<>();
 
 
-    private List<Player> players = new ArrayList<>();
+    private final List<Player> players = new ArrayList<>();
     private List<Player> spectators = new ArrayList<>();
     private List<Block> signs = new ArrayList<>();
     private GameState status = GameState.restarting;
@@ -2499,7 +2499,7 @@ public class Arena implements IArena {
         }
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
-        players = null;
+        players.clear();
         spectators = null;
         signs = null;
         yml = null;
