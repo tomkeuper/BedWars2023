@@ -113,7 +113,7 @@ public class Arena implements IArena {
 
 
     private List<Player> players = new ArrayList<>();
-    private List<Player> spectators = new ArrayList<>();
+    private final List<Player> spectators = new ArrayList<>();
     private List<Block> signs = new ArrayList<>();
     private GameState status = GameState.restarting;
     private YamlConfiguration yml;
@@ -2493,7 +2493,7 @@ public class Arena implements IArena {
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
-        spectators = null;
+        spectators.clear();
         signs = null;
         yml = null;
         cm = null;

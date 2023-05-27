@@ -55,6 +55,11 @@ public class Announcement {
                         player.sendMessage(announcement);
                     }
                 }
+                for (Player player : arena.getSpectators()) {
+                    if (arena.getStatus() == GameState.playing) {
+                        player.sendMessage(announcement);
+                    }
+                }
                 ++this.index;
             }
         }.runTaskTimerAsynchronously(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) * 20L, config.getInt(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW) *20L);
