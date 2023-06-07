@@ -43,7 +43,7 @@ public class HalloweenSpecial {
         Bukkit.getPluginManager().registerEvents(new HalloweenListener(), BedWars.plugin);
 
         // pumpkin in shop
-        ShopCategory blockCategory = ShopManager.getShop().getCategoryList().stream().filter(category -> category.getName().equals("blocks-category")).findFirst().orElse(null);
+        ShopCategory blockCategory = ShopManager.shop.getCategoryList().stream().filter(category -> category.getName().equals("blocks-category")).findFirst().orElse(null);
         if (blockCategory != null) {
             PumpkinContent content = new PumpkinContent(blockCategory);
             if (content.isLoaded()) {

@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
@@ -122,7 +123,7 @@ public class PumpkinContent extends CategoryContent {
     }
 
     @Override
-    public ItemStack getItemStack(Player player, ShopCache shopCache) {
+    public ItemStack getItemStack(Player player, IShopCache shopCache) {
         return getItemStack(player);
     }
 

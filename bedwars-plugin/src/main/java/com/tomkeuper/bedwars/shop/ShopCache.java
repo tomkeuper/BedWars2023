@@ -21,6 +21,10 @@
 package com.tomkeuper.bedwars.shop;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
+import com.tomkeuper.bedwars.api.shop.ICachedItem;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
@@ -31,18 +35,18 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class ShopCache {
+public class ShopCache implements IShopCache {
 
     private UUID player;
     private List<CachedItem> cachedItems = new LinkedList<>();
     private int selectedCategory;
-    private HashMap<ShopCategory, Byte> categoryWeight = new HashMap<>();
+    private HashMap<IShopCategory, Byte> categoryWeight = new HashMap<>();
 
     private static List<ShopCache> shopCaches = new ArrayList<>();
 
     public ShopCache(UUID player) {
         this.player = player;
-        this.selectedCategory = ShopManager.getShop().getQuickBuyButton().getSlot();
+        this.selectedCategory = ShopManager.shop.getQuickBuyButton().getSlot();
         shopCaches.add(this);
     }
 
@@ -59,7 +63,7 @@ public class ShopCache {
     }
 
     public int getContentTier(String identifier) {
-        CachedItem ci = getCachedItem(identifier);
+        ICachedItem ci = getCachedItem(identifier);
         return ci == null ? 1 : ci.getTier();
     }
 
@@ -94,21 +98,22 @@ public class ShopCache {
      * Keep trace of shop items and player's tiers
      */
     @SuppressWarnings("WeakerAccess")
-    public class CachedItem {
-        private CategoryContent cc;
+    public class CachedItem implements ICachedItem {
+        private ICategoryContent cc;
         private int tier = 1;
 
-        public CachedItem(CategoryContent cc) {
+        public CachedItem(ICategoryContent cc) {
             this.cc = cc;
             cachedItems.add(this);
             BedWars.debug("New Cached item " + cc.getIdentifier() + " for player " + player);
         }
 
+        @Override
         public int getTier() {
             return tier;
         }
 
-        public CategoryContent getCc() {
+        public ICategoryContent getCc() {
             return cc;
         }
 
@@ -124,6 +129,7 @@ public class ShopCache {
             cc.giveItems(Bukkit.getPlayer(player), getShopCache(player), arena);
         }
 
+        @Override
         public void upgrade(int slot) {
             tier++;
             Player p = Bukkit.getPlayer(player);
@@ -138,6 +144,7 @@ public class ShopCache {
             p.updateInventory();
         }
 
+        @Override
         public void updateItem(int slot, Player p) {
             if (p.getOpenInventory() != null) {
                 if (p.getOpenInventory().getTopInventory() != null) {
@@ -150,7 +157,8 @@ public class ShopCache {
     /**
      * Get a player's cached item
      */
-    public CachedItem getCachedItem(String identifier) {
+    @Override
+    public ICachedItem getCachedItem(String identifier) {
         for (CachedItem ci : cachedItems) {
             if (ci.getCc().getIdentifier().equals(identifier)) return ci;
         }
@@ -160,14 +168,16 @@ public class ShopCache {
     /**
      * Check if the player has a cached item
      */
-    public boolean hasCachedItem(CategoryContent cc) {
+    @Override
+    public boolean hasCachedItem(ICategoryContent cc) {
         for (CachedItem ci : cachedItems) {
             if (ci.getCc() == cc) return true;
         }
         return false;
     }
 
-    public CachedItem getCachedItem(CategoryContent cc) {
+    @Override
+    public ICachedItem getCachedItem(ICategoryContent cc) {
         for (CachedItem ci : cachedItems) {
             if (ci.getCc() == cc) return ci;
         }
@@ -178,8 +188,9 @@ public class ShopCache {
      * Upgrade cached item
      * Add it if not found
      */
-    public void upgradeCachedItem(CategoryContent cc, int slot) {
-        CachedItem ci = getCachedItem(cc.getIdentifier());
+    @Override
+    public void upgradeCachedItem(ICategoryContent cc, int slot) {
+        ICachedItem ci = getCachedItem(cc.getIdentifier());
         if (ci == null) {
             ci = new CachedItem(cc);
             ci.updateItem(slot, Bukkit.getPlayer(player));
@@ -195,7 +206,8 @@ public class ShopCache {
      * Used for categories where you can't buy lower items
      * Ex. if you have bought diamond iron from it, you can't buy stone iron
      */
-    public void setCategoryWeight(ShopCategory sc, byte weight) {
+    @Override
+    public void setCategoryWeight(IShopCategory sc, byte weight) {
         if (categoryWeight.containsKey(sc)) {
             categoryWeight.replace(sc, weight);
         } else {
@@ -203,7 +215,7 @@ public class ShopCache {
         }
     }
 
-    public byte getCategoryWeight(ShopCategory sc) {
+    public byte getCategoryWeight(IShopCategory sc) {
         return categoryWeight.getOrDefault(sc, (byte) 0);
     }
 

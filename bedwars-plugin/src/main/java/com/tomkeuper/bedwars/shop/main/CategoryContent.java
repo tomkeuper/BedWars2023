@@ -29,6 +29,9 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.shop.ShopBuyEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -134,7 +137,8 @@ public class CategoryContent implements ICategoryContent {
 
     }
 
-    public void execute(Player player, ShopCache shopCache, int slot) {
+    @Override
+    public void execute(Player player, IShopCache shopCache, int slot) {
 
         IContentTier ct;
 
@@ -229,7 +233,8 @@ public class CategoryContent implements ICategoryContent {
     /**
      * Add tier items to player inventory
      */
-    public void giveItems(Player player, ShopCache shopCache, IArena arena) {
+    @Override
+    public void giveItems(Player player, IShopCache shopCache, IArena arena) {
         for (IBuyItem bi : contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1).getBuyItemsList()) {
             bi.give(player, arena);
         }
@@ -248,11 +253,12 @@ public class CategoryContent implements ICategoryContent {
 
     @Override
     public boolean hasQuick(Player player) {
-        PlayerQuickBuyCache pqbc = PlayerQuickBuyCache.getQuickBuyCache(player.getUniqueId());
+        IPlayerQuickBuyCache pqbc = PlayerQuickBuyCache.getInstance().getQuickBuyCache(player.getUniqueId());
         return pqbc != null && hasQuick(pqbc);
     }
 
-    public ItemStack getItemStack(Player player, ShopCache shopCache) {
+    @Override
+    public ItemStack getItemStack(Player player, IShopCache shopCache) {
         IContentTier ct;
         if (shopCache.getContentTier(identifier) == contentTiers.size()) {
             ct = contentTiers.get(contentTiers.size() - 1);
@@ -270,7 +276,7 @@ public class CategoryContent implements ICategoryContent {
         if (im != null) {
             im = i.getItemMeta().clone();
             boolean canAfford = calculateMoney(player, ct.getCurrency()) >= ct.getPrice();
-            PlayerQuickBuyCache qbc = PlayerQuickBuyCache.getQuickBuyCache(player.getUniqueId());
+            IPlayerQuickBuyCache qbc = PlayerQuickBuyCache.getInstance().getQuickBuyCache(player.getUniqueId());
             boolean hasQuick = qbc != null && hasQuick(qbc);
 
             String color = getMsg(player, canAfford ? Messages.SHOP_CAN_BUY_COLOR : Messages.SHOP_CANT_BUY_COLOR);
@@ -320,8 +326,8 @@ public class CategoryContent implements ICategoryContent {
         return i;
     }
 
-    public boolean hasQuick(PlayerQuickBuyCache c) {
-        for (QuickBuyElement q : c.getElements()) {
+    public boolean hasQuick(IPlayerQuickBuyCache c) {
+        for (IQuickBuyElement q : c.getElements()) {
             if (q.getCategoryContent() == this) return true;
         }
         return false;

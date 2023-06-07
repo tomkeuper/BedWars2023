@@ -23,6 +23,8 @@ package com.tomkeuper.bedwars.shop.main;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.events.shop.ShopOpenEvent;
 import com.tomkeuper.bedwars.api.language.Language;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
@@ -37,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 
 @SuppressWarnings("WeakerAccess")
-public class ShopIndex {
+public class ShopIndex implements IShopIndex {
 
     private int invSize = 54;
     private String namePath, separatorNamePath, separatorLorePath;
@@ -74,7 +76,7 @@ public class ShopIndex {
      * @param quickBuyCache the player cache regarding his preferences
      * @param player        target player
      */
-    public void open(Player player, PlayerQuickBuyCache quickBuyCache, boolean callEvent) {
+    public void open(Player player, IPlayerQuickBuyCache quickBuyCache, boolean callEvent) {
 
         if (quickBuyCache == null) return;
 
@@ -149,6 +151,7 @@ public class ShopIndex {
     /**
      * Get the inventory name path
      */
+    @Override
     public String getNamePath() {
         return namePath;
     }
@@ -156,6 +159,7 @@ public class ShopIndex {
     /**
      * Get the inventory size
      */
+    @Override
     public int getInvSize() {
         return invSize;
     }

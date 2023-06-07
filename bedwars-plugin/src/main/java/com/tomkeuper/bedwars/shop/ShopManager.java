@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.shop.listeners.*;
 import com.tomkeuper.bedwars.shop.main.QuickBuyButton;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
@@ -37,7 +38,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 
 @SuppressWarnings("WeakerAccess")
-public class ShopManager extends ConfigManager {
+public class ShopManager extends ConfigManager implements IShopManager {
 
     public static ShopIndex shop;
 
@@ -524,7 +525,7 @@ public class ShopManager extends ConfigManager {
         }
     }
 
-    public static ShopIndex getShop() {
+    public ShopIndex getShop() {
         return shop;
     }
 

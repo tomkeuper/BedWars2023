@@ -20,11 +20,13 @@
 
 package com.tomkeuper.bedwars.shop.quickbuy;
 
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
 
-public class QuickBuyElement {
+public class QuickBuyElement implements IQuickBuyElement {
 
     private int slot;
     private CategoryContent categoryContent;
@@ -32,20 +34,23 @@ public class QuickBuyElement {
 
 
     public QuickBuyElement(String path, int slot){
-        this.categoryContent = ShopCategory.getCategoryContent(path, ShopManager.getShop());
+        this.categoryContent = ShopCategory.getCategoryContent(path, ShopManager.shop);
         if (this.categoryContent != null) this.loaded = true;
         this.slot = slot;
     }
 
+    @Override
     public boolean isLoaded() {
         return loaded;
     }
 
+    @Override
     public int getSlot() {
         return slot;
     }
 
-    public CategoryContent getCategoryContent() {
+    @Override
+    public ICategoryContent getCategoryContent() {
         return categoryContent;
     }
 }

@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.database;
 
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
 import com.tomkeuper.bedwars.stats.PlayerStats;
 
@@ -96,5 +97,5 @@ public interface Database {
     /**
      * @param updateSlots key is slot id and value is the element.
      */
-    void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<QuickBuyElement> elementList);
+    void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<IQuickBuyElement> elementList);
 }

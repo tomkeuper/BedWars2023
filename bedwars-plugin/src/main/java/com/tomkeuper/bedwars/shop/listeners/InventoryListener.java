@@ -22,6 +22,9 @@ package com.tomkeuper.bedwars.shop.listeners;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.shop.ICachedItem;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
@@ -55,7 +58,7 @@ public class InventoryListener implements Listener {
         if (a.isSpectator(p)) return;
 
         ShopCache shopCache = ShopCache.getShopCache(p.getUniqueId());
-        PlayerQuickBuyCache cache = PlayerQuickBuyCache.getQuickBuyCache(p.getUniqueId());
+        IPlayerQuickBuyCache cache = PlayerQuickBuyCache.getInstance().getQuickBuyCache(p.getUniqueId());
 
         if (cache == null) return;
         if (shopCache == null) return;
@@ -70,13 +73,13 @@ public class InventoryListener implements Listener {
         if (ShopIndex.getIndexViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
-            for (ShopCategory sc : ShopManager.getShop().getCategoryList()) {
+            for (ShopCategory sc : ShopManager.shop.getCategoryList()) {
                 if (e.getSlot() == sc.getSlot()) {
-                    sc.open(p, ShopManager.getShop(), shopCache);
+                    sc.open(p, ShopManager.shop, shopCache);
                     return;
                 }
             }
-            for (QuickBuyElement element : cache.getElements()) {
+            for (IQuickBuyElement element : cache.getElements()) {
                 if (element.getSlot() == e.getSlot()) {
                     if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                         cache.setElement(element.getSlot(), null);
@@ -89,13 +92,13 @@ public class InventoryListener implements Listener {
             }
         } else if (ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
-            for (ShopCategory sc : ShopManager.getShop().getCategoryList()) {
-                if (ShopManager.getShop().getQuickBuyButton().getSlot() == e.getSlot()) {
-                    ShopManager.getShop().open(p, cache, false);
+            for (ShopCategory sc : ShopManager.shop.getCategoryList()) {
+                if (ShopManager.shop.getQuickBuyButton().getSlot() == e.getSlot()) {
+                    ShopManager.shop.open(p, cache, false);
                     return;
                 }
                 if (e.getSlot() == sc.getSlot()) {
-                    sc.open(p, ShopManager.getShop(), shopCache);
+                    sc.open(p, ShopManager.shop, shopCache);
                     return;
                 }
                 if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
@@ -217,7 +220,7 @@ public class InventoryListener implements Listener {
         String identifier = BedWars.nms.getShopUpgradeIdentifier(i);
         if (identifier == null) return false;
         if (identifier.equals("null")) return false;
-        ShopCache.CachedItem cachedItem = sc.getCachedItem(identifier);
+        ICachedItem cachedItem = sc.getCachedItem(identifier);
         return cachedItem != null;
         // the commented line bellow was blocking movement only if tiers amount > 1
         // return sc.getCachedItem(identifier).getCc().getContentTiers().size() > 1;
