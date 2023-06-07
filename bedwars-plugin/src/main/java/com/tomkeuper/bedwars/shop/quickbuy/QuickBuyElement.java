@@ -29,12 +29,12 @@ import com.tomkeuper.bedwars.shop.main.ShopCategory;
 public class QuickBuyElement implements IQuickBuyElement {
 
     private int slot;
-    private CategoryContent categoryContent;
+    private ICategoryContent categoryContent;
     private boolean loaded = false;
 
 
     public QuickBuyElement(String path, int slot){
-        this.categoryContent = ShopCategory.getCategoryContent(path, ShopManager.shop);
+        this.categoryContent = ShopCategory.getInstance().getCategoryContent(path, ShopManager.shop);
         if (this.categoryContent != null) this.loaded = true;
         this.slot = slot;
     }

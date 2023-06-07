@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -61,12 +62,12 @@ public class CategoryContent implements ICategoryContent {
     private String identifier;
     private boolean permanent = false, downgradable = false, unbreakable = false;
     private byte weight = 0;
-    private ShopCategory father;
+    private IShopCategory father;
 
     /**
      * Load a new category
      */
-    public CategoryContent(String path, String name, String categoryName, YamlConfiguration yml, ShopCategory father) {
+    public CategoryContent(String path, String name, String categoryName, YamlConfiguration yml, IShopCategory father) {
         BedWars.debug("Loading CategoryContent " + path);
         this.contentName = name;
         this.father = father;
@@ -247,7 +248,7 @@ public class CategoryContent implements ICategoryContent {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        ShopCache sc = ShopCache.getShopCache(player.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(player.getUniqueId());
         return sc == null ? null : getItemStack(player, sc);
     }
 

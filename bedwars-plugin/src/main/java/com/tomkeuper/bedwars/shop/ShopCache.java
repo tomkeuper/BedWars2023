@@ -43,31 +43,37 @@ public class ShopCache implements IShopCache {
     private HashMap<IShopCategory, Byte> categoryWeight = new HashMap<>();
 
     private static List<ShopCache> shopCaches = new ArrayList<>();
+    private static ShopCache instance;
 
     public ShopCache(UUID player) {
         this.player = player;
         this.selectedCategory = ShopManager.shop.getQuickBuyButton().getSlot();
         shopCaches.add(this);
+        instance = this;
     }
 
     public UUID getPlayer() {
         return player;
     }
 
+    @Override
     public void setSelectedCategory(int slot) {
         this.selectedCategory = slot;
     }
 
+    @Override
     public int getSelectedCategory() {
         return selectedCategory;
     }
 
+    @Override
     public int getContentTier(String identifier) {
         ICachedItem ci = getCachedItem(identifier);
         return ci == null ? 1 : ci.getTier();
     }
 
-    public static ShopCache getShopCache(UUID player) {
+    @Override
+    public ShopCache getShopCache(UUID player) {
         for (ShopCache sc : new ArrayList<>(shopCaches)) {
             if (sc.player.equals(player)) return sc;
         }
@@ -234,5 +240,9 @@ public class ShopCache implements IShopCache {
 
     public List<CachedItem> getCachedItems() {
         return cachedItems;
+    }
+
+    public static ShopCache getInstance() {
+        return instance;
     }
 }

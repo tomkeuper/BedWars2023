@@ -21,10 +21,13 @@
 package com.tomkeuper.bedwars.shop.main;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
+import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import org.bukkit.Bukkit;
@@ -44,9 +47,10 @@ public class ShopCategory implements IShopCategory {
     private ItemStack itemStack;
     private String itemNamePath, itemLorePath, invNamePath;
     private boolean loaded = false;
-    private final List<CategoryContent> categoryContentList = new ArrayList<>();
+    private final List<ICategoryContent> categoryContentList = new ArrayList<>();
     public static List<UUID> categoryViewers = new ArrayList<>();
     private final String name;
+    private static ShopCategory instance;
 
     /**
      * Load a shop category from the given path
@@ -71,7 +75,7 @@ public class ShopCategory implements IShopCategory {
             return;
         }
 
-        for (ShopCategory sc : ShopManager.shop.getCategoryList()){
+        for (IShopCategory sc : ShopManager.shop.getCategoryList()){
             if (sc.getSlot() == slot){
                 BedWars.plugin.getLogger().severe("Slot is already in use at: " + path);
                 return;
@@ -115,9 +119,10 @@ public class ShopCategory implements IShopCategory {
                 BedWars.debug("Adding CategoryContent: " + s + " to Shop Category: " + path);
             }
         }
+        instance = this;
     }
 
-    public void open(Player player, ShopIndex index, ShopCache shopCache){
+    public void open(Player player, IShopIndex index, IShopCache shopCache){
         if (player.getOpenInventory().getTopInventory() == null) return;
         ShopIndex.indexViewers.remove(player.getUniqueId());
 
@@ -125,7 +130,7 @@ public class ShopCategory implements IShopCategory {
 
         inv.setItem(index.getQuickBuyButton().getSlot(), index.getQuickBuyButton().getItemStack(player));
 
-        for (ShopCategory sc : index.getCategoryList()) {
+        for (IShopCategory sc : index.getCategoryList()) {
             inv.setItem(sc.getSlot(), sc.getItemStack(player));
         }
 
@@ -135,7 +140,7 @@ public class ShopCategory implements IShopCategory {
 
         shopCache.setSelectedCategory(getSlot());
 
-        for (CategoryContent cc : getCategoryContentList()) {
+        for (ICategoryContent cc : getCategoryContentList()) {
             inv.setItem(cc.getSlot(), cc.getItemStack(player, shopCache));
         }
 
@@ -148,6 +153,7 @@ public class ShopCategory implements IShopCategory {
     /**
      * Get the category preview item in player's language
      */
+    @Override
     public ItemStack getItemStack(Player player) {
         ItemStack i = itemStack.clone();
         ItemMeta im = i.getItemMeta();
@@ -162,6 +168,7 @@ public class ShopCategory implements IShopCategory {
     /**
      * Check if category was loaded
      */
+    @Override
     public boolean isLoaded() {
         return loaded;
     }
@@ -169,29 +176,37 @@ public class ShopCategory implements IShopCategory {
     /**
      * Get category slot in shop index
      */
+    @Override
     public int getSlot() {
         return slot;
     }
 
-    public List<CategoryContent> getCategoryContentList() {
+    @Override
+    public List<ICategoryContent> getCategoryContentList() {
         return categoryContentList;
     }
 
     /**Get a category content by identifier*/
-    public static CategoryContent getCategoryContent(String identifier, ShopIndex shopIndex){
-        for (ShopCategory sc : shopIndex.getCategoryList()){
-            for (CategoryContent cc : sc.getCategoryContentList()){
+    @Override
+    public ICategoryContent getCategoryContent(String identifier, IShopIndex shopIndex){
+        for (IShopCategory sc : shopIndex.getCategoryList()){
+            for (ICategoryContent cc : sc.getCategoryContentList()){
                 if (cc.getIdentifier().equals(identifier)) return cc;
             }
         }
         return null;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
-    public static List<UUID> getCategoryViewers() {
+    public List<UUID> getCategoryViewers() {
         return new ArrayList<>(categoryViewers);
+    }
+
+    public static ShopCategory getInstance() {
+        return instance;
     }
 }

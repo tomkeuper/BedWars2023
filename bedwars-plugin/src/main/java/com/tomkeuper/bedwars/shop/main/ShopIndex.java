@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.events.shop.ShopOpenEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -43,7 +44,7 @@ public class ShopIndex implements IShopIndex {
 
     private int invSize = 54;
     private String namePath, separatorNamePath, separatorLorePath;
-    private List<ShopCategory> categoryList = new ArrayList<>();
+    private List<IShopCategory> categoryList = new ArrayList<>();
     private QuickBuyButton quickBuyButton;
     public ItemStack separatorSelected, separatorStandard;
 
@@ -90,7 +91,7 @@ public class ShopIndex implements IShopIndex {
 
         inv.setItem(getQuickBuyButton().getSlot(), getQuickBuyButton().getItemStack(player));
 
-        for (ShopCategory sc : getCategoryList()) {
+        for (IShopCategory sc : getCategoryList()) {
             inv.setItem(sc.getSlot(), sc.getItemStack(player));
         }
 
@@ -98,9 +99,9 @@ public class ShopIndex implements IShopIndex {
 
         inv.setItem(getQuickBuyButton().getSlot() + 9, getSelectedItem(player));
         //noinspection ConstantConditions
-        ShopCache.getShopCache(player.getUniqueId()).setSelectedCategory(getQuickBuyButton().getSlot());
+        ShopCache.getInstance().getShopCache(player.getUniqueId()).setSelectedCategory(getQuickBuyButton().getSlot());
 
-        quickBuyCache.addInInventory(inv, ShopCache.getShopCache(player.getUniqueId()));
+        quickBuyCache.addInInventory(inv, ShopCache.getInstance().getShopCache(player.getUniqueId()));
 
         player.openInventory(inv);
         if (!indexViewers.contains(player.getUniqueId())) {
@@ -112,6 +113,7 @@ public class ShopIndex implements IShopIndex {
     /**
      * Add shop separator between categories and items
      */
+    @Override
     public void addSeparator(Player player, Inventory inv) {
         ItemStack i = separatorStandard.clone();
         ItemMeta im = i.getItemMeta();
@@ -129,6 +131,7 @@ public class ShopIndex implements IShopIndex {
     /**
      * This is the item that indicates the selected category
      */
+    @Override
     public ItemStack getSelectedItem(Player player) {
         ItemStack i = separatorSelected.clone();
         ItemMeta im = i.getItemMeta();
@@ -143,7 +146,8 @@ public class ShopIndex implements IShopIndex {
     /**
      * Add a shop category
      */
-    public void addShopCategory(ShopCategory sc) {
+    @Override
+    public void addShopCategory(IShopCategory sc) {
         categoryList.add(sc);
         BedWars.debug("Adding shop category: " + sc + " at slot " + sc.getSlot());
     }
@@ -167,7 +171,7 @@ public class ShopIndex implements IShopIndex {
     /**
      * Get the shop's categories
      */
-    public List<ShopCategory> getCategoryList() {
+    public List<IShopCategory> getCategoryList() {
         return categoryList;
     }
 

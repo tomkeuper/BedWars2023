@@ -3,6 +3,8 @@ package com.tomkeuper.bedwars.api.shop;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 /**
  * Represents a cache for shop items and player's tiers.
  */
@@ -64,5 +66,9 @@ public interface IShopCache {
      * @return The cached item, or null if not found.
      */
     ICachedItem getCachedItem(ICategoryContent cc);
+
+    void setSelectedCategory(int slot);
+    int getSelectedCategory();
+    IShopCache getShopCache(UUID player);
 }
 

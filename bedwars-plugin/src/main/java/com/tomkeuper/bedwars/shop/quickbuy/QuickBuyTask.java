@@ -21,8 +21,10 @@
 package com.tomkeuper.bedwars.shop.quickbuy;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
@@ -72,8 +74,8 @@ public class QuickBuyTask extends BukkitRunnable {
                                 continue;
                             }
 
-                            for (ShopCategory sc : ShopManager.shop.getCategoryList()) {
-                                for (CategoryContent cc : sc.getCategoryContentList()) {
+                            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
+                                for (ICategoryContent cc : sc.getCategoryContentList()) {
                                     if (cc.getIdentifier().equals(BedWars.shop.getYml().getString(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + "." + s + ".path"))) {
                                         cache.setElement(Integer.parseInt(BedWars.shop.getYml().getString(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + "." + s + ".slot")), cc);
                                     }

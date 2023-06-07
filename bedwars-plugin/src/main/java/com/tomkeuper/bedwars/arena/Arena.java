@@ -797,9 +797,9 @@ public class Arena implements IArena {
         }
 
         List<ShopCache.CachedItem> cacheList = new ArrayList<>();
-        if (ShopCache.getShopCache(p.getUniqueId()) != null) {
+        if (ShopCache.getInstance().getShopCache(p.getUniqueId()) != null) {
             //noinspection ConstantConditions
-            cacheList = ShopCache.getShopCache(p.getUniqueId()).getCachedPermanents();
+            cacheList = ShopCache.getInstance().getShopCache(p.getUniqueId()).getCachedPermanents();
         }
 
         LastHit lastHit = LastHit.getLastHit(p);
@@ -1180,7 +1180,7 @@ public class Arena implements IArena {
         p.getInventory().clear();
 
         //restore items before re-spawning in team
-        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc != null) sc.destroy();
         sc = new ShopCache(p.getUniqueId());
         for (ShopCache.CachedItem ci : reJoin.getPermanentsAndNonDowngradables()) {

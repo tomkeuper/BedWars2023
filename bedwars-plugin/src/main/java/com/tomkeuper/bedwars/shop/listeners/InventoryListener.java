@@ -22,9 +22,11 @@ package com.tomkeuper.bedwars.shop.listeners;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.shop.ICachedItem;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
@@ -57,13 +59,13 @@ public class InventoryListener implements Listener {
         if (a == null) return;
         if (a.isSpectator(p)) return;
 
-        ShopCache shopCache = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache shopCache = ShopCache.getInstance().getShopCache(p.getUniqueId());
         IPlayerQuickBuyCache cache = PlayerQuickBuyCache.getInstance().getQuickBuyCache(p.getUniqueId());
 
         if (cache == null) return;
         if (shopCache == null) return;
 
-        if(ShopIndex.getIndexViewers().contains(p.getUniqueId()) || ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
+        if(ShopIndex.getIndexViewers().contains(p.getUniqueId()) || ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
             if (e.getClickedInventory() != null && e.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
                 e.setCancelled(true);
                 return;
@@ -73,7 +75,7 @@ public class InventoryListener implements Listener {
         if (ShopIndex.getIndexViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
-            for (ShopCategory sc : ShopManager.shop.getCategoryList()) {
+            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
                 if (e.getSlot() == sc.getSlot()) {
                     sc.open(p, ShopManager.shop, shopCache);
                     return;
@@ -90,9 +92,9 @@ public class InventoryListener implements Listener {
                     return;
                 }
             }
-        } else if (ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
+        } else if (ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
-            for (ShopCategory sc : ShopManager.shop.getCategoryList()) {
+            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
                 if (ShopManager.shop.getQuickBuyButton().getSlot() == e.getSlot()) {
                     ShopManager.shop.open(p, cache, false);
                     return;
@@ -102,7 +104,7 @@ public class InventoryListener implements Listener {
                     return;
                 }
                 if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
-                for (CategoryContent cc : sc.getCategoryContentList()) {
+                for (ICategoryContent cc : sc.getCategoryContentList()) {
                     if (cc.getSlot() == e.getSlot()) {
                         if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
                             if (cache.hasCategoryContent(cc)) return;
@@ -123,7 +125,7 @@ public class InventoryListener implements Listener {
                 }
             }
             if (!add) return;
-            CategoryContent cc = QuickBuyAdd.getQuickBuyAdds().get(e.getWhoClicked().getUniqueId());
+            ICategoryContent cc = QuickBuyAdd.getQuickBuyAdds().get(e.getWhoClicked().getUniqueId());
             if (cc != null) {
                 cache.setElement(e.getSlot(), cc);
             }
@@ -135,7 +137,7 @@ public class InventoryListener implements Listener {
     public void onUpgradableMove(InventoryClickEvent e) {
 
         Player p = (Player) e.getWhoClicked();
-        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc == null) return;
 
         //block moving from hotbar
