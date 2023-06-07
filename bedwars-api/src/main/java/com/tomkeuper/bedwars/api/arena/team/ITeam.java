@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.upgrades.EnemyBaseEnterTrap;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -269,17 +270,29 @@ public interface ITeam {
     /**
      * Get team dragons amount for the sudden death phase.
      */
-    int getDragons();
+    int getDragonAmount();
 
     /**
      * Set a team dragons amount for the sudden death phase.
      */
-    void setDragons(int amount);
+    void setDragonAmount(int amount);
 
     /**
      * Get all players from team
      */
     List<Player> getMembersCache();
+
+    /**
+     * Get all players from team
+     */
+    List<EnderDragon> getDragons();
+
+    /**
+     * Assign a dragon to a team
+     *
+     * @param dragon Dragon entity
+     */
+    void addDragon(EnderDragon dragon);
 
     /**
      * Destroy team data when the arena restarts.
