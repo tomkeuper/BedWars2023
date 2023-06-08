@@ -36,6 +36,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 public class ShopCache implements IShopCache {
+    public ShopCache() {
+        instance = this;
+    }
 
     private UUID player;
     private List<CachedItem> cachedItems = new LinkedList<>();
@@ -49,7 +52,6 @@ public class ShopCache implements IShopCache {
         this.player = player;
         this.selectedCategory = ShopManager.shop.getQuickBuyButton().getSlot();
         shopCaches.add(this);
-        instance = this;
     }
 
     public UUID getPlayer() {

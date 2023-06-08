@@ -59,6 +59,10 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
     private static final ConcurrentHashMap<UUID, PlayerQuickBuyCache> quickBuyCaches = new ConcurrentHashMap<>();
     private final HashMap<Integer, String> updateSlots = new HashMap<>();
 
+    public PlayerQuickBuyCache(){
+        instance = this;
+    }
+
     public PlayerQuickBuyCache(Player player) {
         if (player == null) return;
         this.player = player.getUniqueId();
@@ -72,7 +76,6 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         this.emptyItemLorePath = Messages.SHOP_QUICK_EMPTY_LORE;
         task = new QuickBuyTask(player.getUniqueId());
         quickBuyCaches.put(this.player, this);
-        instance = this;
     }
 
 

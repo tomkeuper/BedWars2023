@@ -64,7 +64,9 @@ import com.tomkeuper.bedwars.lobbysocket.LoadedUsersCleaner;
 import com.tomkeuper.bedwars.lobbysocket.SendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
+import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
+import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsManager;
 import com.tomkeuper.bedwars.support.citizens.CitizensListener;
@@ -517,6 +519,10 @@ public class BedWars extends JavaPlugin {
 
         /* Initialize shop */
         shop = new ShopManager();
+
+        /* Initialize instances */
+        new ShopCache();
+        new PlayerQuickBuyCache();
 
         //Leave this code at the end of the enable method
         for (Language l : Language.getLanguages()) {
