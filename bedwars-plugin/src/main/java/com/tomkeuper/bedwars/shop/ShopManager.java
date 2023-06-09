@@ -416,6 +416,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     /**
      * Hide the item details like enchants, attributes etc.
      */
+    @Override
     public ItemMeta hideItemDetails(ItemMeta im) {
         if (im != null) {
             im.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON);
@@ -426,6 +427,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     /**
      * Enchant item stack and hide details
      */
+    @Override
     public ItemStack enchantItem(ItemStack itemStack) {
         ItemStack i = new ItemStack(itemStack);
         ItemMeta im = i.getItemMeta();
@@ -451,6 +453,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     /**
      * Create a tier for a shop content
      */
+    @Override
     public void addCategoryContentTier(String path, String contentName, int contentSlot, String tierName, String tierMaterial, int tierData, int amount, boolean enchant, int tierCost, String tierCurrency, boolean permanent,
                                        boolean downgradable) {
         path += ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + contentName + ".";
@@ -470,6 +473,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
      * Create a tier for a shop content (unbreakable)
      * Comment: Reason I made a new function; not all items can be unbreakable, thus shouldn't have the option.
      */
+    @Override
     public void addCategoryContentTier(String path, String contentName, int contentSlot, String tierName, String tierMaterial, int tierData, int amount, boolean enchant, int tierCost, String tierCurrency, boolean permanent,
                                        boolean downgradable, boolean unbreakable) {
         path += ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + contentName + ".";
@@ -489,6 +493,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     /**
      * Add buy items to a content tier
      */
+    @Override
     public void addBuyItem(String path, String contentName, String tierName, String item, String material, int data, int amount, String enchant, String potion, String itemName, boolean autoEquip) {
         path += ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + contentName + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + tierName + "." + ConfigPath.SHOP_CONTENT_BUY_ITEMS_PATH + "." + item + ".";
         getYml().addDefault(path + "material", material);
@@ -508,6 +513,10 @@ public class ShopManager extends ConfigManager implements IShopManager {
         }
     }
 
+    /**
+     * Add buy potions to a content tier
+     */
+    @Override
     public void addBuyPotion(String path, String contentName, String tierName, String item, String material, int data, int amount, String enchant, String potion, String itemName) {
         path += ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + contentName + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + tierName + "." + ConfigPath.SHOP_CONTENT_BUY_ITEMS_PATH + "." + item + ".";
         getYml().addDefault(path + "material", material);
