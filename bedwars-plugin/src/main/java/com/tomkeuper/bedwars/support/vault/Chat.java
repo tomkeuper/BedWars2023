@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.support.vault;
 
+import com.tomkeuper.bedwars.api.BedWars;
 import org.bukkit.entity.Player;
 
 public interface Chat extends BedWars.ChatUtil {
