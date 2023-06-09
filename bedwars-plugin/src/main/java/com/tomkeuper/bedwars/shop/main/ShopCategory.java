@@ -88,7 +88,7 @@ public class ShopCategory implements IShopCategory {
 
         if (yml.get(path + ConfigPath.SHOP_CATEGORY_ITEM_ENCHANTED) != null) {
             if (yml.getBoolean(path + ConfigPath.SHOP_CATEGORY_ITEM_ENCHANTED)) {
-                itemStack = ShopManager.enchantItem(itemStack);
+                itemStack = BedWars.shop.enchantItem(itemStack);
             }
         }
 

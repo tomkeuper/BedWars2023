@@ -70,7 +70,7 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
                 BedWars.shop.getYml().getInt(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_AMOUNT),
                 (short) BedWars.shop.getYml().getInt(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_DATA));
         if (BedWars.shop.getYml().getBoolean(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_ENCHANTED)) {
-            this.emptyItem = ShopManager.enchantItem(emptyItem);
+            this.emptyItem = BedWars.shop.enchantItem(emptyItem);
         }
         this.emptyItemNamePath = Messages.SHOP_QUICK_EMPTY_NAME;
         this.emptyItemLorePath = Messages.SHOP_QUICK_EMPTY_LORE;

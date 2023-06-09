@@ -426,7 +426,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     /**
      * Enchant item stack and hide details
      */
-    public static ItemStack enchantItem(ItemStack itemStack) {
+    public ItemStack enchantItem(ItemStack itemStack) {
         ItemStack i = new ItemStack(itemStack);
         ItemMeta im = i.getItemMeta();
         if (im != null) {
