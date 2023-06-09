@@ -416,7 +416,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     /**
      * Hide the item details like enchants, attributes etc.
      */
-    public static ItemMeta hideItemDetails(ItemMeta im) {
+    public ItemMeta hideItemDetails(ItemMeta im) {
         if (im != null) {
             im.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_POTION_EFFECTS, ItemFlag.HIDE_DESTROYS, ItemFlag.HIDE_PLACED_ON);
         }
@@ -431,7 +431,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
         ItemMeta im = i.getItemMeta();
         if (im != null) {
             im.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
-            i.setItemMeta(hideItemDetails(im));
+            i.setItemMeta(BedWars.shop.hideItemDetails(im));
         }
         return i;
     }

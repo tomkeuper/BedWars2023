@@ -28,7 +28,6 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.shop.IShopIndex;
-import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -103,7 +102,7 @@ public class ShopCategory implements IShopCategory {
         }
 
         if (itemStack.getItemMeta() != null) {
-            itemStack.setItemMeta(ShopManager.hideItemDetails(itemStack.getItemMeta()));
+            itemStack.setItemMeta(BedWars.shop.hideItemDetails(itemStack.getItemMeta()));
         }
 
         itemNamePath = Messages.SHOP_CATEGORY_ITEM_NAME.replace("%category%", path);
