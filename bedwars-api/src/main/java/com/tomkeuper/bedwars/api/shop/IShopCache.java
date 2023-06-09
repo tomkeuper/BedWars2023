@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 /**
- * Represents a cache for shop items and player's tiers.
+ * Represents a cache for shop items and player tiers.
  */
 public interface IShopCache {
 
@@ -67,8 +67,25 @@ public interface IShopCache {
      */
     ICachedItem getCachedItem(ICategoryContent cc);
 
+    /**
+     * Set the selected category slot.
+     *
+     * @param slot The slot of the selected category.
+     */
     void setSelectedCategory(int slot);
+
+    /**
+     * Get the slot of the selected category.
+     *
+     * @return The slot of the selected category.
+     */
     int getSelectedCategory();
+
+    /**
+     * Get the shop cache for a specific player.
+     *
+     * @param player The UUID of the player.
+     * @return The shop cache for the player, or null if not found.
+     */
     IShopCache getShopCache(UUID player);
 }
-
