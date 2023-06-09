@@ -103,7 +103,7 @@ public class ShopCategory implements IShopCategory {
         }
 
         if (itemStack.getItemMeta() != null) {
-            itemStack.setItemMeta(ShopManager.hideItemStuff(itemStack.getItemMeta()));
+            itemStack.setItemMeta(ShopManager.hideItemDetails(itemStack.getItemMeta()));
         }
 
         itemNamePath = Messages.SHOP_CATEGORY_ITEM_NAME.replace("%category%", path);

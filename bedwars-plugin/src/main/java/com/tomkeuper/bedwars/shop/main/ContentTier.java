@@ -111,7 +111,7 @@ public class ContentTier implements IContentTier {
         }
 
         if (itemStack != null) {
-            itemStack.setItemMeta(ShopManager.hideItemStuff(itemStack.getItemMeta()));
+            itemStack.setItemMeta(ShopManager.hideItemDetails(itemStack.getItemMeta()));
         }
 
         IBuyItem bi;
