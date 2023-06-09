@@ -22,6 +22,7 @@ package com.tomkeuper.bedwars.database;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.language.Language;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
 import com.tomkeuper.bedwars.stats.PlayerStats;
 
@@ -369,11 +370,11 @@ public class SQLite implements Database {
     }
 
     @Override
-    public void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<QuickBuyElement> elements) {
+    public void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<IQuickBuyElement> elements) {
         if (updateSlots.isEmpty()) return;
         boolean hasQuick;
         if (!(hasQuick = hasQuickBuy(uuid))) {
-            for (QuickBuyElement element : elements) {
+            for (IQuickBuyElement element : elements) {
                 if (!updateSlots.containsKey(element.getSlot())) {
                     updateSlots.put(element.getSlot(), element.getCategoryContent().getIdentifier());
                 }

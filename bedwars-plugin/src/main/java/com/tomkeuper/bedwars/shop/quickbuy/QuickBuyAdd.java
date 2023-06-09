@@ -20,8 +20,10 @@
 
 package com.tomkeuper.bedwars.shop.quickbuy;
 
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
@@ -36,17 +38,17 @@ import java.util.UUID;
 
 public class QuickBuyAdd {
 
-    public static HashMap<UUID, CategoryContent> quickBuyAdds = new HashMap<>();
+    public static HashMap<UUID, ICategoryContent> quickBuyAdds = new HashMap<>();
 
-    public QuickBuyAdd(Player player, CategoryContent cc){
+    public QuickBuyAdd(Player player, ICategoryContent cc){
         ShopCategory.categoryViewers.remove(player.getUniqueId());
         open(player, cc);
     }
 
-    public void open(Player player, CategoryContent cc){
-        Inventory inv = Bukkit.createInventory(null, ShopManager.getShop().getInvSize(), Language.getMsg(player, Messages.SHOP_QUICK_ADD_NAME));
-        PlayerQuickBuyCache cache = PlayerQuickBuyCache.getQuickBuyCache(player.getUniqueId());
-        ShopCache sc = ShopCache.getShopCache(player.getUniqueId());
+    public void open(Player player, ICategoryContent cc){
+        Inventory inv = Bukkit.createInventory(null, ShopManager.shop.getInvSize(), Language.getMsg(player, Messages.SHOP_QUICK_ADD_NAME));
+        IPlayerQuickBuyCache cache = PlayerQuickBuyCache.getInstance().getQuickBuyCache(player.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(player.getUniqueId());
         if (sc == null || cache == null){
             player.closeInventory();
         }
@@ -58,7 +60,7 @@ public class QuickBuyAdd {
         quickBuyAdds.put(player.getUniqueId(), cc);
     }
 
-    public static HashMap<UUID, CategoryContent> getQuickBuyAdds() {
+    public static HashMap<UUID, ICategoryContent> getQuickBuyAdds() {
         return new HashMap<>(quickBuyAdds);
     }
 }

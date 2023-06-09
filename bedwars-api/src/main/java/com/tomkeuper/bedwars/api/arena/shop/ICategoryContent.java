@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars.api.arena.shop;
 
+import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,4 +63,8 @@ public interface ICategoryContent {
      * Get content tiers.
      */
     List<IContentTier> getContentTiers();
+
+    void execute(Player player, IShopCache shopCache, int slot);
+    void giveItems(Player player, IShopCache shopCache, IArena arena);
+    ItemStack getItemStack(Player player, IShopCache shopCache);
 }

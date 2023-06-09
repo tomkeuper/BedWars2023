@@ -31,10 +31,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -197,7 +194,7 @@ public abstract class VersionSupport {
     /**
      * Spawn ender dragon
      */
-    public abstract void spawnDragon(Location l, ITeam team);
+    public abstract EnderDragon spawnDragon(Location l, ITeam team);
 
     /**
      * Color a bed 1.12+

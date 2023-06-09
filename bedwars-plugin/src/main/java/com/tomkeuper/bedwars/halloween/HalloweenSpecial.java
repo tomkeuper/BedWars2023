@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.halloween;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.halloween.shop.PumpkinContent;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
@@ -43,7 +44,7 @@ public class HalloweenSpecial {
         Bukkit.getPluginManager().registerEvents(new HalloweenListener(), BedWars.plugin);
 
         // pumpkin in shop
-        ShopCategory blockCategory = ShopManager.getShop().getCategoryList().stream().filter(category -> category.getName().equals("blocks-category")).findFirst().orElse(null);
+        IShopCategory blockCategory = ShopManager.shop.getCategoryList().stream().filter(category -> category.getName().equals("blocks-category")).findFirst().orElse(null);
         if (blockCategory != null) {
             PumpkinContent content = new PumpkinContent(blockCategory);
             if (content.isLoaded()) {
