@@ -158,6 +158,7 @@
         <module>versionsupport_v1_17_r1</module>
         <module>versionsupport_v1_18_r2</module>
         <module>versionsupport_v1_19_r3</module>
+        <module>versionsupport_v1_20_R1</module>
     </modules>
 
     <distributionManagement>
