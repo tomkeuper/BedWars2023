@@ -58,6 +58,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.andrei1058.bedwars.BedWars.*;
@@ -476,7 +477,7 @@ public class DamageDeathMove implements Listener {
 
             // handle drops
             if (PlayerDrops.handlePlayerDrops(a, victim, killer, victimsTeam, killersTeam, cause, e.getDrops())) {
-                e.getDrops().clear();
+                e.getDrops().addAll(new ArrayList<>());
             }
 
             // send respawn packet
