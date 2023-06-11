@@ -51,7 +51,9 @@ public class MainConfig extends ConfigManager {
         yml.addDefault("storeLink", "https://example.com/");
         yml.addDefault("lobbyServer", "hub");
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_ANTI_DROP, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN, false);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR, false);
         yml.addDefault(ConfigPath.GENERAL_CHAT_GLOBAL, yml.get("globalChat", false));
         yml.addDefault(ConfigPath.GENERAL_CHAT_FORMATTING, yml.get("formatChat", true));
         yml.addDefault("debug", false);
@@ -145,6 +147,7 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_FURNACE, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_BREWING_STAND, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLE_ANVIL, true);
+        yml.addDefault(ConfigPath.GENERAL_DISABLE_SHOUT_SOLO, false);
 
         /* Multi-Arena Lobby Command Items */
         saveLobbyCommandItem("stats", "bw stats", false, BedWars.getForCurrentVersion("SKULL_ITEM", "SKULL_ITEM", "PLAYER_HEAD"), 3, 0);

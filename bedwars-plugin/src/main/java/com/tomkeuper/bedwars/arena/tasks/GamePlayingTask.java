@@ -42,6 +42,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Map;
 
+import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class GamePlayingTask implements Runnable, PlayingTask {
@@ -53,9 +54,9 @@ public class GamePlayingTask implements Runnable, PlayingTask {
 
     public GamePlayingTask(Arena arena) {
         this.arena = arena;
-        this.beds_destroy_countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_BEDS_DESTROY_COUNTDOWN);
-        this.dragon_spawn_countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_DRAGON_SPAWN_COUNTDOWN);
-        this.game_end_countdown = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_GAME_END_COUNTDOWN);
+        this.beds_destroy_countdown = config.getInt(ConfigPath.GENERAL_CONFIGURATION_BEDS_DESTROY_COUNTDOWN);
+        this.dragon_spawn_countdown = config.getInt(ConfigPath.GENERAL_CONFIGURATION_DRAGON_SPAWN_COUNTDOWN);
+        this.game_end_countdown = config.getInt(ConfigPath.GENERAL_CONFIGURATION_GAME_END_COUNTDOWN);
         this.task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
         this.oreGenTask = new OreGenTask(arena);
     }
@@ -145,7 +146,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         }
                     }
                     getArena().updateNextEvent();
-                    if(BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN)) {
+                    if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN)) {
                         for (IGenerator o : arena.getOreGenerators()) {
                             Location l = o.getLocation();
                             for (int y = 0; y < 20; y++) {
@@ -179,23 +180,24 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                 }
                 break;
         }
-        int distance = 0;
-        for (ITeam t : getArena().getTeams()) {
-            if (t.getSize() > 1) {
-                for (Player p : t.getMembers()) {
-                    for (Player p2 : t.getMembers()) {
-                        if (p2 == p || !p.getLocation().getWorld().equals(p2.getLocation().getWorld())) continue;
-                        if (distance == 0) {
-                            distance = (int) p.getLocation().distance(p2.getLocation());
-                        } else if ((int) p.getLocation().distance(p2.getLocation()) < distance) {
-                            distance = (int) p.getLocation().distance(p2.getLocation());
+        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR)) {
+            int distance = 0;
+            for (ITeam t : getArena().getTeams()) {
+                if (t.getSize() > 1) {
+                    for (Player p : t.getMembers()) {
+                        for (Player p2 : t.getMembers()) {
+                            if (p2 == p || !p.getLocation().getWorld().equals(p2.getLocation().getWorld())) continue;
+                            if (distance == 0) {
+                                distance = (int) p.getLocation().distance(p2.getLocation());
+                            } else if ((int) p.getLocation().distance(p2.getLocation()) < distance) {
+                                distance = (int) p.getLocation().distance(p2.getLocation());
+                            }
                         }
+                        BedWars.nms.playAction(p, getMsg(p, Messages.FORMATTING_ACTION_BAR_TRACKING).replace("%bw_team%", t.getColor().chat() + t.getDisplayName(Language.getPlayerLanguage(p)))
+                                .replace("%bw_distance%", t.getColor().chat().toString() + distance).replace("&", "§"));
                     }
-                    BedWars.nms.playAction(p, getMsg(p, Messages.FORMATTING_ACTION_BAR_TRACKING).replace("%bw_team%", t.getColor().chat() + t.getDisplayName(Language.getPlayerLanguage(p)))
-                            .replace("%bw_distance%", t.getColor().chat().toString() + distance).replace("&", "§"));
                 }
             }
-
         }
 
         /* AFK SYSTEM FOR PLAYERS */
@@ -223,7 +225,7 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         continue;
                     }
                     ITeam t = a.getTeam(e.getKey());
-                    if (t == null){
+                    if (t == null) {
                         a.addSpectator(e.getKey(), true, null);
                     } else {
                         t.respawnMember(e.getKey());
@@ -256,8 +258,6 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                 }
             }
         }
-
-
     }
 
     public void cancel() {
@@ -265,5 +265,3 @@ public class GamePlayingTask implements Runnable, PlayingTask {
         oreGenTask.cancel();
     }
 }
-
-
