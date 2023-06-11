@@ -112,6 +112,7 @@ public class DamageDeathMove implements Listener {
                         e.setCancelled(true);
                     } else BedWarsTeam.reSpawnInvulnerability.remove(p.getUniqueId());
                 }
+                Arena.checkPlayerHealth(p, e, a);
                 //}
 
             }
