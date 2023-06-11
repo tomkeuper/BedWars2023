@@ -78,6 +78,9 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -2536,6 +2539,10 @@ public class Arena implements IArena {
                 PaperSupport.teleportC(player, getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 player.setAllowFlight(true);
                 player.setFlying(true);
+                player.setHealth(20);
+                player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+                // Removes Active Burning status
+                player.setFireTicks(0);
 
                 respawnSessions.put(player, seconds);
                 Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
@@ -2552,12 +2559,23 @@ public class Arena implements IArena {
                     PaperSupport.teleportC(player, getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 }, 10L);
             } else {
+                player.setHealth(20);
+                player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
+                player.setFireTicks(0);
                 ITeam team = getTeam(player);
                 team.respawnMember(player);
             }
             return true;
         }
         return false;
+    }
+    
+    public static void checkPlayerHealth(Player p, EntityDamageEvent e, IArena a) {
+        if (e.getDamage() > p.getHealth() && e.getCause() != EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+            e.setCancelled(true);
+            Bukkit.getServer().getPluginManager().callEvent(new PlayerDeathEvent(p, Arrays.asList(p.getInventory().getContents()), p.getTotalExperience(), null));
+            Bukkit.getServer().getPluginManager().callEvent(new PlayerRespawnEvent(p, a.getReSpawnLocation(), false));
+        }
     }
 
     @Override
