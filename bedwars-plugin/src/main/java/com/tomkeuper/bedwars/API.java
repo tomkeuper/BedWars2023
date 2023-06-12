@@ -32,6 +32,9 @@ import com.tomkeuper.bedwars.api.server.ISetupSession;
 import com.tomkeuper.bedwars.api.server.RestoreAdapter;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
@@ -254,6 +257,21 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         @Override
         public void takeMoney(Player player, Material currency, int amount) {
             CategoryContent.takeMoney(player, currency, amount);
+        }
+
+        @Override
+        public IShopManager getShopManager() {
+            return BedWars.shop;
+        }
+
+        @Override
+        public IShopCache getShopCache() {
+            return BedWars.shopCache;
+        }
+
+        @Override
+        public IPlayerQuickBuyCache getPlayerQuickBuyCache() {
+            return BedWars.playerQuickBuyCache;
         }
     };
 

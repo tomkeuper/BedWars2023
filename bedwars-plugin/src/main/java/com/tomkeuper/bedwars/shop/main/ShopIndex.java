@@ -77,6 +77,7 @@ public class ShopIndex implements IShopIndex {
      * @param quickBuyCache the player cache regarding his preferences
      * @param player        target player
      */
+    @Override
     public void open(Player player, IPlayerQuickBuyCache quickBuyCache, boolean callEvent) {
 
         if (quickBuyCache == null) return;

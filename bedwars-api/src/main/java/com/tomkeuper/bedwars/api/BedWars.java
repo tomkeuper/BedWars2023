@@ -32,6 +32,9 @@ import com.tomkeuper.bedwars.api.server.ISetupSession;
 import com.tomkeuper.bedwars.api.server.RestoreAdapter;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -343,6 +346,10 @@ public interface BedWars {
          * Take money from player on buy
          */
         void takeMoney(Player player, Material currency, int amount);
+
+        IShopManager getShopManager();
+        IShopCache getShopCache();
+        IPlayerQuickBuyCache getPlayerQuickBuyCache();
     }
 
     /**

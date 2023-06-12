@@ -26,6 +26,15 @@ public interface IShopIndex {
     int getInvSize();
 
     /**
+     * Open this shop to a player
+     *
+     * @param callEvent     true if you want to call the shop open event
+     * @param quickBuyCache the player cache regarding his preferences
+     * @param player        target player
+     */
+    void open(Player player, IPlayerQuickBuyCache quickBuyCache, boolean callEvent);
+
+    /**
      * Get the list of shop categories in the index.
      *
      * @return The list of shop categories.

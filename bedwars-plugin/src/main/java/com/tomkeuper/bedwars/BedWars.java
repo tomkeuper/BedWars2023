@@ -118,6 +118,8 @@ public class BedWars extends JavaPlugin {
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    public static PlayerQuickBuyCache playerQuickBuyCache;
+    public static ShopCache shopCache;
     public static StatsManager statsManager;
     public static BedWars plugin;
     public static VersionSupport nms;
@@ -521,8 +523,8 @@ public class BedWars extends JavaPlugin {
         shop = new ShopManager();
 
         /* Initialize instances */
-        new ShopCache();
-        new PlayerQuickBuyCache();
+        shopCache = new ShopCache();
+        playerQuickBuyCache = new PlayerQuickBuyCache();
 
         //Leave this code at the end of the enable method
         for (Language l : Language.getLanguages()) {
