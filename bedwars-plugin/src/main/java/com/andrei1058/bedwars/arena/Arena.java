@@ -2540,7 +2540,6 @@ public class Arena implements IArena {
                 player.setAllowFlight(true);
                 player.setFlying(true);
                 player.setHealth(20);
-                player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
                 // Removes Active Burning status
                 player.setFireTicks(0);
 
@@ -2560,7 +2559,6 @@ public class Arena implements IArena {
                 }, 10L);
             } else {
                 player.setHealth(20);
-                player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
                 player.setFireTicks(0);
                 ITeam team = getTeam(player);
                 team.respawnMember(player);
