@@ -521,6 +521,7 @@ public class BedWars extends JavaPlugin {
 
         /* Initialize shop */
         shop = new ShopManager();
+        shop.loadShop();
 
         /* Initialize instances */
         shopCache = new ShopCache();
