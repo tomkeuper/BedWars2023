@@ -2571,6 +2571,7 @@ public class Arena implements IArena {
     public static void checkPlayerHealth(Player p, EntityDamageEvent e, IArena a) {
         if (e.getDamage() > p.getHealth() && e.getCause() != EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
             e.setCancelled(true);
+            p.getActivePotionEffects().forEach(effect -> p.removePotionEffect(effect.getType()));
             Bukkit.getServer().getPluginManager().callEvent(new PlayerDeathEvent(p, Arrays.asList(p.getInventory().getContents()), p.getTotalExperience(), null));
             Bukkit.getServer().getPluginManager().callEvent(new PlayerRespawnEvent(p, a.getReSpawnLocation(), false));
         }
