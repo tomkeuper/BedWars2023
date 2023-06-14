@@ -280,7 +280,8 @@ public class Spanish extends Language {
         yml.addDefault(Messages.PLAYER_DIE_REWARD_GOLD, "%bw_lang_prefix%&6+%bw_amount% %bw_meaning%");
         yml.addDefault(Messages.ARENA_MAX_BUILD_LIMIT_REACHED, "&cMax build height limit reached!");
         yml.addDefault(Messages.ARENA_MIN_BUILD_LIMIT_REACHED, "&cMin build height limit reached!");
-
+        yml.addDefault(Messages.ARENA_FIREBALL_COOLDOWN, "&cPlease wait %bw_cooldown%s to use that again!");
+        yml.addDefault(Messages.ARENA_IN_GAME_ANNOUNCEMENT, Arrays.asList("&c&lIf you get disconnected use /rejoin to join back in the game.", "&c&lCross-teaming is not allowed! Report cross-teamers using /report."));
         yml.addDefault(Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR, "%bw_player_color%%bw_player% &7fue golpeado por una bomba.");
         yml.addDefault(Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL, "%bw_player_color%%bw_player% &7fue golpeado por una bomba. &b&lMUERTE FINAL!");
         yml.addDefault(Messages.PLAYER_STATS_GUI_INV_NAME, "&8%bw_player% Estadistícas");
@@ -503,6 +504,7 @@ public class Spanish extends Language {
         yml.addDefault(Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", "leave"), Arrays.asList("&7Utiliza este objeto para", "&7regresar al lobby."));
 
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&cNo puedes hacer eso aún! Espera %bw_seconds% segundos más!");
+        yml.addDefault(Messages.COMMAND_SHOUT_DISABLE_SOLO, "&cShouting is disabled in Solo!");
         yml.addDefault(Messages.COMMAND_LEAVE_STARTED, "&a&lTeleporting you to the lobby in %bw_leave_delay% seconds... Right-click again to cancel the teleport!");
         yml.addDefault(Messages.COMMAND_LEAVE_CANCELED, "&c&lTeleport cancelled!");
         yml.addDefault(Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM, "%bw_team_color%[%bw_team_name%]");

@@ -62,17 +62,21 @@ public class ConfigPath {
     public static final String GENERATOR_EMERALD_TIER_III_START = "emerald.tierIII.start";
 
 
-    public static final String GENERAL_CONFIGURATION_BUNGEE_MODE_GAMES_BEFORE_RESTART = "bungee-settings.games-before-restart";
-    public static final String GENERAL_CONFIGURATION_AUTO_SCALE_LIMIT = "bungee-settings.auto-scale-clone-limit";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_RESTART_CMD = "bungee-settings.restart-cmd";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS = "bungee-settings.lobby-sockets";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID = "bungee-settings.server-id";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT = "bungee-settings.bwp-time-out";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_CLOUDNET_SUPPORT = "bungee-settings.server-id";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_GAMES_BEFORE_RESTART = "bungeecord-settings.games-before-restart";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_AUTO_SCALE_LIMIT = "bungeecord-settings.auto-scale-clone-limit";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_RESTART_CMD = "bungeecord-settings.restart-cmd";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS = "bungeecord-settings.lobby-sockets";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID = "bungeecord-settings.server-id";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT = "bungeecord-settings.bwp-time-out";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_CLOUDNET_SUPPORT = "bungeecord-settings.server-id";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVER= "bungeecord-settings.lobby-server";
 
     public static final String GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH = "allow-fire-extinguish";
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
+    public static final String GENERAL_CONFIGURATION_ENABLE_ANTI_DROP = "enable-anti-drop-feature";
     public static final String GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN = "enable-generator-replace-air-sudden-death";
+    public static final String GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR = "enable-teammate-tracking-action-bar";
+
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
     public static final String GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER = "use-experimental-team-assigner";
@@ -123,6 +127,10 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_REJOIN_TIME = "rejoin-time";
     public static final String GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY = "re-spawn-invulnerability";
     public static final String GENERAL_CONFIGURATION_LEAVE_DELAY = "leave-delay-time";
+    public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT = "in-game-announcement";
+    public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE = GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT +".enable";
+
+    public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_COOLDOW = GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT + ".cooldown";
 
     public static final String GENERAL_CONFIGURATION_SHOUT_COOLDOWN = "shout-cmd-cooldown";
 
@@ -162,6 +170,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ENABLE_FOOTSTEPS_ON_INVISIBILITY = "enable-footsteps-on-invisibility";
 
     public static final String GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP = "server-ip";
+    public static final String GENERAL_DISABLE_SHOUT_SOLO = "disable-shout-solo";
 
     private static final String GENERAL_CHAT = "chat-settings.";
     public static final String GENERAL_CHAT_FORMATTING = GENERAL_CHAT+"format";

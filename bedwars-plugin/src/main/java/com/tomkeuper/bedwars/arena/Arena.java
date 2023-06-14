@@ -107,7 +107,7 @@ public class Arena implements IArena {
     private static final HashMap<Player, IArena> arenaByPlayer = new HashMap<>();
     private static final HashMap<String, IArena> arenaByIdentifier = new HashMap<>();
     private static final LinkedList<IArena> arenas = new LinkedList<>();
-    private static int gamesBeforeRestart = config.getInt(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_MODE_GAMES_BEFORE_RESTART);
+    private static int gamesBeforeRestart = config.getInt(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_GAMES_BEFORE_RESTART);
     public static HashMap<UUID, Integer> afkCheck = new HashMap<>();
     public static HashMap<UUID, Integer> magicMilk = new HashMap<>();
 
@@ -797,9 +797,9 @@ public class Arena implements IArena {
         }
 
         List<ShopCache.CachedItem> cacheList = new ArrayList<>();
-        if (ShopCache.getShopCache(p.getUniqueId()) != null) {
+        if (ShopCache.getInstance().getShopCache(p.getUniqueId()) != null) {
             //noinspection ConstantConditions
-            cacheList = ShopCache.getShopCache(p.getUniqueId()).getCachedPermanents();
+            cacheList = ShopCache.getInstance().getShopCache(p.getUniqueId()).getCachedPermanents();
         }
 
         LastHit lastHit = LastHit.getLastHit(p);
@@ -1180,7 +1180,7 @@ public class Arena implements IArena {
         p.getInventory().clear();
 
         //restore items before re-spawning in team
-        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc != null) sc.destroy();
         sc = new ShopCache(p.getUniqueId());
         for (ShopCache.CachedItem ci : reJoin.getPermanentsAndNonDowngradables()) {
@@ -1603,23 +1603,23 @@ public class Arena implements IArena {
         } else if (status == GameState.restarting) {
             restartingTask = new GameRestartingTask(this);
         }
+        if (TabAPI.getInstance() != null){
+            PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
+            PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
+            players.forEach(c -> {
+                BoardManager.getInstance().giveTabFeatures(c, this, false);
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+            });
 
-        PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
-        PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
-        players.forEach(c -> {
-            BoardManager.getInstance().giveTabFeatures(c, this, false);
-            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
-            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
-        });
-
-        spectators.forEach(c -> {
-            BoardManager.getInstance().giveTabFeatures(c, this, false);
-            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
-            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
-        });
-
+            spectators.forEach(c -> {
+                BoardManager.getInstance().giveTabFeatures(c, this, false);
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+            });
+        }
     }
 
     /**
@@ -2687,7 +2687,7 @@ public class Arena implements IArena {
         }
 
         // check amount of active clones
-        return config.getInt(ConfigPath.GENERAL_CONFIGURATION_AUTO_SCALE_LIMIT) > activeClones;
+        return config.getInt(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_AUTO_SCALE_LIMIT) > activeClones;
     }
 
     @Override

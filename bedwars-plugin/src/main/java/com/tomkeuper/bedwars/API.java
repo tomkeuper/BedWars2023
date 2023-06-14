@@ -32,6 +32,9 @@ import com.tomkeuper.bedwars.api.server.ISetupSession;
 import com.tomkeuper.bedwars.api.server.RestoreAdapter;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
@@ -39,6 +42,7 @@ import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsAPI;
+import com.tomkeuper.bedwars.support.vault.Economy;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -254,6 +258,21 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         public void takeMoney(Player player, Material currency, int amount) {
             CategoryContent.takeMoney(player, currency, amount);
         }
+
+        @Override
+        public IShopManager getShopManager() {
+            return BedWars.shop;
+        }
+
+        @Override
+        public IShopCache getShopCache() {
+            return BedWars.shopCache;
+        }
+
+        @Override
+        public IPlayerQuickBuyCache getPlayerQuickBuyCache() {
+            return BedWars.playerQuickBuyCache;
+        }
     };
 
     @Override
@@ -447,4 +466,48 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     public IScoreboardService getScoreboardManager() {
         return BoardManager.getInstance();
     }
+
+    @Override
+    public EconomyUtil getEconomyUtil() {
+        return economyUtil;
+    }
+
+    private final EconomyUtil economyUtil = new EconomyUtil() {
+        @Override
+        public boolean isEconomy() {
+            return BedWars.getEconomy().isEconomy();
+        }
+
+        @Override
+        public double getMoney(Player p) {
+            return BedWars.getEconomy().getMoney(p);
+        }
+
+        @Override
+        public void giveMoney(Player p, double money) {
+            BedWars.getEconomy().giveMoney(p, money);
+        }
+
+        @Override
+        public void buyAction(Player p, double cost) {
+            BedWars.getEconomy().buyAction(p, cost);
+        }
+    };
+
+    @Override
+    public ChatUtil getChatUtil() {
+        return chatUtil;
+    }
+
+    private final ChatUtil chatUtil = new ChatUtil() {
+        @Override
+        public String getPrefix(Player p) {
+            return BedWars.getChatSupport().getPrefix(p);
+        }
+
+        @Override
+        public String getSuffix(Player p) {
+            return BedWars.getChatSupport().getSuffix(p);
+        }
+    };
 }

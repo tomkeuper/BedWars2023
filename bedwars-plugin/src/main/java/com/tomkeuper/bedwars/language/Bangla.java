@@ -133,6 +133,7 @@ public class Bangla extends Language {
         yml.addDefault(Messages.COMMAND_FORCESTART_SUCCESS, "§c▪ §7Countdown shongkhipto kora hoyeche!");
         yml.addDefault(Messages.COMMAND_FORCESTART_NO_PERM, "%bw_lang_prefix%&7Apni arena ti ke force start korte parben na.\n§7VIP Features grohon korte donate korun.");
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&cApni akhono eti korte parben na! %bw_seconds% wait korun!");
+        yml.addDefault(Messages.COMMAND_SHOUT_DISABLE_SOLO, "&cShouting is disabled in Solo!");
         yml.addDefault(Messages.COMMAND_LEAVE_STARTED, "&a&lTeleporting you to the lobby in %bw_leave_delay% seconds... Right-click again to cancel the teleport!");
         yml.addDefault(Messages.COMMAND_LEAVE_CANCELED, "&c&lTeleport cancelled!");
         yml.addDefault(Messages.ARENA_JOIN_VIP_KICK, "%bw_lang_prefix%&cDukkhito, kintu ekti donor arena ti te join korar karone apnake kick kora hoyeche.\n&aAro features er jonno donate korar bibechona korun. &7&o(click)");
@@ -273,6 +274,10 @@ public class Bangla extends Language {
         yml.addDefault(Messages.PLAYER_DIE_REWARD_EMERALD, "%bw_lang_prefix%&a+%bw_amount% %bw_meaning%");
         yml.addDefault(Messages.PLAYER_DIE_REWARD_IRON, "%bw_lang_prefix%&f+%bw_amount% %bw_meaning%");
         yml.addDefault(Messages.PLAYER_DIE_REWARD_GOLD, "%bw_lang_prefix%&6+%bw_amount% %bw_meaning%");
+        yml.addDefault(Messages.ARENA_MAX_BUILD_LIMIT_REACHED, "&cMax build height limit reached!");
+        yml.addDefault(Messages.ARENA_MIN_BUILD_LIMIT_REACHED, "&cMin build height limit reached!");
+        yml.addDefault(Messages.ARENA_FIREBALL_COOLDOWN, "&cPlease wait %bw_cooldown%s to use that again!");
+        yml.addDefault(Messages.ARENA_IN_GAME_ANNOUNCEMENT, Arrays.asList("&c&lIf you get disconnected use /rejoin to join back in the game.", "&c&lCross-teaming is not allowed! Report cross-teamers using /report."));
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_TITLE, "&cAPNI MORLEN!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_SUBTITLE, "&eApni &c%bw_time% &eseconds e respawn niben");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_CHAT, "%bw_lang_prefix%&eApni &c%bw_time% &eseconds e respawn niben");

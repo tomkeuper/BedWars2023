@@ -135,6 +135,7 @@ public class Persian extends Language {
         yml.addDefault(Messages.COMMAND_FORCESTART_SUCCESS, "§c▪ §7Shomaresh makoos kootah shod!");
         yml.addDefault(Messages.COMMAND_FORCESTART_NO_PERM, "%bw_lang_prefix%&7Shoma nemitavanid in arena ro forcestart konid.\n§7Lotfan baraye daryaft ghabeliat haye vizhe server ro donate konid.");
         yml.addDefault(Messages.COMMAND_COOLDOWN, "&cShoma hanooz nemitoonid in kar ro anjam bedid! Lotfan %bw_seconds% sanie sabr konid!");
+        yml.addDefault(Messages.COMMAND_SHOUT_DISABLE_SOLO, "&cShouting is disabled in Solo!");
         yml.addDefault(Messages.COMMAND_LEAVE_STARTED, "&a&lTeleporting you to the lobby in %bw_leave_delay% seconds... Right-click again to cancel the teleport!");
         yml.addDefault(Messages.COMMAND_LEAVE_CANCELED, "&c&lTeleport cancelled!");
         yml.addDefault(Messages.ARENA_JOIN_VIP_KICK, "%bw_lang_prefix%&cMotasefane shoma bedalil vorood yek donor be arena kick shodid.\n&aLotfan baraye daryaft ghabeliat haye vizhe server ro donate konid. &7&o(click)");
@@ -276,6 +277,8 @@ public class Persian extends Language {
         yml.addDefault(Messages.PLAYER_DIE_REWARD_GOLD, "%bw_lang_prefix%&6+%bw_amount% %bw_meaning%");
         yml.addDefault(Messages.ARENA_MAX_BUILD_LIMIT_REACHED, "&cMax build height limit reached!");
         yml.addDefault(Messages.ARENA_MIN_BUILD_LIMIT_REACHED, "&cMin build height limit reached!");
+        yml.addDefault(Messages.ARENA_FIREBALL_COOLDOWN, "&cPlease wait %bw_cooldown%s to use that again!");
+        yml.addDefault(Messages.ARENA_IN_GAME_ANNOUNCEMENT, Arrays.asList("&c&lIf you get disconnected use /rejoin to join back in the game.", "&c&lCross-teaming is not allowed! Report cross-teamers using /report."));
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_TITLE, "&cSHOMA MORDID!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_SUBTITLE, "&eShoma dar &c%bw_time% &esanie dige respawn mishid!");
         yml.addDefault(Messages.PLAYER_DIE_RESPAWN_CHAT, "%bw_lang_prefix%&eShoma dar &c%bw_time% &esanie dige respawn mishid!");

@@ -64,6 +64,7 @@ public class Messages {
     public static String COMMAND_TP_NOT_IN_ARENA = "cmd-tp-not-in-arena";
     public static String COMMAND_TP_NOT_STARTED = "cmd-tp-not-started";
     public static String COMMAND_TP_USAGE = "cmd-tp-usage";
+    public static String COMMAND_SHOUT_DISABLE_SOLO = "cmd-disable-shout-solo";
     public static String REJOIN_NO_ARENA = "cmd-rejoin-no-arena";
     public static String REJOIN_DENIED = "cmd-rejoin-denied";
     public static String REJOIN_ALLOWED = "cmd-rejoin-allowed";
@@ -152,6 +153,8 @@ public class Messages {
 
     public static String ARENA_MAX_BUILD_LIMIT_REACHED = "build-max-height-limit-reached";
     public static String ARENA_MIN_BUILD_LIMIT_REACHED = "build-min-height-limit-reached";
+    public static String ARENA_FIREBALL_COOLDOWN = "arena-fireball-cooldown";
+    public static String ARENA_IN_GAME_ANNOUNCEMENT = "in-game-announcement";
 
     /** Stats related */
     public static String PLAYER_STATS_GUI_PATH = "stats";

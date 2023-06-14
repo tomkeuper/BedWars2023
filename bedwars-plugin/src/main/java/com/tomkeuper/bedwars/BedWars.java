@@ -57,13 +57,16 @@ import com.tomkeuper.bedwars.listeners.arenaselector.ArenaSelectorListener;
 import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.chat.ChatAFK;
 import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
+import com.tomkeuper.bedwars.arena.feature.AntiDropFeature;
 import com.tomkeuper.bedwars.listeners.joinhandler.*;
 import com.tomkeuper.bedwars.lobbysocket.ArenaSocket;
 import com.tomkeuper.bedwars.lobbysocket.LoadedUsersCleaner;
 import com.tomkeuper.bedwars.lobbysocket.SendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
+import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
+import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsManager;
 import com.tomkeuper.bedwars.support.citizens.CitizensListener;
@@ -115,6 +118,8 @@ public class BedWars extends JavaPlugin {
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    public static PlayerQuickBuyCache playerQuickBuyCache;
+    public static ShopCache shopCache;
     public static StatsManager statsManager;
     public static BedWars plugin;
     public static VersionSupport nms;
@@ -516,6 +521,11 @@ public class BedWars extends JavaPlugin {
 
         /* Initialize shop */
         shop = new ShopManager();
+        shop.loadShop();
+
+        /* Initialize instances */
+        shopCache = new ShopCache();
+        playerQuickBuyCache = new PlayerQuickBuyCache();
 
         //Leave this code at the end of the enable method
         for (Language l : Language.getLanguages()) {
@@ -580,8 +590,10 @@ public class BedWars extends JavaPlugin {
             HalloweenSpecial.init();
         }
 
+        // Register features
         SpoilPlayerTNTFeature.init();
         GenSplitFeature.init();
+        AntiDropFeature.init();
     }
 
     private void registerDelayedCommands() {

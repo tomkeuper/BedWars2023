@@ -371,7 +371,7 @@ public class BedWarsTeam implements ITeam {
         p.sendMessage(getMsg(p, Messages.PLAYER_DIE_RESPAWNED_TEXT));
 
         sendDefaultInventory(p, false);
-        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc != null) {
             sc.managePermanentsAndDowngradables(getArena());
         }
