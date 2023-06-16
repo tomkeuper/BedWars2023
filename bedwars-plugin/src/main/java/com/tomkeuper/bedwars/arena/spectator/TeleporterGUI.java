@@ -117,7 +117,7 @@ public class TeleporterGUI {
         ItemStack i = nms.getPlayerHead(targetPlayer, null);
         ItemMeta im = i.getItemMeta();
         assert im != null;
-        im.setDisplayName(getMsg(GUIholder, Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME)
+        im.setDisplayName(getMsg(targetPlayer, Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME)
                 .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(targetPlayer))
                 .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(targetPlayer))
                 .replace("%bw_player%", targetPlayer.getDisplayName())
