@@ -1209,6 +1209,7 @@ public class Arena implements IArena {
         if (getRestartingTask() != null) getRestartingTask().cancel();
         if (getStartingTask() != null) getStartingTask().cancel();
         if (getPlayingTask() != null) getPlayingTask().cancel();
+        if (getAnnouncementTask() != null) getAnnouncementTask().cancel();
         plugin.getLogger().log(Level.WARNING, "Disabling arena: " + getArenaName());
         for (Player inWorld : getWorld().getPlayers()) {
             inWorld.kickPlayer("You're not supposed to be here.");
