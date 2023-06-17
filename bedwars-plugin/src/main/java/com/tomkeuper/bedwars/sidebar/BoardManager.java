@@ -103,7 +103,7 @@ public class BoardManager implements IScoreboardService {
     private BoardManager() {
         scoreboardManager = TabAPI.getInstance().getScoreboardManager();
         bossBarManager = TabAPI.getInstance().getBossBarManager();
-        if (bossBarManager == null) BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want");
+        if (bossBarManager == null) BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon bossbars");
     }
 
     private void registerPlaceholders(){

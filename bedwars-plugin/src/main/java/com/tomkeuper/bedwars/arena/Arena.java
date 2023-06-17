@@ -2822,7 +2822,7 @@ public class Arena implements IArena {
      */
     public void createTABTeamDragonBossBar(ITeam team, int dragonNumber) {
         if (TabAPI.getInstance().getBossBarManager() == null) {
-            BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want");
+            BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon bossbars");
             return;
         }
         String dragonPlaceholderName = "%bw_"+team.getArena().getWorldName()+"_"+team.getName() + "+" + dragonNumber + "%";
