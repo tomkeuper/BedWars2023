@@ -11,6 +11,7 @@ public class PlayerStatChangeEvent extends Event {
 
     private Player player;
     private IArena arena;
+    private StatType statType;
     private boolean cancelled = false;
 
     /**
@@ -19,9 +20,10 @@ public class PlayerStatChangeEvent extends Event {
      * @param arena  - target arena
      *
      */
-    public PlayerStatChangeEvent(Player player, IArena arena) {
+    public PlayerStatChangeEvent(Player player, IArena arena, StatType statType) {
         this.player = player;
         this.arena = arena;
+        this.statType = statType;
     }
 
 
@@ -38,6 +40,10 @@ public class PlayerStatChangeEvent extends Event {
      */
     public Player getPlayer() {
         return player;
+    }
+
+    public enum StatType {
+        FIRST_PLAY, LAST_PLAY, WINS, KILLS, FINAL_KILLS, LOSSES, DEATHS, FINAL_DEATHS, BEDS_DESTROYED, GAMES_PLAYED, CUSTOM
     }
 
     public HandlerList getHandlers() {
