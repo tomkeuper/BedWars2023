@@ -32,6 +32,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -102,6 +103,14 @@ public class SpoilPlayerTNTFeature {
             }
         }
 
+        @EventHandler
+        public void onDeath(PlayerDeathEvent event) {
+            Player player = event.getEntity();
+            if (player.getInventory().contains(Material.TNT)) {
+                instance.playersWithTnt.remove(player);
+            }
+        }
+        
         @EventHandler(ignoreCancelled = true)
         public void onPlace(BlockPlaceEvent event) {
             ItemStack inHand = event.getItemInHand();
