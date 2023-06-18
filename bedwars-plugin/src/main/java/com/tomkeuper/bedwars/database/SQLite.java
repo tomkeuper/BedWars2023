@@ -206,11 +206,75 @@ public class SQLite implements IDatabase {
 
     @Override
     public void saveCustomStat(String columnName, UUID player, Object value, String dataType) {
+        String sql;
+        checkCustomColumnExists(columnName, dataType);
+        try {
+            checkConnection();
 
+            if (hasStats(player)) {
+                sql = "UPDATE global_stats SET "+columnName+"=? WHERE uuid = ?;";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setObject(1, value);
+                    statement.setString(2, player.toString());
+                    statement.executeUpdate();
+                }
+            } else {
+                sql = "INSERT INTO global_stats (uuid, "+columnName+") VALUES (?, ?);";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setString(1, player.toString());
+                    statement.setObject(2, value);
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void checkCustomColumnExists(String columnName, String dataType){
+        String sql = "PRAGMA table_info(global_stats)";
+        try {
+            checkConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                ResultSet resultSet = statement.executeQuery();
+                boolean columnExists = false;
+                while (resultSet.next()) {
+                    String existingColumnName = resultSet.getString("name");
+                    if (existingColumnName.equalsIgnoreCase(columnName)) {
+                        columnExists = true;
+                        break;
+                    }
+                }
+                if (!columnExists){
+                    sql = "ALTER TABLE global_stats ADD COLUMN " +columnName+ " " + dataType;
+                    try (PreparedStatement statement1 = connection.prepareStatement(sql)) {
+                        statement1.executeUpdate();
+                    }
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public Object getCustomStat(String columnName, UUID player) {
+        String sql = "SELECT "+columnName+" FROM global_stats WHERE uuid = ?;";
+        try {
+            checkConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, player.toString());
+                try (ResultSet result = statement.executeQuery()) {
+                    if (result.next()) {
+                        return result.getObject(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
