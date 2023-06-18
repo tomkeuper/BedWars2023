@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.stats;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class StatsManager {
 
-    private final Map<UUID, PlayerStats> stats = new ConcurrentHashMap<>();
+    private final Map<UUID, IPlayerStats> stats = new ConcurrentHashMap<>();
 
     public StatsManager() {
         registerListeners();
@@ -41,13 +42,13 @@ public class StatsManager {
         stats.remove(uuid);
     }
 
-    public void put(UUID uuid, PlayerStats playerStats) {
+    public void put(UUID uuid, IPlayerStats playerStats) {
         stats.put(uuid, playerStats);
     }
 
     @NotNull
-    public PlayerStats get(UUID uuid) {
-        PlayerStats playerStats = stats.get(uuid);
+    public IPlayerStats get(UUID uuid) {
+        IPlayerStats playerStats = stats.get(uuid);
         if (playerStats == null) {
             throw new IllegalStateException("Trying to get stats data of an unloaded player!");
         }
@@ -55,7 +56,7 @@ public class StatsManager {
     }
 
     @Nullable
-    public PlayerStats getUnsafe(UUID uuid) {
+    public IPlayerStats getUnsafe(UUID uuid) {
         return stats.get(uuid);
     }
 

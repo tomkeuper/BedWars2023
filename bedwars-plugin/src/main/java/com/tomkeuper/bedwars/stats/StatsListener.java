@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.api.events.gameplay.GameEndEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerBedBreakEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -49,7 +50,7 @@ public class StatsListener implements Listener {
             // Do nothing if login fails
             return;
         }
-        PlayerStats stats = BedWars.getRemoteDatabase().fetchStats(event.getUniqueId());
+        IPlayerStats stats = BedWars.getRemoteDatabase().fetchStats(event.getUniqueId());
         stats.setName(event.getName());
         BedWars.getStatsManager().put(event.getUniqueId(), stats);
     }
@@ -64,16 +65,16 @@ public class StatsListener implements Listener {
 
     @EventHandler
     public void onBedBreak(PlayerBedBreakEvent event) {
-        PlayerStats stats = BedWars.getStatsManager().get(event.getPlayer().getUniqueId());
+        IPlayerStats stats = BedWars.getStatsManager().get(event.getPlayer().getUniqueId());
         //store beds destroyed
         stats.setBedsDestroyed(stats.getBedsDestroyed() + 1);
     }
 
     @EventHandler
     public void onPlayerKill(PlayerKillEvent event) {
-        PlayerStats victimStats = BedWars.getStatsManager().get(event.getVictim().getUniqueId());
+        IPlayerStats victimStats = BedWars.getStatsManager().get(event.getVictim().getUniqueId());
         // If killer is not null and not equal to victim
-        PlayerStats killerStats = !event.getVictim().equals(event.getKiller()) ?
+        IPlayerStats killerStats = !event.getVictim().equals(event.getKiller()) ?
                 (event.getKiller() == null ? null : BedWars.getStatsManager().getUnsafe(event.getKiller().getUniqueId())) : null;
 
         if (event.getCause().isFinalKill()) {
@@ -100,7 +101,7 @@ public class StatsListener implements Listener {
             if (player == null) continue;
             if (!player.isOnline()) continue;
 
-            PlayerStats stats = BedWars.getStatsManager().get(uuid);
+            IPlayerStats stats = BedWars.getStatsManager().get(uuid);
 
             // store wins even if is in another game because he assisted this team
             // the ones who abandoned are already removed from the winners list
@@ -129,7 +130,7 @@ public class StatsListener implements Listener {
             return; // Game didn't start
         }
 
-        PlayerStats playerStats = BedWars.getStatsManager().get(player.getUniqueId());
+        IPlayerStats playerStats = BedWars.getStatsManager().get(player.getUniqueId());
         // sometimes can be null due to scheduling delays
         if (playerStats == null) return;
 
@@ -159,7 +160,7 @@ public class StatsListener implements Listener {
                 Player damager = event.getLastDamager();
                 ITeam killerTeam = event.getArena().getTeam(damager);
                 if (damager != null && event.getArena().isPlayer(damager) && killerTeam != null) {
-                    PlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
+                    IPlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
                     damagerStats.setFinalKills(damagerStats.getFinalKills() + 1);
                     event.getArena().addPlayerKill(damager, true, player);
                 }
@@ -178,7 +179,7 @@ public class StatsListener implements Listener {
 
                     // Reward attacker
                     event.getArena().addPlayerKill(damager, false, player);
-                    PlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
+                    IPlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
                     damagerStats.setKills(damagerStats.getKills() + 1);
                 }
             }

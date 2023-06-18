@@ -18,17 +18,16 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.database;
+package com.tomkeuper.bedwars.api.database;
 
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
-import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
-import com.tomkeuper.bedwars.stats.PlayerStats;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-public interface Database {
+public interface IDatabase {
 
     /**
      * Initialize database.
@@ -43,9 +42,9 @@ public interface Database {
     /**
      * Create or replace stats for a player.
      */
-    void saveStats(PlayerStats stats);
+    void saveStats(IPlayerStats stats);
 
-    PlayerStats fetchStats(UUID uuid);
+    IPlayerStats fetchStats(UUID uuid);
 
     /**
      * Get quick buy slot value.

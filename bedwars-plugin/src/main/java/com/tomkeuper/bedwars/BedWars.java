@@ -46,7 +46,7 @@ import com.tomkeuper.bedwars.commands.party.PartyCommand;
 import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
-import com.tomkeuper.bedwars.database.Database;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
 import com.tomkeuper.bedwars.language.*;
@@ -138,7 +138,7 @@ public class BedWars extends JavaPlugin {
     public static ArenaManager arenaManager = new ArenaManager();
 
     //remote database
-    private static Database remoteDatabase;
+    private static IDatabase remoteDatabase;
 
     private boolean serverSoftwareSupport = true;
 
@@ -762,7 +762,7 @@ public class BedWars extends JavaPlugin {
     /**
      * Get remote database.
      */
-    public static Database getRemoteDatabase() {
+    public static IDatabase getRemoteDatabase() {
         return remoteDatabase;
     }
 

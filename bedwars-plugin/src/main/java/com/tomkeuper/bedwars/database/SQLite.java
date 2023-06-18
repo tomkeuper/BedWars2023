@@ -21,9 +21,10 @@
 package com.tomkeuper.bedwars.database;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
-import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.stats.PlayerStats;
 
 import java.io.File;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class SQLite implements Database {
+public class SQLite implements IDatabase {
 
     private String url;
 
@@ -129,7 +130,7 @@ public class SQLite implements Database {
     }
 
     @Override
-    public void saveStats(PlayerStats stats) {
+    public void saveStats(IPlayerStats stats) {
         String sql;
         try {
             checkConnection();
@@ -174,8 +175,8 @@ public class SQLite implements Database {
     }
 
     @Override
-    public PlayerStats fetchStats(UUID uuid) {
-        PlayerStats stats = new PlayerStats(uuid);
+    public IPlayerStats fetchStats(UUID uuid) {
+        IPlayerStats stats = new PlayerStats(uuid);
         String sql = "SELECT * FROM global_stats WHERE uuid = ?;";
         try {
             checkConnection();
