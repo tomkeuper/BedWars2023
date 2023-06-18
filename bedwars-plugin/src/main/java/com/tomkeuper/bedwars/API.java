@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
@@ -510,4 +511,14 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
             return BedWars.getChatSupport().getSuffix(p);
         }
     };
+
+    @Override
+    public void setRemoteDatabase(IDatabase database) {
+        BedWars.setRemoteDatabase(database);
+    }
+    @Override
+    public IDatabase getRemoteDatabase() {
+        return BedWars.getRemoteDatabase();
+    }
+
 }

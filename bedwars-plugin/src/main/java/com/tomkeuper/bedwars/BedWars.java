@@ -821,4 +821,8 @@ public class BedWars extends JavaPlugin {
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return new VoidChunkGenerator();
     }
+
+    public static void setRemoteDatabase(IDatabase database){
+        remoteDatabase = database;
+    }
 }

@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -562,4 +563,15 @@ public interface BedWars {
          */
         String getSuffix(Player p);
     }
+
+    /**
+     * Set database implementation
+     */
+    void setRemoteDatabase(IDatabase database);
+
+    /**
+     * Set database implementation
+     */
+    IDatabase getRemoteDatabase();
+
 }
