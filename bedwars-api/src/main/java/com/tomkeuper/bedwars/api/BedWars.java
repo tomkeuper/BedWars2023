@@ -22,6 +22,7 @@ package com.tomkeuper.bedwars.api;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
+import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.database.IDatabase;
@@ -513,56 +514,19 @@ public interface BedWars {
     IScoreboardService getScoreboardManager();
 
     /**
-     * Get economy methods
+     * Get economy util.
      */
-    EconomyUtil getEconomyUtil();
-
-    interface EconomyUtil {
-
-        /**
-         * Check if economy is enabled
-         */
-        boolean isEconomy();
-
-        /**
-         * Get player money balance
-         * @param p player from which to get the economy balance
-         */
-        double getMoney(Player p);
-
-        /**
-         * give to player money
-         * @param p player from which to get the economy balance
-         * @param money money amount to give
-         */
-        void giveMoney(Player p, double money);
-
-        /**
-         * Get player money from balance to buy an item shop
-         * @param p player from which to get the money
-         * @param cost money amount to take
-         */
-        void buyAction(Player p, double cost);
-    }
+    IEconomy getEconomyUtil();
 
     /**
-     * Get chat methods
+     * Get chat util.
      */
-    ChatUtil getChatUtil();
+    IChat getChatUtil();
 
-    interface ChatUtil {
-        /**
-         * Get Player prefix
-         * @param p player from which to take the prefix
-         */
-        String getPrefix(Player p);
-
-        /**
-         * Get Player suffix
-         * @param p player from which to take the suffix
-         */
-        String getSuffix(Player p);
-    }
+    /**
+     * Change the economy interface.
+     */
+    void setEconomyAdapter(IEconomy economyAdapter);
 
     /**
      * Set database implementation
@@ -573,5 +537,4 @@ public interface BedWars {
      * Set database implementation
      */
     IDatabase getRemoteDatabase();
-
 }

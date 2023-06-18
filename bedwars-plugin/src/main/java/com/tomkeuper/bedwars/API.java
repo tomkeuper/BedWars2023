@@ -22,8 +22,10 @@ package com.tomkeuper.bedwars;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
+import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -43,7 +45,6 @@ import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsAPI;
-import com.tomkeuper.bedwars.support.vault.Economy;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -469,48 +470,14 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     }
 
     @Override
-    public EconomyUtil getEconomyUtil() {
-        return economyUtil;
+    public IEconomy getEconomyUtil() {
+        return BedWars.getEconomy();
     }
-
-    private final EconomyUtil economyUtil = new EconomyUtil() {
-        @Override
-        public boolean isEconomy() {
-            return BedWars.getEconomy().isEconomy();
-        }
-
-        @Override
-        public double getMoney(Player p) {
-            return BedWars.getEconomy().getMoney(p);
-        }
-
-        @Override
-        public void giveMoney(Player p, double money) {
-            BedWars.getEconomy().giveMoney(p, money);
-        }
-
-        @Override
-        public void buyAction(Player p, double cost) {
-            BedWars.getEconomy().buyAction(p, cost);
-        }
-    };
 
     @Override
-    public ChatUtil getChatUtil() {
-        return chatUtil;
+    public IChat getChatUtil() {
+        return BedWars.getChatSupport();
     }
-
-    private final ChatUtil chatUtil = new ChatUtil() {
-        @Override
-        public String getPrefix(Player p) {
-            return BedWars.getChatSupport().getPrefix(p);
-        }
-
-        @Override
-        public String getSuffix(Player p) {
-            return BedWars.getChatSupport().getSuffix(p);
-        }
-    };
 
     @Override
     public void setRemoteDatabase(IDatabase database) {
@@ -521,4 +488,8 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         return BedWars.getRemoteDatabase();
     }
 
+    @Override
+    public void setEconomyAdapter(IEconomy economyAdapter) {
+        BedWars.setEconomy(economyAdapter);
+    }
 }

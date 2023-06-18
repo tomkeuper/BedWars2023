@@ -21,8 +21,10 @@
 package com.tomkeuper.bedwars;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -128,9 +130,9 @@ public class BedWars extends JavaPlugin {
     public static boolean isPaper = false;
 
     private static Party party = new NoParty();
-    private static Chat chat = new NoChat();
+    private static IChat chat = new NoChat();
     protected static Level level;
-    private static Economy economy;
+    private static IEconomy economy;
     private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static String lobbyWorld = "";
     private static boolean shuttingDown = false;
@@ -700,7 +702,7 @@ public class BedWars extends JavaPlugin {
         return party;
     }
 
-    public static Chat getChatSupport() {
+    public static IChat getChatSupport() {
         return chat;
     }
 
@@ -733,7 +735,7 @@ public class BedWars extends JavaPlugin {
         level = levelsManager;
     }
 
-    public static Economy getEconomy() {
+    public static IEconomy getEconomy() {
         return economy;
     }
 
@@ -815,6 +817,10 @@ public class BedWars extends JavaPlugin {
 
     public static void setParty(Party party) {
         BedWars.party = party;
+    }
+
+    public static void setEconomy(IEconomy economy) {
+        BedWars.economy = economy;
     }
 
     @Override
