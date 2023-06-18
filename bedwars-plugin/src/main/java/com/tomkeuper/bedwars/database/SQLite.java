@@ -205,6 +205,16 @@ public class SQLite implements IDatabase {
     }
 
     @Override
+    public void saveCustomStat(String columnName, UUID player, Object value, String dataType) {
+
+    }
+
+    @Override
+    public Object getCustomStat(String columnName, UUID player) {
+        return null;
+    }
+
+    @Override
     public String getQuickBuySlots(UUID p, int slot) {
         String result = "";
         try {

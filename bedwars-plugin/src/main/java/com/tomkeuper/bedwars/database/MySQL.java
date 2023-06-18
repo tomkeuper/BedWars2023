@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.database;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
@@ -74,7 +75,7 @@ public class MySQL implements IDatabase {
     public boolean connect() {
         HikariConfig hikariConfig = new HikariConfig();
 
-        hikariConfig.setPoolName("BedWars1058MySQLPool");
+        hikariConfig.setPoolName("BedWars2023MySQLPool");
 
         hikariConfig.setMaximumPoolSize(poolSize);
         hikariConfig.setMaxLifetime(maxLifetime * 1000L);
@@ -238,6 +239,68 @@ public class MySQL implements IDatabase {
             e.printStackTrace();
         }
         return stats;
+    }
+
+    @Override
+    public void saveCustomStat(String columnName, UUID player, Object value, String dataType){
+        String sql;
+        checkCustomColumnExists(columnName, dataType);
+        try (Connection connection = dataSource.getConnection()) {
+            if (hasStats(player)) {
+                sql = "UPDATE global_stats SET "+columnName+"=? WHERE uuid = ?;";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setObject(1, value);
+                    statement.setString(2, player.toString());
+                    statement.executeUpdate();
+                }
+            } else {
+                sql = "INSERT INTO global_stats (uuid, "+columnName+") VALUES (?, ?);";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setString(1, player.toString());
+                    statement.setObject(2, value);
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Object getCustomStat(String columnName, UUID player){
+        String sql = "SELECT "+columnName+" FROM global_stats WHERE uuid = ?;";
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, player.toString());
+                try (ResultSet result = statement.executeQuery()) {
+                    if (result.next()) {
+                        return result.getObject(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void checkCustomColumnExists(String columnName, String dataType){
+        String sql = "SHOW COLUMNS FROM global_stats LIKE ?";
+        try (Connection connection = dataSource.getConnection()){
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, columnName);
+                try (ResultSet result = statement.executeQuery()){
+                    if (!result.next()){
+                        sql = "ALTER TABLE global_stats ADD COLUMN " +columnName+ " " + dataType;
+                        try (PreparedStatement statement1 = connection.prepareStatement(sql)){
+                            statement1.executeUpdate();
+                        }
+                    }
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

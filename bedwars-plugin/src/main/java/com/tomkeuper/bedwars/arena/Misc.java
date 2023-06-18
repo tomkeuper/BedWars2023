@@ -32,7 +32,6 @@ import com.tomkeuper.bedwars.api.region.Region;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.stats.PlayerStats;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

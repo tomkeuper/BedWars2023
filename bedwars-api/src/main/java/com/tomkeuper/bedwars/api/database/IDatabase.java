@@ -46,6 +46,10 @@ public interface IDatabase {
 
     IPlayerStats fetchStats(UUID uuid);
 
+    void saveCustomStat(String columnName, UUID player, Object value, String dataType);
+
+    Object getCustomStat(String columnName, UUID player);
+
     /**
      * Get quick buy slot value.
      */
