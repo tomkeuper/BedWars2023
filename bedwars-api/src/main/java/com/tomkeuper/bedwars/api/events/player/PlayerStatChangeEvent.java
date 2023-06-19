@@ -42,6 +42,13 @@ public class PlayerStatChangeEvent extends Event {
         return player;
     }
 
+    /**
+     * Get the stat type
+     */
+    public StatType getStatType() {
+        return statType;
+    }
+
     public enum StatType {
         FIRST_PLAY, LAST_PLAY, WINS, KILLS, FINAL_KILLS, LOSSES, DEATHS, FINAL_DEATHS, BEDS_DESTROYED, GAMES_PLAYED, CUSTOM
     }
