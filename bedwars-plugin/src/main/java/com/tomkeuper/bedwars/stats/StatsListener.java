@@ -29,6 +29,7 @@ import com.tomkeuper.bedwars.api.events.player.PlayerBedBreakEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerStatChangeEvent;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class StatsListener implements Listener {
             // Do nothing if login fails
             return;
         }
-        PlayerStats stats = BedWars.getRemoteDatabase().fetchStats(event.getUniqueId());
+        IPlayerStats stats = BedWars.getRemoteDatabase().fetchStats(event.getUniqueId());
         stats.setName(event.getName());
         BedWars.getStatsManager().put(event.getUniqueId(), stats);
     }
@@ -65,7 +66,7 @@ public class StatsListener implements Listener {
 
     @EventHandler
     public void onBedBreak(PlayerBedBreakEvent event) {
-        PlayerStats stats = BedWars.getStatsManager().get(event.getPlayer().getUniqueId());
+        IPlayerStats stats = BedWars.getStatsManager().get(event.getPlayer().getUniqueId());
         //store beds destroyed
         PlayerStatChangeEvent ev = new PlayerStatChangeEvent(event.getPlayer(), event.getArena(), PlayerStatChangeEvent.StatType.BEDS_DESTROYED);
         Bukkit.getPluginManager().callEvent(ev); //call player stat change event for bed destroyer (bed destroy)
@@ -75,9 +76,9 @@ public class StatsListener implements Listener {
 
     @EventHandler
     public void onPlayerKill(PlayerKillEvent event) {
-        PlayerStats victimStats = BedWars.getStatsManager().get(event.getVictim().getUniqueId());
+        IPlayerStats victimStats = BedWars.getStatsManager().get(event.getVictim().getUniqueId());
         // If killer is not null and not equal to victim
-        PlayerStats killerStats = !event.getVictim().equals(event.getKiller()) ?
+        IPlayerStats killerStats = !event.getVictim().equals(event.getKiller()) ?
                 (event.getKiller() == null ? null : BedWars.getStatsManager().getUnsafe(event.getKiller().getUniqueId())) : null;
 
         PlayerStatChangeEvent ev = new PlayerStatChangeEvent(event.getKiller(), event.getArena(), PlayerStatChangeEvent.StatType.KILLS);
@@ -124,7 +125,7 @@ public class StatsListener implements Listener {
             if (player == null) continue;
             if (!player.isOnline()) continue;
 
-            PlayerStats stats = BedWars.getStatsManager().get(uuid);
+            IPlayerStats stats = BedWars.getStatsManager().get(uuid);
 
             PlayerStatChangeEvent ev = new PlayerStatChangeEvent(player, event.getArena(), PlayerStatChangeEvent.StatType.WINS);
             PlayerStatChangeEvent ev1 = new PlayerStatChangeEvent(player, event.getArena(), PlayerStatChangeEvent.StatType.GAMES_PLAYED);
@@ -160,7 +161,7 @@ public class StatsListener implements Listener {
             return; // Game didn't start
         }
 
-        PlayerStats playerStats = BedWars.getStatsManager().get(player.getUniqueId());
+        IPlayerStats playerStats = BedWars.getStatsManager().get(player.getUniqueId());
         // sometimes can be null due to scheduling delays
         if (playerStats == null) return;
 
@@ -206,9 +207,9 @@ public class StatsListener implements Listener {
                 PlayerStatChangeEvent ev4 = new PlayerStatChangeEvent(damager, event.getArena(), PlayerStatChangeEvent.StatType.FINAL_KILLS);
 
                 if (damager != null && event.getArena().isPlayer(damager) && killerTeam != null) {
-                    PlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
                     Bukkit.getPluginManager().callEvent(ev4); //call player stat change event for damager
                     if(ev4.isCancelled()) return;
+                    IPlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
                     damagerStats.setFinalKills(damagerStats.getFinalKills() + 1);
                     event.getArena().addPlayerKill(damager, true, player);
                 }
@@ -232,9 +233,9 @@ public class StatsListener implements Listener {
 
                     // Reward attacker
                     event.getArena().addPlayerKill(damager, false, player);
-                    PlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
                     Bukkit.getPluginManager().callEvent(ev6); //call player stat change event for damager
                     if(ev6.isCancelled()) return;
+                    IPlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
                     damagerStats.setKills(damagerStats.getKills() + 1);
                 }
             }

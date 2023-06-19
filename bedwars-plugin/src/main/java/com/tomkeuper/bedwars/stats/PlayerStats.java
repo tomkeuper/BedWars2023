@@ -20,10 +20,12 @@
 
 package com.tomkeuper.bedwars.stats;
 
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
+
 import java.time.Instant;
 import java.util.UUID;
 
-public class PlayerStats {
+public class PlayerStats implements IPlayerStats {
 
     private final UUID uuid;
 

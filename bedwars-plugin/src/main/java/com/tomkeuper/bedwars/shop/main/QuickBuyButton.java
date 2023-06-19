@@ -21,11 +21,12 @@
 package com.tomkeuper.bedwars.shop.main;
 
 import com.tomkeuper.bedwars.api.language.Language;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyButton;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class QuickBuyButton {
+public class QuickBuyButton implements IQuickBuyButton {
 
     private int slot;
     private ItemStack itemStack;
@@ -49,6 +50,7 @@ public class QuickBuyButton {
     /**
      * Get the quick buy button in the player's language
      */
+    @Override
     public ItemStack getItemStack(Player player) {
         ItemStack i = itemStack.clone();
         ItemMeta im = i.getItemMeta();
@@ -63,6 +65,7 @@ public class QuickBuyButton {
     /**
      * Get quick buy item slot
      */
+    @Override
     public int getSlot() {
         return slot;
     }

@@ -35,6 +35,6 @@ public class DragonAction implements UpgradeAction {
 
     @Override
     public void onBuy(@Nullable Player player, ITeam bwt) {
-        bwt.setDragons(amount);
+        bwt.setDragonAmount(amount);
     }
 }

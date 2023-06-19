@@ -25,6 +25,7 @@ import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
@@ -34,6 +35,9 @@ import com.tomkeuper.bedwars.api.server.ISetupSession;
 import com.tomkeuper.bedwars.api.server.RestoreAdapter;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -345,6 +349,10 @@ public interface BedWars {
          * Take money from player on buy
          */
         void takeMoney(Player player, Material currency, int amount);
+
+        IShopManager getShopManager();
+        IShopCache getShopCache();
+        IPlayerQuickBuyCache getPlayerQuickBuyCache();
     }
 
     /**
@@ -520,4 +528,14 @@ public interface BedWars {
      * Change the economy interface.
      */
     void setEconomyAdapter(IEconomy economyAdapter);
+
+    /**
+     * Set database implementation
+     */
+    void setRemoteDatabase(IDatabase database);
+
+    /**
+     * Set database implementation
+     */
+    IDatabase getRemoteDatabase();
 }

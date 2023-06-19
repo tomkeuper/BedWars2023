@@ -71,10 +71,16 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <!-- TAB -->
+<!--        <repository>-->
+<!--            <id>krypton</id>-->
+<!--            <url>https://repo.kryptonmc.org/releases</url>-->
+<!--        </repository>-->
+<!--        Temporary workaround because tab V4 is not yet released-->
         <repository>
-            <id>krypton</id>
-            <url>https://repo.kryptonmc.org/releases</url>
+            <id>bedwars-releases</id>
+            <url>https://repo.tomkeuper.com/repository/bedwars-releases/</url>
         </repository>
+<!--        -->
         <repository>
             <id>cloudnet-releases</id>
             <url>https://repo.cloudnetservice.eu/repository/releases/</url>
@@ -241,7 +247,7 @@
         <dependency>
             <groupId>me.neznamy</groupId>
             <artifactId>tab-api</artifactId>
-            <version>3.2.4</version>
+            <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -314,5 +320,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
