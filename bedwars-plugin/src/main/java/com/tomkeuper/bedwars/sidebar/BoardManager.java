@@ -308,8 +308,8 @@ public class BoardManager implements IScoreboardService {
 
         setHeaderFooter(tabPlayer,arena);
 
-        TabAPI.getInstance().getTablistFormatManager().setPrefix(tabPlayer, "%bw_prefix%");
-        TabAPI.getInstance().getTablistFormatManager().setSuffix(tabPlayer, "%bw_suffix%");
+        TabAPI.getInstance().getTabListFormatManager().setPrefix(tabPlayer, "%bw_prefix%");
+        TabAPI.getInstance().getTabListFormatManager().setSuffix(tabPlayer, "%bw_suffix%");
 
         TabAPI.getInstance().getNameTagManager().setPrefix(tabPlayer, "%bw_prefix%");
         TabAPI.getInstance().getNameTagManager().setSuffix(tabPlayer, "%bw_suffix%");
