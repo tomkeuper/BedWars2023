@@ -30,8 +30,8 @@ import com.tomkeuper.bedwars.api.exceptions.InvalidMaterialException;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.region.Region;
 import com.tomkeuper.bedwars.api.server.ServerType;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.stats.PlayerStats;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -319,7 +319,7 @@ public class Misc {
     }
 
     public static String replaceStatsPlaceholders(Player player, @NotNull String s, boolean papiReplacements) {
-        PlayerStats stats = BedWars.getStatsManager().get(player.getUniqueId());
+        IPlayerStats stats = BedWars.getStatsManager().get(player.getUniqueId());
 
         if (s.contains("%bw_kills%"))
             s = s.replace("%bw_kills%", String.valueOf(stats.getKills()));

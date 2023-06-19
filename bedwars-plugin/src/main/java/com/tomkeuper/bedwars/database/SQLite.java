@@ -21,8 +21,10 @@
 package com.tomkeuper.bedwars.database;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
-import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.stats.PlayerStats;
 
 import java.io.File;
@@ -33,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class SQLite implements Database {
+public class SQLite implements IDatabase {
 
     private String url;
 
@@ -128,7 +130,7 @@ public class SQLite implements Database {
     }
 
     @Override
-    public void saveStats(PlayerStats stats) {
+    public void saveStats(IPlayerStats stats) {
         String sql;
         try {
             checkConnection();
@@ -173,8 +175,8 @@ public class SQLite implements Database {
     }
 
     @Override
-    public PlayerStats fetchStats(UUID uuid) {
-        PlayerStats stats = new PlayerStats(uuid);
+    public IPlayerStats fetchStats(UUID uuid) {
+        IPlayerStats stats = new PlayerStats(uuid);
         String sql = "SELECT * FROM global_stats WHERE uuid = ?;";
         try {
             checkConnection();
@@ -200,6 +202,80 @@ public class SQLite implements Database {
             e.printStackTrace();
         }
         return stats;
+    }
+
+    @Override
+    public void saveCustomStat(String columnName, UUID player, Object value, String dataType) {
+        String sql;
+        checkCustomColumnExists(columnName, dataType);
+        try {
+            checkConnection();
+
+            if (hasStats(player)) {
+                sql = "UPDATE global_stats SET "+columnName+"=? WHERE uuid = ?;";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setObject(1, value);
+                    statement.setString(2, player.toString());
+                    statement.executeUpdate();
+                }
+            } else {
+                sql = "INSERT INTO global_stats (uuid, "+columnName+") VALUES (?, ?);";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setString(1, player.toString());
+                    statement.setObject(2, value);
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void checkCustomColumnExists(String columnName, String dataType){
+        String sql = "PRAGMA table_info(global_stats)";
+        try {
+            checkConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                ResultSet resultSet = statement.executeQuery();
+                boolean columnExists = false;
+                while (resultSet.next()) {
+                    String existingColumnName = resultSet.getString("name");
+                    if (existingColumnName.equalsIgnoreCase(columnName)) {
+                        columnExists = true;
+                        break;
+                    }
+                }
+                if (!columnExists){
+                    sql = "ALTER TABLE global_stats ADD COLUMN " +columnName+ " " + dataType;
+                    try (PreparedStatement statement1 = connection.prepareStatement(sql)) {
+                        statement1.executeUpdate();
+                    }
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Object getCustomStat(String columnName, UUID player) {
+        String sql = "SELECT "+columnName+" FROM global_stats WHERE uuid = ?;";
+        try {
+            checkConnection();
+
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, player.toString());
+                try (ResultSet result = statement.executeQuery()) {
+                    if (result.next()) {
+                        return result.getObject(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -369,11 +445,11 @@ public class SQLite implements Database {
     }
 
     @Override
-    public void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<QuickBuyElement> elements) {
+    public void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<IQuickBuyElement> elements) {
         if (updateSlots.isEmpty()) return;
         boolean hasQuick;
         if (!(hasQuick = hasQuickBuy(uuid))) {
-            for (QuickBuyElement element : elements) {
+            for (IQuickBuyElement element : elements) {
                 if (!updateSlots.containsKey(element.getSlot())) {
                     updateSlots.put(element.getSlot(), element.getCategoryContent().getIdentifier());
                 }

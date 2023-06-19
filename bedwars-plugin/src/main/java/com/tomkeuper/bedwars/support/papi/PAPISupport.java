@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.stats.PlayerStats;
@@ -116,7 +117,7 @@ public class PAPISupport extends PlaceholderExpansion {
             if(targetedStat.isEmpty() || targetedStat.isBlank()) {
                 return null;
             }
-            PlayerStats stats = BedWars.getStatsManager().getUnsafe(player.getUniqueId());
+            IPlayerStats stats = BedWars.getStatsManager().getUnsafe(player.getUniqueId());
             if(stats == null) {
                 return null;
             }

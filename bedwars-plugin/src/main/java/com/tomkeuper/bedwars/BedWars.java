@@ -48,7 +48,7 @@ import com.tomkeuper.bedwars.commands.party.PartyCommand;
 import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
-import com.tomkeuper.bedwars.database.Database;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
 import com.tomkeuper.bedwars.language.*;
@@ -66,7 +66,9 @@ import com.tomkeuper.bedwars.lobbysocket.LoadedUsersCleaner;
 import com.tomkeuper.bedwars.lobbysocket.SendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
+import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
+import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsManager;
 import com.tomkeuper.bedwars.support.citizens.CitizensListener;
@@ -118,6 +120,8 @@ public class BedWars extends JavaPlugin {
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    public static PlayerQuickBuyCache playerQuickBuyCache;
+    public static ShopCache shopCache;
     public static StatsManager statsManager;
     public static BedWars plugin;
     public static VersionSupport nms;
@@ -136,7 +140,7 @@ public class BedWars extends JavaPlugin {
     public static ArenaManager arenaManager = new ArenaManager();
 
     //remote database
-    private static Database remoteDatabase;
+    private static IDatabase remoteDatabase;
 
     private boolean serverSoftwareSupport = true;
 
@@ -521,6 +525,10 @@ public class BedWars extends JavaPlugin {
         shop = new ShopManager();
         shop.loadShop();
 
+        /* Initialize instances */
+        shopCache = new ShopCache();
+        playerQuickBuyCache = new PlayerQuickBuyCache();
+
         //Leave this code at the end of the enable method
         for (Language l : Language.getLanguages()) {
             l.setupUnSetCategories();
@@ -756,7 +764,7 @@ public class BedWars extends JavaPlugin {
     /**
      * Get remote database.
      */
-    public static Database getRemoteDatabase() {
+    public static IDatabase getRemoteDatabase() {
         return remoteDatabase;
     }
 
@@ -818,5 +826,9 @@ public class BedWars extends JavaPlugin {
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return new VoidChunkGenerator();
+    }
+
+    public static void setRemoteDatabase(IDatabase database){
+        remoteDatabase = database;
     }
 }
