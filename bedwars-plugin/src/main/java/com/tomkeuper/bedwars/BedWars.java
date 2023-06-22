@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars;
 
+import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
@@ -132,6 +134,7 @@ public class BedWars extends JavaPlugin {
     private static boolean shuttingDown = false;
 
     public static ArenaManager arenaManager = new ArenaManager();
+    public static IAddonManager addonsManager = new AddonManager();
 
     //remote database
     private static Database remoteDatabase;
@@ -575,6 +578,7 @@ public class BedWars extends JavaPlugin {
             }
         });
 
+
 //        registerEvents(new ScoreboardListener()); #Disabled for now
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN)) {
@@ -586,6 +590,11 @@ public class BedWars extends JavaPlugin {
         SpoilPlayerTNTFeature.init();
         GenSplitFeature.init();
         AntiDropFeature.init();
+
+        // Initialize the addons
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            (new AddonManager()).registerAddons();
+        }, 60L);
     }
 
     private void registerDelayedCommands() {
