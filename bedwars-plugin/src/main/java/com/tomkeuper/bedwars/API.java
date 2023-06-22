@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars;
 
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
@@ -259,6 +260,11 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     @Override
     public IStats getStatsUtil() {
         return StatsAPI.getInstance();
+    }
+
+    @Override
+    public IAddonManager getAddonsUtil() {
+        return BedWars.addonsManager;
     }
 
     @Override
