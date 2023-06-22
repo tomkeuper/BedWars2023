@@ -39,6 +39,7 @@ import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -385,6 +386,10 @@ public interface BedWars {
          * @return count
          */
         int getTotalUpgradeTiers(IArena arena);
+
+        void setCustomMenuForArena(IArena arena, UpgradesIndex menu);
+
+        UpgradesIndex getMenuForArena(IArena arena);
     }
 
     /**
