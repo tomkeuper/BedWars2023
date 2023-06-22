@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars;
 
+import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
@@ -138,6 +140,7 @@ public class BedWars extends JavaPlugin {
     private static boolean shuttingDown = false;
 
     public static ArenaManager arenaManager = new ArenaManager();
+    public static IAddonManager addonsManager = new AddonManager();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -596,6 +599,11 @@ public class BedWars extends JavaPlugin {
         SpoilPlayerTNTFeature.init();
         GenSplitFeature.init();
         AntiDropFeature.init();
+
+        // Initialize the addons
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            (new AddonManager()).registerAddons();
+        }, 60L);
     }
 
     private void registerDelayedCommands() {

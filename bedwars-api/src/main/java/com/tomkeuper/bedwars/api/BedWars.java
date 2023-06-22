@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.api;
 
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.chat.IChat;
@@ -56,6 +57,11 @@ public interface BedWars {
      * Get stats utils.
      */
     IStats getStatsUtil();
+
+    /**
+     * Get addon util
+     */
+    IAddonManager getAddonsUtil();
 
     interface IStats {
         /**
