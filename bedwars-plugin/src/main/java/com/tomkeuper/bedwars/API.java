@@ -286,7 +286,7 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
 
     @Override
     public IAddonManager getAddonsUtil() {
-        return BedWars.addonsManager;
+        return BedWars.addonManager;
     }
 
     @Override
