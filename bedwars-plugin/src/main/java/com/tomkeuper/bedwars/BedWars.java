@@ -602,7 +602,7 @@ public class BedWars extends JavaPlugin {
 
         // Initialize the addons
         Bukkit.getScheduler().runTaskLater(this, () -> {
-            (new AddonManager()).loadAddons();
+            addonManager.loadAddons();
         }, 60L);
     }
 
@@ -622,7 +622,7 @@ public class BedWars extends JavaPlugin {
 
     public void onDisable() {
         shuttingDown = true;
-        (new AddonManager()).unloadAddons();
+        addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
             ArenaSocket.disable();
