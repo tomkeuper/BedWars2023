@@ -25,7 +25,7 @@ public class Warnings implements Listener {
         }
 
         if(Bukkit.getServer().getSpawnRadius() > 0) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> player.sendMessage(ChatColor.RED + "[BedWars1058] Your spawn-protection in server.properties is enabled. "+ChatColor.YELLOW+"This might mess with BedWars arenas!"+ChatColor.GRAY+" It is highly reccomend setting it to 0."), 5);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.sendMessage(ChatColor.RED + "[BedWars1058] Your spawn-protection in server.properties is enabled. "+ChatColor.YELLOW+"This might mess with BedWars arenas!"+ChatColor.GRAY+" It is highly recommended setting it to 0."), 5);
         }
     }
 }
