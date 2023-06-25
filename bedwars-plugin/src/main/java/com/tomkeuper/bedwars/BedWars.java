@@ -371,9 +371,6 @@ public class BedWars extends JavaPlugin {
 
         registerEvents(new InvisibilityPotionListener());
 
-        /* Load join signs. */
-        loadArenasAndSigns();
-
         statsManager = new StatsManager();
 
         /* Party support */
@@ -578,6 +575,10 @@ public class BedWars extends JavaPlugin {
                 getLogger().info("Hooked into TAB support!");
                 if (BoardManager.init()) {
                     getLogger().info("TAB support has been loaded");
+
+                    /* Load join signs. */
+                    loadArenasAndSigns();
+
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
                     Bukkit.getPluginManager().disablePlugin(this);
