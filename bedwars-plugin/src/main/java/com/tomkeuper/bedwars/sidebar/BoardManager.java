@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
+import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class BoardManager implements IScoreboardService {
@@ -266,53 +267,57 @@ public class BoardManager implements IScoreboardService {
 
     @Override
     public void giveTabFeatures(@NotNull Player player, @Nullable IArena arena, boolean delay) {
-        String arenaDisplayname = "null";
-        if (null != arena) arenaDisplayname = arena.getDisplayName();
-        BedWars.debug("giveTabFeatures() player: " + player.getDisplayName() + " arena: " + arenaDisplayname);
+        int delayTime = 0;
+        if (delay) delayTime = 5;
 
-        // if sidebar is disabled in lobby on shared mode
-        if (null == arena){ if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) return;}
-        else if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_GAME_SIDEBAR)) return;
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+            String arenaDisplayname = "null";
+            if (null != arena) arenaDisplayname = arena.getDisplayName();
+            BedWars.debug("giveTabFeatures() player: " + player.getDisplayName() + " arena: " + arenaDisplayname);
+            // if sidebar is disabled in lobby on shared mode
+            if (null == arena){ if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) return;}
+            else if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_GAME_SIDEBAR)) return;
 
-        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
 
-        if (TabAPI.getInstance().getNameTagManager() == null || tabPlayer == null) {
-            BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player");
-            return;
-        }
-
-        String scoreboardName = "bw_lobby_" + Language.getPlayerLanguage(player).getIso();
-        // set sidebar lines based on game state or lobby
-        if (null != arena){
-            if (arena.getStatus() == GameState.waiting) {
-                scoreboardName = "bw_" + arena.getGroup() + "_waiting_" + Language.getPlayerLanguage(player).getIso();
-                tabPlayer.setTemporaryGroup(null);
-            } else if (arena.getStatus() == GameState.starting) {
-                scoreboardName = "bw_" + arena.getGroup() + "_starting_" + Language.getPlayerLanguage(player).getIso();
-                tabPlayer.setTemporaryGroup(null);
-            } else if (arena.getStatus() == GameState.playing || arena.getStatus() == GameState.restarting) {
-                scoreboardName = "bw_" + arena.getGroup() + "_playing_" + Language.getPlayerLanguage(player).getIso();
-                tabPlayer.setTemporaryGroup(arena.getTeam(player) != null ? arena.getTeam(player).getName() : "");
+            if (TabAPI.getInstance().getNameTagManager() == null || tabPlayer == null) {
+                BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player");
+                return;
             }
-        }
-        if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME)){
-            if (TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager) {
-                UnlimitedNameTagManager unm = (UnlimitedNameTagManager) TabAPI.getInstance().getNameTagManager();
-                if (null == unm) Bukkit.getLogger().warning("Below name health is enabled in BedWars config but unlimited nametags is disabled in TAB config!");
-                unm.setLine(tabPlayer,"belowname", "%bw_tab_health%");
+
+            String scoreboardName = "bw_lobby_" + Language.getPlayerLanguage(player).getIso();
+            // set sidebar lines based on game state or lobby
+            if (null != arena){
+                if (arena.getStatus() == GameState.waiting) {
+                    scoreboardName = "bw_" + arena.getGroup() + "_waiting_" + Language.getPlayerLanguage(player).getIso();
+                    tabPlayer.setTemporaryGroup(null);
+                } else if (arena.getStatus() == GameState.starting) {
+                    scoreboardName = "bw_" + arena.getGroup() + "_starting_" + Language.getPlayerLanguage(player).getIso();
+                    tabPlayer.setTemporaryGroup(null);
+                } else if (arena.getStatus() == GameState.playing || arena.getStatus() == GameState.restarting) {
+                    scoreboardName = "bw_" + arena.getGroup() + "_playing_" + Language.getPlayerLanguage(player).getIso();
+                    tabPlayer.setTemporaryGroup(arena.getTeam(player) != null ? arena.getTeam(player).getName() : "");
+                }
             }
-        }
+            if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME)){
+                if (TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager) {
+                    UnlimitedNameTagManager unm = (UnlimitedNameTagManager) TabAPI.getInstance().getNameTagManager();
+                    if (null == unm) Bukkit.getLogger().warning("Below name health is enabled in BedWars config but unlimited nametags is disabled in TAB config!");
+                    unm.setLine(tabPlayer,"belowname", "%bw_tab_health%");
+                }
+            }
 
-        Scoreboard scoreboard = scoreboardManager.getRegisteredScoreboards().get(scoreboardName);
-        scoreboardManager.showScoreboard(tabPlayer, scoreboard);
+            Scoreboard scoreboard = scoreboardManager.getRegisteredScoreboards().get(scoreboardName);
+            scoreboardManager.showScoreboard(tabPlayer, scoreboard);
 
-        setHeaderFooter(tabPlayer,arena);
+            setHeaderFooter(tabPlayer,arena);
 
-        TabAPI.getInstance().getTabListFormatManager().setPrefix(tabPlayer, "%bw_prefix%");
-        TabAPI.getInstance().getTabListFormatManager().setSuffix(tabPlayer, "%bw_suffix%");
+            TabAPI.getInstance().getTabListFormatManager().setPrefix(tabPlayer, "%bw_prefix%");
+            TabAPI.getInstance().getTabListFormatManager().setSuffix(tabPlayer, "%bw_suffix%");
 
-        TabAPI.getInstance().getNameTagManager().setPrefix(tabPlayer, "%bw_prefix%");
-        TabAPI.getInstance().getNameTagManager().setSuffix(tabPlayer, "%bw_suffix%");
+            TabAPI.getInstance().getNameTagManager().setPrefix(tabPlayer, "%bw_prefix%");
+            TabAPI.getInstance().getNameTagManager().setSuffix(tabPlayer, "%bw_suffix%");
+        }, delayTime);
     }
 
     @Override
