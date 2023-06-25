@@ -22,6 +22,8 @@ package com.tomkeuper.bedwars.arena.spectator;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
@@ -74,20 +76,13 @@ public class TeleporterGUI {
     public static void openGUI(Player p) {
         IArena arena = Arena.getArenaByPlayer(p);
         if (arena == null) return;
-        int size = arena.getPlayers().size();
-        if (size <= 9) {
-            size = 9;
-        } else if (size <= 18) {
-            size = 18;
-        } else if (size > 19 && size <= 27) {
-            size = 27;
-        } else if (size > 27 && size <= 36) {
-            size = 36;
-        } else if (size > 36 && size <= 45) {
-            size = 45;
-        } else {
+
+        int playerCount = arena.getPlayers().size();
+        int size = (playerCount % 9) == 0 ? playerCount : ((int) Math.ceil(playerCount / 9.0)) * 9;
+        if (size > 54) {
             size = 54;
         }
+
         Inventory inv = Bukkit.createInventory(p, size, getMsg(p, Messages.ARENA_SPECTATOR_TELEPORTER_GUI_NAME));
         refreshInv(p, inv);
         refresh.put(p, inv);
@@ -117,10 +112,15 @@ public class TeleporterGUI {
         ItemStack i = nms.getPlayerHead(targetPlayer, null);
         ItemMeta im = i.getItemMeta();
         assert im != null;
+        IArena currentArena = Arena.getArenaByPlayer(targetPlayer);
+        ITeam targetPlayerTeam = currentArena.getTeam(targetPlayer);
+
         im.setDisplayName(getMsg(GUIholder, Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME)
                 .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(targetPlayer))
                 .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(targetPlayer))
                 .replace("%bw_player%", targetPlayer.getDisplayName())
+                .replace("%bw_team_color%", String.valueOf(targetPlayerTeam.getColor().chat()))
+                .replace("%bw_team%", targetPlayerTeam.getDisplayName(Language.getPlayerLanguage(GUIholder)))
                 .replace("%bw_playername%", targetPlayer.getName()));
         List<String> lore = new ArrayList<>();
         String health = String.valueOf((int)targetPlayer.getHealth() * 100 / targetPlayer.getHealthScale());
