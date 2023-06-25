@@ -783,7 +783,7 @@ public class Arena implements IArena {
         Arena.afkCheck.remove(p.getUniqueId());
         BedWars.getAPI().getAFKUtil().setPlayerAFK(p, false);
 
-        if (getStatus() == GameState.playing) {
+        if (status == GameState.playing) {
             for (ITeam t : getTeams()) {
                 if (t.isMember(p)) {
                     team = t;
@@ -1010,7 +1010,7 @@ public class Arena implements IArena {
 
         // fix #340
         // remove player from party if leaves and the owner is still in the arena while waiting or starting
-        if (getStatus() == GameState.waiting || getStatus() == GameState.starting) {
+        if (status == GameState.waiting || status == GameState.starting) {
             if (BedWars.getParty().hasParty(p) && !BedWars.getParty().isOwner(p)) {
                 for (Player pl : BedWars.getParty().getMembers(p)) {
                     if (BedWars.getParty().isOwner(pl) && pl.getWorld().getName().equalsIgnoreCase(getArenaName())) {
@@ -1919,7 +1919,7 @@ public class Arena implements IArena {
      * It will manage the arena restart and the needed stuff.
      */
     public void checkWinner() {
-        if (getStatus() != GameState.restarting) {
+        if (status != GameState.restarting) {
             int max = getTeams().size(), eliminated = 0;
             ITeam winner = null;
             for (ITeam t : getTeams()) {
@@ -2063,7 +2063,7 @@ public class Arena implements IArena {
                 //
 
             }
-            if (players.size() == 0 && getStatus() != GameState.restarting) {
+            if (players.size() == 0 && status != GameState.restarting) {
                 changeStatus(GameState.restarting);
             }
         }
