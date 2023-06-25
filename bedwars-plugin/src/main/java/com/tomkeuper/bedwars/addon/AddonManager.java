@@ -44,6 +44,7 @@ public class AddonManager extends AddonStorer implements IAddonManager {
     @Override
     public void loadAddon(Addon addon) {
         loadedAddons.add(addon);
+        unloadedAddons.remove(addon);
         if (!Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin()))
             Bukkit.getPluginManager().enablePlugin(addon.getPlugin());
     }
@@ -51,6 +52,7 @@ public class AddonManager extends AddonStorer implements IAddonManager {
     @Override
     public void unloadAddon(Addon addon) {
         unloadedAddons.add(addon);
+        loadedAddons.remove(addon);
         addon.unload();
         Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
     }
