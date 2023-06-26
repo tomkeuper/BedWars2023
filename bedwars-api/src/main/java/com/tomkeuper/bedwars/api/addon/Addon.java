@@ -38,6 +38,8 @@ public abstract class Addon {
      * Register the addon
      */
     public void register() {
-        (new AddonStorer()).registeredAddons().add(this);
+        AddonStorer as = new AddonStorer();
+        if (as.registeredAddons().contains(this)) return;
+        as.registeredAddons().add(this);
     }
 }

@@ -5,7 +5,7 @@ import com.tomkeuper.bedwars.api.addon.Addon;
 import com.tomkeuper.bedwars.api.addon.AddonStorer;
 import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import org.bukkit.Bukkit;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,8 +16,8 @@ public class AddonManager extends AddonStorer implements IAddonManager {
 
     public AddonManager() {
         registeredAddons = registeredAddons();
-        unloadedAddons = unloadedAddons();
-        loadedAddons = loadedAddons();
+        if (unloadedAddons == null) unloadedAddons = new ArrayList<>();
+        if (loadedAddons == null) loadedAddons = new ArrayList<>();
     }
 
 
@@ -43,6 +43,7 @@ public class AddonManager extends AddonStorer implements IAddonManager {
 
     @Override
     public void loadAddon(Addon addon) {
+        if (loadedAddons.contains(addon)) return;
         loadedAddons.add(addon);
         unloadedAddons.remove(addon);
         if (!Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin()))
@@ -51,10 +52,12 @@ public class AddonManager extends AddonStorer implements IAddonManager {
 
     @Override
     public void unloadAddon(Addon addon) {
+        if (unloadedAddons.contains(addon)) return;
         unloadedAddons.add(addon);
         loadedAddons.remove(addon);
         addon.unload();
-        Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
+        if (Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin()))
+            Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
     }
 
     @Override
@@ -81,6 +84,7 @@ public class AddonManager extends AddonStorer implements IAddonManager {
         log(registeredAddons.size() + " " + count + " has been found!");
         log("Loading " + registeredAddons.size() + " " + count);
         for (Addon addon : registeredAddons) {
+            if (loadedAddons.contains(addon)) continue;
             log("Loading " + addon.getIdentifier() + " by " + addon.getAuthor()+". " + "Version " + addon.getVersion());
             loadedAddons.add(addon);
             addon.load();
