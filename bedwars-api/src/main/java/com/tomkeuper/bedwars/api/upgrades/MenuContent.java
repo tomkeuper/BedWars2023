@@ -25,24 +25,36 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * The MenuContent interface represents a piece of content in a menu.
+ * It defines methods for retrieving the display item, handling click events,
+ * and getting the name of the menu content.
+ */
 public interface MenuContent {
 
     /**
-     * Item that represent the item in the GUI.
+     * Retrieves the display item for this menu content.
      *
-     * @return item.
+     * @param player the player viewing the menu
+     * @param team   the team associated with the menu
+     * @return the display item
      */
     ItemStack getDisplayItem(Player player, ITeam team);
 
     /**
-     * Manage what to do on click.
+     * Handles the click event on this menu content.
+     *
+     * @param player     the player who clicked
+     * @param clickType  the type of click
+     * @param team       the team associated with the menu
      */
     void onClick(Player player, ClickType clickType, ITeam team);
 
     /**
-     * Get identifier.
+     * Retrieves the name of this menu content.
      *
-     * @return content name.
+     * @return the name of the menu content
      */
     String getName();
 }
+
