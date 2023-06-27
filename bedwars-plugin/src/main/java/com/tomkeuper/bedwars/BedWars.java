@@ -766,11 +766,11 @@ public class BedWars extends JavaPlugin {
             int release = versionString.length > 3 ? Integer.parseInt(versionString[3]) : 0;
 
             String adapterPath;
-            if (major == 2 && minor == 2 && release == 1) { //todo implement 2.30-SNAPSHOT check
+            if (((major == 2 && minor == 2 && release ==1) || swmPlugin.getDescription().getVersion().equals("2.3.0-SNAPSHOT")) && (nms.getVersion() == 0 || nms.getVersion() == 5)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimeAdapter";
-            } else if (major == 2 && minor == 8 && release == 0) { //todo implement 2.8.0+ versions
+            } else if ((major == 2 && (minor >= 8 && minor <= 10) && (release >= 0 && release <= 9)) && (nms.getVersion() == 8)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.AdvancedSlimeAdapter";
-            } else if (major > 2 || major == 2 && minor >= 10) {
+            } else if ((major > 2 || major == 2 && minor >= 10) && nms.getVersion() == 9) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimePaperAdapter";
             } else {
                 return false;
