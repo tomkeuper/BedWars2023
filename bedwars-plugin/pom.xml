@@ -169,6 +169,16 @@
         </dependency>
         <dependency>
             <groupId>com.tomkeuper.bedwars</groupId>
+            <artifactId>resetadapter_aswm</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tomkeuper.bedwars</groupId>
+            <artifactId>resetadapter_slimepaper</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tomkeuper.bedwars</groupId>
             <artifactId>versionsupport_1_12_r1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -277,23 +287,27 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.bstats</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.bstats</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.hikari</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.hikari</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.slf4j</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.slf4j</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.iridium.iridiumcolorapi</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.color</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.color</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.flowpowered.nbt</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.flow</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.paper</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.paper</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
