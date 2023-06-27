@@ -1,4 +1,4 @@
-![Logo](https://github.com/tomkeuper/BedWars2023/assets/81072838/e36317fd-b9f0-4deb-9d4c-4152f66f29dd)
+![Bedwars2023_Logo](https://github.com/tomkeuper/BedWars2023/assets/29728836/5979c0e8-1333-40a5-b43c-49ceabd06a57)
 
 [![Discord](https://discordapp.com/api/guilds/760851292826107926/widget.png?style=shield)](https://discord.gg/kPaBGwhmjf) [![bStats](https://img.shields.io/bstats/servers/18317)](#)
 
