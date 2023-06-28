@@ -113,7 +113,7 @@ public class TeleporterGUI {
         ItemMeta im = i.getItemMeta();
         assert im != null;
       
-        im.setDisplayName(getMsg(targetPlayer, Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME)
+        im.setDisplayName(getMsg(targetPlayer, Messages.ARENA_SPECTATOR_TELEPORTER_GUI_HEAD_NAME);
         IArena currentArena = Arena.getArenaByPlayer(targetPlayer);
         ITeam targetPlayerTeam = currentArena.getTeam(targetPlayer);
                 .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(targetPlayer))
