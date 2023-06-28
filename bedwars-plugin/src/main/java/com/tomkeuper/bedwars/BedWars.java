@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars;
 
+import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
@@ -41,7 +43,7 @@ import com.tomkeuper.bedwars.arena.spectator.SpectatorListeners;
 import com.tomkeuper.bedwars.arena.tasks.OneTick;
 import com.tomkeuper.bedwars.arena.tasks.Refresh;
 import com.tomkeuper.bedwars.arena.upgrades.BaseListener;
-import com.tomkeuper.bedwars.arena.upgrades.HealPoolListner;
+import com.tomkeuper.bedwars.arena.upgrades.HealPoolListener;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.commands.leave.LeaveCommand;
 import com.tomkeuper.bedwars.commands.party.PartyCommand;
@@ -139,6 +141,7 @@ public class BedWars extends JavaPlugin {
     private static boolean shuttingDown = false;
 
     public static ArenaManager arenaManager = new ArenaManager();
+    public static IAddonManager addonsManager = new AddonManager();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -301,7 +304,7 @@ public class BedWars extends JavaPlugin {
                 new FireballListener(), new EggBridge(), new SpectatorListeners(), new BaseListener(), new TargetListener(), new LangListener(), new Warnings(this), new ChatAFK(), new GameEndListener());
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE)) {
-            registerEvents(new HealPoolListner());
+            registerEvents(new HealPoolListener());
         }
 
         if (getServerType() == ServerType.BUNGEE) {
@@ -333,9 +336,6 @@ public class BedWars extends JavaPlugin {
         registerEvents(new ChunkLoad());
 
         registerEvents(new InvisibilityPotionListener());
-
-        /* Load join signs. */
-        loadArenasAndSigns();
 
         statsManager = new StatsManager();
 
@@ -541,6 +541,10 @@ public class BedWars extends JavaPlugin {
                 getLogger().info("Hooked into TAB support!");
                 if (BoardManager.init()) {
                     getLogger().info("TAB support has been loaded");
+
+                    /* Load join signs. */
+                    loadArenasAndSigns();
+
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
                     Bukkit.getPluginManager().disablePlugin(this);
@@ -562,6 +566,11 @@ public class BedWars extends JavaPlugin {
         SpoilPlayerTNTFeature.init();
         GenSplitFeature.init();
         AntiDropFeature.init();
+
+        // Initialize the addons
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            (new AddonManager()).registerAddons();
+        }, 60L);
     }
 
     private void registerDelayedCommands() {

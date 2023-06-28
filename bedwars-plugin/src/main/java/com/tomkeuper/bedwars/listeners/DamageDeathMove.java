@@ -604,6 +604,7 @@ public class DamageDeathMove implements Listener {
             } else {
                 if (a.getStatus() == GameState.playing) {
                     if (e.getPlayer().getLocation().getBlockY() <= a.getYKillHeight()) {
+                        e.getPlayer().getInventory().clear(); //Fix issue #149
                         BedWars.nms.voidKill(e.getPlayer());
                     }
                     for (ITeam t : a.getTeams()) {

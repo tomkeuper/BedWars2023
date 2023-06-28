@@ -387,7 +387,6 @@ public class UpgradesManager {
      * @param arena target arena.
      * @param menu  custom menu.
      */
-    @SuppressWarnings("unused")
     public static void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
         if (!customMenuForArena.containsKey(arena)) {
             customMenuForArena.put(arena, menu);
