@@ -3,63 +3,102 @@ package com.tomkeuper.bedwars.addon;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.addon.Addon;
 import com.tomkeuper.bedwars.api.addon.IAddonManager;
+import org.bukkit.Bukkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class AddonManager implements IAddonManager {
-    private static List<Addon> addons;
+    private static List<Addon> registeredAddons;
+    private static List<Addon> unloadedAddons;
+    private static List<Addon> loadedAddons;
 
     public AddonManager() {
-        if (addons == null) addons = new ArrayList<>();
+        if (registeredAddons == null) registeredAddons = new ArrayList<>();
+        if (unloadedAddons == null) unloadedAddons = new ArrayList<>();
+        if (loadedAddons == null) loadedAddons = new ArrayList<>();
     }
+
+
     @Override
     public List<Addon> getAddons() {
-        return addons;
+        return registeredAddons;
+    }
+
+    @Override
+    public List<Addon> getLoadedAddons() {
+        return loadedAddons;
+    }
+
+    @Override
+    public List<Addon> getUnloadedAddons() {
+        return unloadedAddons;
     }
 
     @Override
     public List<Addon> getAddonsByAuthor(String author) {
-        return addons.stream().filter(a -> a.getAuthor().equals(author)).collect(Collectors.toList());
+        return registeredAddons.stream().filter(a -> a.getAuthor().equals(author)).collect(Collectors.toList());
     }
 
     @Override
     public void loadAddon(Addon addon) {
-        addons.add(addon);
+        if (loadedAddons.contains(addon)) return;
+        loadedAddons.add(addon);
+        unloadedAddons.remove(addon);
+        if (!Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin()))
+            Bukkit.getPluginManager().enablePlugin(addon.getPlugin());
     }
-
-    public void registerAddons() {
-        String count = "";
-        if (addons.size() < 1) {
-            log("No addons were found!");
-            return;
-        }
-        else if (addons.size() == 1) count = "addon";
-        else if (addons.size() > 1) count = "addons";
-        log(addons.size() + " " + count + " has been found!");
-        log("Loading " + addons.size() + " " + count);
-        for (Addon addon : addons) {
-            log("Loading " + addon.getIdentifier() + " by " + addon.getAuthor()+". " + "Version " + addon.getVersion());
-            addon.load();
-            log(addon.getIdentifier() + " addon loaded and registered successfully!");
-        }
-    }
-
-    private void log(String log) {
-        BedWars.getPlugin(BedWars.class).getLogger().info(log);
-    }
-
 
     @Override
     public void unloadAddon(Addon addon) {
-        addons.remove(addon);
+        if (unloadedAddons.contains(addon)) return;
+        unloadedAddons.add(addon);
+        loadedAddons.remove(addon);
         addon.unload();
+        if (Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin()))
+            Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
     }
 
     @Override
     public void unloadAddons() {
-        for (Addon addon : addons) {
+        if (loadedAddons.isEmpty()) return;
+        log("Unloading addons...");
+        for (Addon addon : loadedAddons) {
+            log("Unloading " + addon.getName() + " by " + addon.getAuthor());
             addon.unload();
+            Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
+            log("Addon unloaded successfully!");
         }
+    }
+
+    @Override
+    public void loadAddons() {
+        String count = "";
+        if (registeredAddons.size() < 1) {
+            log("No addons were found!");
+            return;
+        }
+        else if (registeredAddons.size() == 1) count = "addon";
+        else if (registeredAddons.size() > 1) count = "addons";
+        log(registeredAddons.size() + " " + count + " has been found!");
+        log("Loading " + registeredAddons.size() + " " + count);
+        for (Addon addon : registeredAddons) {
+            if (loadedAddons.contains(addon)) continue;
+            log("Loading " + addon.getName() + " by " + addon.getAuthor()+". " + "Version " + addon.getVersion());
+            loadedAddons.add(addon);
+            addon.load();
+            log(addon.getName() + " addon loaded and registered successfully!");
+        }
+    }
+
+    @Override
+    public void registerAddon(Addon addon){
+        if (addon == null) return;
+        if (registeredAddons.contains(addon)) return;
+        registeredAddons.add(addon);
+    }
+
+    private void log(String log) {
+        BedWars.getPlugin(BedWars.class).getLogger().info(log);
     }
 }

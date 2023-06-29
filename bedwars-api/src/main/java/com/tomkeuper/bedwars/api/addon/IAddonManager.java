@@ -5,9 +5,19 @@ import java.util.List;
 
 public interface IAddonManager {
     /**
-     * Get the loaded and unloaded addons
+     * Get the registered addons
      */
     List<Addon> getAddons();
+
+    /**
+     * Get the loaded addons
+     */
+    List<Addon> getLoadedAddons();
+
+    /**
+     * Get the unloaded addons
+     */
+    List<Addon> getUnloadedAddons();
 
     /**
      * Get the addons made by a specific author
@@ -31,4 +41,11 @@ public interface IAddonManager {
      * Unload every addon
      */
     void unloadAddons();
+
+    /**
+     * Load every addon
+     */
+    void loadAddons();
+
+    void registerAddon(Addon addon);
 }

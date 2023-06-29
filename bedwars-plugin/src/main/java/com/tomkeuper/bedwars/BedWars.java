@@ -141,7 +141,7 @@ public class BedWars extends JavaPlugin {
     private static boolean shuttingDown = false;
 
     public static ArenaManager arenaManager = new ArenaManager();
-    public static IAddonManager addonsManager = new AddonManager();
+    public static IAddonManager addonManager = new AddonManager();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -569,7 +569,7 @@ public class BedWars extends JavaPlugin {
 
         // Initialize the addons
         Bukkit.getScheduler().runTaskLater(this, () -> {
-            (new AddonManager()).registerAddons();
+            addonManager.loadAddons();
         }, 60L);
     }
 
@@ -589,6 +589,7 @@ public class BedWars extends JavaPlugin {
 
     public void onDisable() {
         shuttingDown = true;
+        addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
             ArenaSocket.disable();
