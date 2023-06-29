@@ -162,7 +162,7 @@ public class FireballListener implements Listener {
             return;
         }
         Player player = (Player) e.getEntity();
-        if (Arena.isInArena(player)) {
+        if (!Arena.isInArena(player)) {
             return;
         }
         e.setCancelled(true);
