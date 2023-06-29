@@ -55,9 +55,11 @@ public class BoardManager implements IScoreboardService {
     public void registerLoadEvent(){
         TabAPI.getInstance().getEventBus().register(PlayerLoadEvent.class,
                 event -> {
-                    IArena arena = Arena.getArenaByPlayer((Player) event.getPlayer().getPlayer());
                     if (BedWars.getServerType() == ServerType.SHARED && !((Player) event.getPlayer().getPlayer()).getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) return;
-                    BoardManager.getInstance().giveTabFeatures((Player) event.getPlayer().getPlayer(), arena, false);
+                    Bukkit.getScheduler().runTaskLater(BedWars.plugin,() -> {
+                        IArena arena = Arena.getArenaByPlayer((Player) event.getPlayer().getPlayer());
+                        BoardManager.getInstance().giveTabFeatures((Player) event.getPlayer().getPlayer(), arena, false);
+                    },5); //Give time for player to be put in arena player list.
                 });
     }
 
