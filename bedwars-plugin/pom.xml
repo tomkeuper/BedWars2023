@@ -204,6 +204,11 @@
         </dependency>
         <dependency>
             <groupId>com.tomkeuper.bedwars</groupId>
+            <artifactId>versionsupport_v1_20_r1</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tomkeuper.bedwars</groupId>
             <artifactId>versionsupport-common</artifactId>
             <version>${project.parent.version}</version>
         </dependency>

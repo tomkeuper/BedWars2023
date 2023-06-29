@@ -338,21 +338,22 @@ public class v1_20_R1 extends VersionSupport {
         try {
             var protection = 300f;
             // blast resistance
-            Field field = BlockBase.class.getDeclaredField("aH");
+            Field field = BlockBase.class.getDeclaredField("aF");
             field.setAccessible(true);
             // end stone
-            field.set(Blocks.fj, protection);
+            field.set(Blocks.fz, protection);
             // obsidian
-            field.set(Blocks.ce, protection);
+            field.set(Blocks.co, protection);
             // standard glass
-            field.set(Blocks.aH, protection);
+            field.set(Blocks.aQ, protection);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
-                    Blocks.dU, Blocks.dV, Blocks.dW, Blocks.dX,
-                    Blocks.dY, Blocks.dZ, Blocks.dZ, Blocks.ea,
-                    Blocks.eb, Blocks.ec, Blocks.ed, Blocks.ee,
-                    Blocks.ef, Blocks.eg, Blocks.eh, Blocks.ei,
-                    Blocks.ej,
+                    Blocks.ej, Blocks.ek, Blocks.el, Blocks.em,
+                    Blocks.en, Blocks.eo, Blocks.ep, Blocks.eq,
+                    Blocks.er, Blocks.es, Blocks.et, Blocks.eu,
+                    Blocks.ev, Blocks.ew, Blocks.ex, Blocks.ey,
+
+                    Blocks.qB,
             };
 
             Arrays.stream(coloredGlass).forEach(
