@@ -19,9 +19,14 @@ public abstract class Addon {
     public abstract String getVersion();
 
     /**
+     * Get the name of an addon
+     */
+    public abstract String getName();
+
+    /**
      * Get the identifier of an addon
      */
-    public abstract String getIdentifier();
+    public abstract String getDescription();
 
     /**
      * Load everything from the addon

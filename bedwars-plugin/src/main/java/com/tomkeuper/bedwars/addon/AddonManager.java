@@ -64,7 +64,7 @@ public class AddonManager implements IAddonManager {
         if (loadedAddons.isEmpty()) return;
         log("Unloading addons...");
         for (Addon addon : loadedAddons) {
-            log("Unloading " + addon.getIdentifier() + " by " + addon.getAuthor());
+            log("Unloading " + addon.getName() + " by " + addon.getAuthor());
             addon.unload();
             Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
             log("Addon unloaded successfully!");
@@ -84,10 +84,10 @@ public class AddonManager implements IAddonManager {
         log("Loading " + registeredAddons.size() + " " + count);
         for (Addon addon : registeredAddons) {
             if (loadedAddons.contains(addon)) continue;
-            log("Loading " + addon.getIdentifier() + " by " + addon.getAuthor()+". " + "Version " + addon.getVersion());
+            log("Loading " + addon.getName() + " by " + addon.getAuthor()+". " + "Version " + addon.getVersion());
             loadedAddons.add(addon);
             addon.load();
-            log(addon.getIdentifier() + " addon loaded and registered successfully!");
+            log(addon.getName() + " addon loaded and registered successfully!");
         }
     }
 
