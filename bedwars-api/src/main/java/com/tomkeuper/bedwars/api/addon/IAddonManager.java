@@ -46,4 +46,6 @@ public interface IAddonManager {
      * Load every addon
      */
     void loadAddons();
+
+    void registerAddon(Addon addon);
 }

@@ -33,13 +33,4 @@ public abstract class Addon {
      * Unload everything from the addon
      */
     public abstract void unload();
-
-    /**
-     * Register the addon
-     */
-    public void register() {
-        AddonStorer as = new AddonStorer();
-        if (as.registeredAddons().contains(this)) return;
-        as.registeredAddons().add(this);
-    }
 }

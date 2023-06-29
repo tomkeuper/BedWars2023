@@ -2,20 +2,19 @@ package com.tomkeuper.bedwars.addon;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.addon.Addon;
-import com.tomkeuper.bedwars.api.addon.AddonStorer;
 import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import org.bukkit.Bukkit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AddonManager extends AddonStorer implements IAddonManager {
+public class AddonManager implements IAddonManager {
     private static List<Addon> registeredAddons;
     private static List<Addon> unloadedAddons;
     private static List<Addon> loadedAddons;
 
     public AddonManager() {
-        registeredAddons = registeredAddons();
+        if (registeredAddons == null) registeredAddons = new ArrayList<>();
         if (unloadedAddons == null) unloadedAddons = new ArrayList<>();
         if (loadedAddons == null) loadedAddons = new ArrayList<>();
     }
@@ -90,6 +89,13 @@ public class AddonManager extends AddonStorer implements IAddonManager {
             addon.load();
             log(addon.getIdentifier() + " addon loaded and registered successfully!");
         }
+    }
+
+    @Override
+    public void registerAddon(Addon addon){
+        if (addon == null) return;
+        if (registeredAddons.contains(addon)) return;
+        registeredAddons.add(addon);
     }
 
     private void log(String log) {
