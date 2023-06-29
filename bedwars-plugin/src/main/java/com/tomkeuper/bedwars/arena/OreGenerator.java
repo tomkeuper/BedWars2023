@@ -36,7 +36,6 @@ import com.tomkeuper.bedwars.api.region.Cuboid;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,7 +43,6 @@ import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -52,7 +50,9 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 public class OreGenerator implements IGenerator {
 
     private Location location;
-    private int upgradeStage = 1, spawnLimit = 0, amount = 1, speedMultiplier = 4;
+    private double upgradeStage = 1.0;
+    private int spawnLimit = 0, amount = 1;
+    final int speedMultiplier = 4;
     private double delay = 1, lastSpawn;
     private IArena arena;
     private ItemStack ore;
@@ -182,8 +182,8 @@ public class OreGenerator implements IGenerator {
         }
     }
 
-    private void dropItem(Location location, int amount) {
-        for (int temp = amount; temp > 0; temp--) {
+    private void dropItem(Location location, double amount) {
+        for (double temp = amount; temp > 0; temp--) {
             ItemStack itemStack = new ItemStack(ore);
             if (!stack) {
                 ItemMeta itemMeta = itemStack.getItemMeta();

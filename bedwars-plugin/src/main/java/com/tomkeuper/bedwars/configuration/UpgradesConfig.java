@@ -83,23 +83,23 @@ public class UpgradesConfig extends ConfigManager {
             yml.addDefault("upgrade-forge.tier-1.currency", "diamond");
             yml.addDefault("upgrade-forge.tier-1.cost", 2);
             addDefaultDisplayItem("upgrade-forge.tier-1", "FURNACE", 0, 1, false);
-            yml.addDefault("upgrade-forge.tier-1.receive", Arrays.asList("generator-edit: iron,2,2,41", "generator-edit: gold,3,1,14"));
+            yml.addDefault("upgrade-forge.tier-1.receive", Arrays.asList("generator-edit: iron,2.0,2,41", "generator-edit: gold,3.0,1,14"));
 
             yml.addDefault("upgrade-forge.tier-2.currency", "diamond");
             yml.addDefault("upgrade-forge.tier-2.cost", 4);
             addDefaultDisplayItem("upgrade-forge.tier-2", "FURNACE", 0, 2, false);
-            yml.addDefault("upgrade-forge.tier-2.receive", Arrays.asList("generator-edit: iron,1,2,48", "generator-edit: gold,3,2,21"));
+            yml.addDefault("upgrade-forge.tier-2.receive", Arrays.asList("generator-edit: iron,1.0,2,48", "generator-edit: gold,3.0,2,21"));
 
             yml.addDefault("upgrade-forge.tier-3.currency", "diamond");
             yml.addDefault("upgrade-forge.tier-3.cost", 6);
             addDefaultDisplayItem("upgrade-forge.tier-3", "FURNACE", 0, 3, false);
-            yml.addDefault("upgrade-forge.tier-3.receive", Arrays.asList("generator-edit: iron,1,2,64", "generator-edit: gold,3,2,29",
+            yml.addDefault("upgrade-forge.tier-3.receive", Arrays.asList("generator-edit: iron,1.0,2,64", "generator-edit: gold,3.0,2,29",
                     "generator-edit: emerald,10,1,10"));
 
             yml.addDefault("upgrade-forge.tier-4.currency", "diamond");
             yml.addDefault("upgrade-forge.tier-4.cost", 8);
             addDefaultDisplayItem("upgrade-forge.tier-4", "FURNACE", 0, 4, false);
-            yml.addDefault("upgrade-forge.tier-4.receive", Arrays.asList("generator-edit: iron,1,4,120", "generator-edit: gold,2,4,80",
+            yml.addDefault("upgrade-forge.tier-4.receive", Arrays.asList("generator-edit: iron,1.0,4,120", "generator-edit: gold,2.0,4,80",
                     "generator-edit: emerald,10,2,20"));
 
             yml.addDefault("upgrade-heal-pool.tier-1.currency", "diamond");
