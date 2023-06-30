@@ -94,13 +94,13 @@ public class UpgradesConfig extends ConfigManager {
             yml.addDefault("upgrade-forge.tier-3.cost", 6);
             addDefaultDisplayItem("upgrade-forge.tier-3", "FURNACE", 0, 3, false);
             yml.addDefault("upgrade-forge.tier-3.receive", Arrays.asList("generator-edit: iron,1.0,2,64", "generator-edit: gold,3.0,2,29",
-                    "generator-edit: emerald,10,1,10"));
+                    "generator-edit: emerald,10.0,1,10"));
 
             yml.addDefault("upgrade-forge.tier-4.currency", "diamond");
             yml.addDefault("upgrade-forge.tier-4.cost", 8);
             addDefaultDisplayItem("upgrade-forge.tier-4", "FURNACE", 0, 4, false);
             yml.addDefault("upgrade-forge.tier-4.receive", Arrays.asList("generator-edit: iron,1.0,4,120", "generator-edit: gold,2.0,4,80",
-                    "generator-edit: emerald,10,2,20"));
+                    "generator-edit: emerald,10.0,2,20"));
 
             yml.addDefault("upgrade-heal-pool.tier-1.currency", "diamond");
             yml.addDefault("upgrade-heal-pool.tier-1.cost", 1);
