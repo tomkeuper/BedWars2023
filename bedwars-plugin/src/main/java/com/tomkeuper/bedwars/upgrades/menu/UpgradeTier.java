@@ -149,9 +149,10 @@ public class UpgradeTier {
                     if (genType == null) {
                         BedWars.plugin.getLogger().warning("Invalid generator type " + data[0] + " at upgrades2: " + parentName + "." + name);
                     }
-                    int spawn, amount, limit;
+                    double spawn;
+                    int amount, limit;
                     try {
-                        spawn = Integer.parseInt(data[1]);
+                        spawn = Double.parseDouble(data[1]);
                         amount = Integer.parseInt(data[2]);
                         limit = Integer.parseInt(data[3]);
                     } catch (Exception ex) {

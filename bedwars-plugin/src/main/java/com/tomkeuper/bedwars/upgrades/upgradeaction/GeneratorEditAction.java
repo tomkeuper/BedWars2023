@@ -37,11 +37,11 @@ import java.util.stream.Collectors;
 public class GeneratorEditAction implements UpgradeAction {
 
     private final int amount;
-    private final int delay;
+    private final double delay;
     private final int limit;
     private final ApplyType type;
 
-    public GeneratorEditAction(ApplyType type, int amount, int delay, int limit) {
+    public GeneratorEditAction(ApplyType type, int amount, double delay, int limit) {
         this.type = type;
         this.amount = amount;
         this.delay = delay;
