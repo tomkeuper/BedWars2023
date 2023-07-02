@@ -84,10 +84,27 @@ public class AddonManager implements IAddonManager {
         log("Loading " + registeredAddons.size() + " " + count);
         for (Addon addon : registeredAddons) {
             if (loadedAddons.contains(addon)) continue;
-            log("Loading " + addon.getName() + " by " + addon.getAuthor()+". " + "Version " + addon.getVersion());
+            String name, author, version;
+            try{
+                name = addon.getName();
+            } catch (AbstractMethodError ignored){
+                name = "null";
+            }
+            try{
+                author = addon.getAuthor();
+            } catch (AbstractMethodError ignored){
+                author = "null";
+            }
+            try{
+                version = addon.getVersion();
+            } catch (AbstractMethodError ignored){
+                version = "null";
+            }
+
+            log("Loading " + name + " by " + author +". " + "Version " + version);
             loadedAddons.add(addon);
             addon.load();
-            log(addon.getName() + " addon loaded and registered successfully!");
+            log(name + " addon loaded and registered successfully!");
         }
     }
 
