@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.database;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
@@ -56,15 +57,15 @@ public class MySQL implements IDatabase {
      * Create new MySQL connection.
      */
     public MySQL() {
-        this.host = config.getYml().getString("database.host");
-        this.database = config.getYml().getString("database.database");
-        this.user = config.getYml().getString("database.user");
-        this.pass = config.getYml().getString("database.pass");
-        this.port = config.getYml().getInt("database.port");
-        this.ssl = config.getYml().getBoolean("database.ssl");
-        this.certificateVerification = config.getYml().getBoolean("database.verify-certificate", true);
-        this.poolSize = config.getYml().getInt("database.pool-size", 10);
-        this.maxLifetime = config.getYml().getInt("database.max-lifetime", 1800);
+        this.host = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_HOST);
+        this.database = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_DATABASE);
+        this.user = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_USER);
+        this.pass = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_PASS);
+        this.port = config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_DATABASE_PORT);
+        this.ssl = config.getYml().getBoolean(ConfigPath.GENERAL_CONFIGURATION_DATABASE_SSL);
+        this.certificateVerification = config.getYml().getBoolean(ConfigPath.GENERAL_CONFIGURATION_DATABASE_VERIFY_CERT);
+        this.poolSize = config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_DATABASE_POOL_SIZE);
+        this.maxLifetime = config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_DATABASE_MAX_LIFETIME);
     }
 
     /**

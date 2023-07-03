@@ -35,13 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class SQLite implements IDatabase {
+public class H2 implements IDatabase {
 
     private String url;
 
     private Connection connection;
 
-    public SQLite() {
+    public H2() {
         File folder = new File(BedWars.plugin.getDataFolder() + "/Cache");
         if (!folder.exists()) {
             if (!folder.mkdir()) {
@@ -50,10 +50,6 @@ public class SQLite implements IDatabase {
         }
         File dataFolder = new File(folder.getPath() + "/player_data.db");
 
-        //TODO Remove check in V2.0
-        if (dataFolder.getPath().equals(folder.getPath() + "/shop.db")) {
-            dataFolder.renameTo(new File(folder.getPath() + "/player_data.db"));
-        }
         if (!dataFolder.exists()) {
             try {
                 if (!dataFolder.createNewFile()) {
@@ -64,13 +60,13 @@ public class SQLite implements IDatabase {
                 return;
             }
         }
-        this.url = "jdbc:sqlite:" + dataFolder;
+        this.url = "jdbc:h2:" + dataFolder;
         try {
-            Class.forName("org.sqlite.JDBC");
+            Class.forName("org.h2.Driver");
             DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
             if (e instanceof ClassNotFoundException) {
-                BedWars.plugin.getLogger().severe("Could not find SQLite Driver on your system!");
+                BedWars.plugin.getLogger().severe("Could Not Find H2 Driver on your system!");
             }
             e.printStackTrace();
         }
@@ -82,27 +78,27 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            sql = "CREATE TABLE IF NOT EXISTS global_stats (id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    "name VARCHAR(200), uuid VARCHAR(36), first_play TIMESTAMP NULL DEFAULT NULL, " +
-                    "last_play TIMESTAMP DEFAULT NULL, wins INTEGER(10), kills INTEGER(10), " +
-                    "final_kills INTEGER(10), looses INTEGER(10), deaths INTEGER(10), final_deaths INTEGER(10), beds_destroyed INTEGER(10), games_played INTEGER(10));";
+            sql = "CREATE TABLE IF NOT EXISTS GLOBAL_STATS (ID INTEGER PRIMARY KEY AUTO_INCREMENT, " +
+                    "NAME VARCHAR(200), UUID VARCHAR(36), FIRST_PLAY TIMESTAMP NULL DEFAULT NULL, " +
+                    "LAST_PLAY TIMESTAMP DEFAULT NULL, WINS INTEGER(10), KILLS INTEGER(10), " +
+                    "FINAL_KILLS INTEGER(10), LOSES INTEGER(10), DEATHS INTEGER(10), FINAL_DEATHS INTEGER(10), BEDS_DESTROYED INTEGER(10), GAMES_PLAYED INTEGER(10));";
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(sql);
             }
             try (Statement st = connection.createStatement()) {
-                sql = "CREATE TABLE IF NOT EXISTS quick_buy_2 (uuid VARCHAR(36) PRIMARY KEY, " +
-                        "slot_19 VARCHAR(200), slot_20 VARCHAR(200), slot_21 VARCHAR(200), slot_22 VARCHAR(200), slot_23 VARCHAR(200), slot_24 VARCHAR(200), slot_25 VARCHAR(200)," +
-                        "slot_28 VARCHAR(200), slot_29 VARCHAR(200), slot_30 VARCHAR(200), slot_31 VARCHAR(200), slot_32 VARCHAR(200), slot_33 VARCHAR(200), slot_34 VARCHAR(200)," +
-                        "slot_37 VARCHAR(200), slot_38 VARCHAR(200), slot_39 VARCHAR(200), slot_40 VARCHAR(200), slot_41 VARCHAR(200), slot_42 VARCHAR(200), slot_43 VARCHAR(200));";
+                sql = "CREATE TABLE IF NOT EXISTS QUICK_BUY (UUID VARCHAR(36) PRIMARY KEY, " +
+                        "SLOT_19 VARCHAR(200), SLOT_20 VARCHAR(200), SLOT_21 VARCHAR(200), SLOT_22 VARCHAR(200), SLOT_23 VARCHAR(200), SLOT_24 VARCHAR(200), SLOT_25 VARCHAR(200)," +
+                        "SLOT_28 VARCHAR(200), SLOT_29 VARCHAR(200), SLOT_30 VARCHAR(200), SLOT_31 VARCHAR(200), SLOT_32 VARCHAR(200), SLOT_33 VARCHAR(200), SLOT_34 VARCHAR(200)," +
+                        "SLOT_37 VARCHAR(200), SLOT_38 VARCHAR(200), SLOT_39 VARCHAR(200), SLOT_40 VARCHAR(200), SLOT_41 VARCHAR(200), SLOT_42 VARCHAR(200), SLOT_43 VARCHAR(200));";
                 st.executeUpdate(sql);
             }
             try (Statement st = connection.createStatement()) {
-                sql = "CREATE TABLE IF NOT EXISTS player_levels (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid VARCHAR(200), " +
-                        "level INTEGER, xp INTEGER, name VARCHAR(200), next_cost INTEGER);";
+                sql = "CREATE TABLE IF NOT EXISTS PLAYER_LEVELS (id INTEGER PRIMARY KEY AUTO_INCREMENT, UUID VARCHAR(200), " +
+                        "LEVEL INTEGER, XP INTEGER, NAME VARCHAR(200), NEXT_COST INTEGER);";
                 st.executeUpdate(sql);
             }
             try (Statement st = connection.createStatement()) {
-                sql = "CREATE TABLE IF NOT EXISTS  player_language (id INTEGER PRIMARY KEY AUTOINCREMENT, uuid VARCHAR(200), " +
+                sql = "CREATE TABLE IF NOT EXISTS PLAYER_LANGUAGE (id INTEGER PRIMARY KEY AUTO_INCREMENT, UUID VARCHAR(200), " +
                         "iso VARCHAR(200));";
                 st.executeUpdate(sql);
             }
@@ -113,7 +109,7 @@ public class SQLite implements IDatabase {
 
     @Override
     public boolean hasStats(UUID uuid) {
-        String sql = "SELECT uuid FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT UUID FROM GLOBAL_STATS WHERE UUID = ?;";
         try {
             checkConnection();
 
@@ -136,7 +132,7 @@ public class SQLite implements IDatabase {
             checkConnection();
 
             if (hasStats(stats.getUuid())) {
-                sql = "UPDATE global_stats SET last_play=?, wins=?, kills=?, final_kills=?, looses=?, deaths=?, final_deaths=?, beds_destroyed=?, games_played=?, name=? WHERE uuid = ?;";
+                sql = "UPDATE GLOBAL_STATS SET last_play=?, wins=?, kills=?, final_kills=?, looses=?, deaths=?, final_deaths=?, beds_destroyed=?, games_played=?, NAME=? WHERE UUID = ?;";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setTimestamp(1, Timestamp.from(stats.getLastPlay()));
                     statement.setInt(2, stats.getWins());
@@ -152,7 +148,7 @@ public class SQLite implements IDatabase {
                     statement.executeUpdate();
                 }
             } else {
-                sql = "INSERT INTO global_stats (name, uuid, first_play, last_play, wins, kills, final_kills, looses, deaths, final_deaths, beds_destroyed, games_played) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                sql = "INSERT INTO GLOBAL_STATS (Name, UUID, first_play, last_play, wins, kills, final_kills, looses, deaths, final_deaths, beds_destroyed, games_played) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setString(1, stats.getName());
                     statement.setString(2, stats.getUuid().toString());
@@ -177,7 +173,7 @@ public class SQLite implements IDatabase {
     @Override
     public IPlayerStats fetchStats(UUID uuid) {
         IPlayerStats stats = new PlayerStats(uuid);
-        String sql = "SELECT * FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT * FROM GLOBAL_STATS WHERE UUID = ?;";
         try {
             checkConnection();
 
@@ -212,14 +208,14 @@ public class SQLite implements IDatabase {
             checkConnection();
 
             if (hasStats(player)) {
-                sql = "UPDATE global_stats SET "+columnName+"=? WHERE uuid = ?;";
+                sql = "UPDATE GLOBAL_STATS SET "+columnName+"=? WHERE UUID = ?;";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setObject(1, value);
                     statement.setString(2, player.toString());
                     statement.executeUpdate();
                 }
             } else {
-                sql = "INSERT INTO global_stats (uuid, "+columnName+") VALUES (?, ?);";
+                sql = "INSERT INTO GLOBAL_STATS (UUID, "+columnName+") VALUES (?, ?);";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setString(1, player.toString());
                     statement.setObject(2, value);
@@ -232,24 +228,20 @@ public class SQLite implements IDatabase {
     }
 
     public void checkCustomColumnExists(String columnName, String dataType){
-        String sql = "PRAGMA table_info(global_stats)";
+        BedWars.debug("checkCustomColumnExists(String columnName, String dataType)");
+        String sql = "SHOW COLUMNS FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?;";
         try {
             checkConnection();
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                ResultSet resultSet = statement.executeQuery();
-                boolean columnExists = false;
-                while (resultSet.next()) {
-                    String existingColumnName = resultSet.getString("name");
-                    if (existingColumnName.equalsIgnoreCase(columnName)) {
-                        columnExists = true;
-                        break;
-                    }
-                }
-                if (!columnExists){
-                    sql = "ALTER TABLE global_stats ADD COLUMN " +columnName+ " " + dataType;
-                    try (PreparedStatement statement1 = connection.prepareStatement(sql)) {
-                        statement1.executeUpdate();
+                statement.setString(1, columnName);
+                try (ResultSet result = statement.executeQuery()){
+                    if (!result.next()){
+                        BedWars.debug("Creating column: " + columnName);
+                        sql = "ALTER TABLE GLOBAL_STATS ADD COLUMN " +columnName+ " " + dataType;
+                        try (PreparedStatement statement1 = connection.prepareStatement(sql)){
+                            statement1.executeUpdate();
+                        }
                     }
                 }
             }
@@ -260,7 +252,7 @@ public class SQLite implements IDatabase {
 
     @Override
     public Object getCustomStat(String columnName, UUID player) {
-        String sql = "SELECT "+columnName+" FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT " + columnName + " FROM GLOBAL_STATS WHERE UUID = ?;";
         try {
             checkConnection();
 
@@ -284,11 +276,11 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement ps = connection.prepareStatement("SELECT slot_" + slot + " FROM quick_buy_2 WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT SLOT_" + slot + " FROM QUICK_BUY WHERE UUID = ?;")) {
                 ps.setString(1, p.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        result = rs.getString("slot_" + slot);
+                        result = rs.getString("SLOT_" + slot);
                     }
                 }
             }
@@ -304,7 +296,7 @@ public class SQLite implements IDatabase {
             checkConnection();
 
             try (Statement statement = connection.createStatement()) {
-                try (ResultSet rs = statement.executeQuery("SELECT uuid FROM quick_buy_2 WHERE uuid = '" + uuid.toString() + "';")) {
+                try (ResultSet rs = statement.executeQuery("SELECT UUID FROM QUICK_BUY WHERE UUID = '" + uuid.toString() + "';")) {
                     if (rs.next()) {
                         rs.close();
                         return true;
@@ -319,7 +311,7 @@ public class SQLite implements IDatabase {
 
     @Override
     public int getColumn(UUID player, String column) {
-        String sql = "SELECT ? FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT ? FROM GLOBAL_STATS WHERE UUID = ?;";
         try {
             checkConnection();
 
@@ -346,14 +338,14 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement ps = connection.prepareStatement("SELECT level, xp, name, next_cost FROM player_levels WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT LEVEL, XP, NAME, NEXT_COST FROM PLAYER_LEVELS WHERE UUID = ?;")) {
                 ps.setString(1, player.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        r[0] = rs.getInt("level");
-                        r[1] = rs.getInt("xp");
-                        r[2] = rs.getString("name");
-                        r[3] = rs.getInt("next_cost");
+                        r[0] = rs.getInt("LEVEL");
+                        r[1] = rs.getInt("XP");
+                        r[2] = rs.getString("NAME");
+                        r[3] = rs.getInt("NEXT_COST");
                     }
                 }
             }
@@ -368,11 +360,11 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement pss = connection.prepareStatement("SELECT uuid from player_levels WHERE uuid = ?;")) {
+            try (PreparedStatement pss = connection.prepareStatement("SELECT UUID from PLAYER_LEVELS WHERE UUID = ?;")) {
                 pss.setString(1, player.toString());
                 try (ResultSet rs = pss.executeQuery()) {
                     if (!rs.next()) {
-                        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO player_levels (uuid, level, xp, name, next_cost) VALUES (?, ?, ?, ?, ?);")) {
+                        try (PreparedStatement ps = connection.prepareStatement("INSERT INTO PLAYER_LEVELS (UUID, LEVEL, XP, NAME, NEXT_COST) VALUES (?, ?, ?, ?, ?);")) {
                             //ps.setInt(1, 0);
                             ps.setString(1, player.toString());
                             ps.setInt(2, level);
@@ -382,7 +374,7 @@ public class SQLite implements IDatabase {
                             ps.executeUpdate();
                         }
                     } else {
-                        try (PreparedStatement ps = displayName == null ? connection.prepareStatement("UPDATE player_levels SET level=?, xp=? WHERE uuid = '" + player.toString() + "';") : connection.prepareStatement("UPDATE player_levels SET level=?, xp=?, name=?, next_cost=? WHERE uuid = '" + player.toString() + "';")) {
+                        try (PreparedStatement ps = displayName == null ? connection.prepareStatement("UPDATE PLAYER_LEVELS SET LEVEL=?, XP=? WHERE UUID = '" + player.toString() + "';") : connection.prepareStatement("UPDATE PLAYER_LEVELS SET LEVEL=?, XP=?, NAME=?, NEXT_COST=? WHERE UUID = '" + player.toString() + "';")) {
                             ps.setInt(1, level);
                             ps.setInt(2, xp);
                             if (displayName != null) {
@@ -405,13 +397,13 @@ public class SQLite implements IDatabase {
             checkConnection();
 
             try (Statement statement = connection.createStatement()) {
-                try (ResultSet rs = statement.executeQuery("SELECT iso FROM player_language WHERE uuid = '" + player.toString() + "';")) {
+                try (ResultSet rs = statement.executeQuery("SELECT iso FROM PLAYER_LANGUAGE WHERE UUID = '" + player.toString() + "';")) {
                     if (rs.next()) {
                         try (Statement st = connection.createStatement()) {
-                            st.executeUpdate("UPDATE player_language SET iso='" + iso + "' WHERE uuid = '" + player.toString() + "';");
+                            st.executeUpdate("UPDATE PLAYER_LANGUAGE SET iso='" + iso + "' WHERE UUID = '" + player.toString() + "';");
                         }
                     } else {
-                        try (PreparedStatement st = connection.prepareStatement("INSERT INTO player_language (uuid, iso) VALUES (?, ?);")) {
+                        try (PreparedStatement st = connection.prepareStatement("INSERT INTO PLAYER_LANGUAGE (UUID, iso) VALUES (?, ?);")) {
                             st.setString(1, player.toString());
                             st.setString(2, iso);
                             st.execute();
@@ -430,7 +422,7 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement ps = connection.prepareStatement("SELECT iso FROM player_language WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT iso FROM PLAYER_LANGUAGE WHERE UUID = ?;")) {
                 ps.setString(1, player.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -461,7 +453,7 @@ public class SQLite implements IDatabase {
         if (hasQuick) {
             for (Map.Entry<Integer, String> entry : updateSlots.entrySet()) {
                 i++;
-                columns.append("slot_").append(entry.getKey()).append("=?");
+                columns.append("SLOT_").append(entry.getKey()).append("=?");
                 if (i != updateSlots.size()) {
                     columns.append(", ");
                 }
@@ -469,7 +461,7 @@ public class SQLite implements IDatabase {
         } else {
             for (Map.Entry<Integer, String> entry : updateSlots.entrySet()) {
                 i++;
-                columns.append("slot_").append(entry.getKey());
+                columns.append("SLOT_").append(entry.getKey());
                 values.append("?");
                 if (i != updateSlots.size()) {
                     columns.append(", ");
@@ -477,7 +469,7 @@ public class SQLite implements IDatabase {
                 }
             }
         }
-        String sql = hasQuick ? "UPDATE quick_buy_2 SET " + columns + " WHERE uuid=?;" : "INSERT INTO quick_buy_2 (uuid," + columns + ") VALUES (?," + values + ");";
+        String sql = hasQuick ? "UPDATE QUICK_BUY SET " + columns + " WHERE UUID=?;" : "INSERT INTO QUICK_BUY (UUID," + columns + ") VALUES (?," + values + ");";
         try {
             checkConnection();
 
@@ -505,12 +497,12 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM quick_buy_2 WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM QUICK_BUY WHERE UUID = ?;")) {
                 ps.setString(1, uuid.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
                         for (int i : slot) {
-                            String id = rs.getString("slot_" + i);
+                            String id = rs.getString("SLOT_" + i);
                             if (null != id && !id.isEmpty()) {
                                 results.put(i, id);
                             }
@@ -530,8 +522,8 @@ public class SQLite implements IDatabase {
         if (this.connection == null)
             renew = true;
         else
-            if (this.connection.isClosed())
-                renew = true;
+        if (this.connection.isClosed())
+            renew = true;
 
         if (renew)
             this.connection = DriverManager.getConnection(url);
