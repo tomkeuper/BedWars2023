@@ -51,6 +51,7 @@ import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
 import com.tomkeuper.bedwars.api.database.IDatabase;
+import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
 import com.tomkeuper.bedwars.language.*;
@@ -379,7 +380,7 @@ public class BedWars extends JavaPlugin {
         nms.registerEntities();
 
         /* Database support */
-        if (config.getBoolean("database.enable")) {
+        if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("mysql")) {
             MySQL mySQL = new MySQL();
             long time = System.currentTimeMillis();
             if (!mySQL.connect()) {
@@ -393,8 +394,11 @@ public class BedWars extends JavaPlugin {
                         "Using this remote connection is not recommended!");
             }
             remoteDatabase.init();
-        } else {
+        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("sqlite")){
             remoteDatabase = new SQLite();
+            remoteDatabase.init();
+        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("h2")){
+            remoteDatabase = new H2();
             remoteDatabase.init();
         }
 
