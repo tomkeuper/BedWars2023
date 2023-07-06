@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
-import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class BoardManager implements IScoreboardService {
@@ -38,7 +37,6 @@ public class BoardManager implements IScoreboardService {
     private final HashMap<TabPlayer, Integer> tabPlayersPrefix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersSuffix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersTitle = new HashMap<>();
-
 
     public static boolean init(){
         if (TabAPI.getInstance().getScoreboardManager() == null) return false;
@@ -70,6 +68,7 @@ public class BoardManager implements IScoreboardService {
             scoreboardManager.createScoreboard("bw_lobby_" + language.getIso(),"%bw_scoreboard_title%", lines.subList(1, lines.size()));
         }
     }
+
     public void registerArenaScoreboards(Arena arena){
         //Technically it's possible to have per arena scoreboards. Future feature?
         for (Language language: Language.getLanguages()){
@@ -235,6 +234,7 @@ public class BoardManager implements IScoreboardService {
                 }
             }
 
+            assert lines != null;
             titleLine = lines.get(0);
             String[] titleArray = titleLine.split(",");
 
@@ -261,7 +261,6 @@ public class BoardManager implements IScoreboardService {
             return null ==  line? "" : line;
         });
     }
-
 
     public static BoardManager getInstance() {
         return instance;
@@ -446,7 +445,7 @@ public class BoardManager implements IScoreboardService {
 
     @NotNull
     private String getNextEventTime(Arena arena, Player player) {
-        if (!(arena instanceof Arena)) return getNextEventDateFormat(player).format((0L));
+        if (arena == null) return getNextEventDateFormat(player).format((0L));
         long time = 0L;
         PlayingTask playingTask = arena.getPlayingTask();
         switch (arena.getNextEvent()) {
