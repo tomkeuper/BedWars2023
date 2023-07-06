@@ -907,8 +907,6 @@ public class Arena implements IArena {
         }
         for (Player on : getSpectators()) {
             on.sendMessage(getMsg(on, Messages.COMMAND_LEAVE_MSG).replace("%bw_v_prefix%", getChatSupport().getPrefix(p)).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
-            Bukkit.getLogger().info("BAS LOG :"+getChatSupport().getPrefix(p));
-            Bukkit.getLogger().info("BAS LOG :"+getChatSupport().getSuffix(p));
         }
 
         if (getServerType() == ServerType.SHARED) {

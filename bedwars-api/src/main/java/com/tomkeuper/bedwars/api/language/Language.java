@@ -32,7 +32,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public class Language extends ConfigManager {
 
