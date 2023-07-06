@@ -102,12 +102,12 @@ public class PartyCommand extends BukkitCommand {
                     if (BedWars.getParty().hasParty(Bukkit.getPlayer(args[1]))) {
                         BedWars.getParty().addMember(Bukkit.getPlayer(args[1]), p);
                         for (Player on : BedWars.getParty().getMembers(Bukkit.getPlayer(args[1]))) {
-                            on.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
+                            on.sendMessage(getMsg(on, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
                         }
                     } else {
                         BedWars.getParty().createParty(Bukkit.getPlayer(args[1]), p);
                         for (Player on : BedWars.getParty().getMembers(Bukkit.getPlayer(args[1]))) {
-                            on.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
+                            on.sendMessage(getMsg(on, Messages.COMMAND_PARTY_ACCEPT_SUCCESS).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
                         }
                     }
                 } else {
