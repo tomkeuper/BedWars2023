@@ -59,6 +59,7 @@ import org.bukkit.util.Vector;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import static com.tomkeuper.bedwars.BedWars.getChatSupport;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class DamageDeathMove implements Listener {

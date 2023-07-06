@@ -518,8 +518,7 @@ public class Arena implements IArena {
             p.setAllowFlight(false);
             p.setHealth(20);
             for (Player on : players) {
-                on.sendMessage(
-                        getMsg(p, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
+                on.sendMessage(getMsg(on, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                             .replace("%bw_playername%", p.getName())
@@ -898,8 +897,7 @@ public class Arena implements IArena {
             }
         }
         for (Player on : getPlayers()) {
-            on.sendMessage(
-                    getMsg(p, Messages.COMMAND_LEAVE_MSG)
+            on.sendMessage(getMsg(on, Messages.COMMAND_LEAVE_MSG)
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                             .replace("%bw_playername%", p.getName())
@@ -908,7 +906,9 @@ public class Arena implements IArena {
             );
         }
         for (Player on : getSpectators()) {
-            on.sendMessage(getMsg(p, Messages.COMMAND_LEAVE_MSG).replace("%bw_v_prefix%", getChatSupport().getPrefix(p)).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
+            on.sendMessage(getMsg(on, Messages.COMMAND_LEAVE_MSG).replace("%bw_v_prefix%", getChatSupport().getPrefix(p)).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
+            Bukkit.getLogger().info("BAS LOG :"+getChatSupport().getPrefix(p));
+            Bukkit.getLogger().info("BAS LOG :"+getChatSupport().getSuffix(p));
         }
 
         if (getServerType() == ServerType.SHARED) {
