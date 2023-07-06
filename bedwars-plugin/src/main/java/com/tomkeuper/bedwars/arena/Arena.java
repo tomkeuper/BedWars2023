@@ -2652,15 +2652,13 @@ public class Arena implements IArena {
                 Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
                     player.setAllowFlight(true);
                     player.setFlying(true);
+                    player.setFireTicks(0);
 
                     nms.setCollide(player, this, false);
-                    // #274
                     for (Player invisible : getShowTime().keySet()) {
                         BedWars.nms.hideArmor(invisible, player);
                     }
-
-                    PaperSupport.teleportC(player, getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                }, 10L);
+                }, 5L);
             } else {
                 ITeam team = getTeam(player);
                 team.respawnMember(player);

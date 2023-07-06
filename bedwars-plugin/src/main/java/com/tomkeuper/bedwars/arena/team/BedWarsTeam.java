@@ -353,6 +353,7 @@ public class BedWarsTeam implements ITeam {
         p.setAllowFlight(false);
         p.setFlying(false);
         p.setHealth(20);
+        p.setFireTicks(0);
 
         Bukkit.getScheduler().runTaskLater(plugin, ()-> {
             getArena().getRespawnSessions().remove(p); //Fixes https://github.com/andrei1058/BedWars1058/issues/669
