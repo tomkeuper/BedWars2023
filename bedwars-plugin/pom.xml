@@ -229,6 +229,7 @@
             <artifactId>vipfeatures-api</artifactId>
             <version>[1.0,)</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
