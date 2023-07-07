@@ -229,6 +229,7 @@
             <artifactId>vipfeatures-api</artifactId>
             <version>[1.0,)</version>
             <optional>true</optional>
+            <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
@@ -257,7 +258,13 @@
             <version>2.0.6</version>
             <optional>true</optional>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.220</version>
+            <optional>true</optional>
+        </dependency>
         <!-- TAB -->
         <dependency>
             <groupId>me.neznamy</groupId>
@@ -297,6 +304,10 @@
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
                             <shadedPattern>com.tomkeuper.bedwars.libs.hikari</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.h2</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.h2</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>
