@@ -62,7 +62,7 @@ public class H2 implements IDatabase {
         }
         this.url = "jdbc:h2:" + dataFolder;
         try {
-            Class.forName("org.h2.Driver");
+            Class.forName("com.tomkeuper.bedwars.libs.h2");
             DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
             if (e instanceof ClassNotFoundException) {
