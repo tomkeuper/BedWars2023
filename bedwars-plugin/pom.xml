@@ -229,7 +229,6 @@
             <artifactId>vipfeatures-api</artifactId>
             <version>[1.0,)</version>
             <optional>true</optional>
-            <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
@@ -324,6 +323,10 @@
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
                             <shadedPattern>com.tomkeuper.bedwars.libs.paper</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.andrei1058.vipfeatures.api</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.vipfeatures</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
