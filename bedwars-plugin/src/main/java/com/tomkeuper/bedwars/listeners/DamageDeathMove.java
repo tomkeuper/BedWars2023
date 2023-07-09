@@ -467,7 +467,9 @@ public class DamageDeathMove implements Listener {
             }
 
             // send respawn packet
-            Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> victim.spigot().respawn(), 3L);
+            victim.spigot().respawn();
+            // TODO Investigate if this actually requires a run task later
+//            Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> victim.spigot().respawn(), 3L);
             a.addPlayerDeath(victim);
 
             // reset last damager
@@ -604,6 +606,7 @@ public class DamageDeathMove implements Listener {
             } else {
                 if (a.getStatus() == GameState.playing) {
                     if (e.getPlayer().getLocation().getBlockY() <= a.getYKillHeight()) {
+                        e.getPlayer().getInventory().clear(); //Fix issue #149
                         BedWars.nms.voidKill(e.getPlayer());
                     }
                     for (ITeam t : a.getTeams()) {

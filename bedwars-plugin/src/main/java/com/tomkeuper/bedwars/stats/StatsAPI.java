@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.stats;
 
 import com.tomkeuper.bedwars.api.BedWars;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -40,8 +41,8 @@ public class StatsAPI implements BedWars.IStats {
     private StatsAPI() {
     }
 
-    private PlayerStats getData(UUID uuid) {
-        PlayerStats stats = com.tomkeuper.bedwars.BedWars.getStatsManager().getUnsafe(uuid);
+    private IPlayerStats getData(UUID uuid) {
+        IPlayerStats stats = com.tomkeuper.bedwars.BedWars.getStatsManager().getUnsafe(uuid);
         if (stats == null) {
             stats = com.tomkeuper.bedwars.BedWars.getRemoteDatabase().fetchStats(uuid);
         }

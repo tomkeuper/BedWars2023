@@ -10,7 +10,7 @@ import com.tomkeuper.bedwars.api.events.upgrades.UpgradeBuyEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class HealPoolListner implements Listener {
+public class HealPoolListener implements Listener {
     @EventHandler
     public void onTeamUpgrade(UpgradeBuyEvent e){
         if (e.getTeamUpgrade().getName().contains("heal-pool")){

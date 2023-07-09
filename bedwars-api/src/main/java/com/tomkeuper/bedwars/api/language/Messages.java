@@ -209,6 +209,7 @@ public class Messages {
     public static String FORMATTING_SCOREBOARD_NEXEVENT_TIMER = "format-sb-generator-timer";
     public static String FORMATTING_SCOREBOARD_YOUR_TEAM = "format-sb-you";
     public static String FORMATTING_ACTION_BAR_TRACKING = "format-action-tracking";
+    public static String FORMATTING_BOSSBAR_DRAGON = "format-dragon-bossbar";
     public static String FORMATTING_TEAM_WINNER_FORMAT = "format-winner-team";
     public static String FORMATTING_SOLO_WINNER_FORMAT = "format-winner-solo";
     public static String FORMATTING_EACH_WINNER = "format-each-winner";

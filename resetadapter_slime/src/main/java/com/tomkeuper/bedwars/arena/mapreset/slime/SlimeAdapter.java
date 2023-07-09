@@ -434,4 +434,9 @@ public class SlimeAdapter extends RestoreAdapter {
             }
         }
     }
+
+    @Override
+    public String getDisplayName() {
+        return "Slime World Manager by Grinderwolf";
+    }
 }

@@ -21,9 +21,14 @@
 package com.tomkeuper.bedwars.shop.quickbuy;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
@@ -41,9 +46,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PlayerQuickBuyCache {
+public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
 
-    private final List<QuickBuyElement> elements = new ArrayList<>();
+    private static PlayerQuickBuyCache instance;
+    private final List<IQuickBuyElement> elements = new ArrayList<>();
     private String emptyItemNamePath, emptyItemLorePath;
     private ItemStack emptyItem;
     private UUID player;
@@ -53,6 +59,10 @@ public class PlayerQuickBuyCache {
     private static final ConcurrentHashMap<UUID, PlayerQuickBuyCache> quickBuyCaches = new ConcurrentHashMap<>();
     private final HashMap<Integer, String> updateSlots = new HashMap<>();
 
+    public PlayerQuickBuyCache(){
+        instance = this;
+    }
+
     public PlayerQuickBuyCache(Player player) {
         if (player == null) return;
         this.player = player.getUniqueId();
@@ -60,7 +70,7 @@ public class PlayerQuickBuyCache {
                 BedWars.shop.getYml().getInt(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_AMOUNT),
                 (short) BedWars.shop.getYml().getInt(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_DATA));
         if (BedWars.shop.getYml().getBoolean(ConfigPath.SHOP_SETTINGS_QUICK_BUY_EMPTY_ENCHANTED)) {
-            this.emptyItem = ShopManager.enchantItem(emptyItem);
+            this.emptyItem = BedWars.shop.enchantItem(emptyItem);
         }
         this.emptyItemNamePath = Messages.SHOP_QUICK_EMPTY_NAME;
         this.emptyItemLorePath = Messages.SHOP_QUICK_EMPTY_LORE;
@@ -73,11 +83,12 @@ public class PlayerQuickBuyCache {
      * Add the player's preferences to the given inventory.
      * This will also add the red empty item.
      */
-    public void addInInventory(Inventory inv, ShopCache shopCache) {
+    @Override
+    public void addInInventory(Inventory inv, IShopCache shopCache) {
 
         Player p = Bukkit.getPlayer(player);
 
-        for (QuickBuyElement qbe : elements) {
+        for (IQuickBuyElement qbe : elements) {
             inv.setItem(qbe.getSlot(), qbe.getCategoryContent().getItemStack(p, shopCache));
         }
 
@@ -91,6 +102,7 @@ public class PlayerQuickBuyCache {
         }
     }
 
+    @Override
     public void destroy() {
         elements.clear();
         if (task != null) {
@@ -100,7 +112,8 @@ public class PlayerQuickBuyCache {
         this.pushChangesToDB();
     }
 
-    public void setElement(int slot, CategoryContent cc) {
+    @Override
+    public void setElement(int slot, ICategoryContent cc) {
         elements.removeIf(q -> q.getSlot() == slot);
         String element;
         if (cc == null){
@@ -131,8 +144,9 @@ public class PlayerQuickBuyCache {
     /**
      * Check if as category content at quick buy
      */
-    public boolean hasCategoryContent(CategoryContent cc) {
-        for (QuickBuyElement q : getElements()) {
+    @Override
+    public boolean hasCategoryContent(ICategoryContent cc) {
+        for (IQuickBuyElement q : getElements()) {
             if (q.getCategoryContent() == cc) return true;
         }
         return false;
@@ -142,18 +156,21 @@ public class PlayerQuickBuyCache {
      * Get a Player Quick buy cache
      */
     @Nullable
-    public static PlayerQuickBuyCache getQuickBuyCache(UUID uuid) {
+    @Override
+    public IPlayerQuickBuyCache getQuickBuyCache(UUID uuid) {
         return quickBuyCaches.getOrDefault(uuid, null);
     }
 
-    public List<QuickBuyElement> getElements() {
+    @Override
+    public List<IQuickBuyElement> getElements() {
         return elements;
     }
 
     /**
      * Add a quick buy element
      */
-    public void addQuickElement(QuickBuyElement e) {
+    @Override
+    public void addQuickElement(IQuickBuyElement e) {
         this.elements.add(e);
     }
 
@@ -161,4 +178,12 @@ public class PlayerQuickBuyCache {
         Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin,
                 () -> BedWars.getRemoteDatabase().pushQuickBuyChanges(updateSlots, this.player, elements));
     }
+
+    /**
+     * Get instance
+     */
+    public static PlayerQuickBuyCache getInstance() {
+        return instance;
+    }
+
 }

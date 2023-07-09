@@ -62,6 +62,9 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PARTIES, true);
         yml.addDefault(ConfigPath.GENERAL_ALESSIODP_PARTIES_RANK, 10);
         //
+        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_TAB_NAME, "%bw_playername%");
+        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED, false);
+        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME, "%bw_player%");
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR, true);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_USE_GAME_SIDEBAR, true);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_TITLE_REFRESH_INTERVAL, 200);
@@ -127,13 +130,19 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES, 0.0);
         //
-        yml.addDefault("database.enable", false);
-        yml.addDefault("database.host", "localhost");
-        yml.addDefault("database.port", 3306);
-        yml.addDefault("database.database", "bedwars2023");
-        yml.addDefault("database.user", "root");
-        yml.addDefault("database.pass", "cheese");
-        yml.addDefault("database.ssl", false);
+
+        // Database Configuration
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE, "SQLite");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_HOST, "localhost");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_PORT, 3306);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_DATABASE, "bedwars2023");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_USER, "root");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_PASS, "cheese");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_SSL, false);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_VERIFY_CERT, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_POOL_SIZE, 10);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_MAX_LIFETIME, 1800);
+        //
 
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS, true);

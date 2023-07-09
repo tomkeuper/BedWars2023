@@ -71,10 +71,16 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <!-- TAB -->
+<!--        <repository>-->
+<!--            <id>krypton</id>-->
+<!--            <url>https://repo.kryptonmc.org/releases</url>-->
+<!--        </repository>-->
+<!--        Temporary workaround because tab V4 is not yet released-->
         <repository>
-            <id>krypton</id>
-            <url>https://repo.kryptonmc.org/releases</url>
+            <id>bedwars-releases</id>
+            <url>https://repo.tomkeuper.com/repository/bedwars-releases/</url>
         </repository>
+<!--        -->
         <repository>
             <id>cloudnet-releases</id>
             <url>https://repo.cloudnetservice.eu/repository/releases/</url>
@@ -163,6 +169,16 @@
         </dependency>
         <dependency>
             <groupId>com.tomkeuper.bedwars</groupId>
+            <artifactId>resetadapter_aswm</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tomkeuper.bedwars</groupId>
+            <artifactId>resetadapter_slimepaper</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tomkeuper.bedwars</groupId>
             <artifactId>versionsupport_1_12_r1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -184,6 +200,11 @@
         <dependency>
             <groupId>com.tomkeuper.bedwars</groupId>
             <artifactId>versionsupport_v1_19_r3</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tomkeuper.bedwars</groupId>
+            <artifactId>versionsupport_v1_20_r1</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
@@ -236,12 +257,18 @@
             <version>2.0.6</version>
             <optional>true</optional>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.220</version>
+            <optional>true</optional>
+        </dependency>
         <!-- TAB -->
         <dependency>
             <groupId>me.neznamy</groupId>
             <artifactId>tab-api</artifactId>
-            <version>3.2.4</version>
+            <version>4.0.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -271,23 +298,35 @@
                     <relocations>
                         <relocation>
                             <pattern>org.bstats</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.bstats</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.bstats</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.zaxxer.hikari</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.hikari</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.hikari</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.h2</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.h2</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>org.slf4j</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.slf4j</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.slf4j</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>com.iridium.iridiumcolorapi</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.color</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.color</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.flowpowered.nbt</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.flow</shadedPattern>
                         </relocation>
                         <relocation>
                             <pattern>io.papermc.lib</pattern>
-                            <shadedPattern>com.andrei1058.bedwars.libs.paper</shadedPattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.paper</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.andrei1058.vipfeatures.api</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.vipfeatures</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -314,5 +353,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

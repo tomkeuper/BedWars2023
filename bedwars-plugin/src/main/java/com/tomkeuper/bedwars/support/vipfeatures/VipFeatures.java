@@ -49,6 +49,6 @@ public class VipFeatures extends MiniGame {
 
     @Override
     public String getDisplayName() {
-        return "BedWars1058";
+        return "BedWars2023";
     }
 }

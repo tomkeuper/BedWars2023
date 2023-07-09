@@ -30,6 +30,7 @@ import com.tomkeuper.bedwars.api.tasks.AnnouncementTask;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.api.tasks.RestartingTask;
 import com.tomkeuper.bedwars.api.tasks.StartingTask;
+import me.neznamy.tab.api.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -47,108 +48,149 @@ public interface IArena {
 
     /**
      * Check if a player is spectating on this arena.
+     *
+     * @param player The player to check.
+     * @return `true` if the player is spectating, `false` otherwise.
      */
     boolean isSpectator(Player player);
 
     /**
      * Check if a player is spectating on this arena.
+     *
+     * @param player The UUID of the player to check.
+     * @return `true` if the player is spectating, `false` otherwise.
      */
     boolean isSpectator(UUID player);
 
     /**
-     * Check if a player is spectating on this arena.
+     * Check if a player is respawning in this arena.
+     *
+     * @param player The UUID of the player to check.
+     * @return `true` if the player is respawning, `false` otherwise.
      */
     boolean isReSpawning(UUID player);
 
     /**
-     * Get used world name.
+     * Get the used world name for the arena.
+     *
+     * @return The name of the world used by the arena.
      */
     String getArenaName();
 
     /**
      * Initialize the arena after loading the world.
      * This needs to be called in order to allow players to join.
+     *
+     * @param world The world object associated with the arena.
      */
     void init(World world);
 
     /**
-     * Get arena config.
+     * Get the configuration manager for the arena.
+     *
+     * @return The configuration manager.
      */
     ConfigManager getConfig();
 
     /**
-     * Check if user is playing.
+     * Check if a player is currently playing in the arena.
+     *
+     * @param player The player to check.
+     * @return `true` if the player is playing, `false` otherwise.
      */
     boolean isPlayer(Player player);
 
     /**
-     * Get a list of spectators.
+     * Get a list of spectators in the arena.
+     *
+     * @return The list of spectators.
      */
     List<Player> getSpectators();
 
     /**
-     * Get the player's team.
-     * This will work if the player is alive only.
+     * Get the team of a player.
+     * This method will only work if the player is alive.
      * <p>
-     * Use {@link #getExTeam(UUID)} to get the team where the player has played in current match.
+     * Use {@link #getExTeam(UUID)} to get the team the player played for in the current match
+     * if the player has been eliminated.
+     *
+     * @param player The player to get the team for.
+     * @return The player's team.
      */
     ITeam getTeam(Player player);
 
     /**
-     * Get the team where the player has played in current match.
-     * To be used if the player was eliminated.
+     * Get the team the player played for in the current match.
+     * This should be used if the player has been eliminated.
+     *
+     * @param player The UUID of the player.
+     * @return The team the player played for in the current match.
      */
     ITeam getExTeam(UUID player);
 
     /**
-     * Get the arena name as a message that can be used on signs etc.
+     * Get the arena name as a message that can be used on signs, etc.
+     * This replaces '-' and '_' with spaces in the arena name.
      *
-     * @return A string with - and _ replaced by a space.
+     * @return The arena name with '-' and '_' replaced by spaces.
      */
     String getDisplayName();
 
     /**
-     * Change world name for auto-scaling.
+     * Change the world name.
      *
-     * @param name new name.
+     * @param name The new world name.
      */
     void setWorldName(String name);
 
     /**
-     * Get arena status.
+     * Get the current status of the arena.
+     *
+     * @return The current status of the arena.
      */
     GameState getStatus();
 
     /**
-     * Get players in arena.
+     * Get a list of players currently in the arena.
+     *
+     * @return The list of players in the arena.
      */
     List<Player> getPlayers();
 
     /**
-     * Get maximum allowed players amount.
+     * Get the maximum number of players allowed in the arena.
+     *
+     * @return The maximum number of players allowed.
      */
     int getMaxPlayers();
 
     /**
-     * Get arena group.
+     * Get the group of the arena.
+     *
+     * @return The group of the arena.
      */
     String getGroup();
 
     /**
-     * Get maximum players allowed in a team.
+     * Get the maximum number of players allowed in a team.
+     *
+     * @return The maximum number of players allowed in a team.
      */
     int getMaxInTeam();
 
     /**
-     * Get registered scoreboard name.
+     * Get the registered scoreboard name.
+     *
+     * @return The name of the registered scoreboard.
      */
+    @SuppressWarnings("unused")
     String getScoreboardName();
 
-
     /**
-     * Get list of players in respawn screen.
-     * Player is the actual player in re-spawn screen.
-     * Integer is the remaining time.
+     * Get a map of players in the respawn screen and their remaining time.
+     * The map key is the player in the respawn screen, and the value is the remaining time.
+     *
+     * @return The map of players in the respawn screen and their remaining time.
      */
     ConcurrentHashMap<Player, Integer> getRespawnSessions();
 
@@ -191,15 +233,16 @@ public interface IArena {
     void removeSpectator(Player p, boolean disconnect);
 
     /**
-     * Rejoin an arena
+     * Rejoin an arena.
      *
-     * @return true if can rejoin
+     * @param p The player who wants to rejoin the arena.
+     * @return `true` if the player can rejoin the arena, `false` otherwise.
      */
     boolean reJoin(Player p);
 
     /**
      * Disable the arena.
-     * This will automatically kick/ remove the people from the arena.
+     * This will automatically kick/remove the players from the arena.
      */
     void disable();
 
@@ -209,171 +252,257 @@ public interface IArena {
     void restart();
 
     /**
-     * Get the arena world
+     * Get the arena world.
+     *
+     * @return The world associated with the arena.
      */
     World getWorld();
 
     /**
-     * Get the display status for an arena.
-     * A message that can be used on signs etc.
+     * Get the display status for the arena.
+     * This returns a message that can be used on signs, etc.
+     *
+     * @param lang The language used to retrieve the display status message.
+     * @return The display status message for the arena.
      */
     String getDisplayStatus(Language lang);
 
     /**
-     * Get arena display group for given player.
+     * Get the arena display group for the given player.
      *
-     * @return translated group.
+     * @param player The player for which to retrieve the display group.
+     * @return The translated display group for the player.
      */
     String getDisplayGroup(Player player);
 
     /**
-     * Get arena display group for given language.
+     * Get the arena display group for the given language.
      *
-     * @return translated group.
+     * @param language The language for which to retrieve the display group.
+     * @return The translated display group for the language.
      */
     @SuppressWarnings("unused")
     String getDisplayGroup(Language language);
 
+    /**
+     * Get the list of teams in the arena.
+     *
+     * @return The list of teams in the arena.
+     */
     List<ITeam> getTeams();
 
     /**
-     * Add placed block to cache.
-     * So players will be able to remove blocks placed by players only.
+     * Add a placed block to the cache.
+     * This allows players to remove blocks placed by other players.
+     *
+     * @param block The placed block to add to the cache.
      */
     void addPlacedBlock(Block block);
 
     /**
-     * Gets the cooldowns for fireballs
-     * @return The cooldowns for fireballs
+     * Gets the cooldowns for fireballs in the arena.
+     *
+     * @return The cooldowns for fireballs, mapping player UUIDs to their respective cooldown expiration timestamps.
      */
     Map<UUID, Long> getFireballCooldowns();
 
     /**
-     * Remove placed block.
+     * Remove the specified placed block from the arena.
+     *
+     * @param block The block to remove.
      */
     void removePlacedBlock(Block block);
 
+    /**
+     * Check if the given block is placed in the arena.
+     *
+     * @param block The block to check.
+     * @return `true` if the block is placed in the arena, `false` otherwise.
+     */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isBlockPlaced(Block block);
 
     /**
-     * Get a player kills count.
+     * Get the number of kills for a player.
      *
-     * @param p          Target player
-     * @param finalKills True if you want to get the Final Kills. False for regular kills.
+     * @param p          The target player.
+     * @param finalKills True to get the number of final kills, false for regular kills.
+     * @return The number of kills for the player.
      */
     int getPlayerKills(Player p, boolean finalKills);
 
     /**
-     * Get the player beds destroyed count
+     * Get the number of beds destroyed by a player.
      *
-     * @param p Target player
+     * @param p The target player.
+     * @return The number of beds destroyed by the player.
      */
     int getPlayerBedsDestroyed(Player p);
 
     /**
-     * Get the join signs for this arena
+     * Get the join signs for this arena.
      *
-     * @return signs.
+     * @return A list of join signs for the arena.
      */
     List<Block> getSigns();
 
     /**
-     * Get the island radius
+     * Get the radius of the islands in the arena.
+     *
+     * @return The island radius.
      */
     int getIslandRadius();
 
+    /**
+     * Set the arena group of the arena.
+     *
+     * @param group The arena group name to set.
+     */
     void setGroup(String group);
 
     /**
-     * Set game status without starting stats.
+     * Set the game status of the arena without starting the corresponding tasks.
+     *
+     * @param status The game status to set.
      */
     void setStatus(GameState status);
 
     /**
-     * Change game status starting tasks.
+     * Change the game status of the arena and start the corresponding tasks.
+     *
+     * @param status The game status to change to.
      */
     void changeStatus(GameState status);
 
     /**
-     * Add a join sign for the arena.
+     * Add a join sign for the arena at the specified location.
+     *
+     * @param loc The location of the join sign.
      */
     void addSign(Location loc);
 
     /**
-     * Refresh signs.
+     * Refresh the join signs for the arena.
      */
     void refreshSigns();
 
     /**
-     * Add a kill point to the game stats.
+     * Add a player kill to the game statistics.
+     *
+     * @param p          The player who made the kill.
+     * @param finalKill  Whether it was a final kill.
+     * @param victim     The player who was killed.
      */
     void addPlayerKill(Player p, boolean finalKill, Player victim);
 
     /**
-     * Add a destroyed bed point to the player temp stats.
+     * Add a bed destroyed event to the temporary statistics of a player.
+     *
+     * @param p The player who destroyed a bed.
      */
     void addPlayerBedDestroyed(Player p);
 
     /**
-     * Check winner. Will check if the game has a winner in certain conditions. Manage your win conditions.
-     * Call the arena restart and the needed stuff.
+     * Check for a winner in the arena.
+     * This method should be used to manage your win conditions and trigger the arena restart if necessary.
      */
     void checkWinner();
 
     /**
-     * Add a kill to the player temp stats.
+     * Add a player death to the temporary statistics.
+     *
+     * @param p The player who died.
      */
     void addPlayerDeath(Player p);
 
     /**
-     * Set next event for the arena.
+     * Set the next event for the arena.
+     *
+     * @param nextEvent The next event to set.
      */
     void setNextEvent(NextEvent nextEvent);
 
     /**
-     * Get next event.
+     * Get the next event for the arena.
+     *
+     * @return The next event.
      */
     NextEvent getNextEvent();
 
     /**
-     * This will give the pre-game command Items.
-     * This will clear the inventory first.
+     * Give the pre-game command items to a player.
+     * This will clear the player's inventory first.
+     *
+     * @param p The player to give the pre-game command items to.
      */
     void sendPreGameCommandItems(Player p);
 
     /**
-     * This will give the spectator command Items.
-     * This will clear the inventory first.
+     * Give the spectator command items to a player.
+     * This will clear the player's inventory first.
+     *
+     * @param p The player to give the spectator command items to.
      */
     void sendSpectatorCommandItems(Player p);
 
     /**
-     * Get a team by name
+     * Get a team in the arena by its name.
+     *
+     * @param name The name of the team.
+     * @return The team with the specified name, or null if not found.
      */
     ITeam getTeam(String name);
 
+    /**
+     * Get the starting task for the arena.
+     *
+     * @return The starting task.
+     */
     StartingTask getStartingTask();
 
+    /**
+     * Get the playing task for the arena.
+     *
+     * @return The playing task.
+     */
     PlayingTask getPlayingTask();
 
+    /**
+     * Get the restarting task for the arena.
+     *
+     * @return The restarting task.
+     */
     RestartingTask getRestartingTask();
 
+    /**
+     * Get the announcement task for the arena.
+     *
+     * @return The announcement task.
+     */
     AnnouncementTask getAnnouncementTask();
 
     /**
-     * Get Ore Generators.
+     * Get the ore generators in the arena.
+     *
+     * @return The list of ore generators.
      */
     List<IGenerator> getOreGenerators();
 
     /**
-     * Get the list of next events to come.
-     * Not ordered.
+     * Get the list of next events to come in the arena.
+     * Note: The events are not ordered.
+     *
+     * @return The list of next events.
      */
+    @SuppressWarnings("unused")
     List<String> getNextEvents();
 
     /**
-     * Get player deaths.
+     * Get the number of deaths for a specific player in the arena.
+     *
+     * @param p            The player.
+     * @param finalDeaths  Whether to retrieve final deaths or all deaths.
+     * @return The number of deaths for the player.
      */
     int getPlayerDeaths(Player p, boolean finalDeaths);
 
@@ -390,7 +519,9 @@ public interface IArena {
     void sendEmeraldsUpgradeMessages();
 
     /**
-     * List of placed blocks.
+     * Get a list of placed blocks in the arena.
+     *
+     * @return A linked list of vectors representing the locations of the placed blocks.
      */
     LinkedList<Vector> getPlaced();
 
@@ -399,90 +530,178 @@ public interface IArena {
      */
     void destroyData();
 
+    /**
+     * Get the count of upgrade diamonds.
+     *
+     * @return The count of upgrade diamonds.
+     */
     int getUpgradeDiamondsCount();
 
+    /**
+     * Get the count of upgrade emeralds.
+     *
+     * @return The count of upgrade emeralds.
+     */
     int getUpgradeEmeraldsCount();
 
+    /**
+     * Get the list of regions for the arena.
+     *
+     * @return The list of regions.
+     */
     List<Region> getRegionsList();
 
     /**
-     * Get invisibility for armor
+     * Get the show time map for armor invisibility.
+     *
+     * @return The show time map.
      */
     ConcurrentHashMap<Player, Integer> getShowTime();
 
+    /**
+     * Set whether spectating is allowed in the arena.
+     *
+     * @param allowSpectate `true` to allow spectating, `false` to disallow.
+     */
+    @SuppressWarnings("unused")
     void setAllowSpectate(boolean allowSpectate);
 
+    /**
+     * Check if spectating is allowed in the arena.
+     *
+     * @return `true` if spectating is allowed, `false` otherwise.
+     */
     boolean isAllowSpectate();
 
+    /**
+     * Get the name of the world associated with the arena.
+     *
+     * @return The name of the world.
+     */
     String getWorldName();
 
     /**
-     * Get player render distance in blocks.
+     * Get the player's render distance in blocks.
+     *
+     * @return The render distance in blocks.
      */
     int getRenderDistance();
 
     /**
-     * Put a player in re-spawning countdown.
+     * Put a player in a re-spawning countdown.
      *
-     * @param player  target player.
-     * @param seconds countdown in seconds. 0 for instant re-spawn.
-     * @return false if the player is not actually in game or if is in another re-spawn session.
+     * @param player  The target player.
+     * @param seconds The countdown in seconds. Use 0 for instant re-spawn.
+     * @return `true` if the player is successfully put in a re-spawn session, `false` otherwise.
      */
     @SuppressWarnings("UnusedReturnValue")
     boolean startReSpawnSession(Player player, int seconds);
 
     /**
-     * Check if a player is in re-spawning screen/ countdown.
+     * Check if a player is in the re-spawning screen/countdown.
+     *
+     * @param player The player to check.
+     * @return `true` if the player is in the re-spawning screen/countdown, `false` otherwise.
      */
     boolean isReSpawning(Player player);
 
     /**
-     * Get re-spawning screen location.
+     * Get the re-spawning screen location.
+     *
+     * @return The re-spawning screen location.
      */
     Location getReSpawnLocation();
 
     /**
-     * Where spectators will spawn.
+     * Get the location where spectators will spawn.
+     *
+     * @return The spectator spawn location.
      */
     Location getSpectatorLocation();
+
     /**
-     * Allows map break
+     * Set whether map break is allowed or not.
+     *
+     * @param value `true` to allow map break, `false` otherwise.
      */
+    @SuppressWarnings("unused")
     void setAllowMapBreak(boolean value);
+
     /**
-     * Checks if the map break is enabled
+     * Check if map break is enabled.
+     *
+     * @return `true` if map break is enabled, `false` otherwise.
      */
     boolean isMapBreakable();
 
     /**
-     * Location where to spawn at join (waiting/ starting).
+     * Get the location where players will spawn when joining (waiting/starting).
+     *
+     * @return The waiting location.
      */
     Location getWaitingLocation();
 
     /**
      * Check if the given location is protected.
-     * Border checks, regions, island spawn protection, npc protections, generator protections.
+     * This includes border checks, regions, island spawn protection, NPC protections, and generator protections.
+     *
+     * @param location The location to check.
+     * @return `true` if the location is protected, `false` otherwise.
      */
+    @SuppressWarnings("unused")
     boolean isProtected(Location location);
 
     /**
-     * This is triggered when a player has abandoned a game.
-     * This should remove its assist from existing team and re-join session.
-     * This does not replace {@link #removePlayer(Player, boolean)}.
+     * Triggered when a player has abandoned a game.
+     * This should remove their assist from the existing team and re-join the session.
+     * Note: This does not replace the `removePlayer(Player, boolean)` method.
+     *
+     * @param player The player who has abandoned the game.
      */
     void abandonGame(Player player);
 
     /**
-     * -1 won't handle void kill.
-     * Instant kill when player y is under this number.
+     * Get the Y-coordinate height at which players are instantly killed.
+     * Use -1 to disable void kills.
+     *
+     * @return The Y-coordinate height for instant kills.
      */
     int getYKillHeight();
 
+    /**
+     * Get the start time of the arena.
+     *
+     * @return The start time.
+     */
     Instant getStartTime();
 
+    /**
+     * Get the team assigner used for assigning teams in an arena.
+     *
+     * @return The team assigner.
+     */
     ITeamAssigner getTeamAssigner();
 
+    /**
+     * Set the team assigner used for assigning teams in an arena.
+     *
+     * @param teamAssigner The team assigner to be set.
+     */
+    @SuppressWarnings("unused")
     void setTeamAssigner(ITeamAssigner teamAssigner);
 
+    /**
+     * Get the list of players who have left the arena.
+     *
+     * @return The list of left players.
+     */
+    @SuppressWarnings("unused")
     List<Player> getLeavingPlayers();
+
+    /**
+     * Get the list of dragon boss bars in the arena.
+     *
+     * @return The list of dragon boss bars.
+     */
+    List<BossBar> getDragonBossbars();
 }

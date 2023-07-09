@@ -30,14 +30,18 @@ public abstract class RestoreAdapter {
     private Plugin plugin;
 
     /**
-     * @param owner adapter owner.
+     * Constructor for RestoreAdapter.
+     *
+     * @param owner The owner plugin of the adapter.
      */
     public RestoreAdapter(Plugin owner) {
         this.plugin = owner;
     }
 
     /**
-     * Get adapter owner.
+     * Get the owner plugin of the adapter.
+     *
+     * @return The owner plugin.
      */
     public Plugin getOwner() {
         return plugin;
@@ -46,59 +50,88 @@ public abstract class RestoreAdapter {
     /**
      * Load the world.
      * Arenas will be initialized automatically based on WorldLoadEvent.
+     *
+     * @param arena The arena to enable.
      */
-    public abstract void onEnable(IArena a);
+    public abstract void onEnable(IArena arena);
 
     /**
      * Restore the world.
-     * call new Arena when it's done.
+     * Call new Arena when it's done.
+     *
+     * @param arena The arena to restart.
      */
-    public abstract void onRestart(IArena a);
+    public abstract void onRestart(IArena arena);
 
     /**
      * Unload the world.
-     * This is usually used for /bw unloadArena name
+     * This is usually used for /bw unloadArena name.
+     *
+     * @param arena The arena to disable.
      */
-    public abstract void onDisable(IArena a);
+    public abstract void onDisable(IArena arena);
 
     /**
      * Load the world for setting it up.
+     *
+     * @param setupSession The setup session containing the world to load.
      */
-    public abstract void onSetupSessionStart(ISetupSession s);
+    public abstract void onSetupSessionStart(ISetupSession setupSession);
 
     /**
      * Unload the world.
+     *
+     * @param setupSession The setup session containing the world to unload.
      */
-    public abstract void onSetupSessionClose(ISetupSession s);
+    public abstract void onSetupSessionClose(ISetupSession setupSession);
 
     /**
      * Remove lobby blocks.
+     *
+     * @param arena The arena to remove lobby blocks from.
      */
-    public abstract void onLobbyRemoval(IArena a);
+    public abstract void onLobbyRemoval(IArena arena);
 
     /**
-     * Check if given world exists.
+     * Check if the given world exists.
+     *
+     * @param name The name of the world to check.
+     * @return `true` if the world exists, `false` otherwise.
      */
     public abstract boolean isWorld(String name);
 
     /**
      * Delete a world.
+     *
+     * @param name The name of the world to delete.
      */
     public abstract void deleteWorld(String name);
 
     /**
      * Clone an arena world.
+     *
+     * @param sourceArena The name of the source world to clone.
+     * @param destinationArena The name of the destination world to create.
      */
-    public abstract void cloneArena(String name1, String name2);
+    public abstract void cloneArena(String sourceArena, String destinationArena);
 
     /**
-     * Get world container.
+     * Get the list of worlds.
+     *
+     * @return The list of world names.
      */
     public abstract List<String> getWorldsList();
 
     /**
-     * Convert worlds if it is necessary before loading them.
-     * Let them load on BedWars1058 main Thread so they will be converted before getting loaded.
+     * Convert worlds if necessary before loading them.
+     * Let them load on BedWars2023 main Thread, so they will be converted before getting loaded.
      */
     public abstract void convertWorlds();
+
+    /**
+     * Get the display name of the restore adapter.
+     *
+     * @return The display name.
+     */
+    public abstract String getDisplayName();
 }

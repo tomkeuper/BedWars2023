@@ -20,10 +20,14 @@
 
 package com.tomkeuper.bedwars;
 
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
+import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
@@ -32,7 +36,11 @@ import com.tomkeuper.bedwars.api.server.ISetupSession;
 import com.tomkeuper.bedwars.api.server.RestoreAdapter;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
@@ -254,11 +262,31 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         public void takeMoney(Player player, Material currency, int amount) {
             CategoryContent.takeMoney(player, currency, amount);
         }
+
+        @Override
+        public IShopManager getShopManager() {
+            return BedWars.shop;
+        }
+
+        @Override
+        public IShopCache getShopCache() {
+            return BedWars.shopCache;
+        }
+
+        @Override
+        public IPlayerQuickBuyCache getPlayerQuickBuyCache() {
+            return BedWars.playerQuickBuyCache;
+        }
     };
 
     @Override
     public IStats getStatsUtil() {
         return StatsAPI.getInstance();
+    }
+
+    @Override
+    public IAddonManager getAddonsUtil() {
+        return BedWars.addonManager;
     }
 
     @Override
@@ -300,6 +328,16 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         @Override
         public int getTotalUpgradeTiers(IArena arena) {
             return UpgradesManager.getMenuForArena(arena).countTiers();
+        }
+
+        @Override
+        public void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
+            UpgradesManager.setCustomMenuForArena(arena, menu);
+        }
+
+        @Override
+        public UpgradesIndex getMenuForArena(IArena arena) {
+            return UpgradesManager.getMenuForArena(arena);
         }
     };
 
@@ -446,5 +484,29 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     @Override
     public IScoreboardService getScoreboardManager() {
         return BoardManager.getInstance();
+    }
+
+    @Override
+    public IEconomy getEconomyUtil() {
+        return BedWars.getEconomy();
+    }
+
+    @Override
+    public IChat getChatUtil() {
+        return BedWars.getChatSupport();
+    }
+
+    @Override
+    public void setRemoteDatabase(IDatabase database) {
+        BedWars.setRemoteDatabase(database);
+    }
+    @Override
+    public IDatabase getRemoteDatabase() {
+        return BedWars.getRemoteDatabase();
+    }
+
+    @Override
+    public void setEconomyAdapter(IEconomy economyAdapter) {
+        BedWars.setEconomy(economyAdapter);
     }
 }
