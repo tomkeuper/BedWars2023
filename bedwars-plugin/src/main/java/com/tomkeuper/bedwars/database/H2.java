@@ -30,10 +30,7 @@ import com.tomkeuper.bedwars.stats.PlayerStats;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class H2 implements IDatabase {
 
@@ -60,7 +57,7 @@ public class H2 implements IDatabase {
                 return;
             }
         }
-        this.url = "jdbc:h2:" + dataFolder;
+        this.url = "jdbc:h2:"+ BedWars.plugin.getDataFolder().getAbsolutePath() + File.separator + dataFolder + ";TRACE_LEVEL_FILE=0";
         try {
             Class.forName("com.tomkeuper.bedwars.libs.h2.Driver");
             DriverManager.getConnection(url);
@@ -80,8 +77,8 @@ public class H2 implements IDatabase {
 
             sql = "CREATE TABLE IF NOT EXISTS GLOBAL_STATS (ID INTEGER PRIMARY KEY AUTO_INCREMENT, " +
                     "NAME VARCHAR(200), UUID VARCHAR(36), FIRST_PLAY TIMESTAMP NULL DEFAULT NULL, " +
-                    "LAST_PLAY TIMESTAMP DEFAULT NULL, WINS INTEGER(10), KILLS INTEGER(10), " +
-                    "FINAL_KILLS INTEGER(10), LOSES INTEGER(10), DEATHS INTEGER(10), FINAL_DEATHS INTEGER(10), BEDS_DESTROYED INTEGER(10), GAMES_PLAYED INTEGER(10));";
+                    "LAST_PLAY TIMESTAMP DEFAULT NULL, WINS INTEGER, KILLS INTEGER, " +
+                    "FINAL_KILLS INTEGER, LOSES INTEGER, DEATHS INTEGER, FINAL_DEATHS INTEGER, BEDS_DESTROYED INTEGER, GAMES_PLAYED INTEGER);";
             try (Statement statement = connection.createStatement()) {
                 statement.executeUpdate(sql);
             }
@@ -132,7 +129,7 @@ public class H2 implements IDatabase {
             checkConnection();
 
             if (hasStats(stats.getUuid())) {
-                sql = "UPDATE GLOBAL_STATS SET last_play=?, wins=?, kills=?, final_kills=?, looses=?, deaths=?, final_deaths=?, beds_destroyed=?, games_played=?, NAME=? WHERE UUID = ?;";
+                sql = "UPDATE GLOBAL_STATS SET last_play=?, wins=?, kills=?, final_kills=?, loses=?, deaths=?, final_deaths=?, beds_destroyed=?, games_played=?, NAME=? WHERE UUID = ?;";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setTimestamp(1, Timestamp.from(stats.getLastPlay()));
                     statement.setInt(2, stats.getWins());
@@ -148,7 +145,7 @@ public class H2 implements IDatabase {
                     statement.executeUpdate();
                 }
             } else {
-                sql = "INSERT INTO GLOBAL_STATS (Name, UUID, first_play, last_play, wins, kills, final_kills, looses, deaths, final_deaths, beds_destroyed, games_played) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+                sql = "INSERT INTO GLOBAL_STATS (Name, UUID, first_play, last_play, wins, kills, final_kills, loses, deaths, final_deaths, beds_destroyed, games_played) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setString(1, stats.getName());
                     statement.setString(2, stats.getUuid().toString());
@@ -186,7 +183,7 @@ public class H2 implements IDatabase {
                         stats.setWins(result.getInt("wins"));
                         stats.setKills(result.getInt("kills"));
                         stats.setFinalKills(result.getInt("final_kills"));
-                        stats.setLosses(result.getInt("looses"));
+                        stats.setLosses(result.getInt("loses"));
                         stats.setDeaths(result.getInt("deaths"));
                         stats.setFinalDeaths(result.getInt("final_deaths"));
                         stats.setBedsDestroyed(result.getInt("beds_destroyed"));
