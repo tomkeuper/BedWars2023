@@ -26,45 +26,86 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-
+/**
+ * Represents a category content in a shop.
+ */
 public interface ICategoryContent {
 
     /**
-     * Get content slot in category
+     * Get the slot of the content within its category.
+     *
+     * @return The slot number.
      */
     int getSlot();
 
     /**
-     * Get content preview item in player's language
+     * Get the preview item of the content in the player's language.
+     *
+     * @param player The player for whom the item is being retrieved.
+     * @return The ItemStack representing the content's preview item.
      */
     ItemStack getItemStack(Player player);
 
     /**
-     * Check if a player has this cc to quick buy
+     * Check if the content is available for quick buy for the player.
+     *
+     * @param player The player to check for.
+     * @return {@code true} if the player has the content available for quick buy, {@code false} otherwise.
      */
     boolean hasQuick(Player player);
 
     /**
-     * Check if is permanent content.
+     * Check if the content is permanent.
+     *
+     * @return {@code true} if the content is permanent, {@code false} otherwise.
      */
     boolean isPermanent();
 
     /**
-     * Check if is downgradable.
+     * Check if the content is downgradable.
+     *
+     * @return {@code true} if the content is downgradable, {@code false} otherwise.
      */
     boolean isDowngradable();
 
     /**
-     * Get category identifier.
+     * Get the identifier of the category content.
+     *
+     * @return The identifier of the category content.
      */
     String getIdentifier();
 
     /**
-     * Get content tiers.
+     * Get the list of content tiers for the category content.
+     *
+     * @return The list of content tiers.
      */
     List<IContentTier> getContentTiers();
 
+    /**
+     * Execute the category content action for the player.
+     *
+     * @param player     The player who is executing the action.
+     * @param shopCache  The shop cache containing the player's data.
+     * @param slot       The slot number of the content.
+     */
     void execute(Player player, IShopCache shopCache, int slot);
+
+    /**
+     * Give the items associated with the category content to the player.
+     *
+     * @param player     The player to give the items to.
+     * @param shopCache  The shop cache containing the player's data.
+     * @param arena      The arena context for the shop.
+     */
     void giveItems(Player player, IShopCache shopCache, IArena arena);
+
+    /**
+     * Get the ItemStack representation of the category content for the player, using the shop cache.
+     *
+     * @param player     The player for whom the ItemStack is being retrieved.
+     * @param shopCache  The shop cache containing the player's data.
+     * @return The ItemStack representing the category content.
+     */
     ItemStack getItemStack(Player player, IShopCache shopCache);
 }
