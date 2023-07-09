@@ -55,7 +55,6 @@ import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.database.H2;
-import com.tomkeuper.bedwars.database.Database;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
