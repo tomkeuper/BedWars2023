@@ -87,6 +87,8 @@ import com.tomkeuper.bedwars.support.vipfeatures.VipFeatures;
 import com.tomkeuper.bedwars.support.vipfeatures.VipListeners;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -115,7 +117,7 @@ import java.util.*;
 public class BedWars extends JavaPlugin {
 
     private static ServerType serverType = ServerType.MULTIARENA;
-    public static boolean debug = true, autoscale = false;
+    public static boolean debug = true, autoscale = false, isPaper = false;
     public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
     public static ConfigManager signs, generators;
     public static MainConfig config;
@@ -125,7 +127,6 @@ public class BedWars extends JavaPlugin {
     public static StatsManager statsManager;
     public static BedWars plugin;
     public static VersionSupport nms;
-    public static boolean isPaper = false;
 
     private static Party party = new NoParty();
     private static IChat chat = new NoChat();
@@ -141,7 +142,7 @@ public class BedWars extends JavaPlugin {
     //remote database
     private static IDatabase remoteDatabase;
 
-    private boolean serverSoftwareSupport = true;
+    private boolean serverSoftwareSupport = true, papiSupportLoaded = false, vaultEconomyLoaded = false, vaultChatLoaded = false;
 
     private static com.tomkeuper.bedwars.api.BedWars api;
 
@@ -240,7 +241,6 @@ public class BedWars extends JavaPlugin {
 
         if (!this.handleWorldAdapter()) {
             api.setRestoreAdapter(new InternalAdapter(this));
-            getLogger().info("Using internal world restore system.");
         }
 
         /* Register commands */
@@ -411,11 +411,6 @@ public class BedWars extends JavaPlugin {
                 this.getLogger().severe("Could not spawn CmdJoin NPCs. Make sure you have right version of Citizens for your server!");
                 JoinNPC.setCitizensSupport(false);
             }
-            /*if (getServerType() == ServerType.BUNGEE) {
-                if (Arena.getArenas().size() > 0) {
-                    ArenaSocket.sendMessage(Arena.getArenas().get(0));
-                }
-            }*/
         }, 40L);
 
         /* Save messages for stats gui items if custom items added, for each language */
@@ -424,9 +419,9 @@ public class BedWars extends JavaPlugin {
 
         /* PlaceholderAPI Support */
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            getLogger().info("Hooked into PlaceholderAPI support!");
             new PAPISupport().register();
             SupportPAPI.setSupportPAPI(new SupportPAPI.withPAPI());
+            papiSupportLoaded = true;
         }
         /*
          * Vault support
@@ -440,7 +435,7 @@ public class BedWars extends JavaPlugin {
                     RegisteredServiceProvider rsp = this.getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
                     if (rsp != null) {
                         WithChat.setChat((net.milkbowl.vault.chat.Chat) rsp.getProvider());
-                        plugin.getLogger().info("Hooked into vault chat support!");
+                        vaultChatLoaded = true;
                         chat = new WithChat();
                     } else {
                         plugin.getLogger().info("Vault found, but no chat provider!");
@@ -454,7 +449,7 @@ public class BedWars extends JavaPlugin {
                     RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> rsp = this.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
                     if (rsp != null) {
                         WithEconomy.setEconomy(rsp.getProvider());
-                        plugin.getLogger().info("Hooked into vault economy support!");
+                        vaultEconomyLoaded = true;
                         economy = new WithEconomy();
                     } else {
                         plugin.getLogger().info("Vault found, but no economy provider!");
@@ -528,8 +523,6 @@ public class BedWars extends JavaPlugin {
             }
         }
 
-        Bukkit.getScheduler().runTaskLater(this, () -> getLogger().info("This server is running in " + getServerType().toString() + " with auto-scale " + autoscale), 100L);
-
         // Initialize team upgrades
         UpgradesManager.init();
 
@@ -569,6 +562,27 @@ public class BedWars extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             addonManager.loadAddons();
         }, 60L);
+
+        // Initialize the addons
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            this.getLogger().info("BedWars2023 has been enabled!");
+            this.getLogger().info("");
+            this.getLogger().info("ServerType: " + getServerType().toString());
+            this.getLogger().info("Auto Scale enabled: " + autoscale);
+            this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
+            this.getLogger().info("");
+            this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
+            this.getLogger().info("");
+            this.getLogger().info("PAPI support: " + papiSupportLoaded);
+            this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
+            this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
+            this.getLogger().info("");
+            this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
+            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false"));
+            this.getLogger().info("");
+            this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }, 80L);
     }
 
     private void registerDelayedCommands() {
