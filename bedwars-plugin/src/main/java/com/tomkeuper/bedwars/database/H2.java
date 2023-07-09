@@ -225,7 +225,6 @@ public class H2 implements IDatabase {
     }
 
     public void checkCustomColumnExists(String columnName, String dataType){
-        BedWars.debug("checkCustomColumnExists(String columnName, String dataType)");
         String sql = "SHOW COLUMNS FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?;";
         try {
             checkConnection();
@@ -234,7 +233,6 @@ public class H2 implements IDatabase {
                 statement.setString(1, columnName);
                 try (ResultSet result = statement.executeQuery()){
                     if (!result.next()){
-                        BedWars.debug("Creating column: " + columnName);
                         sql = "ALTER TABLE GLOBAL_STATS ADD COLUMN " +columnName+ " " + dataType;
                         try (PreparedStatement statement1 = connection.prepareStatement(sql)){
                             statement1.executeUpdate();
