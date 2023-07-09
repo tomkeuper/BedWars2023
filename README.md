@@ -17,7 +17,7 @@ It is required to use Java 11 or newer.
 The internal world restore system is based on zipping and unzipping maps which can become
 heavy if you are still making use of HDD in 2021, and you do not have a decent CPU, for a better
 and faster restore system install [SlimeWorldManager](https://www.spigotmc.org/resources/slimeworldmanager.69974/) or [AdvancedWorldManager](https://www.spigotmc.org/resources/advanced-slimeworldmanager.87209/).
-BedWars1058 will hook into it and do everything for you.
+BedWars2023 will hook into it and do everything for you.
 
 # Dependency
 - Java 11
@@ -32,7 +32,7 @@ BedWars1058 will hook into it and do everything for you.
 
 # Pre-made setups and community addons
 
-You can find a list of pre-made setups and community addons [on the wiki](https://wiki.andrei1058.dev/docs/BedWars1058/addons)
+You can find a list of pre-made setups and community addons [on the wiki](https://docs.tomkeuper.com/docs/BedWars2023/addons)
 
 # Main features
 
@@ -104,17 +104,17 @@ Players with bw.vip permission are able to join full arenas in starting phase. T
 - we also support Parties by AlessioDP and Party and Friends by Simonsator which could be a better solution if you are a large network.
 
 ###### Anti AFK System:
-Inactive players for more than 45 seconds can't pick-up items from generators.
+Inactive players for more than 45 seconds can't pick up items from generators.
 
 ###### Custom Join Items:
 - you can add and remove items that you receive when you join the server (only on multi-arena) and the items you receive when you join a game in starting/ waiting phase or when you join as a spectator.
 - join items can execute commands.
 
 ###### Map Restore System:
-- the default restore adapter from BedWars1058 is based on un-loading the map, un-zipping a backup and loading it again. This may be heavy for servers with cheap hardware. We recommend using gaming processors and a SSD.
-- to improve performance we added support for SlimeWorldManager, which loads maps way faster with less performance impact thanks to its slime format. We really encourage you installing this plugin. No manual conversion is required. BedWars1058 will handle everything. Read how to install it here.
-- you can also implement your own map adapter trough the API.
-- it may seem heavy than other plugins because we don't simply keep track of modified blocks. We need to restore the entire map because server owners can allow players to destroy the maps like on a SkyWars game. Regions like generators, NPCs and team spawns will be protected.
+- the default restore adapter from BedWars2023 is based on un-loading the map, unzipping a backup and loading it again. This may be heavy for servers with cheap hardware. We recommend using gaming processors and a SSD.
+- to improve performance we added support for SlimeWorldManager, which loads maps way faster with less performance impact thanks to its slime format. We really encourage you installing this plugin. No manual conversion is required. BedWars2023 will handle everything. Read how to install it here.
+- you can also implement your own map adapter through the API.
+- it may seem heavier than other plugins because we don't simply keep track of modified blocks. We need to restore the entire map because server owners can allow players to destroy the maps like on a SkyWars game. Regions like generators, NPCs and team spawns will be protected.
 
 ###### Re-Join | Feature:
 If you get disconnected, or if you leave a game (configurable) you can re-join it via command or by joining the server again. This is also available in bungee scalable mode.

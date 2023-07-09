@@ -296,7 +296,7 @@ public interface ITeam {
 
     /**
      * Destroy team data when the arena restarts.
-     * This must be called by BedWars1058 only.
+     * This must be called by BedWars2023 only.
      */
     void destroyData();
 
