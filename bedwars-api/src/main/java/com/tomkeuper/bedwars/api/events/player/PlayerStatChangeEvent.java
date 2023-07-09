@@ -5,6 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * An event that is called when player statistics are changed.
+ */
 public class PlayerStatChangeEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -15,10 +18,11 @@ public class PlayerStatChangeEvent extends Event {
     private boolean cancelled = false;
 
     /**
-     * Called when player statistics get changes
-     * @Param player - target player
-     * @param arena  - target arena
+     * Constructs a new PlayerStatChangeEvent.
      *
+     * @param player   the target player
+     * @param arena    the target arena
+     * @param statType the type of statistic being changed
      */
     public PlayerStatChangeEvent(Player player, IArena arena, StatType statType) {
         this.player = player;
@@ -26,52 +30,83 @@ public class PlayerStatChangeEvent extends Event {
         this.statType = statType;
     }
 
-
-
     /**
-     * Get the arena
+     * Gets the arena associated with the event.
+     *
+     * @return the arena associated with the event
      */
     public IArena getArena() {
         return arena;
     }
 
     /**
-     * Get the player
+     * Gets the player associated with the event.
+     *
+     * @return the player associated with the event
      */
     public Player getPlayer() {
         return player;
     }
 
     /**
-     * Get the stat type
+     * Gets the type of statistic being changed.
+     *
+     * @return the type of statistic being changed
      */
     public StatType getStatType() {
         return statType;
     }
 
-    public enum StatType {
-        FIRST_PLAY, LAST_PLAY, WINS, KILLS, FINAL_KILLS, LOSSES, DEATHS, FINAL_DEATHS, BEDS_DESTROYED, GAMES_PLAYED, CUSTOM
-    }
-
+    /**
+     * Gets the list of event handlers for the event.
+     *
+     * @return the list of event handlers for the event
+     */
     public HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    /**
+     * Gets the list of event handlers for the event.
+     *
+     * @return the list of event handlers for the event
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
 
     /**
-     * Check if event was cancelled
+     * Checks if the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise
      */
     public boolean isCancelled() {
         return cancelled;
     }
 
     /**
-     * Cancel event
+     * Sets the cancellation status of the event.
+     *
+     * @param cancelled true to cancel the event, false otherwise
      */
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
+    }
+
+    /**
+     * Represents the types of statistics that can be changed.
+     */
+    public enum StatType {
+        FIRST_PLAY,
+        LAST_PLAY,
+        WINS,
+        KILLS,
+        FINAL_KILLS,
+        LOSSES,
+        DEATHS,
+        FINAL_DEATHS,
+        BEDS_DESTROYED,
+        GAMES_PLAYED,
+        CUSTOM
     }
 }

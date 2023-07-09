@@ -309,70 +309,32 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         return shopUtil;
     }
 
-    /**
-     * An implementation of the TeamUpgradesUtil interface that provides access to team upgrade-related functionalities.
-     * This implementation uses the UpgradesManager class to interact with team upgrades.
-     */
     private final TeamUpgradesUtil teamUpgradesUtil = new TeamUpgradesUtil() {
-        /**
-         * Checks if a player is currently watching the team upgrades GUI.
-         *
-         * @param player The player to check.
-         * @return {@code true} if the player is watching the team upgrades GUI, {@code false} otherwise.
-         */
         @Override
         public boolean isWatchingGUI(Player player) {
             return UpgradesManager.isWatchingUpgrades(player.getUniqueId());
         }
 
-        /**
-         * Sets a player to be watching the team upgrades GUI.
-         *
-         * @param player The player to set.
-         */
         @Override
         public void setWatchingGUI(Player player) {
             UpgradesManager.setWatchingUpgrades(player.getUniqueId());
         }
 
-        /**
-         * Removes the watching status for team upgrades from a player.
-         *
-         * @param uuid The UUID of the player.
-         */
         @Override
         public void removeWatchingUpgrades(UUID uuid) {
             UpgradesManager.removeWatchingUpgrades(uuid);
         }
 
-        /**
-         * Retrieves the total number of upgrade tiers available for an arena.
-         *
-         * @param arena The arena to get the upgrade tiers for.
-         * @return The total number of upgrade tiers for the specified arena.
-         */
         @Override
         public int getTotalUpgradeTiers(IArena arena) {
             return UpgradesManager.getMenuForArena(arena).countTiers();
         }
 
-        /**
-         * Sets a custom upgrade menu for an arena.
-         *
-         * @param arena The arena to set the custom menu for.
-         * @param menu  The custom upgrade menu.
-         */
         @Override
         public void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
             UpgradesManager.setCustomMenuForArena(arena, menu);
         }
 
-        /**
-         * Retrieves the upgrade menu for an arena.
-         *
-         * @param arena The arena to get the upgrade menu for.
-         * @return The upgrade menu for the specified arena.
-         */
         @Override
         public UpgradesIndex getMenuForArena(IArena arena) {
             return UpgradesManager.getMenuForArena(arena);
