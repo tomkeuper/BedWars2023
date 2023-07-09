@@ -83,6 +83,7 @@ public interface IGenerator {
 
     /**
      * Change item spawn delay. In seconds.
+     * Internally any corrections will be made to compensate for the increased speed
      */
     void setDelay(double delay);
 

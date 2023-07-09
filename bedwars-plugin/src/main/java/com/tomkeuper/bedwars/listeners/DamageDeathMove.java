@@ -439,8 +439,8 @@ public class DamageDeathMove implements Listener {
                         .replace("%bw_playername%", victim.getName())
                         .replace("%bw_team%", victimsTeam.getDisplayName(lang))
                         .replace("%bw_killer_color%", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
-                        .replace("%bw_killer_playername%", killer == null ? "" : killer.getDisplayName())
-                        .replace("%bw_killer_name%", killer == null ? "" : killer.getName())
+                        .replace("%bw_killer_playername%", killer == null ? "" : killer.getName())
+                        .replace("%bw_killer_name%", killer == null ? "" : killer.getDisplayName())
                         .replace("%bw_killer_team_name%", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
             }
             for (Player on : a.getSpectators()) {
@@ -451,8 +451,8 @@ public class DamageDeathMove implements Listener {
                         .replace("%bw_playername%", victim.getName())
                         .replace("%bw_team%", victimsTeam.getDisplayName(lang))
                         .replace("%bw_killer_color%", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
-                        .replace("%bw_killer_playername%", killer == null ? "" : killer.getDisplayName())
-                        .replace("%bw_killer_name%", killer == null ? "" : killer.getName())
+                        .replace("%bw_killer_playername%", killer == null ? "" : killer.getName())
+                        .replace("%bw_killer_name%", killer == null ? "" : killer.getDisplayName())
                         .replace("%bw_killer_team_name%", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
             }
 
