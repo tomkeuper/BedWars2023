@@ -64,7 +64,19 @@ public class AddonManager implements IAddonManager {
         if (loadedAddons.isEmpty()) return;
         log("Unloading addons...");
         for (Addon addon : loadedAddons) {
-            log("Unloading " + addon.getName() + " by " + addon.getAuthor());
+            String name, author;
+            try{
+                name = addon.getName();
+            } catch (AbstractMethodError ignored){
+                name = "null";
+            }
+            try{
+                author = addon.getAuthor();
+            } catch (AbstractMethodError ignored){
+                author = "null";
+            }
+
+            log("Unloading " + name + " by " + author);
             addon.unload();
             Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
             log("Addon unloaded successfully!");
