@@ -68,7 +68,7 @@ public class ChatFormatting implements Listener {
 
         // handle lobby world for multi arena
         if (BedWars.getServerType() == ServerType.MULTIARENA && p.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
-            setRecipients(p.getWorld().getPlayers());
+            setRecipients(e, p.getWorld().getPlayers());
         }
 
         Language language = getPlayerLanguage(p);
@@ -78,17 +78,15 @@ public class ChatFormatting implements Listener {
 
             // spectator chat
             if (a.isSpectator(p)) {
-                setRecipients(a.getSpectators());
+                setRecipients(e, a.getSpectators());
                 sendMessage(language.m(Messages.FORMATTING_CHAT_SPECTATOR), e.getMessage(), p, null);
-                e.setCancelled(true);
                 return;
             }
 
             // arena lobby chat
             if (a.getStatus() == GameState.waiting || a.getStatus() == GameState.starting) {
-                setRecipients(a.getPlayers());
+                setRecipients(e, a.getPlayers());
                 sendMessage(language.m(Messages.FORMATTING_CHAT_WAITING), e.getMessage(), p, null);
-                e.setCancelled(true);
                 return;
             }
 
@@ -110,7 +108,7 @@ public class ChatFormatting implements Listener {
                     return;
                 }
                 ShoutCommand.updateShout(p);
-                setRecipients(a.getPlayers(), a.getSpectators());
+                setRecipients(e, a.getPlayers(), a.getSpectators());
                 msg = clearShout(msg, language);
                 if (msg.isEmpty()) {
                     e.setCancelled(true);
@@ -118,24 +116,21 @@ public class ChatFormatting implements Listener {
                 }
                 e.setMessage(msg);
                 sendMessage(language.m(Messages.FORMATTING_CHAT_SHOUT), e.getMessage(), p, team);
-                e.setCancelled(true);
                 return;
             }
 
             // player team chat
             if (a.getMaxInTeam() == 1) {
-                setRecipients(a.getPlayers(), a.getSpectators());
+                setRecipients(e, a.getPlayers(), a.getSpectators());
             } else {
-                setRecipients(team.getMembers());
+                setRecipients(e, team.getMembers());
             }
             sendMessage(language.m(Messages.FORMATTING_CHAT_TEAM), e.getMessage(), p, team);
-            e.setCancelled(true);
             return;
         }
 
         // multi arena lobby chat
         sendMessage(language.m(Messages.FORMATTING_CHAT_LOBBY), e.getMessage(), p, null);
-        e.setCancelled(true);
     }
 
     private static String parsePHolders(String format, String msg, Player eventTriggerPlayer, Player recipientPlayer, @Nullable ITeam team) {
@@ -170,7 +165,8 @@ public class ChatFormatting implements Listener {
     }
 
     @SafeVarargs
-    public static void setRecipients(List<Player>... target) {
+    public static void setRecipients(AsyncPlayerChatEvent event, List<Player>... target) {
+        event.getRecipients().clear();
         if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CHAT_GLOBAL)) {
             recipients.clear();
             for (List<Player> list : target) {
