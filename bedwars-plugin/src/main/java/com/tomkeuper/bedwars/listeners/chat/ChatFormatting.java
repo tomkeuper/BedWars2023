@@ -39,12 +39,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 import static com.tomkeuper.bedwars.api.language.Language.getPlayerLanguage;
 
 public class ChatFormatting implements Listener {
+
+    private static final List<Player> recipients = new ArrayList<>();
 
     @EventHandler(ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent e) {
@@ -62,28 +66,29 @@ public class ChatFormatting implements Listener {
             e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
         }
 
-        Language language = getPlayerLanguage(p);
-
         // handle lobby world for multi arena
         if (BedWars.getServerType() == ServerType.MULTIARENA && p.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
-            setRecipients(e, p.getWorld().getPlayers());
+            setRecipients(p.getWorld().getPlayers());
         }
 
+        Language language = getPlayerLanguage(p);
         // handle arena chat
         if (Arena.getArenaByPlayer(p) != null) {
             IArena a = Arena.getArenaByPlayer(p);
 
             // spectator chat
             if (a.isSpectator(p)) {
-                setRecipients(e, a.getSpectators());
-                e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_SPECTATOR), p, null));
+                setRecipients(a.getSpectators());
+                sendMessage(language.m(Messages.FORMATTING_CHAT_SPECTATOR), e.getMessage(), p, null);
+                e.setCancelled(true);
                 return;
             }
 
             // arena lobby chat
             if (a.getStatus() == GameState.waiting || a.getStatus() == GameState.starting) {
-                setRecipients(e, a.getPlayers());
-                e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_WAITING), p, null));
+                setRecipients(a.getPlayers());
+                sendMessage(language.m(Messages.FORMATTING_CHAT_WAITING), e.getMessage(), p, null);
+                e.setCancelled(true);
                 return;
             }
 
@@ -105,45 +110,48 @@ public class ChatFormatting implements Listener {
                     return;
                 }
                 ShoutCommand.updateShout(p);
-                setRecipients(e, a.getPlayers(), a.getSpectators());
+                setRecipients(a.getPlayers(), a.getSpectators());
                 msg = clearShout(msg, language);
                 if (msg.isEmpty()) {
                     e.setCancelled(true);
                     return;
                 }
                 e.setMessage(msg);
-                e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_SHOUT), p, team));
+                sendMessage(language.m(Messages.FORMATTING_CHAT_SHOUT), e.getMessage(), p, team);
+                e.setCancelled(true);
                 return;
             }
 
             // player team chat
             if (a.getMaxInTeam() == 1) {
-                setRecipients(e, a.getPlayers(), a.getSpectators());
+                setRecipients(a.getPlayers(), a.getSpectators());
             } else {
-                setRecipients(e, team.getMembers());
+                setRecipients(team.getMembers());
             }
-            e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_TEAM), p, team));
+            sendMessage(language.m(Messages.FORMATTING_CHAT_TEAM), e.getMessage(), p, team);
+            e.setCancelled(true);
             return;
         }
 
         // multi arena lobby chat
-        e.setFormat(parsePHolders(language.m(Messages.FORMATTING_CHAT_LOBBY), p, null));
+        sendMessage(language.m(Messages.FORMATTING_CHAT_LOBBY), e.getMessage(), p, null);
+        e.setCancelled(true);
     }
 
-    private static String parsePHolders(String content, Player player, @Nullable ITeam team) {
-        content = content
-                .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(player))
-                .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(player))
-                .replace("%bw_playername%", player.getName())
-                .replace("%bw_level%", BedWars.getLevelSupport().getLevel(player))
-                .replace("%bw_player%", player.getDisplayName());
+    private static String parsePHolders(String format, String msg, Player eventTriggerPlayer, Player recipientPlayer, @Nullable ITeam team) {
+        format = format
+                .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(eventTriggerPlayer))
+                .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(eventTriggerPlayer))
+                .replace("%bw_playername%", eventTriggerPlayer.getName())
+                .replace("%bw_level%", BedWars.getLevelSupport().getLevel(eventTriggerPlayer))
+                .replace("%bw_player%", eventTriggerPlayer.getDisplayName());
         if (team != null) {
-            String teamFormat = getMsg(player, Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM)
+            String teamFormat = getMsg(recipientPlayer, Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM)
                     .replace("%bw_team_color%", team.getColor().chat() + "")
-                    .replace("%bw_team_name%", team.getDisplayName(Language.getPlayerLanguage(player)).toUpperCase());
-            content = content.replace("%bw_team_format%", teamFormat);
+                    .replace("%bw_team_name%", team.getDisplayName(Language.getPlayerLanguage(recipientPlayer)).toUpperCase());
+            format = format.replace("%bw_team_format%", teamFormat);
         }
-        return SupportPAPI.getSupportPAPI().replace(player, content).replace("%bw_message%", "%2$s");
+        return SupportPAPI.getSupportPAPI().replace(eventTriggerPlayer, format).replace("%bw_message%", msg);
     }
 
     private static boolean isShouting(String msg, Language lang) {
@@ -162,12 +170,18 @@ public class ChatFormatting implements Listener {
     }
 
     @SafeVarargs
-    public static void setRecipients(AsyncPlayerChatEvent event, List<Player>... target) {
+    public static void setRecipients(List<Player>... target) {
         if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CHAT_GLOBAL)) {
-            event.getRecipients().clear();
+            recipients.clear();
             for (List<Player> list : target) {
-                event.getRecipients().addAll(list);
+                recipients.addAll(list);
             }
+        }
+    }
+
+    public void sendMessage(String format, String msg, Player eventTriggerPlayer, ITeam team){
+        for (Player player : recipients) {
+            player.sendMessage(parsePHolders(format, msg, player, eventTriggerPlayer, team));
         }
     }
 }
