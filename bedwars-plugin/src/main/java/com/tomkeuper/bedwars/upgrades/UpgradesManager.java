@@ -383,7 +383,6 @@ public class UpgradesManager {
      * @param arena target arena.
      * @param menu  custom menu.
      */
-    @SuppressWarnings("unused")
     public static void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
         if (!customMenuForArena.containsKey(arena)) {
             customMenuForArena.put(arena, menu);
@@ -525,5 +524,15 @@ public class UpgradesManager {
 
     public static UpgradesConfig getConfiguration() {
         return upgrades;
+    }
+
+    public static int getMenuSize() {
+        int size = getConfiguration().getInt("default-upgrades-settings.menu-size");
+        if(size < 0 || size > 54) {
+            size = 45;
+        } else if((size >= 0 && size <= 54) && size % 9 != 0) {
+            size = 45;
+        }
+        return size;
     }
 }

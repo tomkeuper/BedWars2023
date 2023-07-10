@@ -97,7 +97,7 @@ public class ContentTier implements IContentTier {
 
         if (yml.get(path + ConfigPath.SHOP_CONTENT_TIER_ITEM_ENCHANTED) != null) {
             if (yml.getBoolean(path + ConfigPath.SHOP_CONTENT_TIER_ITEM_ENCHANTED)) {
-                itemStack = ShopManager.enchantItem(itemStack);
+                itemStack = BedWars.shop.enchantItem(itemStack);
             }
         }
 
@@ -111,7 +111,7 @@ public class ContentTier implements IContentTier {
         }
 
         if (itemStack != null) {
-            itemStack.setItemMeta(ShopManager.hideItemStuff(itemStack.getItemMeta()));
+            itemStack.setItemMeta(BedWars.shop.hideItemDetails(itemStack.getItemMeta()));
         }
 
         IBuyItem bi;

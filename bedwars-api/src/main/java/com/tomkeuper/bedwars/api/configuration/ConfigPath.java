@@ -68,7 +68,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS = "bungeecord-settings.lobby-sockets";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID = "bungeecord-settings.server-id";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT = "bungeecord-settings.bwp-time-out";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_CLOUDNET_SUPPORT = "bungeecord-settings.server-id";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_CLOUDNET_SUPPORT = "bungeecord-settings.cloudnet-support";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVER= "bungeecord-settings.lobby-server";
 
     public static final String GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH = "allow-fire-extinguish";
@@ -150,6 +150,9 @@ public class ConfigPath {
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_PLAYING = "scoreboard-settings.player-list.format-playing-list";
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_RESTARTING = "scoreboard-settings.player-list.format-restarting-list";
     public static final String SB_CONFIG_SIDEBAR_LIST_REFRESH = "scoreboard-settings.player-list.names-refresh-interval";
+    public static final String SB_CONFIG_SIDEBAR_TAB_NAME = "scoreboard-settings.tab-name";
+    public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED = "scoreboard-settings.abovehead-name-enable";
+    public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME = "scoreboard-settings.abovehead-name";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_IN_TAB = "scoreboard-settings.health.display-in-tab";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME = "scoreboard-settings.health.display-below-name";
     public static final String GENERAL_CONFIGURATION_DISABLED_LANGUAGES = "disabled-languages";
@@ -240,6 +243,18 @@ public class ConfigPath {
     public static final String GENERAL_FIREBALL_DAMAGE_ENEMY = GENERAL_FIREBALL_DAMAGE_PATH + ".enemy";
     public static final String GENERAL_FIREBALL_DAMAGE_TEAMMATES = GENERAL_FIREBALL_DAMAGE_PATH + ".teammates";
 
+
+    public static final String GENERAL_CONFIGURATION_DATABASE_PATH = "database";
+    public static final String GENERAL_CONFIGURATION_DATABASE_TYPE = GENERAL_CONFIGURATION_DATABASE_PATH + ".type";
+    public static final String GENERAL_CONFIGURATION_DATABASE_HOST = GENERAL_CONFIGURATION_DATABASE_PATH + ".host";
+    public static final String GENERAL_CONFIGURATION_DATABASE_PORT = GENERAL_CONFIGURATION_DATABASE_PATH + ".port";
+    public static final String GENERAL_CONFIGURATION_DATABASE_DATABASE = GENERAL_CONFIGURATION_DATABASE_PATH + ".database";
+    public static final String GENERAL_CONFIGURATION_DATABASE_USER = GENERAL_CONFIGURATION_DATABASE_PATH + ".user";
+    public static final String GENERAL_CONFIGURATION_DATABASE_PASS = GENERAL_CONFIGURATION_DATABASE_PATH + ".pass";
+    public static final String GENERAL_CONFIGURATION_DATABASE_SSL = GENERAL_CONFIGURATION_DATABASE_PATH + ".ssl";
+    public static final String GENERAL_CONFIGURATION_DATABASE_VERIFY_CERT = GENERAL_CONFIGURATION_DATABASE_PATH + ".verify-certificate";
+    public static final String GENERAL_CONFIGURATION_DATABASE_POOL_SIZE = GENERAL_CONFIGURATION_DATABASE_PATH + ".pool-size";
+    public static final String GENERAL_CONFIGURATION_DATABASE_MAX_LIFETIME = GENERAL_CONFIGURATION_DATABASE_PATH + ".max-lifetime";
 
     public static final String GENERAL_CONFIGURATION_PERFORMANCE_PATH = "performance-settings";
     public static final String GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN = GENERAL_CONFIGURATION_PERFORMANCE_PATH + ".rotate-generators";

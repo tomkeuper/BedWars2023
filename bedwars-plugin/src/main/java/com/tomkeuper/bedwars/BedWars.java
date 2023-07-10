@@ -20,11 +20,15 @@
 
 package com.tomkeuper.bedwars;
 
+import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.andrei1058.vipfeatures.api.IVipFeatures;
 import com.andrei1058.vipfeatures.api.MiniGameAlreadyRegistered;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -42,14 +46,15 @@ import com.tomkeuper.bedwars.arena.spectator.SpectatorListeners;
 import com.tomkeuper.bedwars.arena.tasks.OneTick;
 import com.tomkeuper.bedwars.arena.tasks.Refresh;
 import com.tomkeuper.bedwars.arena.upgrades.BaseListener;
-import com.tomkeuper.bedwars.arena.upgrades.HealPoolListner;
+import com.tomkeuper.bedwars.arena.upgrades.HealPoolListener;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.commands.leave.LeaveCommand;
 import com.tomkeuper.bedwars.commands.party.PartyCommand;
 import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
-import com.tomkeuper.bedwars.database.Database;
+import com.tomkeuper.bedwars.api.database.IDatabase;
+import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
@@ -67,7 +72,9 @@ import com.tomkeuper.bedwars.lobbysocket.LoadedUsersCleaner;
 import com.tomkeuper.bedwars.lobbysocket.SendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
+import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
+import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsManager;
 import com.tomkeuper.bedwars.support.citizens.CitizensListener;
@@ -80,6 +87,8 @@ import com.tomkeuper.bedwars.support.vipfeatures.VipFeatures;
 import com.tomkeuper.bedwars.support.vipfeatures.VipListeners;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
@@ -94,6 +103,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -107,30 +117,32 @@ import java.util.*;
 public class BedWars extends JavaPlugin {
 
     private static ServerType serverType = ServerType.MULTIARENA;
-    public static boolean debug = true, autoscale = false;
+    public static boolean debug = true, autoscale = false, isPaper = false;
     public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    public static PlayerQuickBuyCache playerQuickBuyCache;
+    public static ShopCache shopCache;
     public static StatsManager statsManager;
     public static BedWars plugin;
     public static VersionSupport nms;
-    public static boolean isPaper = false;
 
     private static Party party = new NoParty();
-    private static Chat chat = new NoChat();
+    private static IChat chat = new NoChat();
     protected static Level level;
-    private static Economy economy;
+    private static IEconomy economy;
     private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
     private static String lobbyWorld = "";
     private static boolean shuttingDown = false;
 
     public static ArenaManager arenaManager = new ArenaManager();
+    public static IAddonManager addonManager = new AddonManager();
 
     //remote database
-    private static Database remoteDatabase;
+    private static IDatabase remoteDatabase;
 
-    private boolean serverSoftwareSupport = true;
+    private boolean serverSoftwareSupport = true, papiSupportLoaded = false, vaultEconomyLoaded = false, vaultChatLoaded = false;
 
     private static com.tomkeuper.bedwars.api.BedWars api;
 
@@ -227,43 +239,7 @@ public class BedWars extends JavaPlugin {
             plugin.getLogger().warning("_________________________________________________________");
         }
 
-        if (Bukkit.getPluginManager().getPlugin("Enhanced-SlimeWorldManager") != null) {
-            try {
-                //noinspection rawtypes
-                Constructor constructor = Class.forName("com.andrei1058.bedwars.arena.mapreset.eswm.ESlimeAdapter").getConstructor(Plugin.class);
-                try {
-                    api.setRestoreAdapter((RestoreAdapter) constructor.newInstance(this));
-                    this.getLogger().info("Hook into Enhanced-SlimeWorldManager support!");
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                    api.setRestoreAdapter(new InternalAdapter(this));
-                    this.getLogger().info("Failed to hook into Enhanced-SlimeWorldManager support! Using the internal reset adapter.");
-                }
-            } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException |
-                     InvocationTargetException e) {
-                e.printStackTrace();
-                api.setRestoreAdapter(new InternalAdapter(this));
-                this.getLogger().info("Failed to hook into Enhanced-SlimeWorldManager support! Using the internal reset adapter.");
-            }
-        } else if (checkSWM()) {
-            try {
-                //noinspection rawtypes
-                Constructor constructor = Class.forName("com.tomkeuper.bedwars.arena.mapreset.slime.SlimeAdapter").getConstructor(Plugin.class);
-                try {
-                    api.setRestoreAdapter((RestoreAdapter) constructor.newInstance(this));
-                    this.getLogger().info("Hook into SlimeWorldManager support!");
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                    api.setRestoreAdapter(new InternalAdapter(this));
-                    this.getLogger().info("Failed to hook into SlimeWorldManager support! Using internal reset adapter.");
-                }
-            } catch (NoSuchMethodException | ClassNotFoundException | IllegalAccessException |
-                     InvocationTargetException e) {
-                e.printStackTrace();
-                api.setRestoreAdapter(new InternalAdapter(this));
-                this.getLogger().info("Failed to hook into SlimeWorldManager support! Using internal reset adapter.");
-            }
-        } else {
+        if (!this.handleWorldAdapter()) {
             api.setRestoreAdapter(new InternalAdapter(this));
         }
 
@@ -323,7 +299,7 @@ public class BedWars extends JavaPlugin {
                 new FireballListener(), new EggBridge(), new SpectatorListeners(), new BaseListener(), new TargetListener(), new LangListener(), new Warnings(this), new ChatAFK(), new GameEndListener());
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE)) {
-            registerEvents(new HealPoolListner());
+            registerEvents(new HealPoolListener());
         }
 
         if (getServerType() == ServerType.BUNGEE) {
@@ -355,9 +331,6 @@ public class BedWars extends JavaPlugin {
         registerEvents(new ChunkLoad());
 
         registerEvents(new InvisibilityPotionListener());
-
-        /* Load join signs. */
-        loadArenasAndSigns();
 
         statsManager = new StatsManager();
 
@@ -401,7 +374,7 @@ public class BedWars extends JavaPlugin {
         nms.registerEntities();
 
         /* Database support */
-        if (config.getBoolean("database.enable")) {
+        if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("mysql")) {
             MySQL mySQL = new MySQL();
             long time = System.currentTimeMillis();
             if (!mySQL.connect()) {
@@ -415,8 +388,11 @@ public class BedWars extends JavaPlugin {
                         "Using this remote connection is not recommended!");
             }
             remoteDatabase.init();
-        } else {
+        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("sqlite")){
             remoteDatabase = new SQLite();
+            remoteDatabase.init();
+        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("h2")){
+            remoteDatabase = new H2();
             remoteDatabase.init();
         }
 
@@ -435,11 +411,6 @@ public class BedWars extends JavaPlugin {
                 this.getLogger().severe("Could not spawn CmdJoin NPCs. Make sure you have right version of Citizens for your server!");
                 JoinNPC.setCitizensSupport(false);
             }
-            /*if (getServerType() == ServerType.BUNGEE) {
-                if (Arena.getArenas().size() > 0) {
-                    ArenaSocket.sendMessage(Arena.getArenas().get(0));
-                }
-            }*/
         }, 40L);
 
         /* Save messages for stats gui items if custom items added, for each language */
@@ -448,9 +419,9 @@ public class BedWars extends JavaPlugin {
 
         /* PlaceholderAPI Support */
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            getLogger().info("Hooked into PlaceholderAPI support!");
             new PAPISupport().register();
             SupportPAPI.setSupportPAPI(new SupportPAPI.withPAPI());
+            papiSupportLoaded = true;
         }
         /*
          * Vault support
@@ -464,7 +435,7 @@ public class BedWars extends JavaPlugin {
                     RegisteredServiceProvider rsp = this.getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
                     if (rsp != null) {
                         WithChat.setChat((net.milkbowl.vault.chat.Chat) rsp.getProvider());
-                        plugin.getLogger().info("Hooked into vault chat support!");
+                        vaultChatLoaded = true;
                         chat = new WithChat();
                     } else {
                         plugin.getLogger().info("Vault found, but no chat provider!");
@@ -478,7 +449,7 @@ public class BedWars extends JavaPlugin {
                     RegisteredServiceProvider<net.milkbowl.vault.economy.Economy> rsp = this.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
                     if (rsp != null) {
                         WithEconomy.setEconomy(rsp.getProvider());
-                        plugin.getLogger().info("Hooked into vault economy support!");
+                        vaultEconomyLoaded = true;
                         economy = new WithEconomy();
                     } else {
                         plugin.getLogger().info("Vault found, but no economy provider!");
@@ -512,6 +483,10 @@ public class BedWars extends JavaPlugin {
         /* Initialize shop */
         shop = new ShopManager();
         shop.loadShop();
+
+        /* Initialize instances */
+        shopCache = new ShopCache();
+        playerQuickBuyCache = new PlayerQuickBuyCache();
 
         //Leave this code at the end of the enable method
         for (Language l : Language.getLanguages()) {
@@ -548,8 +523,6 @@ public class BedWars extends JavaPlugin {
             }
         }
 
-        Bukkit.getScheduler().runTaskLater(this, () -> getLogger().info("This server is running in " + getServerType().toString() + " with auto-scale " + autoscale), 100L);
-
         // Initialize team upgrades
         UpgradesManager.init();
 
@@ -559,6 +532,10 @@ public class BedWars extends JavaPlugin {
                 getLogger().info("Hooked into TAB support!");
                 if (BoardManager.init()) {
                     getLogger().info("TAB support has been loaded");
+
+                    /* Load join signs. */
+                    loadArenasAndSigns();
+
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
                     Bukkit.getPluginManager().disablePlugin(this);
@@ -580,6 +557,32 @@ public class BedWars extends JavaPlugin {
         SpoilPlayerTNTFeature.init();
         GenSplitFeature.init();
         AntiDropFeature.init();
+
+        // Initialize the addons
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            addonManager.loadAddons();
+        }, 60L);
+
+        // Initialize the addons
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            this.getLogger().info("BedWars2023 has been enabled!");
+            this.getLogger().info("");
+            this.getLogger().info("ServerType: " + getServerType().toString());
+            this.getLogger().info("Auto Scale enabled: " + autoscale);
+            this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
+            this.getLogger().info("");
+            this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
+            this.getLogger().info("");
+            this.getLogger().info("PAPI support: " + papiSupportLoaded);
+            this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
+            this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
+            this.getLogger().info("");
+            this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
+            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false"));
+            this.getLogger().info("");
+            this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        }, 80L);
     }
 
     private void registerDelayedCommands() {
@@ -598,6 +601,7 @@ public class BedWars extends JavaPlugin {
 
     public void onDisable() {
         shuttingDown = true;
+        addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
             ArenaSocket.disable();
@@ -686,7 +690,7 @@ public class BedWars extends JavaPlugin {
         return party;
     }
 
-    public static Chat getChatSupport() {
+    public static IChat getChatSupport() {
         return chat;
     }
 
@@ -719,7 +723,7 @@ public class BedWars extends JavaPlugin {
         level = levelsManager;
     }
 
-    public static Economy getEconomy() {
+    public static IEconomy getEconomy() {
         return economy;
     }
 
@@ -748,7 +752,7 @@ public class BedWars extends JavaPlugin {
     /**
      * Get remote database.
      */
-    public static Database getRemoteDatabase() {
+    public static IDatabase getRemoteDatabase() {
         return remoteDatabase;
     }
 
@@ -761,38 +765,51 @@ public class BedWars extends JavaPlugin {
     }
 
     /**
-     * This is used to check if can hook in SlimeWorldManager support.
-     *
-     * @return true if can load swm support.
+     * Try loading custom adapter support.
+     * @return true when custom adapter was registered.
      */
-    private boolean checkSWM() {
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
-        if (plugin == null) return false;
-        switch (plugin.getDescription().getVersion()) {
-            case "2.2.0":
-            case "2.1.3":
-            case "2.1.2":
-            case "2.1.1":
-            case "2.1.0":
-            case "2.0.5":
-            case "2.0.4":
-            case "2.0.3":
-            case "2.0.2":
-            case "2.0.1":
-            case "2.0.0":
-            case "1.1.4":
-            case "1.1.3":
-            case "1.1.2":
-            case "1.1.1":
-            case "1.1.0":
-            case "1.0.2":
-            case "1.0.1":
-            case "1.0.0-BETA":
-                getLogger().warning("Could not hook into SlimeWorldManager support! You are running an unsupported version");
-                return false;
-            default:
-                return true;
+    private boolean handleWorldAdapter() { //todo fix version check because current check is limited
+        Plugin swmPlugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+
+        if (null == swmPlugin){
+            return false;
         }
+        PluginDescriptionFile pluginDescription = swmPlugin.getDescription();
+        if (null == pluginDescription) {
+            return false;
+        }
+
+        String[] versionString = pluginDescription.getVersion().split("\\.");
+
+
+        try {
+            int major = Integer.parseInt(versionString[0]);
+            int minor = Integer.parseInt(versionString[1]);
+            int release = versionString.length > 3 ? Integer.parseInt(versionString[3]) : 0;
+
+            String adapterPath;
+            if (((major == 2 && minor == 2 && release ==1) || swmPlugin.getDescription().getVersion().equals("2.3.0-SNAPSHOT")) && (nms.getVersion() == 0 || nms.getVersion() == 5)) {
+                adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimeAdapter";
+            } else if ((major == 2 && (minor >= 8 && minor <= 10) && (release >= 0 && release <= 9)) && (nms.getVersion() == 8)) {
+                adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.AdvancedSlimeAdapter";
+            } else if ((major > 2 || major == 2 && minor >= 10) && nms.getVersion() == 9) {
+                adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimePaperAdapter";
+            } else {
+                return false;
+            }
+
+            Constructor<?> constructor = Class.forName(adapterPath).getConstructor(Plugin.class);
+            getLogger().info("Loading restore adapter: "+adapterPath+" ...");
+
+            RestoreAdapter candidate = (RestoreAdapter) constructor.newInstance(this);
+            api.setRestoreAdapter(candidate);
+            getLogger().info("Hook into "+candidate.getDisplayName()+" as restore adapter.");
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.getLogger().info("Something went wrong! Using internal reset adapter...");
+        }
+        return false;
     }
 
     public static boolean isShuttingDown() {
@@ -803,8 +820,16 @@ public class BedWars extends JavaPlugin {
         BedWars.party = party;
     }
 
+    public static void setEconomy(IEconomy economy) {
+        BedWars.economy = economy;
+    }
+
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return new VoidChunkGenerator();
+    }
+
+    public static void setRemoteDatabase(IDatabase database){
+        remoteDatabase = database;
     }
 }

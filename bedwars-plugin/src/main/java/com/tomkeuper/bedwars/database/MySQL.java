@@ -21,8 +21,11 @@
 package com.tomkeuper.bedwars.database;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
-import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
+import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.stats.PlayerStats;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -37,7 +40,7 @@ import java.util.concurrent.TimeUnit;
 import static com.tomkeuper.bedwars.BedWars.config;
 
 @SuppressWarnings("WeakerAccess")
-public class MySQL implements Database {
+public class MySQL implements IDatabase {
 
     private HikariDataSource dataSource;
     private final String host;
@@ -54,15 +57,15 @@ public class MySQL implements Database {
      * Create new MySQL connection.
      */
     public MySQL() {
-        this.host = config.getYml().getString("database.host");
-        this.database = config.getYml().getString("database.database");
-        this.user = config.getYml().getString("database.user");
-        this.pass = config.getYml().getString("database.pass");
-        this.port = config.getYml().getInt("database.port");
-        this.ssl = config.getYml().getBoolean("database.ssl");
-        this.certificateVerification = config.getYml().getBoolean("database.verify-certificate", true);
-        this.poolSize = config.getYml().getInt("database.pool-size", 10);
-        this.maxLifetime = config.getYml().getInt("database.max-lifetime", 1800);
+        this.host = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_HOST);
+        this.database = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_DATABASE);
+        this.user = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_USER);
+        this.pass = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_PASS);
+        this.port = config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_DATABASE_PORT);
+        this.ssl = config.getYml().getBoolean(ConfigPath.GENERAL_CONFIGURATION_DATABASE_SSL);
+        this.certificateVerification = config.getYml().getBoolean(ConfigPath.GENERAL_CONFIGURATION_DATABASE_VERIFY_CERT);
+        this.poolSize = config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_DATABASE_POOL_SIZE);
+        this.maxLifetime = config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_DATABASE_MAX_LIFETIME);
     }
 
     /**
@@ -73,7 +76,7 @@ public class MySQL implements Database {
     public boolean connect() {
         HikariConfig hikariConfig = new HikariConfig();
 
-        hikariConfig.setPoolName("BedWars1058MySQLPool");
+        hikariConfig.setPoolName("BedWars2023MySQLPool");
 
         hikariConfig.setMaximumPoolSize(poolSize);
         hikariConfig.setMaxLifetime(maxLifetime * 1000L);
@@ -165,7 +168,7 @@ public class MySQL implements Database {
     }
 
     @Override
-    public void saveStats(PlayerStats stats) {
+    public void saveStats(IPlayerStats stats) {
         String sql;
         try (Connection connection = dataSource.getConnection()) {
             if (hasStats(stats.getUuid())) {
@@ -209,8 +212,8 @@ public class MySQL implements Database {
     }
 
     @Override
-    public PlayerStats fetchStats(UUID uuid) {
-        PlayerStats stats = new PlayerStats(uuid);
+    public IPlayerStats fetchStats(UUID uuid) {
+        IPlayerStats stats = new PlayerStats(uuid);
         String sql = "SELECT first_play, last_play, wins, kills, final_kills, looses, deaths, final_deaths," +
                 "beds_destroyed, games_played FROM global_stats WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
@@ -237,6 +240,68 @@ public class MySQL implements Database {
             e.printStackTrace();
         }
         return stats;
+    }
+
+    @Override
+    public void saveCustomStat(String columnName, UUID player, Object value, String dataType){
+        String sql;
+        checkCustomColumnExists(columnName, dataType);
+        try (Connection connection = dataSource.getConnection()) {
+            if (hasStats(player)) {
+                sql = "UPDATE global_stats SET "+columnName+"=? WHERE uuid = ?;";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setObject(1, value);
+                    statement.setString(2, player.toString());
+                    statement.executeUpdate();
+                }
+            } else {
+                sql = "INSERT INTO global_stats (uuid, "+columnName+") VALUES (?, ?);";
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setString(1, player.toString());
+                    statement.setObject(2, value);
+                    statement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Object getCustomStat(String columnName, UUID player){
+        String sql = "SELECT "+columnName+" FROM global_stats WHERE uuid = ?;";
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, player.toString());
+                try (ResultSet result = statement.executeQuery()) {
+                    if (result.next()) {
+                        return result.getObject(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void checkCustomColumnExists(String columnName, String dataType){
+        String sql = "SHOW COLUMNS FROM global_stats LIKE ?";
+        try (Connection connection = dataSource.getConnection()){
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, columnName);
+                try (ResultSet result = statement.executeQuery()){
+                    if (!result.next()){
+                        sql = "ALTER TABLE global_stats ADD COLUMN " +columnName+ " " + dataType;
+                        try (PreparedStatement statement1 = connection.prepareStatement(sql)){
+                            statement1.executeUpdate();
+                        }
+                    }
+                }
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -434,11 +499,11 @@ public class MySQL implements Database {
     }
 
     @Override
-    public void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<QuickBuyElement> elements) {
+    public void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<IQuickBuyElement> elements) {
         if (updateSlots.isEmpty()) return;
         boolean hasQuick;
         if (!(hasQuick = hasQuickBuy(uuid))) {
-            for (QuickBuyElement element : elements) {
+            for (IQuickBuyElement element : elements) {
                 if (!updateSlots.containsKey(element.getSlot())) {
                     updateSlots.put(element.getSlot(), element.getCategoryContent().getIdentifier());
                 }

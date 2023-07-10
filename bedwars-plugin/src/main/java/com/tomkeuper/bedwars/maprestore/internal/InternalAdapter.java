@@ -336,4 +336,9 @@ public class InternalAdapter extends RestoreAdapter {
             }
         }
     }
+
+    @Override
+    public String getDisplayName() {
+        return "Internal Restore Adapter";
+    }
 }

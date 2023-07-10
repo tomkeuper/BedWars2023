@@ -68,18 +68,18 @@ import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.vault.WithEconomy;
 import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.placeholder.PlayerPlaceholder;
+import me.neznamy.tab.api.placeholder.ServerPlaceholder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -125,6 +125,9 @@ public class Arena implements IArena {
     private LinkedList<org.bukkit.util.Vector> placed = new LinkedList<>();
     private List<String> nextEvents = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
+    private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
+    private List<PlayerPlaceholder> playerPlaceholders = new ArrayList<>();
+    private List<BossBar> dragonBossbars = new ArrayList<>();
     private int renderDistance;
 
     private final List<Player> leaving = new ArrayList<>();
@@ -415,7 +418,7 @@ public class Arena implements IArena {
         PlaceholderManager pm = TabAPI.getInstance().getPlaceholderManager();
         for (int i = 1; i <= teams.size(); i++) {
             int finalI = i;
-            pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI));
+            playerPlaceholders.add(pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI)));
         }
 
         //register scoreboards
@@ -793,9 +796,9 @@ public class Arena implements IArena {
         }
 
         List<ShopCache.CachedItem> cacheList = new ArrayList<>();
-        if (ShopCache.getShopCache(p.getUniqueId()) != null) {
+        if (ShopCache.getInstance().getShopCache(p.getUniqueId()) != null) {
             //noinspection ConstantConditions
-            cacheList = ShopCache.getShopCache(p.getUniqueId()).getCachedPermanents();
+            cacheList = ShopCache.getInstance().getShopCache(p.getUniqueId()).getCachedPermanents();
         }
 
         LastHit lastHit = LastHit.getLastHit(p);
@@ -1175,7 +1178,7 @@ public class Arena implements IArena {
         p.getInventory().clear();
 
         //restore items before re-spawning in team
-        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc != null) sc.destroy();
         sc = new ShopCache(p.getUniqueId());
         for (ShopCache.CachedItem ci : reJoin.getPermanentsAndNonDowngradables()) {
@@ -1204,6 +1207,7 @@ public class Arena implements IArena {
         if (getRestartingTask() != null) getRestartingTask().cancel();
         if (getStartingTask() != null) getStartingTask().cancel();
         if (getPlayingTask() != null) getPlayingTask().cancel();
+        if (getAnnouncementTask() != null) getAnnouncementTask().cancel();
         plugin.getLogger().log(Level.WARNING, "Disabling arena: " + getArenaName());
         for (Player inWorld : getWorld().getPlayers()) {
             inWorld.kickPlayer("You're not supposed to be here.");
@@ -1607,14 +1611,16 @@ public class Arena implements IArena {
             PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
             players.forEach(c -> {
                 BoardManager.getInstance().giveTabFeatures(c, this, false);
-                prefixPlaceholder.updateValue(TabAPI.getInstance().getPlayer(c.getUniqueId()), prefixPlaceholder.request(TabAPI.getInstance().getPlayer(c.getUniqueId())));
-                suffixPlaceholder.updateValue(TabAPI.getInstance().getPlayer(c.getUniqueId()), suffixPlaceholder.request(TabAPI.getInstance().getPlayer(c.getUniqueId())));
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
             });
 
             spectators.forEach(c -> {
                 BoardManager.getInstance().giveTabFeatures(c, this, false);
-                prefixPlaceholder.updateValue(TabAPI.getInstance().getPlayer(c.getUniqueId()), prefixPlaceholder.request(TabAPI.getInstance().getPlayer(c.getUniqueId())));
-                suffixPlaceholder.updateValue(TabAPI.getInstance().getPlayer(c.getUniqueId()), suffixPlaceholder.request(TabAPI.getInstance().getPlayer(c.getUniqueId())));
+                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
             });
         }
     }
@@ -2500,6 +2506,18 @@ public class Arena implements IArena {
                 despawnable.destroy();
             }
         }
+        for (ServerPlaceholder placeholder : serverPlaceholders){
+            TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
+        }
+        for (PlayerPlaceholder placeholder : playerPlaceholders){
+            TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
+        }
+        if (TabAPI.getInstance().getBossBarManager() != null){
+            for (BossBar bossBar : dragonBossbars){
+                bossBar.getPlayers().forEach(bossBar::removePlayer);
+            }
+            dragonBossbars = null;
+        }
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
@@ -2632,15 +2650,13 @@ public class Arena implements IArena {
                 Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
                     player.setAllowFlight(true);
                     player.setFlying(true);
+                    player.setFireTicks(0);
 
                     nms.setCollide(player, this, false);
-                    // #274
                     for (Player invisible : getShowTime().keySet()) {
                         BedWars.nms.hideArmor(invisible, player);
                     }
-
-                    PaperSupport.teleportC(player, getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                }, 10L);
+                }, 5L);
             } else {
                 ITeam team = getTeam(player);
                 team.respawnMember(player);
@@ -2758,6 +2774,11 @@ public class Arena implements IArena {
         return leaving;
     }
 
+    @Override
+    public List<BossBar> getDragonBossbars(){
+        return dragonBossbars;
+    }
+
     /**
      * Remove player from world.
      * Contains fall-backs.
@@ -2778,6 +2799,37 @@ public class Arena implements IArena {
             } else {
                 PaperSupport.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
             }
+        }
+    }
+
+    /**
+     * Dragon bossbar custom names
+     * Use only for 1.8 servers as they don't support BossBar packets
+     */
+    public void set1_8BossBarName(ITeam team, EnderDragon dragon) {
+        for (Player player : team.getArena().getPlayers()){
+            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
+            dragon.setCustomName(name);
+        }
+    }
+
+    /**
+     * TAB V4 Custom Bossbar naming
+     * Can be used on all versions but will show double bossbars on 1.8 servers as vanilla bossbar is client sided
+     */
+    public void createTABTeamDragonBossBar(ITeam team, int dragonNumber) {
+        if (TabAPI.getInstance().getBossBarManager() == null) {
+            BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon bossbars");
+            return;
+        }
+        String dragonPlaceholderName = "%bw_"+team.getArena().getWorldName()+"_"+team.getName() + "+" + dragonNumber + "%";
+        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500,  () -> team.getDragons().get(dragonNumber).getHealth()/team.getDragons().get(dragonNumber).getMaxHealth()*100);
+        serverPlaceholders.add(dragonPlaceholder);
+        for (Player player : team.getArena().getPlayers()){
+            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
+            BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar( name, dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
+            bb.addPlayer(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+            dragonBossbars.add(bb);
         }
     }
 }

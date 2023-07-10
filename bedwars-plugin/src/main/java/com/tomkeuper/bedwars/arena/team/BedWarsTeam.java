@@ -41,6 +41,7 @@ import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -91,7 +92,9 @@ public class BedWarsTeam implements ITeam {
     // Queued traps
     private LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
     // Amount of dragons for Sudden Death phase
-    private int dragons = 1;
+    private int dragonAmount = 1;
+    // Player cache, used for losers stats and rejoin
+    private List<EnderDragon> dragonEntities = new ArrayList<>();
     // Player cache, used for losers stats and rejoin
     private List<Player> membersCache = new ArrayList<>();
     // Invulnerability at re-spawn
@@ -350,6 +353,7 @@ public class BedWarsTeam implements ITeam {
         p.setAllowFlight(false);
         p.setFlying(false);
         p.setHealth(20);
+        p.setFireTicks(0);
 
         Bukkit.getScheduler().runTaskLater(plugin, ()-> {
             getArena().getRespawnSessions().remove(p); //Fixes https://github.com/andrei1058/BedWars1058/issues/669
@@ -368,7 +372,7 @@ public class BedWarsTeam implements ITeam {
         p.sendMessage(getMsg(p, Messages.PLAYER_DIE_RESPAWNED_TEXT));
 
         sendDefaultInventory(p, false);
-        ShopCache sc = ShopCache.getShopCache(p.getUniqueId());
+        ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc != null) {
             sc.managePermanentsAndDowngradables(getArena());
         }
@@ -782,13 +786,13 @@ public class BedWarsTeam implements ITeam {
         return arena;
     }
 
-    public int getDragons() {
-        return dragons;
+    public int getDragonAmount() {
+        return dragonAmount;
     }
 
     @Override
-    public void setDragons(int amount) {
-        this.dragons = amount;
+    public void setDragonAmount(int amount) {
+        this.dragonAmount = amount;
     }
 
     public List<Player> getMembersCache() {
@@ -798,6 +802,23 @@ public class BedWarsTeam implements ITeam {
     public HashMap<UUID, BedHolo> getBeds() {
         return beds;
     }
+
+    /**
+     * Add assign a dragon to the team.
+     */
+    @Override
+    public void addDragon(EnderDragon dragon){
+        dragonEntities.add(dragon);
+    }
+
+    /**
+     * Add assign a dragon to the team.
+     */
+    @Override
+    public List<EnderDragon> getDragons(){
+        return dragonEntities;
+    }
+
 
     public void destroyData() {
         members = null;
@@ -816,6 +837,7 @@ public class BedWarsTeam implements ITeam {
         armorsEnchantemnts = null;
         enemyBaseEnterTraps.clear();
         membersCache = null;
+        dragonEntities = null;
     }
 
     @Override

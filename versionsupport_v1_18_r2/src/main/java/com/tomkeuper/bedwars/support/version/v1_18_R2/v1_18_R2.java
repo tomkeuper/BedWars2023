@@ -311,13 +311,14 @@ public class v1_18_R2 extends VersionSupport {
     }
 
     @Override
-    public void spawnDragon(Location l, ITeam bwt) {
+    public EnderDragon spawnDragon(Location l, ITeam bwt) {
         if (l == null || l.getWorld() == null) {
             getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
-            return;
+            return null;
         }
         EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
         ed.setPhase(EnderDragon.Phase.CIRCLING);
+        return ed;
     }
 
     @Override

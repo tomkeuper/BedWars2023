@@ -191,7 +191,7 @@ public class Interact implements Listener {
                 ItemStack i = nms.getItemInHand(e.getPlayer());
                 if (i != null) {
                     if (i.getType() != Material.AIR) {
-                        ShopCache sc = ShopCache.getShopCache(e.getPlayer().getUniqueId());
+                        ShopCache sc = ShopCache.getInstance().getShopCache(e.getPlayer().getUniqueId());
                         if (sc != null) {
                             if (InventoryListener.shouldCancelMovement(i, sc)) {
                                 e.setCancelled(true);
