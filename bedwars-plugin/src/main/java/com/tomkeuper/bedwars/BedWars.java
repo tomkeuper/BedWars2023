@@ -566,13 +566,14 @@ public class BedWars extends JavaPlugin {
         // Initialize the addons
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            this.getLogger().info("BedWars2023 has been enabled!");
+            this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
             this.getLogger().info("");
             this.getLogger().info("ServerType: " + getServerType().toString());
             this.getLogger().info("Auto Scale enabled: " + autoscale);
             this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
             this.getLogger().info("");
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
+            this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
             this.getLogger().info("");
             this.getLogger().info("PAPI support: " + papiSupportLoaded);
             this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
@@ -785,16 +786,17 @@ public class BedWars extends JavaPlugin {
         try {
             int major = Integer.parseInt(versionString[0]);
             int minor = Integer.parseInt(versionString[1]);
-            int release = versionString.length > 3 ? Integer.parseInt(versionString[3]) : 0;
+            int release = versionString.length >= 3 ? Integer.parseInt(versionString[2]) : 0;
 
             String adapterPath;
-            if (((major == 2 && minor == 2 && release ==1) || swmPlugin.getDescription().getVersion().equals("2.3.0-SNAPSHOT")) && (nms.getVersion() == 0 || nms.getVersion() == 5)) {
+            if (((major == 2 && minor == 2 && release == 1) || swmPlugin.getDescription().getVersion().equals("2.3.0-SNAPSHOT")) && (nms.getVersion() == 0 || nms.getVersion() == 5)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimeAdapter";
             } else if ((major == 2 && (minor >= 8 && minor <= 10) && (release >= 0 && release <= 9)) && (nms.getVersion() == 8)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.AdvancedSlimeAdapter";
             } else if ((major > 2 || major == 2 && minor >= 10) && nms.getVersion() == 9) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimePaperAdapter";
             } else {
+                this.getLogger().warning("Could not find adapter path for SWM version, is it unsupported?");
                 return false;
             }
 
@@ -807,7 +809,7 @@ public class BedWars extends JavaPlugin {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            this.getLogger().info("Something went wrong! Using internal reset adapter...");
+            this.getLogger().warning("Something went wrong! Using internal reset adapter...");
         }
         return false;
     }
