@@ -121,6 +121,7 @@ public class Language extends ConfigManager {
      * Retrieve a player language.
      */
     public static Language getPlayerLanguage(Player p) {
+        if (p == null) return getDefaultLanguage();
         return langByPlayer.getOrDefault(p.getUniqueId(), getDefaultLanguage());
     }
 
