@@ -28,6 +28,7 @@ import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.craftbukkit.libs.org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -105,6 +106,15 @@ public class Language extends ConfigManager {
         if (p == null) return getDefaultLanguage().m(path);
         BedWars api = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
         return IridiumColorAPI.process(api.getSupportPapi().replace(p, langByPlayer.getOrDefault(p.getUniqueId(), getDefaultLanguage()).m(path).replace("%bw_lang_prefix%", (prefixStatic == null ? "" : prefixStatic))));
+    }
+
+    /**
+     * Get message in specific language and apply Papi placeholders to target player
+     */
+    public static String getMsg(Language language, Player papiPlayer, String path) {
+        if (language == null) return getDefaultLanguage().m(path);
+        BedWars api = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
+        return IridiumColorAPI.process(api.getSupportPapi().replace(papiPlayer, language.m(path).replace("%bw_lang_prefix%", (prefixStatic == null ? "" : prefixStatic))));
     }
 
     /**
