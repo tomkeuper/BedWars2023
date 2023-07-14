@@ -28,7 +28,6 @@ import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.craftbukkit.libs.org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

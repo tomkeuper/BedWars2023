@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
+@SuppressWarnings("unused")
 public class SpectatorFirstPersonEnterEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();

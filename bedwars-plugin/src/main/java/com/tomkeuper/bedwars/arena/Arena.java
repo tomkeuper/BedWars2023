@@ -1613,23 +1613,23 @@ public class Arena implements IArena {
         } else if (status == GameState.restarting) {
             restartingTask = new GameRestartingTask(this);
         }
-        if (TabAPI.getInstance() != null){
-            PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
-            PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
-            players.forEach(c -> {
-                BoardManager.getInstance().giveTabFeatures(c, this, false);
-                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
-                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
-            });
+        PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
+        PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
+        players.forEach(c -> {
+            BoardManager.getInstance().giveTabFeatures(c, this, false);
+            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+            assert tabPlayer != null;
+            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+        });
 
-            spectators.forEach(c -> {
-                BoardManager.getInstance().giveTabFeatures(c, this, false);
-                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
-                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
-            });
-        }
+        spectators.forEach(c -> {
+            BoardManager.getInstance().giveTabFeatures(c, this, false);
+            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+            assert tabPlayer != null;
+            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+        });
     }
 
     /**

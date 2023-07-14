@@ -75,7 +75,7 @@ public class CmdLeave extends SubCommand {
                 return true;
             }
             if (config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY) == 0) {
-                Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
             } else {
                 BukkitTask qt = leaving.get(p.getUniqueId());
                 if (qt != null) {
@@ -88,7 +88,7 @@ public class CmdLeave extends SubCommand {
                 p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY))));
                 BukkitTask bukkitTask = new BukkitRunnable() {
                     public void run() {
-                        Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
+                        Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
                         leaving.remove(p.getUniqueId());
                     }
                 }.runTaskLater(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY) * 20L);

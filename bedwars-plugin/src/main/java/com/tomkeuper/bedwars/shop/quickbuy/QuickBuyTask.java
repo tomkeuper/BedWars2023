@@ -26,8 +26,6 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.shop.ShopManager;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
-import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 

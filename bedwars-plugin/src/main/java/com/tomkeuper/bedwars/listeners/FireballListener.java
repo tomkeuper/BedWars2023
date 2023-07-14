@@ -32,9 +32,6 @@ import org.bukkit.util.Vector;
 
 import java.util.*;
 
-import static com.tomkeuper.bedwars.BedWars.config;
-import static com.tomkeuper.bedwars.BedWars.getAPI;
-
 public class FireballListener implements Listener {
 
     private final double fireballExplosionSize, fireballHorizontal, fireballVertical;
@@ -86,7 +83,7 @@ public class FireballListener implements Listener {
         fireball.setVelocity(fireball.getDirection().multiply(fireballSpeedMultiplier));
         //fireball.setIsIncendiary(false); // apparently this on <12 makes the fireball not explode on hit. wtf bukkit?
         fireball.setYield((float) fireballExplosionSize);
-        fireball.setMetadata("bw1058", new FixedMetadataValue(BedWars.plugin, "ceva"));
+        fireball.setMetadata("bw2023", new FixedMetadataValue(BedWars.plugin, "ceva"));
         BedWars.nms.minusAmount(player, handItem, 1);
     }
 
@@ -217,5 +214,4 @@ public class FireballListener implements Listener {
         }
         e.setFire(fireballMakeFire);
     }
-
 }

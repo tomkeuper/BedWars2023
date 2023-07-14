@@ -27,6 +27,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class StatsAPI implements BedWars.IStats {
 
     private static StatsAPI instance;

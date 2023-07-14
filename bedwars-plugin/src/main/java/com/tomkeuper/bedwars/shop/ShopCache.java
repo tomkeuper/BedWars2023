@@ -26,8 +26,6 @@ import com.tomkeuper.bedwars.api.shop.ICachedItem;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.arena.Arena;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
-import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

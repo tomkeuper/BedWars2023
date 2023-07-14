@@ -317,6 +317,7 @@ public class SQLite implements IDatabase {
         return false;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public int getColumn(UUID player, String column) {
         String sql = "SELECT ? FROM global_stats WHERE uuid = ?;";

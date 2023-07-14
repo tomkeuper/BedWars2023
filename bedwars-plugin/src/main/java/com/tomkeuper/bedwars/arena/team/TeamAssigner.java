@@ -25,10 +25,8 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.ITeamAssigner;
 import com.tomkeuper.bedwars.api.events.gameplay.TeamAssignEvent;
-import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -103,7 +101,7 @@ public class TeamAssigner implements ITeamAssigner {
             if (skip.contains(player)) continue;
             remainingPlayers.add(player);
         }
-        if (remainingPlayers == null) return;
+        if (remainingPlayers.isEmpty()) return;
 
         for (Player player: remainingPlayers) {
             player.closeInventory();

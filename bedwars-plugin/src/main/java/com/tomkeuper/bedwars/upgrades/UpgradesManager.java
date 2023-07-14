@@ -40,7 +40,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -342,7 +341,7 @@ public class UpgradesManager {
 
     /**
      * @param name the string to be converted.
-     * @return NULL if not a currency. {@link org.bukkit.Material#AIR} is used for vault, {@link org.bukkit.Material#IRON_INGOT} for iron, {@link org.bukkit.Material#GOLD_INGOT} for gold, {@link org.bukkit.Material#DIAMOND} for diamond, {@link org.bukkit.Material#EMERALD} for emerald.
+     * @return null if not a currency. {@link org.bukkit.Material#AIR} is used for vault, {@link org.bukkit.Material#IRON_INGOT} for iron, {@link org.bukkit.Material#GOLD_INGOT} for gold, {@link org.bukkit.Material#DIAMOND} for diamond, {@link org.bukkit.Material#EMERALD} for emerald.
      */
     public static Material getCurrency(String name) {
         if (name == null || name.isEmpty()) return null;
@@ -530,7 +529,7 @@ public class UpgradesManager {
         int size = getConfiguration().getInt("default-upgrades-settings.menu-size");
         if(size < 0 || size > 54) {
             size = 45;
-        } else if((size >= 0 && size <= 54) && size % 9 != 0) {
+        } else if(size % 9 != 0) {
             size = 45;
         }
         return size;

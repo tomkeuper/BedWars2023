@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.tomkeuper.bedwars.BedWars.mainCmd;
 import static com.tomkeuper.bedwars.api.language.Messages.*;
 
 public class Italian extends Language {

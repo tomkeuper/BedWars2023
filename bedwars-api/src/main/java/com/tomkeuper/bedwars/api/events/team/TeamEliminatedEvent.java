@@ -5,6 +5,7 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@SuppressWarnings("unused")
 public class TeamEliminatedEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
