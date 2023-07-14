@@ -1,13 +1,17 @@
 package com.tomkeuper.bedwars.listeners;
 
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableMap;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
+import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -17,6 +21,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -117,6 +122,15 @@ public class FireballListener implements Listener {
             if (!Arena.isInArena(player)) {
                 continue;
             }
+            if (arena.isSpectator(player)) continue;
+            if (arena.isReSpawning(player)) continue;
+
+            if (BedWarsTeam.reSpawnInvulnerability.containsKey(player.getUniqueId())) {
+                if (BedWarsTeam.reSpawnInvulnerability.get(player.getUniqueId()) > System.currentTimeMillis()) {
+                    continue;
+                } else BedWarsTeam.reSpawnInvulnerability.remove(player.getUniqueId());
+            }
+
             Vector playerVector = player.getLocation().toVector();
             Vector normalizedVector = vector.subtract(playerVector).normalize();
             Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
@@ -141,13 +155,32 @@ public class FireballListener implements Listener {
                 if (damageSelf > 0) {
                     player.damage(damageSelf); // damage shooter
                 }
-            } else if (arena.getTeam(player).equals(arena.getTeam(source))) {
-                if (damageTeammates > 0) {
-                    player.damage(damageTeammates); // damage teammates
-                }
             } else {
-                if (damageEnemy > 0) {
-                    player.damage(damageEnemy); // damage enemies
+                ITeam playerTeam = arena.getTeam(player);
+                ITeam sourceTeam = arena.getTeam(source);
+
+                if (playerTeam != null && playerTeam.equals(sourceTeam)) {
+                    if (damageTeammates > 0) {
+                        EntityDamageEvent damageEvent = new EntityDamageEvent(
+                                player,
+                                EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, damageTeammates)),
+                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(damageTeammates)))
+                        );
+                        player.setLastDamageCause(damageEvent);
+                        player.damage(damageTeammates); // damage teammates
+                    }
+                } else {
+                    if (damageEnemy > 0) {
+                        EntityDamageEvent damageEvent = new EntityDamageEvent(
+                                player,
+                                EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, damageEnemy)),
+                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(damageEnemy)))
+                        );
+                        player.setLastDamageCause(damageEvent);
+                        player.damage(damageEnemy); // damage enemies
+                    }
                 }
             }
         }
