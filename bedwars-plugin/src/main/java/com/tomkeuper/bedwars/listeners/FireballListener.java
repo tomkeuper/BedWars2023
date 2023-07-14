@@ -38,10 +38,9 @@ public class FireballListener implements Listener {
     private final double damageSelf, damageEnemy, damageTeammates;
     private final double fireballSpeedMultiplier, fireballCooldown;
     private final boolean fireballMakeFire;
-    private final YamlConfiguration config;
 
     public FireballListener() {
-        config = BedWars.config.getYml();
+        YamlConfiguration config = BedWars.config.getYml();
         fireballExplosionSize = config.getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         fireballMakeFire = config.getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
         fireballHorizontal = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL) * -1;
@@ -164,29 +163,24 @@ public class FireballListener implements Listener {
                 ITeam sourceTeam = arena.getTeam(source);
 
                 if (playerTeam != null && playerTeam.equals(sourceTeam)) {
-                    if (damageTeammates > 0) {
-                        EntityDamageEvent damageEvent = new EntityDamageEvent(
-                                player,
-                                EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
-                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, damageTeammates)),
-                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(damageTeammates)))
-                        );
-                        player.setLastDamageCause(damageEvent);
-                        player.damage(damageTeammates); // damage teammates
-                    }
+                    damagePlayer(player, damageTeammates);
                 } else {
-                    if (damageEnemy > 0) {
-                        EntityDamageEvent damageEvent = new EntityDamageEvent(
-                                player,
-                                EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
-                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, damageEnemy)),
-                                new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(damageEnemy)))
-                        );
-                        player.setLastDamageCause(damageEvent);
-                        player.damage(damageEnemy); // damage enemies
-                    }
+                    damagePlayer(player, damageEnemy);
                 }
             }
+        }
+    }
+
+    private void damagePlayer(Player player, double damageTeammates) {
+        if (damageTeammates > 0) {
+            EntityDamageEvent damageEvent = new EntityDamageEvent(
+                    player,
+                    EntityDamageEvent.DamageCause.ENTITY_EXPLOSION,
+                    new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, damageTeammates)),
+                    new EnumMap<>(ImmutableMap.of(EntityDamageEvent.DamageModifier.BASE, Functions.constant(damageTeammates)))
+            );
+            player.setLastDamageCause(damageEvent);
+            player.damage(damageTeammates); // damage teammates
         }
     }
 
