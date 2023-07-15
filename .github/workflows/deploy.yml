@@ -114,3 +114,18 @@ jobs:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
         run: mvn --batch-mode -DskipTests clean deploy -s settings.xml
+      - name: Build JavaDoc
+        run: mvn javadoc:javadoc
+      - name: Deploy JavaDoc 🚀
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        env:
+          JDC_IP_ADDRESS: ${{ secrets.JDC_IP_ADDRESS }}
+          JDC_USER: ${{ secrets.JDC_USER }}
+          JDC_PRIVATE_KEY: ${{ secrets.JDC_PRIVATE_KEY }}
+        with:
+          username: ${{env.JDC_USER}}
+          server: ${{env.JDC_IP_ADDRESS}}
+          ssh_private_key: ${{ env.JDC_PRIVATE_KEY }}
+          local_path: './static/*'
+          remote_path: '/javadocs/'
+          sftpArgs: '-o ConnectTimeout=5'
