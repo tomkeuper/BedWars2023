@@ -46,8 +46,8 @@ import static com.tomkeuper.bedwars.BedWars.config;
 
 public class CmdLeave extends SubCommand {
 
-    private static HashMap<UUID, Long> delay = new HashMap<>();
-    private static HashMap<UUID, BukkitTask> leaving = new HashMap<>();
+    private static final HashMap<UUID, Long> delay = new HashMap<>();
+    private static final HashMap<UUID, BukkitTask> leaving = new HashMap<>();
 
     public CmdLeave(ParentCommand parent, String name) {
         super(parent, name);
@@ -74,25 +74,30 @@ public class CmdLeave extends SubCommand {
                 p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
                 return true;
             }
-            if (config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY) == 0) {
-                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-            } else {
-                BukkitTask qt = leaving.get(p.getUniqueId());
-                if (qt != null) {
-                    update(p.getUniqueId());
-                    qt.cancel();
-                    leaving.remove(p.getUniqueId());
-                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_CANCELED));
-                    return true;
-                }
-                p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY))));
-                BukkitTask bukkitTask = new BukkitRunnable() {
-                    public void run() {
-                        Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+            if (args.length > 0 && args[0].equalsIgnoreCase("delayed")) {
+                int leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY);
+                if (leaveDelay == 0) {
+                    Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+                } else {
+                    BukkitTask qt = leaving.get(p.getUniqueId());
+                    if (qt != null) {
+                        update(p.getUniqueId());
+                        qt.cancel();
                         leaving.remove(p.getUniqueId());
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_CANCELED));
+                        return true;
                     }
-                }.runTaskLater(BedWars.plugin, config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY) * 20L);
-                leaving.put(p.getUniqueId(),bukkitTask);
+                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(leaveDelay)));
+                    BukkitTask bukkitTask = new BukkitRunnable() {
+                        public void run() {
+                            Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+                            leaving.remove(p.getUniqueId());
+                        }
+                    }.runTaskLater(BedWars.plugin, leaveDelay * 20L);
+                    leaving.put(p.getUniqueId(), bukkitTask);
+                }
+            } else {
+                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
             }
         }
         return true;

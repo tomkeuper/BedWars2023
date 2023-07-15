@@ -34,7 +34,7 @@ public class LeaveCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender s, String st, String[] args) {
-        if (s instanceof ConsoleCommandSender) return true;
+        if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
         Bukkit.dispatchCommand(p, "bw leave");
         return true;
