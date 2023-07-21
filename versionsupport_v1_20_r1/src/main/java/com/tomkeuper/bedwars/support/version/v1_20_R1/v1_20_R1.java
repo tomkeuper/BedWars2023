@@ -54,7 +54,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -334,18 +333,17 @@ public class v1_20_R1 extends VersionSupport {
     }
 
     @Override
-    public void registerTntWhitelist() {
+    public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
-            var protection = 300f;
             // blast resistance
             Field field = BlockBase.class.getDeclaredField("aF");
             field.setAccessible(true);
             // end stone
-            field.set(Blocks.fz, protection);
+            field.set(Blocks.fz, endStoneBlast);
             // obsidian
-            field.set(Blocks.co, protection);
+            field.set(Blocks.co, glassBlast);
             // standard glass
-            field.set(Blocks.aQ, protection);
+            field.set(Blocks.aQ, glassBlast);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
                     Blocks.ej, Blocks.ek, Blocks.el, Blocks.em,
@@ -359,7 +357,7 @@ public class v1_20_R1 extends VersionSupport {
             Arrays.stream(coloredGlass).forEach(
                     glass -> {
                         try {
-                            field.set(glass, protection);
+                            field.set(glass, glassBlast);
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }
@@ -438,12 +436,6 @@ public class v1_20_R1 extends VersionSupport {
             i = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEDROCK);
         }
         return i;
-    }
-
-    @Override
-    public void teamCollideRule(@NotNull Team team) {
-        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.setCanSeeFriendlyInvisibles(true);
     }
 
     @Override

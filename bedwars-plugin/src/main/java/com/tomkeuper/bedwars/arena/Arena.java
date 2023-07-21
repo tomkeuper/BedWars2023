@@ -87,6 +87,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.time.Instant;
@@ -2618,8 +2619,31 @@ public class Arena implements IArena {
     }
 
     @Override
-    public void setAllowMapBreak(boolean value) {
-        this.allowMapBreak = value;
+    public void setAllowMapBreak(boolean allowMapBreak) {
+        this.allowMapBreak = allowMapBreak;
+    }
+
+    @Override
+    public boolean isTeamBed(Location location) {
+        return null != getBedsTeam(location);
+    }
+
+    @Override
+    public @Nullable ITeam getBedsTeam(@NotNull Location location) {
+        if (!location.getWorld().getName().equals(this.worldName)) {
+            throw new RuntimeException("Given location is not on this game world.");
+        }
+
+        if (!nms.isBed(location.getBlock().getType())) {
+            return null;
+        }
+
+        for (ITeam team : this.teams) {
+            if (team.isBed(location)) {
+                return team;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -2784,6 +2808,10 @@ public class Arena implements IArena {
     @Override
     public List<BossBar> getDragonBossbars(){
         return dragonBossbars;
+    }
+
+    public boolean isAllowMapBreak() {
+        return allowMapBreak;
     }
 
     /**
