@@ -299,7 +299,7 @@ public class Persian extends Language {
         yml.addDefault(Messages.NPC_NAME_TEAM_SHOP, "&bFOROOSHGAH TEAM,&e&lRIGHT CLICK");
         yml.addDefault(Messages.NPC_NAME_SOLO_SHOP, "&bFOROOSHGAH ITEM,&e&lRIGHT CLICK");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lTEAM ELIMINATED > {TeamColor} Team {TeamName} &chazf shod!\n");
-        yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&cHazf Bed Ha");
+        yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&fHazf Bed Ha");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&fDiamond II");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_III, "&fDiamond III");
         yml.addDefault(Messages.NEXT_EVENT_DRAGON_SPAWN, "&fHamle Dragon");
