@@ -293,7 +293,7 @@ public class Romanian extends Language {
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&lApara-ti patul!");
         yml.addDefault(Messages.BED_HOLOGRAM_DESTROYED, "&c&lPatul tau a fost distrus!");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lTEAM ELIMINAT > {TeamColor}Echipa {TeamName} &ca fost eliminata!\n");
-        yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&cDistrugerea Paturilor");
+        yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&fPat Distruge");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&fDiamant II");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_III, "&fDiamant III");
         yml.addDefault(Messages.NEXT_EVENT_DRAGON_SPAWN, "&fMoarte Brusca");
