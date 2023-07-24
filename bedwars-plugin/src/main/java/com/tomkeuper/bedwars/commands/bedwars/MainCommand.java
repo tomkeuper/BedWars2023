@@ -229,18 +229,12 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
     }
 
     /**
-     * Check if lobby location is set, else send a error message to the player
+     * Check if lobby location is set
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isLobbySet(Player p) {
+    public static boolean isLobbySet() {
         if (BedWars.getServerType() == ServerType.BUNGEE) return true;
-        if (config.getLobbyWorldName().isEmpty()) {
-            if (p != null) {
-                p.sendMessage("§c▪ §7You have to set the lobby location first!");
-            }
-            return false;
-        }
-        return true;
+        return !config.getLobbyWorldName().isEmpty();
     }
 
     @Override

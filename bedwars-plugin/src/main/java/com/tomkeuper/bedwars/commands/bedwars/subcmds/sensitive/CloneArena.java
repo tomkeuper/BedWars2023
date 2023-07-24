@@ -55,7 +55,10 @@ public class CloneArena extends SubCommand {
     public boolean execute(String[] args, CommandSender s) {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
-        if (!MainCommand.isLobbySet(p)) return true;
+        if (!MainCommand.isLobbySet() && p != null) {
+            p.sendMessage("§c▪ §7You have to set the lobby location first!");
+            return true;
+        }
         if (args.length != 2) {
             p.sendMessage("§c▪ §7Usage: §o/" + getParent().getName() + " " + getSubCommandName() + " <mapName> <newArena>");
             return true;

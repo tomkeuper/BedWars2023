@@ -51,7 +51,10 @@ public class Build extends SubCommand {
     public boolean execute(String[] args, CommandSender s) {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
-        if (!MainCommand.isLobbySet(p)) return true;
+        if (!MainCommand.isLobbySet() && p != null) {
+            p.sendMessage("§c▪ §7You have to set the lobby location first!");
+            return true;
+        }
         if (BreakPlace.isBuildSession(p)) {
             p.sendMessage("§6 ▪ §7You can't place and break blocks anymore!");
             BreakPlace.removeBuildSession(p);
