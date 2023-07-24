@@ -532,15 +532,20 @@ public class BedWars extends JavaPlugin {
         // Initialize sidebar manager
         Bukkit.getScheduler().runTask(this, () -> {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
-                getLogger().info("Hooked into TAB support!");
-                if (BoardManager.init()) {
-                    getLogger().info("TAB support has been loaded");
+                getLogger().info("Hooking into TAB support!");
+                try {
+                    if (BoardManager.init()) {
+                        getLogger().info("TAB support has been loaded");
 
-                    /* Load join signs. */
-                    loadArenasAndSigns();
+                        /* Load join signs. */
+                        loadArenasAndSigns();
 
-                } else {
-                    this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
+                    } else {
+                        this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
+                        Bukkit.getPluginManager().disablePlugin(this);
+                    }
+                } catch (NoSuchMethodError error){
+                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v4.0.2 or higher is required!" );
                     Bukkit.getPluginManager().disablePlugin(this);
                 }
             } else {
@@ -566,7 +571,7 @@ public class BedWars extends JavaPlugin {
             addonManager.loadAddons();
         }, 60L);
 
-        // Initialize the addons
+        // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
