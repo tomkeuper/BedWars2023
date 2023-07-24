@@ -567,9 +567,7 @@ public class BedWars extends JavaPlugin {
         AntiDropFeature.init();
 
         // Initialize the addons
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            addonManager.loadAddons();
-        }, 60L);
+        Bukkit.getScheduler().runTaskLater(this, () -> addonManager.loadAddons(), 60L);
 
         // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
@@ -580,6 +578,16 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Auto Scale enabled: " + autoscale);
             this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
             this.getLogger().info("");
+            this.getLogger().info("Arena's enabled: " + api.getArenaUtil().getArenas().size());
+
+            StringJoiner stringJoiner = new StringJoiner(", ");
+            if (api.getArenaUtil().getArenas().isEmpty()) stringJoiner.add("none");
+            for (IArena arena : api.getArenaUtil().getArenas()){
+                stringJoiner.add(arena.getArenaName());
+            }
+
+            this.getLogger().info("being: " + stringJoiner);
+            this.getLogger().info("");
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
             this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
             this.getLogger().info("");
@@ -588,7 +596,7 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
             this.getLogger().info("");
             this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false"));
+            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
