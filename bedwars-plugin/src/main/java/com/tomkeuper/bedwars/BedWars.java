@@ -533,20 +533,19 @@ public class BedWars extends JavaPlugin {
         Bukkit.getScheduler().runTask(this, () -> {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
                 getLogger().info("Hooking into TAB support!");
-                try {
-                    if (BoardManager.init()) {
-                        getLogger().info("TAB support has been loaded");
-
-                        /* Load join signs. */
-                        loadArenasAndSigns();
-
-                    } else {
-                        this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
-                        Bukkit.getPluginManager().disablePlugin(this);
-                    }
-                } catch (NoSuchMethodError error){
+                if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())){
                     this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v4.0.2 or higher is required!" );
                     Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
+                if (BoardManager.init()) {
+                    getLogger().info("TAB support has been loaded");
+
+                    /* Load join signs. */
+                    loadArenasAndSigns();
+
+                } else {
+                    this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
@@ -849,5 +848,42 @@ public class BedWars extends JavaPlugin {
 
     public static void setRemoteDatabase(IDatabase database){
         remoteDatabase = database;
+    }
+
+
+    private boolean checkTABVersion(String version) {
+        String targetVersion = "4.0.2";
+
+        String[] currentParts = version.split("\\.");
+        String[] targetParts = targetVersion.split("\\.");
+
+        // Compare major version
+        int currentMajor = Integer.parseInt(currentParts[0]);
+        int targetMajor = Integer.parseInt(targetParts[0]);
+        if (currentMajor < targetMajor) {
+            return true;
+        } else if (currentMajor > targetMajor) {
+            return false;
+        }
+
+        // Compare minor version
+        int currentMinor = Integer.parseInt(currentParts[1]);
+        int targetMinor = Integer.parseInt(targetParts[1]);
+        if (currentMinor < targetMinor) {
+            return true;
+        } else if (currentMinor > targetMinor) {
+            return false;
+        }
+
+        // Compare patch version
+        int currentPatch = Integer.parseInt(currentParts[2]);
+        int targetPatch = Integer.parseInt(targetParts[2]);
+
+        // Check for equality
+        if (currentPatch == targetPatch) {
+            return true; // Versions are equal
+        }
+
+        return currentPatch < targetPatch;
     }
 }
