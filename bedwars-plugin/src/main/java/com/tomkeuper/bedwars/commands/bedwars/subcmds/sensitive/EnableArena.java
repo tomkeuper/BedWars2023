@@ -101,12 +101,11 @@ public class EnableArena extends SubCommand {
 
     @Override
     public boolean canSee(CommandSender s, com.tomkeuper.bedwars.api.BedWars api) {
-        if (s instanceof ConsoleCommandSender) return false;
-
-        Player p = (Player) s;
-        if (Arena.isInArena(p)) return false;
-
-        if (SetupSession.isInSetupSession(p.getUniqueId())) return false;
+        if (s instanceof Player) {
+            Player p = (Player) s;
+            if (Arena.isInArena(p)) return false;
+            if (SetupSession.isInSetupSession(p.getUniqueId())) return false;
+        }
         return hasPermission(s);
     }
 }

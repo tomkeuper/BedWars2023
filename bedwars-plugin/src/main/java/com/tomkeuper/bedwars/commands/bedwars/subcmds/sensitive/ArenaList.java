@@ -73,7 +73,7 @@ public class ArenaList extends SubCommand {
             start = 0;
         }
 
-        s.sendMessage(color(" &c|| &6" + com.tomkeuper.bedwars.BedWars.plugin.getName() + "&7 Instantiated games:"));
+        s.sendMessage(color(" &c|| &6" + com.tomkeuper.bedwars.BedWars.plugin.getName() + " &cConfigs found: &f" + getArenas().size() + "&7 Instantiated games:"));
 
         if (arenas.isEmpty()) {
             s.sendMessage(ChatColor.RED + "No arenas to display.");
