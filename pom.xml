@@ -167,12 +167,12 @@
         <repository>
             <id>bedwars-repo</id>
             <name>BedWars Maven Repository</name>
-            <url>https://repo.tomkeuper.com/repository/bedwars-releases/</url>
+            <url>https://repo.tomkeuper.com/repository/releases/</url>
         </repository>
         <snapshotRepository>
             <id>bedwars-repo</id>
             <name>BedWars Snapshot Maven Repository</name>
-            <url>https://repo.tomkeuper.com/repository/bedwars-snapshots/</url>
+            <url>https://repo.tomkeuper.com/repository/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
