@@ -95,6 +95,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.29</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>de.simonsator</groupId>
             <artifactId>Party-and-Friends-MySQL-Edition-Spigot-API</artifactId>
             <version>1.5.4-RELEASE</version>
@@ -327,6 +333,10 @@
                         <relocation>
                             <pattern>com.andrei1058.vipfeatures.api</pattern>
                             <shadedPattern>com.tomkeuper.bedwars.libs.vipfeatures</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>com.mysql</pattern>
+                            <shadedPattern>com.tomkeuper.bedwars.libs.mysql</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
