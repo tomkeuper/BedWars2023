@@ -522,14 +522,18 @@ public class Arena implements IArena {
             p.setHealth(20);
             for (Player on : players) {
                 Language language = Language.getPlayerLanguage(on);
-                on.sendMessage(getMsg(language, p, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
+                if (ev.getMessage() != null){
+                    on.sendMessage(getMsg(language, p, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                             .replace("%bw_playername%", p.getName())
                             .replace("%bw_player%", p.getDisplayName())
                             .replace("%bw_on%", String.valueOf(getPlayers().size()))
                             .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                );
+                    );
+                } else {
+                    on.sendMessage(ev.getMessage());
+                }
             }
             setArenaByPlayer(p, this);
 
