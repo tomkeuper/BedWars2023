@@ -75,6 +75,7 @@ public class MySQL implements IDatabase {
     public boolean connect() {
         HikariConfig hikariConfig = new HikariConfig();
 
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setPoolName("BedWars2023MySQLPool");
 
         hikariConfig.setMaximumPoolSize(poolSize);
