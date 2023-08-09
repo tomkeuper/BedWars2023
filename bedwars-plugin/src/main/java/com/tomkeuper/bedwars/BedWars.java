@@ -580,7 +580,7 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
             this.getLogger().info("");
             this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false"));
+            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false") + ", TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "true" : "false"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);

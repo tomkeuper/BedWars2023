@@ -116,7 +116,7 @@ public class BoardManager implements IScoreboardService {
         if (bossBarManager == null) BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon boss-bars");
         if (nameTagManager == null && BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME)) if (!(TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager))
             Bukkit.getLogger().warning("Below name health is enabled in BedWars config but unlimited nametags is disabled in TAB config!");
-        if (tabListFormatManager == null) BedWars.plugin.getLogger().warning("TabList Format Manager is null! You dont have the Tab List enabled in TAB config.\nIf this is intentional, you can ignore this message.");
+        if (tabListFormatManager == null) BedWars.plugin.getLogger().warning("TabList Format Manager is null! You dont have the tablist-name-formatting enabled in TAB config.\nWithout this feature the plugin will NOT work properly");
     }
 
     private void registerPlaceholders(){
