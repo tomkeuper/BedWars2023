@@ -192,7 +192,7 @@ public class CmdList extends SubCommand {
 
     @Override
     public boolean canSee(CommandSender s, BedWars api) {
-
+        if (s instanceof ConsoleCommandSender) return  false;
         if (s instanceof Player) {
             Player p = (Player) s;
             if (Arena.isInArena(p)) return false;

@@ -43,7 +43,9 @@ import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Timestamp;
@@ -226,9 +228,9 @@ public interface BedWars {
          * Loads an arena and adds it to the enable queue.
          *
          * @param worldName the name of the arena world
-         * @param sender    the player who triggered the load (can be null)
+         * @param sender    the player or console who triggered the load (can be null)
          */
-        void loadArena(String worldName, Player sender);
+        void loadArena(String worldName, @Nullable CommandSender sender);
 
         /**
          * Sets the number of games before the server restarts.

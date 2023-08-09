@@ -328,12 +328,32 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public void registerTntWhitelist() {
+    public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             Field field = net.minecraft.server.v1_16_R3.BlockBase.class.getDeclaredField("durability");
             field.setAccessible(true);
-            field.set(Blocks.END_STONE, 12f);
-            field.set(Blocks.GLASS, 300f);
+            for (net.minecraft.server.v1_16_R3.Block glass : new net.minecraft.server.v1_16_R3.Block[]{
+                    Blocks.WHITE_STAINED_GLASS,
+                    Blocks.ORANGE_STAINED_GLASS,
+                    Blocks.MAGENTA_STAINED_GLASS,
+                    Blocks.LIGHT_BLUE_STAINED_GLASS,
+                    Blocks.YELLOW_STAINED_GLASS,
+                    Blocks.LIME_STAINED_GLASS,
+                    Blocks.PINK_STAINED_GLASS,
+                    Blocks.GRAY_STAINED_GLASS,
+                    Blocks.LIGHT_GRAY_STAINED_GLASS,
+                    Blocks.CYAN_STAINED_GLASS,
+                    Blocks.PURPLE_STAINED_GLASS,
+                    Blocks.BLUE_STAINED_GLASS,
+                    Blocks.BROWN_STAINED_GLASS,
+                    Blocks.GREEN_STAINED_GLASS,
+                    Blocks.RED_STAINED_GLASS,
+                    Blocks.BLACK_STAINED_GLASS,
+                    Blocks.GLASS,
+            }) {
+                field.set(glass, glassBlast);
+            }
+            field.set(Blocks.END_STONE, endStoneBlast);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -425,12 +445,6 @@ public class v1_16_R3 extends VersionSupport {
             i = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEDROCK);
         }
         return i;
-    }
-
-    @Override
-    public void teamCollideRule(Team team) {
-        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.setCanSeeFriendlyInvisibles(true);
     }
 
     @Override

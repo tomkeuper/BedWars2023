@@ -470,7 +470,10 @@ public class BedWars extends JavaPlugin {
         }
 
         /* Protect glass walls from tnt explosion */
-        nms.registerTntWhitelist();
+        nms.registerTntWhitelist(
+                (float) config.getDouble(ConfigPath.GENERAL_TNT_PROTECTION_END_STONE_BLAST),
+                (float) config.getDouble(ConfigPath.GENERAL_TNT_PROTECTION_GLASS_BLAST)
+        );
 
         /* Prevent issues on reload */
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -529,7 +532,12 @@ public class BedWars extends JavaPlugin {
         // Initialize sidebar manager
         Bukkit.getScheduler().runTask(this, () -> {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
-                getLogger().info("Hooked into TAB support!");
+                getLogger().info("Hooking into TAB support!");
+                if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())){
+                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v4.0.2 or higher is required!" );
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
                 if (BoardManager.init()) {
                     getLogger().info("TAB support has been loaded");
 
@@ -538,7 +546,6 @@ public class BedWars extends JavaPlugin {
 
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
-                    Bukkit.getPluginManager().disablePlugin(this);
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
@@ -559,11 +566,9 @@ public class BedWars extends JavaPlugin {
         AntiDropFeature.init();
 
         // Initialize the addons
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            addonManager.loadAddons();
-        }, 60L);
+        Bukkit.getScheduler().runTaskLater(this, () -> addonManager.loadAddons(), 60L);
 
-        // Initialize the addons
+        // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
@@ -571,6 +576,16 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("ServerType: " + getServerType().toString());
             this.getLogger().info("Auto Scale enabled: " + autoscale);
             this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
+            this.getLogger().info("");
+            this.getLogger().info("Arena's enabled: " + api.getArenaUtil().getArenas().size());
+
+            StringJoiner stringJoiner = new StringJoiner(", ");
+            if (api.getArenaUtil().getArenas().isEmpty()) stringJoiner.add("none");
+            for (IArena arena : api.getArenaUtil().getArenas()){
+                stringJoiner.add(arena.getArenaName());
+            }
+
+            this.getLogger().info("being: " + stringJoiner);
             this.getLogger().info("");
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
             this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
@@ -580,7 +595,7 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
             this.getLogger().info("");
             this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false") + ", TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "true" : "false"));
+            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true") + ", TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
@@ -833,5 +848,42 @@ public class BedWars extends JavaPlugin {
 
     public static void setRemoteDatabase(IDatabase database){
         remoteDatabase = database;
+    }
+
+
+    private boolean checkTABVersion(String version) {
+        String targetVersion = "4.0.2";
+
+        String[] currentParts = version.split("\\.");
+        String[] targetParts = targetVersion.split("\\.");
+
+        // Compare major version
+        int currentMajor = Integer.parseInt(currentParts[0]);
+        int targetMajor = Integer.parseInt(targetParts[0]);
+        if (currentMajor < targetMajor) {
+            return true;
+        } else if (currentMajor > targetMajor) {
+            return false;
+        }
+
+        // Compare minor version
+        int currentMinor = Integer.parseInt(currentParts[1]);
+        int targetMinor = Integer.parseInt(targetParts[1]);
+        if (currentMinor < targetMinor) {
+            return true;
+        } else if (currentMinor > targetMinor) {
+            return false;
+        }
+
+        // Compare patch version
+        int currentPatch = Integer.parseInt(currentParts[2]);
+        int targetPatch = Integer.parseInt(targetParts[2]);
+
+        // Check for equality
+        if (currentPatch == targetPatch) {
+            return true; // Versions are equal
+        }
+
+        return currentPatch < targetPatch;
     }
 }

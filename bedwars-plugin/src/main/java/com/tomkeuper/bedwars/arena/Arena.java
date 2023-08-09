@@ -78,6 +78,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -87,6 +88,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.time.Instant;
@@ -193,7 +195,7 @@ public class Arena implements IArena {
      * @param name - world name
      * @param p    - This will send messages to the player if something went wrong while loading the arena. Can be NULL.
      */
-    public Arena(String name, Player p) {
+    public Arena(String name, @Nullable CommandSender p) {
         if (!autoscale) {
             for (IArena mm : enableQueue) {
                 if (mm.getArenaName().equalsIgnoreCase(name)) {
@@ -218,11 +220,6 @@ public class Arena implements IArena {
         }
 
         cm = new ArenaConfig(BedWars.plugin, name, plugin.getDataFolder().getPath() + "/Arenas");
-
-        //if (mapManager.isLevelWorld()) {
-        //    Main.plugin.getLogger().severe("COULD NOT LOAD ARENA: " + name);
-        //    //return;
-        //}
 
         yml = cm.getYml();
         if (yml.get("Team") == null) {
@@ -2622,8 +2619,31 @@ public class Arena implements IArena {
     }
 
     @Override
-    public void setAllowMapBreak(boolean value) {
-        this.allowMapBreak = value;
+    public void setAllowMapBreak(boolean allowMapBreak) {
+        this.allowMapBreak = allowMapBreak;
+    }
+
+    @Override
+    public boolean isTeamBed(Location location) {
+        return null != getBedsTeam(location);
+    }
+
+    @Override
+    public @Nullable ITeam getBedsTeam(@NotNull Location location) {
+        if (!location.getWorld().getName().equals(this.worldName)) {
+            throw new RuntimeException("Given location is not on this game world.");
+        }
+
+        if (!nms.isBed(location.getBlock().getType())) {
+            return null;
+        }
+
+        for (ITeam team : this.teams) {
+            if (team.isBed(location)) {
+                return team;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -2788,6 +2808,10 @@ public class Arena implements IArena {
     @Override
     public List<BossBar> getDragonBossbars(){
         return dragonBossbars;
+    }
+
+    public boolean isAllowMapBreak() {
+        return allowMapBreak;
     }
 
     /**

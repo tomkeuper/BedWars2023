@@ -125,7 +125,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
     public boolean execute(CommandSender s, String st, String[] args) {
 
         if (args.length == 0) {
-            /* Set op commands*/
+            /* Set op commands, console always has permission*/
             if ((s.isOp() || s.hasPermission(BedWars.mainCmd + ".*"))) {
                 if (s instanceof Player) {
                     if (SetupSession.isInSetupSession(((Player) s).getUniqueId())) {
@@ -134,16 +134,15 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
                         s.sendMessage("");
                         s.sendMessage("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Admin Commands");
                         s.sendMessage("");
-                        sendSubCommands((Player) s);
+                        sendSubCommands(s);
                     }
                 } else {
-                    s.sendMessage("§f   bw safemode §eenable/ disable");
+                    s.sendMessage("");
+                    s.sendMessage("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Console Commands");
+                    s.sendMessage("");
+                    sendSubCommands(s);
                 }
             } else {
-                if (s instanceof ConsoleCommandSender) {
-                    s.sendMessage("§fNo console commands available atm.");
-                    return true;
-                }
                 /* Send player commands */
                 Bukkit.dispatchCommand(s, mainCmd + " cmds");
             }
@@ -189,11 +188,21 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
     }
 
     @Override
-    public void sendSubCommands(Player p) {
-        for (int i = 0; i <= 20; i++) {
-            for (SubCommand sb : getSubCommands()) {
-                if (sb.getPriority() == i && sb.isShow() && sb.canSee(p, BedWars.getAPI())) {
-                    p.spigot().sendMessage(sb.getDisplayInfo());
+    public void sendSubCommands(CommandSender p) {
+        if (p instanceof Player){
+            for (int i = 0; i <= 20; i++) {
+                for (SubCommand sb : getSubCommands()) {
+                    if (sb.getPriority() == i && sb.isShow() && sb.canSee(p, BedWars.getAPI())) {
+                        ((Player) p).spigot().sendMessage(sb.getDisplayInfo());
+                    }
+                }
+            }
+        }else {
+            for (int i = 0; i <= 20; i++) {
+                for (SubCommand sb : getSubCommands()) {
+                    if (sb.getPriority() == i && sb.isShow() && sb.canSee(p, BedWars.getAPI())) {
+                        p.sendMessage(sb.getDisplayInfo().getText());
+                    }
                 }
             }
         }
@@ -229,18 +238,12 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
     }
 
     /**
-     * Check if lobby location is set, else send a error message to the player
+     * Check if lobby location is set
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    public static boolean isLobbySet(Player p) {
+    public static boolean isLobbySet() {
         if (BedWars.getServerType() == ServerType.BUNGEE) return true;
-        if (config.getLobbyWorldName().isEmpty()) {
-            if (p != null) {
-                p.sendMessage("§c▪ §7You have to set the lobby location first!");
-            }
-            return false;
-        }
-        return true;
+        return !config.getLobbyWorldName().isEmpty();
     }
 
     @Override

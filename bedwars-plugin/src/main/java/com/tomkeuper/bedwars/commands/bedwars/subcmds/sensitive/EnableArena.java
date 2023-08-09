@@ -52,32 +52,33 @@ public class EnableArena extends SubCommand {
 
     @Override
     public boolean execute(String[] args, CommandSender s) {
-        if (s instanceof ConsoleCommandSender) return false;
-        Player p = (Player) s;
-        if (!MainCommand.isLobbySet(p)) return true;
+        if (!MainCommand.isLobbySet()) {
+            s.sendMessage("§c▪ §7You have to set the lobby location first!");
+            return true;
+        }
         if (args.length != 1) {
-            p.sendMessage("§c▪ §7Usage: §o/" + getParent().getName() + " enableRotation <mapName>");
+            s.sendMessage("§c▪ §7Usage: §o/" + getParent().getName() + " enableRotation <mapName>");
             return true;
         }
         if (!BedWars.getAPI().getRestoreAdapter().isWorld(args[0])) {
-            p.sendMessage("§c▪ §7" + args[0] + " doesn't exist!");
+            s.sendMessage("§c▪ §7" + args[0] + " doesn't exist!");
             return true;
         }
 
         for (IArena mm : Arena.getEnableQueue()){
             if (mm.getArenaName().equalsIgnoreCase(args[0])){
-                p.sendMessage("§c▪ §7This arena is already in the enable queue!");
+                s.sendMessage("§c▪ §7This arena is already in the enable queue!");
                 return true;
             }
         }
 
         IArena aa = Arena.getArenaByName(args[0]);
         if (aa != null) {
-            p.sendMessage("§c▪ §7This arena is already enabled!");
+            s.sendMessage("§c▪ §7This arena is already enabled!");
             return true;
         }
-        p.sendMessage("§6 ▪ §7Enabling arena...");
-        new Arena(args[0], p);
+        s.sendMessage("§6 ▪ §7Enabling arena...");
+        new Arena(args[0], s);
         return true;
     }
 
@@ -100,12 +101,11 @@ public class EnableArena extends SubCommand {
 
     @Override
     public boolean canSee(CommandSender s, com.tomkeuper.bedwars.api.BedWars api) {
-        if (s instanceof ConsoleCommandSender) return false;
-
-        Player p = (Player) s;
-        if (Arena.isInArena(p)) return false;
-
-        if (SetupSession.isInSetupSession(p.getUniqueId())) return false;
+        if (s instanceof Player) {
+            Player p = (Player) s;
+            if (Arena.isInArena(p)) return false;
+            if (SetupSession.isInSetupSession(p.getUniqueId())) return false;
+        }
         return hasPermission(s);
     }
 }

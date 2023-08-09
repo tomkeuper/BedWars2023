@@ -51,8 +51,10 @@ import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -129,7 +131,7 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
 
         @SuppressWarnings("unused")
         @Override
-        public void loadArena(String worldName, Player sender) {
+        public void loadArena(String worldName, @Nullable CommandSender sender) {
             new Arena(worldName, sender);
         }
 

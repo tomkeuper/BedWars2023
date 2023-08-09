@@ -31,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -327,4 +328,6 @@ public interface ITeam {
      * @param location x,y,z.
      */
     void setKillDropsLocation(Vector location);
+
+    boolean isBed(@NotNull Location location);
 }
