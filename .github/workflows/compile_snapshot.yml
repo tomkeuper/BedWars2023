@@ -7,6 +7,9 @@ on:
       - development
       - production
   pull_request:
+    types:
+      - opened
+      - edited
 
 jobs:
   build:
