@@ -34,6 +34,8 @@ jobs:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
         run: mvn --batch-mode -DskipTests clean deploy -s settings.xml
+      - name: Install Package
+        run: mvn install
       - name: Build JavaDoc
         run: mvn javadoc:javadoc
       - name: Deploy JavaDoc 🚀
