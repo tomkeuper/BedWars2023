@@ -44,6 +44,6 @@ jobs:
           host: ${{ secrets.JDC_IP_ADDRESS }}
           username: ${{ secrets.JDC_USER }}
           privateKey: ${{ env.JDC_PRIVATE_KEY }}
-          localDir: './static/*'
+          localDir: 'bedwars-api/target/site/apidocs'
           remoteDir: '/var/www/tomkeuper.com/javadocs'
           removeExtraFilesOnServer: true
