@@ -37,7 +37,7 @@ public class PlayerJoinArenaEvent extends Event {
     private final boolean spectator;
     private boolean cancelled = false;
     private final IArena arena;
-    private String message;
+    private String message = "";
 
     /**
      * Constructs a PlayerJoinArenaEvent.
