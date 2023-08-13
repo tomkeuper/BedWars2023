@@ -223,10 +223,7 @@ public class CategoryContent implements ICategoryContent {
             } else {
                 player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", ""));
             }
-            player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", ""));
         }
-
-
         shopCache.setCategoryWeight(father, weight);
     }
 
