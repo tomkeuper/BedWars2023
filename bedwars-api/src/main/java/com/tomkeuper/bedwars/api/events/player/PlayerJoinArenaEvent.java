@@ -97,10 +97,12 @@ public class PlayerJoinArenaEvent extends Event {
         this.cancelled = cancelled;
     }
 
+
     /**
-     * Set a custom join message for the event.
+     * Set a custom join message for the event. The value of the 'message' parameter can be set to null
+     * to disable the join message and prevent it from being displayed.
      *
-     * @param message The custom join message.
+     * @param message The custom join message, or null to disable the message.
      */
     @SuppressWarnings("unused")
     public void setMessage(String message) {
