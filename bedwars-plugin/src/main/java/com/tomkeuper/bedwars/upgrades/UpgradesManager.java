@@ -62,7 +62,6 @@ public class UpgradesManager {
 
     public UpgradesManager() {
         upgrades = new UpgradesConfig("upgrades", plugin.getDataFolder().getPath());
-
     }
 
     public void init(){
@@ -522,5 +521,9 @@ public class UpgradesManager {
             size = 45;
         }
         return size;
+    }
+
+    public HashMap<String, MenuContent> menuContentByName() {
+        return menuContentByName;
     }
 }

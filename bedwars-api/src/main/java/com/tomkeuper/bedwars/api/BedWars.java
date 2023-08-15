@@ -40,15 +40,18 @@ import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -530,9 +533,33 @@ public interface BedWars {
          * Retrieves the upgrade menu for an arena.
          *
          * @param arena The arena to get the upgrade menu for.
-         * @return The upgrade menu for the specified arena.
+         * @return {@link UpgradesIndex} The upgrade menu for the specified arena.
          */
         UpgradesIndex getMenuForArena(IArena arena);
+
+        /**
+         * Check if is upgradable item.
+         * Used in inventory click.
+         *
+         * @param item item to be checked.
+         * @retrun {@link MenuContent} null if isn't an element.
+         */
+        MenuContent getMenuContent(ItemStack item);
+
+        /**
+         * Get menu content by identifier.
+         *
+         * @param identifier menu identifier to be checked.
+         * @retrun {@link MenuContent} null if not found.
+         */
+        MenuContent getMenuContent(String identifier);
+
+        /**
+         * Get a map of menu contents by their identifiers.
+         *
+         * @return A {@link HashMap} containing menu identifiers as keys and corresponding {@link MenuContent} objects as values.
+         */
+        HashMap<String, MenuContent> getMenuContentByName();
     }
 
     /**

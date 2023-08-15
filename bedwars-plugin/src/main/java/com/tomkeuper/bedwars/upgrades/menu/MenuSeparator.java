@@ -77,7 +77,7 @@ public class MenuSeparator implements MenuContent {
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, ITeam team) {
+    public boolean onClick(Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv) {
         for (String cmd : playerCommands) {
             if (cmd.trim().isEmpty()) continue;
             Bukkit.dispatchCommand(player, cmd.replace("{playername}", player.getName()).replace("{player}", player.getDisplayName()).replace("{team}", team == null ? "null" : team.getDisplayName(Language.getPlayerLanguage(player))));
@@ -86,6 +86,7 @@ public class MenuSeparator implements MenuContent {
             if (cmd.trim().isEmpty()) continue;
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("{playername}", player.getName()).replace("{player}", player.getDisplayName()).replace("{team}", team == null ? "null" : team.getDisplayName(Language.getPlayerLanguage(player))));
         }
+        return true;
     }
 
     @Override

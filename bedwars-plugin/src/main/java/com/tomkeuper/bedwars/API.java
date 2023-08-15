@@ -40,6 +40,7 @@ import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
@@ -47,12 +48,12 @@ import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsAPI;
-import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -391,6 +392,24 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         @Override
         public UpgradesIndex getMenuForArena(IArena arena) {
             return BedWars.getUpgradeManager().getMenuForArena(arena);
+        }
+
+        @SuppressWarnings("unused")
+        @Override
+        public MenuContent getMenuContent(ItemStack item) {
+            return BedWars.getUpgradeManager().getMenuContent(item);
+        }
+
+        @SuppressWarnings("unused")
+        @Override
+        public MenuContent getMenuContent(String identifier){
+            return BedWars.getUpgradeManager().getMenuContent(identifier);
+        }
+
+        @SuppressWarnings("unused")
+        @Override
+        public HashMap<String, MenuContent> getMenuContentByName() {
+            return BedWars.getUpgradeManager().menuContentByName();
         }
     };
 

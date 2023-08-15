@@ -48,7 +48,7 @@ public class InventoryListener implements Listener {
 
         MenuContent mc = BedWars.getUpgradeManager().getMenuContent(e.getCurrentItem());
         if (mc == null) return;
-        mc.onClick((Player) e.getWhoClicked(), e.getClick(), a.getTeam((Player) e.getWhoClicked()));
+        mc.onClick((Player) e.getWhoClicked(), e.getClick(), a.getTeam((Player) e.getWhoClicked()), false, true, true, true);
     }
 
     @EventHandler

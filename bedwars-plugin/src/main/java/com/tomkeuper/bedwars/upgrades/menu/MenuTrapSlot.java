@@ -110,7 +110,8 @@ public class MenuTrapSlot implements MenuContent {
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, ITeam team) {
+    public boolean onClick(Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv) {
+        return false;
     }
 
     @Override

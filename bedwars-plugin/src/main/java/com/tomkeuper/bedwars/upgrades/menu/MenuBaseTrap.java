@@ -225,15 +225,17 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, ITeam team) {
+    public boolean onClick(Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv) {
         int queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-queue-limit");
         if (queueLimit == 0) {
             queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
         }
         if (queueLimit <= team.getActiveTraps().size()) {
-            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            player.sendMessage(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT));
-            return;
+            if (announceAlreadyUnlocked){
+                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                player.sendMessage(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT));
+            }
+            return false;
         }
 
         Material currency = this.currency;
@@ -261,24 +263,29 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
             cost = cost + (multiplier * incrementer);
         }
 
-        int money = BedWars.getUpgradeManager().getMoney(player, currency);
-        if (money < cost) {
-            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
-                    .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, cost, currency))
-                    .replace("%bw_amount%", String.valueOf(cost - money)));
-            player.closeInventory();
-            return;
+        if (!forFree){
+            int money = BedWars.getUpgradeManager().getMoney(player, currency);
+            if (money < cost) {
+                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
+                        .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, cost, currency))
+                        .replace("%bw_amount%", String.valueOf(cost - money)));
+                player.closeInventory();
+                return false;
+            }
         }
+
 
         final UpgradeBuyEvent event;
         Bukkit.getPluginManager().callEvent(event = new UpgradeBuyEvent(this, player, team));
-        if(event.isCancelled()) return;
+        if(event.isCancelled()) return false;
 
-        if (currency == Material.AIR) {
-            BedWars.getEconomy().buyAction(player, money);
-        } else {
-            BedWars.getAPI().getShopUtil().takeMoney(player, currency, cost);
+        if (!forFree){
+            if (currency == Material.AIR) {
+                BedWars.getEconomy().buyAction(player, BedWars.getUpgradeManager().getMoney(player, currency));
+            } else {
+                BedWars.getAPI().getShopUtil().takeMoney(player, currency, cost);
+            }
         }
         Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, player);
         team.getActiveTraps().add(this);
@@ -292,11 +299,14 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
             }
         }
 
-        for (Player p1 : team.getMembers()) {
-            p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_upgrade_name%",
-                    ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + getName().replace("base-trap-", "")).replace("%bw_color%", ""))));
+        if (announcePurchase){
+            for (Player p1 : team.getMembers()) {
+                p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_upgrade_name%",
+                        ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + getName().replace("base-trap-", "")).replace("%bw_color%", ""))));
+            }
         }
-        BedWars.getUpgradeManager().getMenuForArena(team.getArena()).open(player);
+        if (openInv) BedWars.getUpgradeManager().getMenuForArena(team.getArena()).open(player);
+        return true;
     }
 
     @Override

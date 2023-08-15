@@ -42,13 +42,17 @@ public interface MenuContent {
     ItemStack getDisplayItem(Player player, ITeam team);
 
     /**
-     * Handles the click event on this menu content.
+     * Handles the click event for a specific upgrade item.
      *
-     * @param player     the player who clicked
-     * @param clickType  the type of click
-     * @param team       the team associated with the menu
+     * @param player           The player who initiated the upgrade.
+     * @param clickType        The type of click.
+     * @param team             The team associated with the menu.
+     * @param forFree          Indicates if the upgrade is obtained for free.
+     * @param announcePurchase Indicates whether the purchase should be announced to the team.
+     * @param openInv          Indicates whether to open the inventory menu after purchase.
+     * @return True if the upgrade was successfully applied, false otherwise.
      */
-    void onClick(Player player, ClickType clickType, ITeam team);
+    boolean onClick(Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv);
 
     /**
      * Retrieves the name of this menu content.
