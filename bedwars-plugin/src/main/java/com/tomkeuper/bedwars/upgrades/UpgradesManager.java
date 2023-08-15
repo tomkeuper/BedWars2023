@@ -341,7 +341,7 @@ public class UpgradesManager {
      * Used in inventory click.
      *
      * @param item item to be checked.
-     * @retrun {@link MenuContent} NULL if isn't an element.
+     * @return {@link MenuContent} NULL if isn't an element.
      */
     public MenuContent getMenuContent(ItemStack item) {
         if (item == null) return null;
@@ -358,7 +358,7 @@ public class UpgradesManager {
     /**
      * Get menu content by identifier.
      *
-     * @retrun null if not found.
+     * @return null if not found.
      */
     public MenuContent getMenuContent(String identifier) {
         return menuContentByName.getOrDefault(identifier.toLowerCase(), null);
