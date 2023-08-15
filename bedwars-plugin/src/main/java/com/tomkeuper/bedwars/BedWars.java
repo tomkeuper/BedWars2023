@@ -122,6 +122,7 @@ public class BedWars extends JavaPlugin {
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    private static UpgradesManager upgradesManager;
     public static PlayerQuickBuyCache playerQuickBuyCache;
     public static ShopCache shopCache;
     public static StatsManager statsManager;
@@ -527,7 +528,8 @@ public class BedWars extends JavaPlugin {
         }
 
         // Initialize team upgrades
-        UpgradesManager.init();
+        upgradesManager = new UpgradesManager();
+        upgradesManager.init();
 
         // Initialize sidebar manager
         Bukkit.getScheduler().runTask(this, () -> {
@@ -774,6 +776,10 @@ public class BedWars extends JavaPlugin {
 
     public static StatsManager getStatsManager() {
         return statsManager;
+    }
+
+    public static UpgradesManager getUpgradeManager(){
+        return upgradesManager;
     }
 
     public static com.tomkeuper.bedwars.api.BedWars getAPI() {

@@ -260,7 +260,7 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         @SuppressWarnings("unused")
         @Override
         public ConfigManager getUpgradesConfig() {
-            return UpgradesManager.getConfiguration();
+            return BedWars.getUpgradeManager().getConfiguration();
         }
     };
 
@@ -360,37 +360,37 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         @SuppressWarnings("unused")
         @Override
         public boolean isWatchingGUI(Player player) {
-            return UpgradesManager.isWatchingUpgrades(player.getUniqueId());
+            return BedWars.getUpgradeManager().isWatchingUpgrades(player.getUniqueId());
         }
 
         @SuppressWarnings("unused")
         @Override
         public void setWatchingGUI(Player player) {
-            UpgradesManager.setWatchingUpgrades(player.getUniqueId());
+            BedWars.getUpgradeManager().setWatchingUpgrades(player.getUniqueId());
         }
 
         @SuppressWarnings("unused")
         @Override
         public void removeWatchingUpgrades(UUID uuid) {
-            UpgradesManager.removeWatchingUpgrades(uuid);
+            BedWars.getUpgradeManager().removeWatchingUpgrades(uuid);
         }
 
         @SuppressWarnings("unused")
         @Override
         public int getTotalUpgradeTiers(IArena arena) {
-            return UpgradesManager.getMenuForArena(arena).countTiers();
+            return BedWars.getUpgradeManager().getMenuForArena(arena).countTiers();
         }
 
         @SuppressWarnings("unused")
         @Override
         public void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
-            UpgradesManager.setCustomMenuForArena(arena, menu);
+            BedWars.getUpgradeManager().setCustomMenuForArena(arena, menu);
         }
 
         @SuppressWarnings("unused")
         @Override
         public UpgradesIndex getMenuForArena(IArena arena) {
-            return UpgradesManager.getMenuForArena(arena);
+            return BedWars.getUpgradeManager().getMenuForArena(arena);
         }
     };
 

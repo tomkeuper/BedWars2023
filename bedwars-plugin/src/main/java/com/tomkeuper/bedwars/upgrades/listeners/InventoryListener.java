@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.upgrades.listeners;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -40,18 +41,18 @@ public class InventoryListener implements Listener {
         IArena a = Arena.getArenaByPlayer((Player) e.getWhoClicked());
         if (a == null) return;
         if (a.isSpectator((Player) e.getWhoClicked())) return;
-        if (!UpgradesManager.isWatchingUpgrades(e.getWhoClicked().getUniqueId())) return;
+        if (!BedWars.getUpgradeManager().isWatchingUpgrades(e.getWhoClicked().getUniqueId())) return;
         e.setCancelled(true);
         if (e.getCurrentItem() == null) return;
         if (e.getCurrentItem().getType() == Material.AIR) return;
 
-        MenuContent mc = UpgradesManager.getMenuContent(e.getCurrentItem());
+        MenuContent mc = BedWars.getUpgradeManager().getMenuContent(e.getCurrentItem());
         if (mc == null) return;
         mc.onClick((Player) e.getWhoClicked(), e.getClick(), a.getTeam((Player) e.getWhoClicked()));
     }
 
     @EventHandler
     public void onUpgradesClose(InventoryCloseEvent e) {
-        UpgradesManager.removeWatchingUpgrades(e.getPlayer().getUniqueId());
+        BedWars.getUpgradeManager().removeWatchingUpgrades(e.getPlayer().getUniqueId());
     }
 }

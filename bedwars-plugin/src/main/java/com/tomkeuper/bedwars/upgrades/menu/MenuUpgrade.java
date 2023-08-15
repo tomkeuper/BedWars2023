@@ -71,7 +71,7 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
         boolean highest = getTiers().size() == tier + 1 && team.getTeamUpgradeTiers().containsKey(getName());
         if (!highest) tier += 1;
         UpgradeTier ut = getTiers().get(tier);
-        boolean afford = UpgradesManager.getMoney(player, ut.getCurrency()) >= ut.getCost();
+        boolean afford = BedWars.getUpgradeManager().getMoney(player, ut.getCurrency()) >= ut.getCost();
 
         ItemStack i = new ItemStack(tiers.get(tier).getDisplayItem());
         ItemMeta im = i.getItemMeta();
@@ -90,7 +90,7 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
         im.setDisplayName(Language.getMsg(player, Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", this.getName().replace("upgrade-", "")).replace("%bw_tier%", ut.getName())).replace("%bw_color%", color));
 
         List<String> lore = new ArrayList<>();
-        String currencyMsg = UpgradesManager.getCurrencyMsg(player, ut);
+        String currencyMsg = BedWars.getUpgradeManager().getCurrencyMsg(player, ut);
         for (String s : Language.getList(player, Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("%bw_name%", this.getName().replace("upgrade-", "")))){
             if (s.contains("{tier_")){
                 // Get tier number from placeholder
@@ -142,11 +142,11 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
         if (getTiers().size() - 1 > tier) {
             ut = getTiers().get(tier + 1);
 
-            int money = UpgradesManager.getMoney(player, ut.getCurrency());
+            int money = BedWars.getUpgradeManager().getMoney(player, ut.getCurrency());
             if (money < ut.getCost()) {
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
                 player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
-                        .replace("%bw_currency%", UpgradesManager.getCurrencyMsg(player, ut))
+                        .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, ut))
                         .replace("%bw_amount%", String.valueOf(ut.getCost() - money)));
                 player.closeInventory();
                 return;
@@ -178,7 +178,7 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
                                 .replace("upgrade-", "")).replace("%bw_tier%", ut.getName())))).replace("%bw_color%", ""));
             }
 
-            ImmutableMap<Integer, MenuContent> menuContentBySlot = UpgradesManager.getMenuForArena(Arena.getArenaByPlayer(player)).getMenuContentBySlot();
+            ImmutableMap<Integer, MenuContent> menuContentBySlot = BedWars.getUpgradeManager().getMenuForArena(Arena.getArenaByPlayer(player)).getMenuContentBySlot();
             Inventory inv = player.getOpenInventory().getTopInventory();
             for (Map.Entry<Integer, MenuContent> entry : menuContentBySlot.entrySet()) {
                 inv.setItem(entry.getKey(), entry.getValue().getDisplayItem(player, team));

@@ -55,11 +55,11 @@ public class MenuSeparator implements MenuContent {
         Language.saveIfNotExists(Messages.UPGRADES_SEPARATOR_ITEM_NAME_PATH + name.replace("separator-", ""), "&cName not set");
         Language.saveIfNotExists(Messages.UPGRADES_SEPARATOR_ITEM_LORE_PATH + name.replace("separator-", ""), Collections.singletonList("&cLore not set"));
 
-        if (UpgradesManager.getConfiguration().getYml().getStringList(name + ".on-click.player") != null) {
-            playerCommands.addAll(UpgradesManager.getConfiguration().getYml().getStringList(name + ".on-click.player"));
+        if (BedWars.getUpgradeManager().getConfiguration().getYml().getStringList(name + ".on-click.player") != null) {
+            playerCommands.addAll(BedWars.getUpgradeManager().getConfiguration().getYml().getStringList(name + ".on-click.player"));
         }
-        if (UpgradesManager.getConfiguration().getYml().getStringList(name + ".on-click.console") != null) {
-            consoleCommands.addAll(UpgradesManager.getConfiguration().getYml().getStringList(name + ".on-click.console"));
+        if (BedWars.getUpgradeManager().getConfiguration().getYml().getStringList(name + ".on-click.console") != null) {
+            consoleCommands.addAll(BedWars.getUpgradeManager().getConfiguration().getYml().getStringList(name + ".on-click.console"));
         }
     }
 

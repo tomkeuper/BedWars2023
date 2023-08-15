@@ -52,7 +52,7 @@ public class MenuTrapSlot implements MenuContent {
         Language.saveIfNotExists(Messages.UPGRADES_TRAP_SLOT_ITEM_NAME_PATH + name.replace("trap-slot-", ""), "&cName not set");
         Language.saveIfNotExists(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE1_PATH + name.replace("trap-slot-", ""), Collections.singletonList("&cLore1 not set"));
         Language.saveIfNotExists(Messages.UPGRADES_TRAP_SLOT_ITEM_LORE2_PATH + name.replace("trap-slot-", ""), Collections.singletonList("&cLore2 not set"));
-        trap = UpgradesManager.getConfiguration().getInt(name + ".trap");
+        trap = BedWars.getUpgradeManager().getConfiguration().getInt(name + ".trap");
         if (trap < 0) trap = 0;
         if (trap != 0) trap -= 1;
     }
@@ -77,19 +77,19 @@ public class MenuTrapSlot implements MenuContent {
                 .replace("%bw_color%", Language.getMsg(player, ebe == null ? Messages.FORMAT_UPGRADE_COLOR_CANT_AFFORD : Messages.FORMAT_UPGRADE_COLOR_UNLOCKED)));
         List<String> lore = new ArrayList<>();
         if (ebe == null) {
-            int cost = UpgradesManager.getConfiguration().getInt(team.getArena().getArenaName().toLowerCase() + "-upgrades-settings.trap-start-price");
+            int cost = BedWars.getUpgradeManager().getConfiguration().getInt(team.getArena().getArenaName().toLowerCase() + "-upgrades-settings.trap-start-price");
             if (cost == 0) {
-                cost = UpgradesManager.getConfiguration().getInt("default-upgrades-settings.trap-start-price");
+                cost = BedWars.getUpgradeManager().getConfiguration().getInt("default-upgrades-settings.trap-start-price");
             }
-            String curr = UpgradesManager.getConfiguration().getString(team.getArena().getArenaName().toLowerCase() + "-upgrades-settings.trap-currency");
+            String curr = BedWars.getUpgradeManager().getConfiguration().getString(team.getArena().getArenaName().toLowerCase() + "-upgrades-settings.trap-currency");
             if (curr == null) {
-                curr = UpgradesManager.getConfiguration().getString("default-upgrades-settings.trap-currency");
+                curr = BedWars.getUpgradeManager().getConfiguration().getString("default-upgrades-settings.trap-currency");
             }
-            String currency = UpgradesManager.getCurrencyMsg(player, cost, curr);
+            String currency = BedWars.getUpgradeManager().getCurrencyMsg(player, cost, curr);
             if (!team.getActiveTraps().isEmpty()) {
-                int multiplier = UpgradesManager.getConfiguration().getInt(team.getArena().getArenaName().toLowerCase() + "-upgrades-settings.trap-increment-price");
+                int multiplier = BedWars.getUpgradeManager().getConfiguration().getInt(team.getArena().getArenaName().toLowerCase() + "-upgrades-settings.trap-increment-price");
                 if (multiplier == 0) {
-                    multiplier = UpgradesManager.getConfiguration().getInt("default-upgrades-settings.trap-increment-price");
+                    multiplier = BedWars.getUpgradeManager().getConfiguration().getInt("default-upgrades-settings.trap-increment-price");
                 }
                 cost = cost + (team.getActiveTraps().size() * multiplier);
             }
