@@ -8,4 +8,4 @@ dependencies {
     compileOnly("com.grinderwolf:slimeworldmanager-api:[2.2.1,)")
 }
 
-description = "resetadapter-slime"
+description = "resetadapter_slime"

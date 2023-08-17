@@ -27,6 +27,7 @@ repositories {
     maven { url = uri("https://nexus.iridiumdevelopment.net/repository/maven-releases/") }
     maven { url = uri("https://repo.glaremasters.me/repository/concuncan/") }
     maven { url = uri("https://repo.rapture.pw/repository/maven-snapshots/") }
+    maven { url = uri("https://repo.rapture.pw/repository/maven-releases/") }
     maven { url = uri("https://repo.infernalsuite.com/repository/maven-snapshots/") }
 }
 

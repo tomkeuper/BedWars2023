@@ -9,7 +9,7 @@ dependencies {
 
     api(project(":bedwars-api"))
     api(project(":versionsupport_1_8_r3"))
-    api(project(":resetadapter-slime"))
+    api(project(":resetadapter_slime"))
     api(project(":resetadapter_aswm"))
     api(project(":resetadapter_slimepaper"))
     api(project(":versionsupport_1_12_r1"))
@@ -18,7 +18,7 @@ dependencies {
     api(project(":versionsupport_v1_18_r2"))
     api(project(":versionsupport_v1_19_r3"))
     api(project(":versionsupport_v1_20_r1"))
-    api(project(":versionsupport-common"))
+    api(project(":versionsupport_common"))
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1")

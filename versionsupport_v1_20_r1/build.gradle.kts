@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     implementation(project(":bedwars-api"))
-    implementation(project(":versionsupport-common"))
+    implementation(project(":versionsupport_common"))
     compileOnly("org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT")
 }
 
