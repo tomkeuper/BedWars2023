@@ -53,6 +53,7 @@ bukkit {
     version = "${project.version}"
 
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
+    depend = listOf("TAB")
     softDepend = listOf(
             "Vault",
             "PlaceholderAPI",
