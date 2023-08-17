@@ -1,5 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+
 plugins {
     id("com.tomkeuper.bedwars.java-conventions")
+    id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 dependencies {
@@ -35,6 +40,47 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("me.neznamy:tab-api:4.0.2")
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
+}
+
+
+bukkit {
+    name = "BedWars2023"
+    main = "com.tomkeuper.bedwars.BedWars"
+    apiVersion = "1.13"
+
+    author = "Mr. Ceasar"
+    description = "BedWars minigame by Tom Keuper forked from BedWars1058"
+    version = "${project.version}"
+
+    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
+    softDepend = listOf(
+            "Vault",
+            "PlaceholderAPI",
+            "Citizens",
+            "Parties",
+            "SlimeWorldManager",
+            "VipFeatures",
+            "Enhanced-SlimeWorldManager",
+            "PartyAndFriends",
+            "Spigot-Party-API-PAF",
+    )
+}
+
+tasks.withType<ShadowJar> {
+    archiveFileName.set("bedwars-plugin-${project.version}.jar")
+
+    exclude(
+            "META-INF/**",
+    )
+
+    val prefix = "com.tomkeuper.bedwars.libs"
+    listOf(
+            "org.bstats",
+            "com.zaxxer.hikari",
+            "org.slf4j"
+    ).forEach { pack ->
+        relocate(pack, "$prefix.$pack")
+    }
 }
 
 description = "bedwars-plugin"
