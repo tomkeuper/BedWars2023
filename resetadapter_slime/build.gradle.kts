@@ -1,7 +1,3 @@
-plugins {
-    `java-library`
-}
-
 dependencies {
     compileOnly(projects.bedwarsApi)
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
@@ -11,4 +7,12 @@ dependencies {
 
 tasks.compileJava {
     options.release.set(11)
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven("https://repo.codemc.io/repository/nms/") // Spigot
+    maven("https://papermc.io/repo/repository/maven-public/") // bungeecord-chat (dep of spigot-api)
+    maven("https://repo.glaremasters.me/repository/concuncan/") // slimeworldmanager-api
 }

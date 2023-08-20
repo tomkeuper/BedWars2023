@@ -7,5 +7,14 @@ dependencies {
 }
 
 tasks.compileJava {
-    options.release.set(11)
+    options.release.set(17)
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven("https://repo.rapture.pw/repository/maven-releases/") // Flow-NBT
+    maven("https://repo.codemc.io/repository/nms/") // Spigot
+    maven("https://papermc.io/repo/repository/maven-public/") // bungeecord-chat (dep of spigot-api)
+    maven("https://repo.rapture.pw/repository/maven-snapshots/") // slimeworldmanager-api
 }

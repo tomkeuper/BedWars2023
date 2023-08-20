@@ -1,8 +1,29 @@
-import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
 plugins {
+    java
+    `maven-publish`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
+//    id("io.github.slimjar") version "1.2.7"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    // Important Repos
+    maven("https://repo.tomkeuper.com/repository/bedwars-releases/") // TAB
+    maven("https://papermc.io/repo/repository/maven-public/") // PaperLib
+    maven("https://repo.codemc.io/repository/nms/") // Spigot
+    maven("https://repo.codemc.io/repository/maven-public/") // VipFeatures
+    maven("https://simonsator.de/repo/") // Party-and-Friends-MySQL-Edition-Spigot-API, Spigot-Party-API-For-RedisBungee
+    maven("https://maven.citizensnpcs.co/repo") // citizens-main
+    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // placeholderapi
+    maven("https://repo.cloudnetservice.eu/repository/releases/") // cloudnet-wrapper-jvm
+    maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
+    maven("https://repo.alessiodp.com/releases/") // slimjar
+
+
 }
 
 dependencies {
@@ -30,12 +51,18 @@ dependencies {
         exclude("com.google.protobuf", "protobuf-java")
     }
 
+    implementation("io.github.slimjar:slimjar:1.2.7")
     compileOnly("de.simonsator:Party-and-Friends-MySQL-Edition-Spigot-API:1.5.4-RELEASE")
     compileOnly("de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT")
     compileOnly("de.simonsator:DevelopmentPAFSpigot:1.0.67")
     compileOnly("com.alessiodp.parties:parties-api:3.2.9")
-    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT")
-    compileOnly("net.milkbowl.vault:VaultAPI:1.7")
+    compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
+        exclude("junit", "junit")
+        exclude("org.bstats", "bstats-bukkit")
+    }
+    compileOnly("net.milkbowl.vault:VaultAPI:1.7") {
+        exclude("org.bukkit", "bukkit")
+    }
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("me.neznamy:tab-api:4.0.2")
@@ -99,15 +126,16 @@ tasks {
             registerPlatform(it, it.tasks.named<ShadowJar>("shadowJar").get())
         }
 
-        relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
         relocate("io.papermc.lib", "com.tomkeuper.bedwars.libs.paper")
+        relocate("io.github.slimjar", "com.tomkeuper.bedwars.libs.slimjar")
         relocate("org.slf4j", "com.tomkeuper.bedwars.libs.slf4j")
         relocate("org.h2", "com.tomkeuper.bedwars.libs.h2")
         relocate("org.bstats", "com.tomkeuper.bedwars.libs.bstats")
+        relocate("org.apache", "com.tomkeuper.bedwars.libs.apache")
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.mysql", "com.tomkeuper.bedwars.libs.mysql")
-        relocate("org.apache", "com.tomkeuper.bedwars.libs.apache")
+        relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
 
     }
     build {

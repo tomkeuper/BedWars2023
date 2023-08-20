@@ -8,5 +8,11 @@ tasks.compileJava {
     options.release.set(11)
 }
 
+repositories {
+    // Important Repos
+    mavenCentral()
+    mavenLocal()
+    maven("https://repo.codemc.io/repository/nms/") // Spigot
+}
 
 description = "versionsupport_v1_8_r3"
