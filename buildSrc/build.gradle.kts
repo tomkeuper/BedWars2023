@@ -3,7 +3,7 @@ plugins {
     `kotlin-dsl`
 }
 
-repositories {
-    // Use the plugin portal to apply community plugins in convention plugins.
-    gradlePluginPortal()
+dependencies {
+    implementation("com.github.johnrengelman:shadow:8.1.1")
+    implementation("io.freefair.gradle:lombok-plugin:8.0.1")
 }

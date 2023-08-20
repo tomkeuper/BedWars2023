@@ -1,11 +1,12 @@
-plugins {
-    id("com.tomkeuper.bedwars.java-conventions")
-}
-
 dependencies {
-    implementation(project(":bedwars-api"))
-    implementation(project(":versionsupport_common"))
+    compileOnly(projects.bedwarsApi)
+    implementation(projects.versionsupportCommon)
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
 }
 
-description = "versionsupport_1_8_r3"
+tasks.compileJava {
+    options.release.set(11)
+}
+
+
+description = "versionsupport_v1_8_r3"

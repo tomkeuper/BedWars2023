@@ -1,34 +1,34 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    id("com.tomkeuper.bedwars.java-conventions")
-    id("com.github.johnrengelman.shadow") version "8.1.0"
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
 }
 
 dependencies {
     api("io.papermc:paperlib:1.0.8")
-    api("mysql:mysql-connector-java:8.0.29")
     api("org.bstats:bstats-bukkit:3.0.2")
 
-    api(project(":bedwars-api"))
-    api(project(":versionsupport_1_8_r3"))
-    api(project(":resetadapter_slime"))
-    api(project(":resetadapter_aswm"))
-    api(project(":resetadapter_slimepaper"))
-    api(project(":versionsupport_1_12_r1"))
-    api(project(":versionsupport_v1_16_r3"))
-    api(project(":versionsupport_v1_17_r1"))
-    api(project(":versionsupport_v1_18_r2"))
-    api(project(":versionsupport_v1_19_r3"))
-    api(project(":versionsupport_v1_20_r1"))
-    api(project(":versionsupport_common"))
+    api(projects.bedwarsApi)
+    api(projects.versionsupportCommon)
+    api(projects.versionsupport18R3)
+    api(projects.versionsupport112R1)
+    api(projects.versionsupportV116R3)
+    api(projects.versionsupportV117R1)
+    api(projects.versionsupportV118R2)
+    api(projects.versionsupportV119R3)
+    api(projects.versionsupportV120R1)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
-    api("com.zaxxer:HikariCP:5.0.1")
-    api("org.slf4j:slf4j-simple:2.0.6")
+    api("com.zaxxer:HikariCP:5.0.1") {
+        exclude("slf4-j-api", "slf4-j-api")
+    }
+    compileOnly("org.slf4j:slf4j-simple:2.0.6")
     api("com.h2database:h2:2.2.220")
+    api("commons-io:commons-io:2.11.0") // for resetadapters
+    api("mysql:mysql-connector-java:8.0.29"){
+        exclude("com.google.protobuf", "protobuf-java")
+    }
 
     compileOnly("de.simonsator:Party-and-Friends-MySQL-Edition-Spigot-API:1.5.4-RELEASE")
     compileOnly("de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT")
@@ -67,21 +67,50 @@ bukkit {
     )
 }
 
-tasks.withType<ShadowJar> {
-    archiveFileName.set("bedwars-plugin-${project.version}.jar")
+tasks.compileJava {
+    options.release.set(11)
+}
+val versions = setOf(
+    projects.versionsupportCommon,
+    projects.versionsupport18R3,
+    projects.versionsupport112R1,
+    projects.versionsupportV116R3,
+    projects.versionsupportV117R1,
+    projects.versionsupportV118R2,
+    projects.versionsupportV119R3,
+    projects.versionsupportV120R1,
+    projects.resetadapterSlime,
+    projects.resetadapterSlimepaper,
+    projects.resetadapterAswm
+).map { it.dependencyProject }
 
-    exclude(
-            "META-INF/**",
-    )
+tasks {
+    shadowJar {
+        archiveFileName.set("BedWars-${project.version}.jar")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    val prefix = "com.tomkeuper.bedwars.libs"
-    listOf(
-            "org.bstats",
-            "com.zaxxer.hikari",
-            "org.slf4j"
-    ).forEach { pack ->
-        relocate(pack, "$prefix.$pack")
+        fun registerPlatform(project: Project, shadeTask: org.gradle.jvm.tasks.Jar) {
+            dependsOn(shadeTask)
+            dependsOn(project.tasks.withType<Jar>())
+            from(zipTree(shadeTask.archiveFile))
+        }
+
+        versions.forEach {
+            registerPlatform(it, it.tasks.named<ShadowJar>("shadowJar").get())
+        }
+
+        relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
+        relocate("io.papermc.lib", "com.tomkeuper.bedwars.libs.paper")
+        relocate("org.slf4j", "com.tomkeuper.bedwars.libs.slf4j")
+        relocate("org.h2", "com.tomkeuper.bedwars.libs.h2")
+        relocate("org.bstats", "com.tomkeuper.bedwars.libs.bstats")
+        relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
+        relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
+        relocate("com.mysql", "com.tomkeuper.bedwars.libs.mysql")
+        relocate("org.apache", "com.tomkeuper.bedwars.libs.apache")
+
+    }
+    build {
+        dependsOn(shadowJar)
     }
 }
-
-description = "bedwars-plugin"

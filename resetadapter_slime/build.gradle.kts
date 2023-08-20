@@ -1,12 +1,14 @@
 plugins {
-    id("com.tomkeuper.bedwars.java-conventions")
+    `java-library`
 }
 
 dependencies {
-    implementation(project(":bedwars-api"))
+    compileOnly(projects.bedwarsApi)
     compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
-    compileOnly("com.grinderwolf:slimeworldmanager-api:[2.2.1,)")
-    api("com.flowpowered:flow-nbt:2.0.2")
+    compileOnly("com.grinderwolf:slimeworldmanager-api:2.2.1")
+    compileOnly("commons-io:commons-io:2.11.0")
 }
 
-description = "resetadapter_slime"
+tasks.compileJava {
+    options.release.set(11)
+}
