@@ -20,14 +20,15 @@
 
 package com.tomkeuper.bedwars;
 
-import com.tomkeuper.bedwars.addon.AddonManager;
-import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.andrei1058.vipfeatures.api.IVipFeatures;
 import com.andrei1058.vipfeatures.api.MiniGameAlreadyRegistered;
+import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -53,7 +54,6 @@ import com.tomkeuper.bedwars.commands.party.PartyCommand;
 import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
-import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
@@ -82,11 +82,17 @@ import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.papi.PAPISupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.party.*;
-import com.tomkeuper.bedwars.support.vault.*;
+import com.tomkeuper.bedwars.support.vault.NoChat;
+import com.tomkeuper.bedwars.support.vault.NoEconomy;
+import com.tomkeuper.bedwars.support.vault.WithChat;
+import com.tomkeuper.bedwars.support.vault.WithEconomy;
 import com.tomkeuper.bedwars.support.vipfeatures.VipFeatures;
 import com.tomkeuper.bedwars.support.vipfeatures.VipListeners;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
+import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import io.github.slimjar.app.builder.ApplicationBuilder;
+import io.github.slimjar.resolver.data.Repository;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
@@ -109,8 +115,14 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
@@ -159,6 +171,19 @@ public class BedWars extends JavaPlugin {
             serverSoftwareSupport = false;
             return;
         }
+
+        try {
+            Path downloadPath = Paths.get(getDataFolder().getPath() + File.separator + "libs");
+            ApplicationBuilder.appending("ajLeaderboards")
+                    .logger(new SlimLogger(this))
+                    .downloadDirectoryPath(downloadPath)
+                    .mirrorSelector((a, b) -> a)
+                    .internalRepositories(Collections.singleton(new Repository(new URI("https://repo1.maven.org/maven2/").toURL())))
+                    .build();
+        } catch (IOException | ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
 
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");

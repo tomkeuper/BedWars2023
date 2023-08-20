@@ -5,7 +5,7 @@ plugins {
     java
     `maven-publish`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
-//    id("io.github.slimjar") version "1.2.7"
+    id("io.github.slimjar").version("1.3.0")
 }
 
 repositories {
@@ -45,9 +45,9 @@ dependencies {
         exclude("slf4-j-api", "slf4-j-api")
     }
     compileOnly("org.slf4j:slf4j-simple:2.0.6")
-    api("com.h2database:h2:2.2.220")
+    slim("com.h2database:h2:2.2.220")
     api("commons-io:commons-io:2.11.0") // for resetadapters
-    api("mysql:mysql-connector-java:8.0.29"){
+    slim("mysql:mysql-connector-java:8.0.29"){
         exclude("com.google.protobuf", "protobuf-java")
     }
 
@@ -111,6 +111,12 @@ val versions = setOf(
     projects.resetadapterAswm
 ).map { it.dependencyProject }
 
+tasks.slimJar {
+    relocate("org.h2", "com.tomkeuper.bedwars.libs.h2")
+    relocate("com.mysql", "com.tomkeuper.bedwars.libs.mysql")
+}
+
+
 tasks {
     shadowJar {
         archiveFileName.set("BedWars-${project.version}.jar")
@@ -134,7 +140,6 @@ tasks {
         relocate("org.apache", "com.tomkeuper.bedwars.libs.apache")
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
-        relocate("com.mysql", "com.tomkeuper.bedwars.libs.mysql")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
 
     }
