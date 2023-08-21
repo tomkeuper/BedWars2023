@@ -1,4 +1,4 @@
-name: Compile snapshot with Maven
+name: Compile snapshot with Gradle
 
 on:
   push:
@@ -32,6 +32,10 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17.0.5'
-          distribution: 'adopt'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: release-candidate
       - name: Compiling snapshot with Gradle
         run: ./gradlew clean build
