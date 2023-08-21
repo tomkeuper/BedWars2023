@@ -38,4 +38,4 @@ jobs:
         with:
           gradle-version: release-candidate
       - name: Compiling snapshot with Gradle
-        run: ./gradlew clean build
+        run: gradle clean build
