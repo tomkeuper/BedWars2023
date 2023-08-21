@@ -22,13 +22,16 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Set up JDK 17.0.5
         uses: actions/setup-java@v2
         with:
           java-version: '17.0.5'
           distribution: 'adopt'
-      - name: Compiling snapshot with Maven
-        run: |
-          mvn clean compile
+      - name: Compiling snapshot with Gradle
+        run: ./gradlew clean build
