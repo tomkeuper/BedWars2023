@@ -19,6 +19,10 @@ jobs:
         with:
           java-version: '17.0.7'
           distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: release-candidate
       - name: Package with Gradle
         run: gradle clean jar
       - name: Publish Artifact
@@ -74,6 +78,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: release-candidate
       - name: Deploy Package
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
@@ -106,6 +114,10 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: release-candidate
       - name: Install Packages
         run: gradle clean publishToMavenLocal
       - name: Build JavaDoc
