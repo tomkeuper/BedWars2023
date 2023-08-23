@@ -5,7 +5,7 @@ on:
     branches: [production]
 
 jobs:
-  package:
+  create-jar:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.bump.outputs.version }}
@@ -14,33 +14,22 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: 'production'
-      - name: Set up JDK 17.0.5
+      - name: Set up JDK 17.0.7
         uses: actions/setup-java@v2
         with:
-          java-version: '17.0.5'
-          distribution: 'adopt'
-      - name: Package with Maven
-        run: |
-          mvn clean package
+          java-version: '17.0.7'
+          distribution: 'temurin'
+      - name: Package with Gradle
+        run: gradle clean jar
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
           name: bedwars-plugin
-          path: bedwars-plugin/target/**.jar
+          path: bedwars-plugin/build/libs/**.jar
           if-no-files-found: error
-      - name: Set next version
-        id: bump
-        uses: nnichols/maven-version-bump-action@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
   release:
     runs-on: ubuntu-latest
-    needs: [ package ]
-    env:
-      BODY_UNLOCK: |
-        {"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"required_linear_history":false,"allow_force_pushes":false,"allow_deletions":false,"block_creations":false,"required_conversation_resolution":false,"lock_branch":false,"allow_fork_syncing":false}
-      BODY_LOCK: |
-        {"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"required_linear_history":false,"allow_force_pushes":false,"allow_deletions":false,"block_creations":false,"required_conversation_resolution":false,"lock_branch":true,"allow_fork_syncing":false}
+    needs: [ create-jar ]
     permissions:
       contents: write
     steps:
@@ -59,73 +48,77 @@ jobs:
           target_commitish: production
           tag_name: ${{ needs.package.outputs.version }}
           generate_release_notes: true
-          files: "target/bedwars-*"
-  merge-master-back-to-dev:
-    timeout-minutes: 2
-    runs-on: ubuntu-latest
-    needs: [ release ]
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: 'production'
-      - name: Unlock Master Branch
-        run: |
-          curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/tomkeuper/BedWars2023/branches/master/protection -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"required_linear_history":false,"allow_force_pushes":false,"allow_deletions":false,"block_creations":false,"required_conversation_resolution":false,"lock_branch":false,"allow_fork_syncing":false}'
-      - name: Set Git config
-        run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "Github Actions"
-      - name: Merge production into master
-        run: |
-          git fetch --unshallow
-          git checkout master
-          git pull
-          git merge --no-ff production -m "Auto-merge production back to master"
-          git push --force
-      - name: Lock Master Branch
-        run: |
-          curl -L -X PUT -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/tomkeuper/BedWars2023/branches/master/protection -d '{"required_status_checks":null,"enforce_admins":false,"required_pull_request_reviews":null,"restrictions":null,"required_linear_history":false,"allow_force_pushes":false,"allow_deletions":false,"block_creations":false,"required_conversation_resolution":false,"lock_branch":true,"allow_fork_syncing":false}'
+          files: "build/libs/bedwars-*"
   deploy-package:
     timeout-minutes: 2
     runs-on: ubuntu-latest
-    needs: [ merge-master-back-to-dev ]
+    needs: [ release ]
     permissions:
       contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: 'api-fixes'
+          ref: 'production'
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v2
         with:
           java-version: '17.0.7'
-          distribution: 'adopt'
-      - name: Cache Maven packages
+          distribution: 'temurin'
+      - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Deploy Package
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
-        run: mvn --batch-mode -DskipTests clean deploy -s settings.xml
-      - name: Build JavaDoc
-        run: mvn javadoc:javadoc
-      - name: Deploy JavaDoc 🚀
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        env:
-          JDC_IP_ADDRESS: ${{ secrets.JDC_IP_ADDRESS }}
-          JDC_USER: ${{ secrets.JDC_USER }}
-          JDC_PRIVATE_KEY: ${{ secrets.JDC_PRIVATE_KEY }}
+        uses: gradle/gradle-build-action@v2.7.1
         with:
-          username: ${{env.JDC_USER}}
-          server: ${{env.JDC_IP_ADDRESS}}
-          ssh_private_key: ${{ env.JDC_PRIVATE_KEY }}
-          local_path: './static/*'
-          remote_path: '/javadocs/'
-          sftpArgs: '-o ConnectTimeout=5'
+          arguments: clean publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
+  javadoc:
+    name: Publish JavaDoc
+    runs-on: ubuntu-latest
+    needs: deploy-package
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: 'production'
+      - name: Set up JDK 17.0.7
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17.0.7'
+          distribution: 'temurin'
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Install Packages
+        run: gradle clean publishToMavenLocal
+      - name: Build JavaDoc
+        run: gradle javadoc
+      - name: Create key for Deploy
+        run: |
+          echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa
+      - name: Deploy JavaDoc 🚀
+        uses: wangyucode/sftp-upload-action@v2.0.2
+        with:
+          host: ${{ secrets.JDC_IP_ADDRESS }}
+          username: ${{ secrets.JDC_USER }}
+          privateKey: './id_rsa'
+          localDir: 'bedwars-api/build/docs/javadoc'
+          remoteDir: '/var/www/tomkeuper.com/javadocs'
+          removeExtraFilesOnServer: true
