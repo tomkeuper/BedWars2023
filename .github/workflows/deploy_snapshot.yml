@@ -41,9 +41,7 @@ jobs:
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
-        uses: gradle/gradle-build-action@v2.7.1
-        with:
-          arguments: publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
+        run: gradle publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
   javadoc:
     name: Publish JavaDoc
     runs-on: ubuntu-latest
