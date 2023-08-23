@@ -1,6 +1,3 @@
-plugins {
-}
-
 allprojects {
     group = "com.tomkeuper.bedwars"
     version = "1.0-SNAPSHOT"

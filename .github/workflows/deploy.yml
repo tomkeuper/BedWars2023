@@ -19,7 +19,7 @@ jobs:
         with:
           java-version: '17.0.7'
           distribution: 'temurin'
-      - name: Package with Maven
+      - name: Package with Gradle
         run: gradle clean jar
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
