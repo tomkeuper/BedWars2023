@@ -23,17 +23,23 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17.0.7'
-          distribution: 'adopt'
-      - name: Cache Maven packages
+          distribution: 'temurin'
+      - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Deploy Package
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
-        run: mvn --batch-mode -DskipTests clean deploy -s settings.xml
+        uses: gradle/gradle-build-action@v2.7.1
+        with:
+          arguments: publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
   javadoc:
     name: Publish JavaDoc
     runs-on: ubuntu-latest
@@ -49,16 +55,20 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17.0.7'
-          distribution: 'adopt'
-      - name: Cache Maven packages
+          distribution: 'temurin'
+      - name: Cache Gradle packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Install Packages
-        run: mvn install
+        run: gradle clean publishToMavenLocal
       - name: Build JavaDoc
-        run: mvn javadoc:javadoc
+        run: gradle javadoc
       - name: Create key for Deploy
         run: |
           echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa
@@ -68,6 +78,6 @@ jobs:
           host: ${{ secrets.JDC_IP_ADDRESS }}
           username: ${{ secrets.JDC_USER }}
           privateKey: './id_rsa'
-          localDir: 'bedwars-api/target/site/apidocs'
+          localDir: 'bedwars-api/build/docs/javadoc'
           remoteDir: '/var/www/tomkeuper.com/javadocs'
           removeExtraFilesOnServer: true
