@@ -82,7 +82,7 @@ public class InventoryListener implements Listener {
             for (IQuickBuyElement element : cache.getElements()) {
                 if (element.getSlot() == e.getSlot()) {
                     if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-                        cache.setElement(element.getSlot(), null);
+                        cache.setElement(element.getSlot(), (ICategoryContent) null);
                         p.closeInventory();
                         return;
                     }

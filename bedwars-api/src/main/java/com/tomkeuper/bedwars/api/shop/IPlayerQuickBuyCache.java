@@ -41,6 +41,14 @@ public interface IPlayerQuickBuyCache {
     void setElement(int slot, ICategoryContent cc);
 
     /**
+     * Set the category content for a specific slot in the quick buy cache.
+     *
+     * @param slot      The slot to set the category content for.
+     * @param category  The category to set.
+     */
+    void setElement(int slot, String category);
+
+    /**
      * Add a quick buy element to the cache.
      *
      * @param e     The quick buy element to add.
@@ -62,4 +70,9 @@ public interface IPlayerQuickBuyCache {
      * @param shopCache  The shop cache to retrieve item stacks from.
      */
     void addInInventory(Inventory inv, IShopCache shopCache);
+
+    /**
+     * Save the QuickBuyCache to the database.
+     */
+    void pushChangesToDB();
 }

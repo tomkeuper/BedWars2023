@@ -125,6 +125,24 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         }
     }
 
+    @SuppressWarnings("unused")
+    @Override
+    public void setElement(int slot, String category) {
+        elements.removeIf(q -> q.getSlot() == slot);
+        String element;
+        if (category == null){
+            element = " ";
+        } else {
+            addQuickElement(new QuickBuyElement(category, slot));
+            element = category;
+        }
+        if (updateSlots.containsKey(slot)){
+            updateSlots.replace(slot, element);
+        } else {
+            updateSlots.put(slot, element);
+        }
+    }
+
     @NotNull
     private ItemStack getEmptyItem(Player player) {
         ItemStack i = emptyItem.clone();
@@ -170,6 +188,7 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         this.elements.add(e);
     }
 
+    @Override
     public void pushChangesToDB() {
         Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin,
                 () -> BedWars.getRemoteDatabase().pushQuickBuyChanges(updateSlots, this.player, elements));

@@ -23,6 +23,7 @@ package com.tomkeuper.bedwars;
 import com.andrei1058.vipfeatures.api.IVipFeatures;
 import com.andrei1058.vipfeatures.api.MiniGameAlreadyRegistered;
 import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.Addon;
 import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.chat.IChat;
@@ -616,6 +617,14 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("");
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
             this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
+
+            StringJoiner stringJoiner2 = new StringJoiner(", ");
+            if (api.getAddonsUtil().getAddons().isEmpty()) stringJoiner2.add("none");
+            for (Addon addon : api.getAddonsUtil().getAddons()){
+                stringJoiner2.add(addon.getName());
+            }
+
+            this.getLogger().info("being: " + stringJoiner2);
             this.getLogger().info("");
             this.getLogger().info("PAPI support: " + papiSupportLoaded);
             this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
