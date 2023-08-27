@@ -523,7 +523,6 @@ public class BedWars extends JavaPlugin {
             l.setupUnSetCategories();
             Language.addDefaultMessagesCommandItems(l);
         }
-
         LevelsConfig.init();
 
         /* Load Money Configuration */
