@@ -42,31 +42,25 @@ jobs:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
         run: gradle publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
-  check_package_changes:
+  changed-files:
     runs-on: ubuntu-latest
+    name: Check if api changed
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Check for package changes
-        id: package_changes
-        run: |
-          from_commit=${{ github.event.before }}
-          to_commit=${{ github.sha }}
-
-          changed_files=$(git diff --name-only $from_commit $to_commit)
-          
-          if echo "$changed_files" | grep -qE "^bedwars-api/"; then
-            echo "Changes detected in the 'bedwars-api' package."
-            echo "::set-output name=package_changed::true"
-          else
-            echo "No changes detected in the 'bedwars-api' package."
-            echo "::set-output name=package_changed::false"
-          fi
+      - name: Get all test, doc and src files that have changed
+        id: changed-files
+        uses: tj-actions/changed-files@v38
+        with:
+          files_yaml: |
+            api:
+              - bedwars-api/**
 
   javadoc:
     name: Publish JavaDoc
     runs-on: ubuntu-latest
     needs: check_package_changes
+    if: steps.changed-files.outputs.api_any_changed == 'true'
     permissions:
       contents: read
     steps:
