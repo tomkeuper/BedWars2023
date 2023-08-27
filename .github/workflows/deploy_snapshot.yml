@@ -47,7 +47,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Check for package changes
         id: package_changes
         run: |
