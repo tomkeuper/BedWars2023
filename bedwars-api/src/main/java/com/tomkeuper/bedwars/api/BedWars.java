@@ -69,7 +69,6 @@ public interface BedWars {
     IAddonManager getAddonsUtil();
 
     interface IStats {
-
         /**
          * Get the player's first play date.
          * You get data from the local cache.
