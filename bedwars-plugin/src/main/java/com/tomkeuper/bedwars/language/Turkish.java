@@ -307,7 +307,7 @@ public class Turkish extends Language {
         yml.addDefault(Messages.NPC_NAME_TEAM_SHOP, "&bTAKIM MARKETİ,&e&lSAĞ TIKLA");
         yml.addDefault(Messages.NPC_NAME_SOLO_SHOP, "&bEŞYA MARKETİ,&e&lSAĞ TIKLA");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lTAKIM ELENDİ > %bw_team_color%%bw_team_name% Takım &celendi!\n");
-        yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&cYatak Kırma");
+        yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&fYatak Kırma");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&fElmas II");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_III, "&fElmas III");
         yml.addDefault(Messages.NEXT_EVENT_DRAGON_SPAWN, "&fEjderha Saldırısı");
