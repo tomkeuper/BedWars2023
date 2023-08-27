@@ -57,10 +57,12 @@ jobs:
           files: |
             api:
               - bedwars-api/**
+
   javadoc:
     name: Publish JavaDoc
     runs-on: ubuntu-latest
-    needs: check_package_changes
+    needs: changed-files
+    if: api-changed
     permissions:
       contents: read
     steps:
