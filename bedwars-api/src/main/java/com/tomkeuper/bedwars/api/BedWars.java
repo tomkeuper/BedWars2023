@@ -57,7 +57,6 @@ import java.util.UUID;
 
 @SuppressWarnings("unused")
 public interface BedWars {
-
     /**
      * Get stats utils.
      */
