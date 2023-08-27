@@ -46,22 +46,21 @@ jobs:
     runs-on: ubuntu-latest
     name: Check if api changed
     outputs:
-      api-changed: ${{ steps.changed-files.outputs.api_any_changed }}
+      api-changed: ${{ steps.changed-files.outputs.bedwars-api_any_changed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Check if API is changed
-        id: changed-files
+      - name: Get changed files in the api folder
+        id: changed-files-specific
         uses: tj-actions/changed-files@v38
         with:
-          files: |
-            api:
-              - bedwars-api/**
-      - name: Run step if api file(s) change
-        if: steps.changed-files.outputs.api_any_changed == 'true'
+          files: bedwars-api
+
+      - name: Run step if any file(s) in the docs folder change
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
-          echo "One or more api files has changed."
-          echo "List all the files that have changed: ${{ steps.changed-files.outputs.api_all_changed_files }}"
+          echo "One or more files in the api folder has changed."
+          echo "List all the files that have changed: ${{ steps.changed-files-specific.outputs.all_changed_files }}"
 
   javadoc:
     name: Publish JavaDoc
