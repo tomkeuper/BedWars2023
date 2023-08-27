@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Check if api changed
     outputs:
-      api-changed: ${{ steps.changed-files.outputs.bedwars-api_any_changed }}
+      api-changed: ${{ steps.changed-files-specific.outputs.any_changed }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -55,7 +55,6 @@ jobs:
         uses: tj-actions/changed-files@v38
         with:
           files: bedwars-api
-
       - name: Run step if any file(s) in the docs folder change
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
