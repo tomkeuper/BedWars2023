@@ -901,29 +901,24 @@ public class BedWars extends JavaPlugin {
         int currentMajor = Integer.parseInt(currentParts[0]);
         int targetMajor = Integer.parseInt(targetParts[0]);
         if (currentMajor < targetMajor) {
-            return true;
-        } else if (currentMajor > targetMajor) {
             return false;
+        } else if (currentMajor > targetMajor) {
+            return true;
         }
 
         // Compare minor version
         int currentMinor = Integer.parseInt(currentParts[1]);
         int targetMinor = Integer.parseInt(targetParts[1]);
         if (currentMinor < targetMinor) {
-            return true;
-        } else if (currentMinor > targetMinor) {
             return false;
+        } else if (currentMinor > targetMinor) {
+            return true;
         }
 
         // Compare patch version
         int currentPatch = Integer.parseInt(currentParts[2]);
         int targetPatch = Integer.parseInt(targetParts[2]);
 
-        // Check for equality
-        if (currentPatch == targetPatch) {
-            return true; // Versions are equal
-        }
-
-        return currentPatch < targetPatch;
+        return currentPatch >= targetPatch;
     }
 }
