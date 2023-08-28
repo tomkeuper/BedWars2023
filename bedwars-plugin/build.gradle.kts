@@ -46,7 +46,7 @@ dependencies {
     api("com.zaxxer:HikariCP:5.0.1") {
         exclude("slf4-j-api", "slf4-j-api")
     }
-    compileOnly("org.slf4j:slf4j-simple:2.0.6")
+    implementation("org.slf4j:slf4j-simple:2.0.6")
     slim("com.h2database:h2:2.2.220")
     api("commons-io:commons-io:2.11.0") // for resetadapters
     slim("mysql:mysql-connector-java:8.0.29"){
