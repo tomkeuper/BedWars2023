@@ -107,33 +107,7 @@ public class TeamAssigner implements ITeamAssigner {
             player.closeInventory();
             findTargetTeam(arena.getTeams(),arena.getMaxInTeam(),1).addPlayers(player);
         }
-
-        // Fallback team assignment
-        BedWars.plugin.getLogger().warning("\n\nBackup Team assigner reached! Please report this on Discord!\nArenaSize: " + arena.getMaxPlayers() + " amount of teams: " + arena.getTeams().size() + " Arena: " + arena.getArenaName());
-        List<Player> remainingPlayersFallback = new ArrayList<>();
-        for (Player player : arena.getPlayers()) {
-            if (null == arena.getTeam(player)) remainingPlayersFallback.add(player);
-        }
-
-        for (Player remaining : remainingPlayersFallback) { //check if left over players need a team
-            BedWars.plugin.getLogger().warning("player: " + remaining.getDisplayName());
-            if (skip.contains(remaining)) continue;
-            for (ITeam team : arena.getTeams()) {
-                if (team.getMembers().size() < arena.getMaxInTeam()) {
-                    TeamAssignEvent e = new TeamAssignEvent(remaining, team, arena);
-                    Bukkit.getPluginManager().callEvent(e);
-                    if (!e.isCancelled()) {
-                        remaining.closeInventory();
-                        team.addPlayers(remaining);
-                    }
-                    break;
-                }
-            }
-        }
     }
-
-
-
 
     /**
      * Finds the target team to add a player based on the following criteria:
@@ -172,6 +146,4 @@ public class TeamAssigner implements ITeamAssigner {
 
         return targetTeam;
     }
-
-
 }
