@@ -22,7 +22,7 @@ repositories {
     maven("https://repo.cloudnetservice.eu/repository/releases/") // cloudnet-wrapper-jvm
     maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
     maven("https://repo.alessiodp.com/releases/") // slimjar
-
+    maven("https://repo.rapture.pw/repository/maven-releases/") // Flow-NBT
 
 }
 
@@ -69,6 +69,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("me.neznamy:tab-api:4.0.2")
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
+    slim("com.flowpowered:flow-nbt:2.0.2")
 }
 
 
@@ -143,7 +144,6 @@ tasks {
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
-
     }
     build {
         dependsOn(shadowJar)
