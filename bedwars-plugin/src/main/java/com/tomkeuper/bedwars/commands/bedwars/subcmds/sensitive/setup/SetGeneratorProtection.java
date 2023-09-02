@@ -3,6 +3,7 @@ package com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.setup;
 import com.tomkeuper.bedwars.api.BedWars;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.command.SubCommand;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import org.bukkit.command.CommandSender;
@@ -14,7 +15,7 @@ import java.util.List;
 public class SetGeneratorProtection extends SubCommand {
     /**
      * Create a sub-command for a bedWars command
-     * Make sure you return true or it will say command not found
+     * Make sure you return true, or it will say command not found
      *
      * @param parent parent command
      * @param name   sub-command name
@@ -53,7 +54,7 @@ public class SetGeneratorProtection extends SubCommand {
                 p.sendMessage("§c▪ §7Usage: /" + com.tomkeuper.bedwars.BedWars.mainCmd + " setGeneratorProtection <int>");
                 return true;
             }
-            ss.getConfig().set("generator-protection", Integer.valueOf(args[0]));
+            ss.getConfig().set(ConfigPath.ARENA_GENERATOR_PROTECTION, Integer.valueOf(args[0]));
             p.sendMessage("§6 ▪ §7Generator protection set to §e" + args[0] + "§7!");
         }
         return true;

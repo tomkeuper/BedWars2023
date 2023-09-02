@@ -44,6 +44,7 @@ public class ArenaConfig extends ConfigManager {
         yml.addDefault(ConfigPath.ARENA_SHOP_PROTECTION, 1);
         yml.addDefault(ConfigPath.ARENA_UPGRADES_PROTECTION, 1);
         yml.addDefault(ConfigPath.ARENA_GENERATOR_PROTECTION, 1);
+        yml.addDefault(ConfigPath.ARENA_GENERATOR_SPLIT_RANGE, 2.0);
         yml.addDefault(ConfigPath.ARENA_ISLAND_RADIUS, 17);
         yml.addDefault("worldBorder", 300);
         yml.addDefault(ConfigPath.ARENA_Y_LEVEL_KILL, -1);
