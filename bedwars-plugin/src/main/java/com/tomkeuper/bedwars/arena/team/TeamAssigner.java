@@ -140,9 +140,13 @@ public class TeamAssigner implements ITeamAssigner {
             }
         }
 
-        // If no suitable team is found, find the first team with available space
+        // If no suitable team is found, find the first team with available space and no more than 1 player
         if (targetTeam == null) {
             for (ITeam team : teams) {
+                if (team.getSize() == 1 && playerAmount <= maxPlayersPerTeam) {
+                    // Skip teams with 1 player when playerAmount is set to 2
+                    continue;
+                }
                 if (team.getSize() < maxPlayersPerTeam - 1) {
                     targetTeam = team;
                     break;
