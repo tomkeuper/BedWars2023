@@ -2365,6 +2365,7 @@ public class Arena implements IArena {
 
     public static List<IArena> getSorted(List<IArena> arenas) {
         List<IArena> sorted = new ArrayList<>(arenas);
+        Collections.shuffle(sorted); // pre shuffle arena list
         sorted.sort(new Comparator<>() {
             @Override
             public int compare(IArena o1, IArena o2) {
