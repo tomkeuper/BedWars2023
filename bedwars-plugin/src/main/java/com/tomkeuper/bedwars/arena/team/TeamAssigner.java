@@ -155,6 +155,16 @@ public class TeamAssigner implements ITeamAssigner {
             }
         }
 
+        // If ALL other team assigners fail. Fall back to first open spot
+        if (targetTeam == null) {
+            for (ITeam team : teams) {
+                if (team.getSize() < maxPlayersPerTeam) {
+                    targetTeam = team;
+                    break;
+                }
+            }
+        }
+
         return targetTeam;
     }
 }
