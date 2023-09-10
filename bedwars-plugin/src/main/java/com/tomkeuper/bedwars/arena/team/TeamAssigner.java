@@ -103,6 +103,7 @@ public class TeamAssigner implements ITeamAssigner {
         }
         if (remainingPlayers.isEmpty()) return;
 
+        BedWars.debug("Assigning teams for arena: " + arena.getArenaName() + " with; max in team: " + arena.getMaxInTeam() + " size: " + arena.getPlayers().size() + " teams: " + arena.getTeams().size());
         for (Player player: remainingPlayers) {
             player.closeInventory();
             findTargetTeam(arena.getTeams(),arena.getMaxInTeam(), arena.getPlayers().size()).addPlayers(player);
