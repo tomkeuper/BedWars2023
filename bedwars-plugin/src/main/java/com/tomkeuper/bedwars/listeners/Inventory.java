@@ -149,18 +149,17 @@ public class Inventory implements Listener {
 
         IArena a = Arena.getArenaByPlayer(p);
         if (a != null) {
-
-            //Prevent players from moving items in stats GUI
-            if (nms.getInventoryName(e).equals(Language.getMsg(p, Messages.PLAYER_STATS_GUI_INV_NAME).replace("{playername}", p.getName()).replace("{player}", p.getDisplayName()))) {
-                e.setCancelled(true);
-                return;
-            }
-
             /* Make it so they can't toggle their armor */
             if (e.getSlotType() == InventoryType.SlotType.ARMOR) {
                 e.setCancelled(true);
                 return;
             }
+        }
+
+        //Prevent players from moving items in stats GUI
+        if (nms.getInventoryName(e).equals(Language.getMsg(p, Messages.PLAYER_STATS_GUI_INV_NAME).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()))) {
+            e.setCancelled(true);
+            return;
         }
 
         if (!i.hasItemMeta()) return;
