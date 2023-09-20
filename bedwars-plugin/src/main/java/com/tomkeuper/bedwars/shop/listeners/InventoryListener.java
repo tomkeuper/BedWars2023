@@ -209,6 +209,7 @@ public class InventoryListener implements Listener {
      */
     public static boolean shouldCancelMovement(ItemStack i, ShopCache sc) {
         if (i == null) return false;
+        if (i.getType() == Material.AIR) return false;
         if (sc == null) return false;
 
         if (BedWars.nms.isCustomBedWarsItem(i)){
