@@ -174,6 +174,7 @@ public class BuyItem implements IBuyItem {
     public void give(Player player, IArena arena) {
 
         ItemStack i = itemStack.clone();
+        i = BedWars.nms.addCustomData(i,"");
         BedWars.debug("Giving BuyItem: " + getUpgradeIdentifier() + " to: " + player.getName());
 
         if (autoEquip && BedWars.nms.isArmor(itemStack)) {
