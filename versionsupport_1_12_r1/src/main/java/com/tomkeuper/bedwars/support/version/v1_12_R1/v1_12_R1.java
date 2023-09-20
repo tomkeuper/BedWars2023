@@ -193,6 +193,7 @@ public class v1_12_R1 extends VersionSupport {
 
     @Override
     public boolean isAxe(org.bukkit.inventory.ItemStack itemStack) {
+        if (CraftItemStack.asNMSCopy(itemStack) == null) return false;
         if (CraftItemStack.asNMSCopy(itemStack).getItem() == null) return false;
         return CraftItemStack.asNMSCopy(itemStack).getItem() instanceof ItemAxe;
     }

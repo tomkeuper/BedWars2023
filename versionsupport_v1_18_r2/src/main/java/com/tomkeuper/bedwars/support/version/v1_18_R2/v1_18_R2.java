@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars.support.version.v1_18_R2;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Vector3fa;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -30,8 +32,6 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Vector3fa;
 import net.minecraft.core.particles.ParticleParamRedstone;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.chat.ChatMessageType;
@@ -62,7 +62,6 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_18_R2.CraftServer;
-import org.bukkit.craftbukkit.v1_18_R2.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftFireball;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
@@ -75,7 +74,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -203,6 +201,7 @@ public class v1_18_R2 extends VersionSupport {
 
     @Override
     public boolean isAxe(org.bukkit.inventory.ItemStack itemStack) {
+        if (CraftItemStack.asNMSCopy(itemStack) == null) return false;
         if (CraftItemStack.asNMSCopy(itemStack).c() == null) return false;
         return CraftItemStack.asNMSCopy(itemStack).c() instanceof ItemAxe;
     }
