@@ -30,6 +30,8 @@ import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.SetupType;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
+import com.tomkeuper.bedwars.support.version.common.VersionCommon;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -140,27 +142,10 @@ public class Inventory implements Listener {
         }
 
         if (e.getCurrentItem() == null) return;
-        if (e.getCurrentItem().
-
-                getType() == Material.AIR) return;
+        if (e.getCurrentItem().getType() == Material.AIR) return;
 
         Player p = (Player) e.getWhoClicked();
         ItemStack i = e.getCurrentItem();
-
-        /*//Prevent moving of command items
-        if (nms.isCustomBedWarsItem(i)) {
-            if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-                e.setCancelled(true);
-                return;
-            }
-            String[] customData = nms.getCustomData(i).split("_");
-            if (customData.length >= 2) {
-                if (customData[0].equals("RUNCOMMAND")) {
-                    e.setCancelled(true);
-                    return;
-                }
-            }
-        }*/
 
         IArena a = Arena.getArenaByPlayer(p);
         if (a != null) {
@@ -206,6 +191,61 @@ public class Inventory implements Listener {
                 e.setCancelled(true);
                 //noinspection UnnecessaryReturnStatement
                 return;
+            }
+        }
+    }
+
+    @EventHandler
+    public void swordHandler(InventoryClickEvent event) {
+        Player player = (Player) event.getView().getPlayer();
+        IArena arena = Arena.getArenaByPlayer(player);
+
+        // Check if player is in an arena or if they are watching a GUI
+        if (arena == null || BedWars.getAPI().getTeamUpgradesUtil().isWatchingGUI(player)) {
+            return;
+        }
+
+        ItemStack cursorItem = event.getView().getCursor();
+
+        // Material will be AIR if shift-clicking
+        if (cursorItem.getType() == Material.AIR && !event.isShiftClick()) {
+            return;
+        }
+
+        // Handle shift-clicking
+        if (event.isShiftClick()) {
+            cursorItem = event.getCurrentItem();
+        }
+
+        // Ensure the clicked inventory is the player's inventory and not an external one
+        if (event.getClickedInventory() != null && !event.getClickedInventory().equals(player.getInventory()) && !event.isShiftClick()) {
+            return;
+        }
+
+        // Check if the item being clicked is a sword
+        if (VersionCommon.api.getVersionSupport().isSword(cursorItem)) {
+            ItemStack[] playerInventory = player.getInventory().getContents();
+
+            // Loop through the player's inventory
+            int slotNum = 0;
+            for (ItemStack item : playerInventory) {
+                if (item == null || item.getType() == Material.AIR || !VersionCommon.api.getVersionSupport().isCustomBedWarsItem(item)) {
+                    continue;
+                }
+
+                // Check if the item is a custom bedwars item with the specific data
+                if (VersionCommon.api.getVersionSupport().getCustomData(item).equalsIgnoreCase("DEFAULT_ITEM")) {
+                    player.getInventory().remove(item);
+
+                    // Handle shift-clicking by swapping items
+                    if (event.isShiftClick()) {
+                        event.setCurrentItem(null);
+                        player.getInventory().setItem(slotNum, cursorItem);
+                    }
+                    // Update inventory to prevent ghost item
+                    Bukkit.getScheduler().runTaskLater(Bukkit.getPluginManager().getPlugin("BedWars2023"), (player)::updateInventory, 1L);
+                }
+                slotNum++;
             }
         }
     }
