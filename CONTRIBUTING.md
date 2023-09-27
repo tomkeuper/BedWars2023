@@ -64,28 +64,27 @@ considered by the maintainers:
 # Additional Notes
 
 ### Issue and Pull Request Labels
-| Label name | Description |  
-| ---  | --- |
-| `enhancement` | Feature requests. |
-| `bug` | Confirmed bugs or reports that are very likely to be bugs. |
-| `question` | Questions more than bug reports or feature requests (e.g. how do I do X). |
-| `feedback` | General feedback more than bug reports or feature requests. |
-| `help-wanted` | The team would appreciate help from the community in resolving these issues. |
-| `beginner` | Less complex issues which would be good first issues to work on for users who want to contribute. |
-| `more-information-needed` | More information needs to be collected about these problems or feature requests (e.g. steps to reproduce). |
-| `needs-reproduction` | Likely bugs, but haven't been reliably reproduced. |
-| `duplicate` | Issues which are duplicates of other issues, i.e. they have been reported before. |
-| `wontfix` | The team has decided not to fix these issues for now, either because they're working as intended or for some other reason. |
-| `invalid` | Issues which aren't valid (e.g. user errors). |
+| Label name                | Description                                                                                                                |  
+|---------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `enhancement`             | Feature requests.                                                                                                          |
+| `bug`                     | Confirmed bugs or reports that are very likely to be bugs.                                                                 |
+| `question`                | Questions more than bug reports or feature requests (e.g. how do I do X).                                                  |
+| `feedback`                | General feedback more than bug reports or feature requests.                                                                |
+| `help-wanted`             | The team would appreciate help from the community in resolving these issues.                                               |
+| `beginner`                | Less complex issues which would be good first issues to work on for users who want to contribute.                          |
+| `more-information-needed` | More information needs to be collected about these problems or feature requests (e.g. steps to reproduce).                 |
+| `needs-reproduction`      | Likely bugs, but haven't been reliably reproduced.                                                                         |
+| `duplicate`               | Issues which are duplicates of other issues, i.e. they have been reported before.                                          |
+| `wontfix`                 | The team has decided not to fix these issues for now, either because they're working as intended or for some other reason. |
+| `invalid`                 | Issues which aren't valid (e.g. user errors).                                                                              |
 
 ### Pull Request Labels
 
 
-| Label name | Description
-| --- | --- |
-| `work-in-progress` | Pull requests which are still being worked on, more changes will follow. |
-| `needs-review` | Pull requests which need code review, and approval from maintainers or 
-core team. |
-| `under-review` | Pull requests being reviewed by maintainers. |
+| Label name         | Description                                                                              |
+|--------------------|------------------------------------------------------------------------------------------|
+| `work-in-progress` | Pull requests which are still being worked on, more changes will follow.                 |
+| `needs-review`     | Pull requests which need code review, and approval from maintainers or core team.        |
+| `under-review`     | Pull requests being reviewed by maintainers.                                             |
 | `requires-changes` | Pull requests which need to be updated based on review comments and then reviewed again. |
-| `needs-testing` | Pull requests which need manual testing. |
+| `needs-testing`    | Pull requests which need manual testing.                                                 |
