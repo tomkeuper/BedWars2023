@@ -1,4 +1,4 @@
-rootProject.name = "bedwars2023"
+rootProject.name = "BedWars2023" // this thing was "bedwars2023" and changed it to "BedWars2023"
 
 // core
 include(":bedwars-api")
