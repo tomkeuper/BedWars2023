@@ -565,10 +565,11 @@ public class DamageDeathMove implements Listener {
                     // if the moving player has invisible armor
                     if (a.getShowTime().containsKey(e.getPlayer())) {
                         for (Player p : a.getPlayers()) {
-                            if (a.getTeam(e.getPlayer()).equals(a.getTeam(p))) return;
+                            if (a.getTeam(e.getPlayer()).equals(a.getTeam(p))) continue;
                             BedWars.nms.hideArmor(e.getPlayer(), p);
                         }
                     }
+                    /* hide players from spectators */
                     if (a.getShowTime().containsKey(e.getPlayer())) {
                         for (Player p : a.getSpectators()) {
                             BedWars.nms.hideArmor(e.getPlayer(), p);
