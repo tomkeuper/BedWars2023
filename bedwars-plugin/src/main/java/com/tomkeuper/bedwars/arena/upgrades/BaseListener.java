@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.arena.upgrades;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -84,18 +85,27 @@ public class BaseListener implements Listener {
         boolean notOnBase = true;
         for (ITeam bwt : a.getTeams()) {
             /* BaseEnterEvent */
+//            BedWars.debug("Checking team : " + bwt.getName());
             if (p.getLocation().distance(bwt.getBed()) <= a.getIslandRadius()) {
                 notOnBase = false;
+
+                // Check if the player was previously on a different base.
                 if (isOnABase.containsKey(p)) {
                     if (isOnABase.get(p) != bwt) {
+                        BedWars.debug("Calling PlayerBaseLEaveEvent1");
                         Bukkit.getPluginManager().callEvent(new PlayerBaseLeaveEvent(p, isOnABase.get(p)));
                         if (!Arena.magicMilk.containsKey(p.getUniqueId())) {
+                            BedWars.debug("Calling PlayerBaseEnterEvent1");
                             Bukkit.getPluginManager().callEvent(new PlayerBaseEnterEvent(p, bwt));
                         }
+
+                        // Update the player's current base.
                         isOnABase.replace(p, bwt);
                     }
                 } else {
+                    // Player is not currently on any base, trigger the enter event.
                     if (!Arena.magicMilk.containsKey(p.getUniqueId())) {
+                        BedWars.debug("Calling PlayerBaseEnterEvent2");
                         Bukkit.getPluginManager().callEvent(new PlayerBaseEnterEvent(p, bwt));
                         isOnABase.put(p, bwt);
                     }
@@ -103,8 +113,10 @@ public class BaseListener implements Listener {
             }
         }
         /* BaseLeaveEvent */
+//        BedWars.debug("not on a base: " + notOnBase);
         if (notOnBase) {
             if (isOnABase.containsKey(p)) {
+                BedWars.debug("Calling PlayerBaseLEaveEvent2");
                 Bukkit.getPluginManager().callEvent(new PlayerBaseLeaveEvent(p, isOnABase.get(p)));
                 isOnABase.remove(p);
             }

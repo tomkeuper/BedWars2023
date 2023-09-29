@@ -30,8 +30,8 @@ import com.tomkeuper.bedwars.api.upgrades.EnemyBaseEnterTrap;
 import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.TeamUpgrade;
 import com.tomkeuper.bedwars.api.upgrades.TrapAction;
+import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import com.tomkeuper.bedwars.upgrades.trapaction.DisenchantAction;
 import com.tomkeuper.bedwars.upgrades.trapaction.PlayerEffectAction;
 import com.tomkeuper.bedwars.upgrades.trapaction.RemoveEffectAction;
@@ -293,6 +293,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         for (Player arenaPlayer : team.getArena().getPlayers()) {
             if (team.isMember(arenaPlayer)) continue;
             if (team.getArena().isReSpawning(arenaPlayer)) continue;
+            if (Arena.magicMilk.containsKey(arenaPlayer.getUniqueId())) continue;
             if (arenaPlayer.getLocation().distance(team.getBed()) <= team.getArena().getIslandRadius()) {
                 team.getActiveTraps().remove(0).trigger(team, arenaPlayer);
                 break;
