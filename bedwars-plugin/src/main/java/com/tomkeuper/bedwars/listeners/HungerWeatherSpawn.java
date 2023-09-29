@@ -116,23 +116,29 @@ public class HungerWeatherSpawn implements Listener {
     public void onDrink(PlayerItemConsumeEvent e) {
         Player p = e.getPlayer();
         IArena a = Arena.getArenaByPlayer(p);
+
         if (a == null) return;
-        /* remove empty bottle */
+
         switch (e.getItem().getType()) {
+            /* remove empty bottle */
             case GLASS_BOTTLE:
                 nms.minusAmount(p, e.getItem(), 1);
                 break;
+
             case MILK_BUCKET:
                 e.setCancelled(true);
                 nms.minusAmount(p, e.getItem(), 1);
+
                 int task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     Arena.magicMilk.remove(p.getUniqueId());
                     p.sendMessage(getMsg(p, Messages.INTERACT_MAGIC_MILK_REMOVED));
                     debug("PlayerItemConsumeEvent player " + p + " was removed from magicMilk");
                 }, 20 * 30L).getTaskId();
+
                 Arena.magicMilk.put(p.getUniqueId(), task);
+
                 if (BaseListener.isOnABase.containsKey(p)) {
-                    if (BaseListener.isOnABase.get(p) != Arena.getArenaByPlayer(p).getTeam(p)) {
+                    if (BaseListener.isOnABase.get(p) != a.getTeam(p)) {
                         Bukkit.getPluginManager().callEvent(new PlayerBaseLeaveEvent(p, BaseListener.isOnABase.get(p)));
                         BaseListener.isOnABase.remove(p);
                     }
