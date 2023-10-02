@@ -42,7 +42,6 @@ public class ShopBuyEvent extends Event implements Cancellable {
     private final IArena arena;
     private final ICategoryContent categoryContent;
     private List<IBuyItem> itemList;
-    private final int slot;
     private boolean cancelled = false;
 
     /**
@@ -54,12 +53,11 @@ public class ShopBuyEvent extends Event implements Cancellable {
      * @param itemList         The list of items bought by the player.
      * @param slot             The slot in the shop where the purchase was made.
      */
-    public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent, List<IBuyItem> itemList, int slot) {
+    public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent, List<IBuyItem> itemList) {
         this.categoryContent = categoryContent;
         this.buyer = buyer;
         this.arena = arena;
         this.itemList = itemList;
-        this.slot = slot;
     }
 
     /**
@@ -105,15 +103,6 @@ public class ShopBuyEvent extends Event implements Cancellable {
      */
     public void setItemList(List<IBuyItem> itemList) {
         this.itemList = itemList;
-    }
-
-    /**
-     * Gets the slot in the shop where the purchase was made.
-     *
-     * @return The slot.
-     */
-    public int getItemSlot() {
-        return slot;
     }
 
     @Override
