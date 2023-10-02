@@ -101,6 +101,15 @@ public interface ICategoryContent {
     void giveItems(Player player, IShopCache shopCache, IArena arena);
 
     /**
+     * Give the items associated with the category content to the player.
+     *
+     * @param player     The player to give the items to.
+     * @param itemList   The list of items that are given to the player.
+     * @param arena      The arena context for the shop.
+     */
+    void giveItems(Player player, List<IBuyItem> itemList, IArena arena);
+
+    /**
      * Get the ItemStack representation of the category content for the player, using the shop cache.
      *
      * @param player     The player for whom the ItemStack is being retrieved.

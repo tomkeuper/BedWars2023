@@ -21,11 +21,15 @@
 package com.tomkeuper.bedwars.api.events.shop;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class ShopBuyEvent extends Event implements Cancellable {
 
@@ -34,15 +38,19 @@ public class ShopBuyEvent extends Event implements Cancellable {
     private final Player buyer;
     private final IArena arena;
     private final ICategoryContent categoryContent;
+    private List<IBuyItem> itemList;
+    private final int slot;
     private boolean cancelled = false;
 
     /**
      * Triggered when a player buys from the shop
      */
-    public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent) {
+    public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent, List<IBuyItem> itemList, int slot) {
         this.categoryContent = categoryContent;
         this.buyer = buyer;
         this.arena = arena;
+        this.itemList = itemList;
+        this.slot = slot;
     }
 
     public IArena getArena() {
@@ -63,8 +71,20 @@ public class ShopBuyEvent extends Event implements Cancellable {
         return categoryContent;
     }
 
+    public List<IBuyItem> getItemList() {
+        return itemList;
+    }
+
+    public void setItem(List<IBuyItem> itemList) {
+        this.itemList = itemList;
+    }
+
+    public int getItemSlot() {
+        return slot;
+    }
+
     @Override
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 
