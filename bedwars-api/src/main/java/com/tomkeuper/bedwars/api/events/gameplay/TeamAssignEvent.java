@@ -26,6 +26,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@SuppressWarnings("unused")
 public class TeamAssignEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();

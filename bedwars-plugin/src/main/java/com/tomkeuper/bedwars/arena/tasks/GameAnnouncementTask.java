@@ -10,7 +10,6 @@ import com.tomkeuper.bedwars.api.tasks.AnnouncementTask;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -57,15 +56,17 @@ public class GameAnnouncementTask implements Runnable, AnnouncementTask {
         this.messages.put(p, messages);
     }
     public void run() {
-//                if (this.index >= GameAnnouncementTask.this.messages.size()) {
-//                    this.index = 0;
-//                }
         if (arena == null) {
             cancel();
         }
         for (Player player : arena.getPlayers()) {
             if (arena.getStatus() == GameState.playing) {
-                player.sendMessage(messages.get(player).get(index % messages.get(player).size()));
+                try {
+                    player.sendMessage(messages.get(player).get(index % messages.get(player).size()));
+                } catch (NullPointerException e){
+                    // Player might lose data when rejoining after getting disconnected
+                    loadMessagesForPlayer(player, Messages.ARENA_IN_GAME_ANNOUNCEMENT);
+                }
             }
         }
         ++this.index;

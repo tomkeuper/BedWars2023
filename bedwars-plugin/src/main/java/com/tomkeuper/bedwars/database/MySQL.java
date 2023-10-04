@@ -20,7 +20,6 @@
 
 package com.tomkeuper.bedwars.database;
 
-import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -76,6 +75,7 @@ public class MySQL implements IDatabase {
     public boolean connect() {
         HikariConfig hikariConfig = new HikariConfig();
 
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setPoolName("BedWars2023MySQLPool");
 
         hikariConfig.setMaximumPoolSize(poolSize);

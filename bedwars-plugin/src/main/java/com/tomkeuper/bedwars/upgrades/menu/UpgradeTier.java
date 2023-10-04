@@ -55,7 +55,7 @@ public class UpgradeTier {
         this.cost = cost;
         this.currency = currency;
 
-        for (String action : UpgradesManager.getConfiguration().getYml().getStringList(parentName + "." + name + ".receive")) {
+        for (String action : BedWars.getUpgradeManager().getConfiguration().getYml().getStringList(parentName + "." + name + ".receive")) {
             String[] type = action.trim().split(":");
             if (type.length < 2) continue;
             String[] data = type[1].trim().toLowerCase().split(",");

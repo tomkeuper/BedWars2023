@@ -39,19 +39,17 @@ public class ChunkLoad implements Listener {
         Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> {
             for (Entity entity : e.getChunk().getEntities()){
                 if (entity instanceof ArmorStand){
-                    if (entity.hasMetadata("bw1058-setup")){
+                    if (entity.hasMetadata("bw2023-setup")){
                         Bukkit.getScheduler().runTask(BedWars.plugin, entity::remove);
                         continue;
                     }
                     if (!((ArmorStand)entity).isVisible()){
                         if (((ArmorStand)entity).isMarker()){
-                            //if (!entity.hasGravity()){
                             if (entity.isCustomNameVisible()){
                                 if (ChatColor.stripColor(entity.getCustomName()).contains(" SET") || ChatColor.stripColor(entity.getCustomName()).contains(" set")){
                                     Bukkit.getScheduler().runTask(BedWars.plugin, entity::remove);
                                 }
                             }
-                            //}
                         }
                     }
                 }

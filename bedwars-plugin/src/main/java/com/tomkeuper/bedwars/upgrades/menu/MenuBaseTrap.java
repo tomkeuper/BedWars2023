@@ -30,8 +30,8 @@ import com.tomkeuper.bedwars.api.upgrades.EnemyBaseEnterTrap;
 import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.TeamUpgrade;
 import com.tomkeuper.bedwars.api.upgrades.TrapAction;
+import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import com.tomkeuper.bedwars.upgrades.trapaction.DisenchantAction;
 import com.tomkeuper.bedwars.upgrades.trapaction.PlayerEffectAction;
 import com.tomkeuper.bedwars.upgrades.trapaction.RemoveEffectAction;
@@ -71,7 +71,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         String nPath = name.replace("base-trap-", "");
         Language.saveIfNotExists(Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + nPath, "&cName not set");
         Language.saveIfNotExists(Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + nPath, Collections.singletonList("&cLore not set"));
-        if (UpgradesManager.getConfiguration().getBoolean(name + ".custom-announce")) {
+        if (BedWars.getUpgradeManager().getConfiguration().getBoolean(name + ".custom-announce")) {
             Language.saveIfNotExists(Messages.UPGRADES_TRAP_CUSTOM_MSG + nPath, "Edit path: " + Messages.UPGRADES_TRAP_CUSTOM_MSG + nPath);
             Language.saveIfNotExists(Messages.UPGRADES_TRAP_CUSTOM_TITLE + nPath, "Edit path: " + Messages.UPGRADES_TRAP_CUSTOM_TITLE + nPath);
             Language.saveIfNotExists(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + nPath, "Edit path: " + Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + nPath);
@@ -80,7 +80,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         this.cost = cost;
         this.currency = currency;
 
-        for (String action : UpgradesManager.getConfiguration().getYml().getStringList(name + ".receive")) {
+        for (String action : BedWars.getUpgradeManager().getConfiguration().getYml().getStringList(name + ".receive")) {
             String[] type = action.trim().split(":");
             if (type.length < 2) continue;
             String[] data = type[1].trim().toLowerCase().split(",");
@@ -171,9 +171,9 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
     public ItemStack getDisplayItem(Player player, ITeam team) {
         Material currency = this.currency;
         if (this.currency == null) {
-            String st = UpgradesManager.getConfiguration().getYml().getString(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-currency");
+            String st = BedWars.getUpgradeManager().getConfiguration().getYml().getString(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-currency");
             if (st == null) {
-                st = UpgradesManager.getConfiguration().getYml().getString("default-upgrades-settings.trap-currency");
+                st = BedWars.getUpgradeManager().getConfiguration().getYml().getString("default-upgrades-settings.trap-currency");
             }
             currency = Material.valueOf(st.toUpperCase());
         }
@@ -182,14 +182,14 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         if (cost == 0) {
             int multiplier = team.getActiveTraps().size();
 
-            int incrementer = UpgradesManager.getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-increment-price");
+            int incrementer = BedWars.getUpgradeManager().getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-increment-price");
             if (incrementer == 0) {
-                incrementer = UpgradesManager.getConfiguration().getYml().getInt("default-upgrades-settings.trap-increment-price");
+                incrementer = BedWars.getUpgradeManager().getConfiguration().getYml().getInt("default-upgrades-settings.trap-increment-price");
             }
 
-            cost = UpgradesManager.getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-start-price");
+            cost = BedWars.getUpgradeManager().getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-start-price");
             if (cost == 0) {
-                cost = UpgradesManager.getConfiguration().getYml().getInt("default-upgrades-settings.trap-start-price");
+                cost = BedWars.getUpgradeManager().getConfiguration().getYml().getInt("default-upgrades-settings.trap-start-price");
             }
             cost = cost + (multiplier * incrementer);
         }
@@ -197,7 +197,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         ItemStack i = displayItem.clone();
         ItemMeta im = i.getItemMeta();
         if (im != null) {
-            boolean afford = UpgradesManager.getMoney(player, currency) >= cost;
+            boolean afford = BedWars.getUpgradeManager().getMoney(player, currency) >= cost;
             String color;
             if (afford) {
                 color = Language.getMsg(player, Messages.FORMAT_UPGRADE_COLOR_CAN_AFFORD);
@@ -208,9 +208,9 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
                     .replace("%bw_color%", color));
 
             List<String> lore = Language.getList(player, Messages.UPGRADES_BASE_TRAP_ITEM_LORE_PATH + name.replace("base-trap-", ""));
-            String currencyMsg = UpgradesManager.getCurrencyMsg(player, cost, currency);
+            String currencyMsg = BedWars.getUpgradeManager().getCurrencyMsg(player, cost, currency);
             lore.add(Language.getMsg(player, Messages.FORMAT_UPGRADE_TRAP_COST).replace("%bw_cost%", String.valueOf(cost)).replace("%bw_currency%", currencyMsg)
-                    .replace("%bw_currency_color%", String.valueOf(UpgradesManager.getCurrencyColor(currency))));
+                    .replace("%bw_currency_color%", String.valueOf(BedWars.getUpgradeManager().getCurrencyColor(currency))));
             lore.add("");
             if (afford) {
                 lore.add(Language.getMsg(player, Messages.UPGRADES_LORE_REPLACEMENT_CLICK_TO_BUY).replace("%bw_color%", color));
@@ -225,22 +225,24 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, ITeam team) {
-        int queueLimit = UpgradesManager.getConfiguration().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-queue-limit");
+    public boolean onClick(Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv) {
+        int queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-queue-limit");
         if (queueLimit == 0) {
-            queueLimit = UpgradesManager.getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
+            queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
         }
         if (queueLimit <= team.getActiveTraps().size()) {
-            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            player.sendMessage(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT));
-            return;
+            if (announceAlreadyUnlocked){
+                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                player.sendMessage(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT));
+            }
+            return false;
         }
 
         Material currency = this.currency;
         if (this.currency == null) {
-            String st = UpgradesManager.getConfiguration().getYml().getString(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-currency");
+            String st = BedWars.getUpgradeManager().getConfiguration().getYml().getString(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-currency");
             if (st == null) {
-                st = UpgradesManager.getConfiguration().getYml().getString("default-upgrades-settings.trap-currency");
+                st = BedWars.getUpgradeManager().getConfiguration().getYml().getString("default-upgrades-settings.trap-currency");
             }
             currency = Material.valueOf(st.toUpperCase());
         }
@@ -249,36 +251,41 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         if (cost == 0) {
             int multiplier = team.getActiveTraps().size();
 
-            int incrementer = UpgradesManager.getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-increment-price");
+            int incrementer = BedWars.getUpgradeManager().getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-increment-price");
             if (incrementer == 0) {
-                incrementer = UpgradesManager.getConfiguration().getYml().getInt("default-upgrades-settings.trap-increment-price");
+                incrementer = BedWars.getUpgradeManager().getConfiguration().getYml().getInt("default-upgrades-settings.trap-increment-price");
             }
 
-            cost = UpgradesManager.getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-start-price");
+            cost = BedWars.getUpgradeManager().getConfiguration().getYml().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-start-price");
             if (cost == 0) {
-                cost = UpgradesManager.getConfiguration().getYml().getInt("default-upgrades-settings.trap-start-price");
+                cost = BedWars.getUpgradeManager().getConfiguration().getYml().getInt("default-upgrades-settings.trap-start-price");
             }
             cost = cost + (multiplier * incrementer);
         }
 
-        int money = UpgradesManager.getMoney(player, currency);
-        if (money < cost) {
-            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
-                    .replace("%bw_currency%", UpgradesManager.getCurrencyMsg(player, cost, currency))
-                    .replace("%bw_amount%", String.valueOf(cost - money)));
-            player.closeInventory();
-            return;
+        if (!forFree){
+            int money = BedWars.getUpgradeManager().getMoney(player, currency);
+            if (money < cost) {
+                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
+                        .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, cost, currency))
+                        .replace("%bw_amount%", String.valueOf(cost - money)));
+                player.closeInventory();
+                return false;
+            }
         }
+
 
         final UpgradeBuyEvent event;
         Bukkit.getPluginManager().callEvent(event = new UpgradeBuyEvent(this, player, team));
-        if(event.isCancelled()) return;
+        if(event.isCancelled()) return false;
 
-        if (currency == Material.AIR) {
-            BedWars.getEconomy().buyAction(player, money);
-        } else {
-            BedWars.getAPI().getShopUtil().takeMoney(player, currency, cost);
+        if (!forFree){
+            if (currency == Material.AIR) {
+                BedWars.getEconomy().buyAction(player, BedWars.getUpgradeManager().getMoney(player, currency));
+            } else {
+                BedWars.getAPI().getShopUtil().takeMoney(player, currency, cost);
+            }
         }
         Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, player);
         team.getActiveTraps().add(this);
@@ -286,17 +293,21 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         for (Player arenaPlayer : team.getArena().getPlayers()) {
             if (team.isMember(arenaPlayer)) continue;
             if (team.getArena().isReSpawning(arenaPlayer)) continue;
+            if (Arena.magicMilk.containsKey(arenaPlayer.getUniqueId())) continue;
             if (arenaPlayer.getLocation().distance(team.getBed()) <= team.getArena().getIslandRadius()) {
                 team.getActiveTraps().remove(0).trigger(team, arenaPlayer);
                 break;
             }
         }
 
-        for (Player p1 : team.getMembers()) {
-            p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_upgrade_name%",
-                    ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + getName().replace("base-trap-", "")).replace("%bw_color%", ""))));
+        if (announcePurchase){
+            for (Player p1 : team.getMembers()) {
+                p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_upgrade_name%",
+                        ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + getName().replace("base-trap-", "")).replace("%bw_color%", ""))));
+            }
         }
-        UpgradesManager.getMenuForArena(team.getArena()).open(player);
+        if (openInv) BedWars.getUpgradeManager().getMenuForArena(team.getArena()).open(player);
+        return true;
     }
 
     @Override
@@ -328,9 +339,9 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
     public void trigger(ITeam trapTeam, Player player) {
 
         Sound sound = null;
-        if (UpgradesManager.getConfiguration().getYml().get(name + ".sound") != null) {
+        if (BedWars.getUpgradeManager().getConfiguration().getYml().get(name + ".sound") != null) {
             try {
-                sound = Sound.valueOf(UpgradesManager.getConfiguration().getYml().getString(name + ".sound"));
+                sound = Sound.valueOf(BedWars.getUpgradeManager().getConfiguration().getYml().getString(name + ".sound"));
             } catch (Exception ignored) {
             }
         }
@@ -341,7 +352,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         final ITeam enemyTeam = trapTeam.getArena().getTeam(player);
         trapActions.forEach(t -> t.onTrigger(player, enemyTeam, trapTeam));
 
-        if (UpgradesManager.getConfiguration().getBoolean(name + ".custom-announce")) {
+        if (BedWars.getUpgradeManager().getConfiguration().getBoolean(name + ".custom-announce")) {
             String name2 = name.replace("base-trap-", "");
             String color = trapTeam.getArena().getTeam(player) == null ? "" : trapTeam.getArena().getTeam(player).getColor().chat().toString();
             for (Player p : trapTeam.getMembers()) {

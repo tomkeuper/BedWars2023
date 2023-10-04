@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.upgrades.listeners;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -43,7 +44,7 @@ public class UpgradeOpenListener implements Listener {
             if (l.getBlockX() == l2.getBlockX() && l.getBlockY() == l2.getBlockY() && l.getBlockZ() == l2.getBlockZ()) {
                 e.setCancelled(true);
                 if (a.isPlayer(e.getPlayer())) {
-                    UpgradesManager.getMenuForArena(a).open(e.getPlayer());
+                    BedWars.getUpgradeManager().getMenuForArena(a).open(e.getPlayer());
                 }
             }
         }

@@ -174,7 +174,7 @@ public class CmdList extends SubCommand {
 
             p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "save", ChatColor.WHITE + "Save arena and go back to lobby", "/" + getParent().getName() + " save", ClickEvent.Action.SUGGEST_COMMAND));
         } else {
-            TextComponent credits = new TextComponent(ChatColor.BLUE + "" + ChatColor.BOLD + MainCommand.getDot() + " " + ChatColor.GOLD + plugin.getName() + " " + ChatColor.GRAY + "v" + plugin.getDescription().getVersion() + " by andrei1058");
+            TextComponent credits = new TextComponent(ChatColor.BLUE + "" + ChatColor.BOLD + MainCommand.getDot() + " " + ChatColor.GOLD + plugin.getName() + " " + ChatColor.GRAY + "v" + plugin.getDescription().getVersion() + " by MrCeasar");
             credits.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link));
             credits.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Arenas: " + (Arena.getArenas().size() == 0 ? ChatColor.RED + "0" : ChatColor.GREEN + "" + Arena.getArenas().size())).create()));
             ((Player) s).spigot().sendMessage(credits);
@@ -192,7 +192,7 @@ public class CmdList extends SubCommand {
 
     @Override
     public boolean canSee(CommandSender s, BedWars api) {
-
+        if (s instanceof ConsoleCommandSender) return  false;
         if (s instanceof Player) {
             Player p = (Player) s;
             if (Arena.isInArena(p)) return false;

@@ -52,7 +52,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 
 import java.lang.reflect.Field;
@@ -194,6 +193,7 @@ public class v1_12_R1 extends VersionSupport {
 
     @Override
     public boolean isAxe(org.bukkit.inventory.ItemStack itemStack) {
+        if (CraftItemStack.asNMSCopy(itemStack) == null) return false;
         if (CraftItemStack.asNMSCopy(itemStack).getItem() == null) return false;
         return CraftItemStack.asNMSCopy(itemStack).getItem() instanceof ItemAxe;
     }
@@ -239,13 +239,13 @@ public class v1_12_R1 extends VersionSupport {
         vlg.setSilent(true);
 
         for (Player p : players) {
-            String[] nume = Language.getMsg(p, name1).split(",");
-            if (nume.length == 1) {
-                ArmorStand a = createArmorStand(nume[0], l.clone().add(0, 1.85, 0));
+            String[] name = Language.getMsg(p, name1).split(",");
+            if (name.length == 1) {
+                ArmorStand a = createArmorStand(name[0], l.clone().add(0, 1.85, 0));
                 new ShopHolo(Language.getPlayerLanguage(p).getIso(), a, null, l, arena);
             } else {
-                ArmorStand a = createArmorStand(nume[0], l.clone().add(0, 2.1, 0));
-                ArmorStand b = createArmorStand(nume[1], l.clone().add(0, 1.85, 0));
+                ArmorStand a = createArmorStand(name[0], l.clone().add(0, 2.1, 0));
+                ArmorStand b = createArmorStand(name[1], l.clone().add(0, 1.85, 0));
                 new ShopHolo(Language.getPlayerLanguage(p).getIso(), a, b, l, arena);
             }
         }
@@ -347,13 +347,13 @@ public class v1_12_R1 extends VersionSupport {
     }
 
     @Override
-    public void registerTntWhitelist() {
+    public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             Field field = Block.class.getDeclaredField("durability");
             field.setAccessible(true);
-            field.set(Block.getByName("glass"), 300f);
-            field.set(Block.getByName("stained_glass"), 300f);
-            field.set(Block.getByName("end_stone"), 69f);
+            field.set(Block.getByName("glass"), glassBlast);
+            field.set(Block.getByName("stained_glass"), glassBlast);
+            field.set(Block.getByName("end_stone"), endStoneBlast);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -437,12 +437,6 @@ public class v1_12_R1 extends VersionSupport {
             i = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEDROCK);
         }
         return i;
-    }
-
-    @Override
-    public void teamCollideRule(Team team) {
-        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.setCanSeeFriendlyInvisibles(true);
     }
 
     @Override

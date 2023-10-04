@@ -77,9 +77,9 @@ public class MenuCategory implements MenuContent {
             List<String> lore = Language.getList(player, Messages.UPGRADES_CATEGORY_ITEM_LORE_PATH + name.replace("category-", ""));
 
             if (name.equalsIgnoreCase("traps")) {
-                int queueLimit = UpgradesManager.getConfiguration().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-queue-limit");
+                int queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt(team.getArena().getGroup().toLowerCase() + "-upgrades-settings.trap-queue-limit");
                 if (queueLimit == 0) {
-                    queueLimit = UpgradesManager.getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
+                    queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
                 }
                 if (queueLimit == team.getActiveTraps().size()) {
                     lore.add("");
@@ -98,16 +98,18 @@ public class MenuCategory implements MenuContent {
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, ITeam team) {
+    public boolean onClick(Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv) {
         if (name.equalsIgnoreCase("category-traps")){
-            int queueLimit = UpgradesManager.getConfiguration().getInt(team.getArena().getGroup().toLowerCase()+"-upgrades-settings.trap-queue-limit");
+            int queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt(team.getArena().getGroup().toLowerCase()+"-upgrades-settings.trap-queue-limit");
             if (queueLimit == 0){
-                queueLimit = UpgradesManager.getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
+                queueLimit = BedWars.getUpgradeManager().getConfiguration().getInt("default-upgrades-settings.trap-queue-limit");
             }
             if (queueLimit <= team.getActiveTraps().size()){
-                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                player.sendMessage(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT));
-                return;
+                if (announceAlreadyUnlocked){
+                    Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                    player.sendMessage(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT));
+                }
+                return false;
             }
         }
         Inventory inv = Bukkit.createInventory(null, 45, Language.getMsg(player, Messages.UPGRADES_CATEGORY_GUI_NAME_PATH + name.replace("category-", "")));
@@ -115,7 +117,8 @@ public class MenuCategory implements MenuContent {
             inv.setItem(entry.getKey(), entry.getValue().getDisplayItem(player, team));
         }
         player.openInventory(inv);
-        UpgradesManager.setWatchingUpgrades(player.getUniqueId());
+        BedWars.getUpgradeManager().setWatchingUpgrades(player.getUniqueId());
+        return true;
     }
 
 }

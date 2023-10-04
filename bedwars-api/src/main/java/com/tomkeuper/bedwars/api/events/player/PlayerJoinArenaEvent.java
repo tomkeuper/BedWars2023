@@ -25,64 +25,113 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+/**
+ * Represents an event that is triggered when a player joins an arena as a player or spectator.
+ * This event is not triggered for players who died and become spectators; listen to the kill event for this purpose.
+ */
 public class PlayerJoinArenaEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private Player player;
-    private boolean spectator;
+    private final Player player;
+    private final boolean spectator;
     private boolean cancelled = false;
-    private IArena arena;
+    private final IArena arena;
+    private String message = "";
 
     /**
-     * This event is called when a player joins the arena as a player or spectator.
-     * The event is not triggered for players who died and become spectators. Listen the kill event for this.
+     * Constructs a PlayerJoinArenaEvent.
+     *
+     * @param arena The arena the player is joining.
+     * @param player The player joining the arena.
+     * @param spectator Whether the player is joining as a spectator.
      */
-    public PlayerJoinArenaEvent(IArena arena, Player p, boolean spectator) {
+    public PlayerJoinArenaEvent(IArena arena, Player player, boolean spectator) {
         this.arena = arena;
-        this.player = p;
+        this.player = player;
         this.spectator = spectator;
     }
 
     /**
-     * Get arena
+     * Get the arena where the event occurred.
+     *
+     * @return The arena instance.
      */
     public IArena getArena() {
         return arena;
     }
 
     /**
-     * Get player
+     * Get the player who is joining the arena.
+     *
+     * @return The player instance.
      */
     public Player getPlayer() {
         return player;
     }
 
     /**
-     * Check if the player has joined as spectator
+     * Check if the player is joining the arena as a spectator.
+     *
+     * @return true if the player is joining as a spectator, false if as a regular player.
      */
     public boolean isSpectator() {
         return spectator;
     }
 
     /**
-     * Check if event was cancelled
+     * Check if the event is cancelled.
+     *
+     * @return true if the event is cancelled, false otherwise.
      */
     public boolean isCancelled() {
         return cancelled;
     }
 
     /**
-     * Cancel event
+     * Cancel the event if needed.
+     *
+     * @param cancelled true to cancel the event, false otherwise.
      */
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 
+
+    /**
+     * Set a custom join message for the event. The value of the 'message' parameter can be set to null
+     * to disable the join message and prevent it from being displayed.
+     *
+     * @param message The custom join message, or null to disable the message.
+     */
+    @SuppressWarnings("unused")
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    /**
+     * Get the custom join message associated with the event.
+     *
+     * @return The custom join message.
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Get the list of handlers for the event.
+     *
+     * @return The list of event handlers.
+     */
     public HandlerList getHandlers() {
         return HANDLERS;
     }
 
+    /**
+     * Get the list of handlers for the event.
+     *
+     * @return The list of event handlers.
+     */
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

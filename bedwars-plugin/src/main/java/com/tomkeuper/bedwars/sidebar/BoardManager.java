@@ -15,10 +15,12 @@ import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBarManager;
 import me.neznamy.tab.api.event.player.PlayerLoadEvent;
+import me.neznamy.tab.api.nametag.NameTagManager;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.scoreboard.Scoreboard;
 import me.neznamy.tab.api.scoreboard.ScoreboardManager;
+import me.neznamy.tab.api.tablist.TabListFormatManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -32,15 +34,17 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class BoardManager implements IScoreboardService {
     private static ScoreboardManager scoreboardManager;
-    private static BossBarManager bossBarManager;
+    private static TabListFormatManager tabListFormatManager;
+    private static PlaceholderManager placeholderManager;
+    private static NameTagManager nameTagManager;
     private static BoardManager instance;
     private final HashMap<TabPlayer, Integer> tabPlayersPrefix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersSuffix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersTitle = new HashMap<>();
 
-    public static boolean init(){
+    public static boolean init() {
         if (TabAPI.getInstance().getScoreboardManager() == null) return false;
-        if (null == instance) {
+        if (instance == null) {
             instance = new BoardManager();
             instance.registerPlaceholders();
             instance.registerLoadEvent();
@@ -50,31 +54,32 @@ public class BoardManager implements IScoreboardService {
         return instance != null;
     }
 
-    public void registerLoadEvent(){
-        TabAPI.getInstance().getEventBus().register(PlayerLoadEvent.class,
-                event -> {
-                    if (BedWars.getServerType() == ServerType.SHARED && !((Player) event.getPlayer().getPlayer()).getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) return;
-                    Bukkit.getScheduler().runTaskLater(BedWars.plugin,() -> {
-                        IArena arena = Arena.getArenaByPlayer((Player) event.getPlayer().getPlayer());
-                        BoardManager.getInstance().giveTabFeatures((Player) event.getPlayer().getPlayer(), arena, false);
-                    },5); //Give time for player to be put in arena player list.
-                });
+    public void registerLoadEvent() {
+        Objects.requireNonNull(TabAPI.getInstance().getEventBus()).register(PlayerLoadEvent.class, event -> {
+            if (BedWars.getServerType() == ServerType.SHARED && !((Player) event.getPlayer().getPlayer()).getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
+                return;
+            }
+            Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+                IArena arena = Arena.getArenaByPlayer((Player) event.getPlayer().getPlayer());
+                BoardManager.getInstance().giveTabFeatures((Player) event.getPlayer().getPlayer(), arena, false);
+            }, 5); // Give time for player to be put in arena player list.
+        });
     }
 
-    public void registerLobbyScoreboards(){
-        for (Language language : Language.getLanguages()){
+    public void registerLobbyScoreboards() {
+        for (Language language : Language.getLanguages()) {
             List<String> lines = language.l(Messages.SCOREBOARD_LOBBY);
             lines.replaceAll(s -> s.isEmpty() ? " " : s); // TAB doesn't display empty lines, we need to replace them with spaces
-            scoreboardManager.createScoreboard("bw_lobby_" + language.getIso(),"%bw_scoreboard_title%", lines.subList(1, lines.size()));
+            scoreboardManager.createScoreboard("bw_lobby_" + language.getIso(), "%bw_scoreboard_title%", lines.subList(1, lines.size()));
         }
     }
 
-    public void registerArenaScoreboards(Arena arena){
-        //Technically it's possible to have per arena scoreboards. Future feature?
-        for (Language language: Language.getLanguages()){
+    public void registerArenaScoreboards(Arena arena) {
+        // Technically it's possible to have per arena scoreboards. Future feature?
+        for (Language language : Language.getLanguages()) {
             List<String> waiting = getScoreboardLines(arena, language, "waiting", Messages.SCOREBOARD_DEFAULT_WAITING);
             String scoreboardWaitingName = "bw_" + arena.getGroup() + "_waiting_" + language.getIso();
-            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardWaitingName)) scoreboardManager.createScoreboard(scoreboardWaitingName,"%bw_scoreboard_title%", waiting.subList(1, waiting.size()));
+            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardWaitingName)) scoreboardManager.createScoreboard(scoreboardWaitingName, "%bw_scoreboard_title%", waiting.subList(1, waiting.size()));
 
             List<String> starting = getScoreboardLines(arena, language, "starting", Messages.SCOREBOARD_DEFAULT_STARTING);
             String scoreboardStartingName = "bw_" + arena.getGroup() + "_starting_" + language.getIso();
@@ -104,13 +109,18 @@ public class BoardManager implements IScoreboardService {
 
     private BoardManager() {
         scoreboardManager = TabAPI.getInstance().getScoreboardManager();
-        bossBarManager = TabAPI.getInstance().getBossBarManager();
-        if (bossBarManager == null) BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon bossbars");
+        tabListFormatManager = TabAPI.getInstance().getTabListFormatManager();
+        placeholderManager = TabAPI.getInstance().getPlaceholderManager();
+        nameTagManager = TabAPI.getInstance().getNameTagManager();
+        BossBarManager bossBarManager = TabAPI.getInstance().getBossBarManager();
+        if (bossBarManager == null) BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon boss-bars");
+        if (nameTagManager == null && BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME)) if (!(TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager))
+            Bukkit.getLogger().warning("Below name health is enabled in BedWars config but unlimited nametags is disabled in TAB config!");
+        if (tabListFormatManager == null) BedWars.plugin.getLogger().warning("TabList Format Manager is null! You dont have the tablist-name-formatting enabled in TAB config.\nWithout this feature the plugin will NOT work properly");
     }
 
     private void registerPlaceholders(){
         BedWars.debug("Registering TAB placeholders...");
-        PlaceholderManager pm = TabAPI.getInstance().getPlaceholderManager();
 
         int placeholderRefresh = BedWars.config.getInt(ConfigPath.SB_CONFIG_SIDEBAR_PLACEHOLDERS_REFRESH_INTERVAL);
         if (placeholderRefresh < 50) {
@@ -140,47 +150,47 @@ public class BoardManager implements IScoreboardService {
             titleRefresh = 100;
         }
 
-        pm.registerPlayerPlaceholder("%bw_v_prefix%",placeholderRefresh, player -> BedWars.getChatSupport().getPrefix((Player) player.getPlayer()));
-        pm.registerPlayerPlaceholder("%bw_v_suffix%", placeholderRefresh, player -> BedWars.getChatSupport().getSuffix((Player) player.getPlayer()));
-        pm.registerPlayerPlaceholder("%bw_playername%", placeholderRefresh, player -> player.getName());
-        pm.registerPlayerPlaceholder("%bw_player%", placeholderRefresh, player -> ((Player) player.getPlayer()).getDisplayName());
-        pm.registerPlayerPlaceholder("%bw_money%", placeholderRefresh, player -> BedWars.getEconomy().getMoney((Player) player.getPlayer()));
-        pm.registerServerPlaceholder("%bw_server_ip%", placeholderRefresh, () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP));
-        pm.registerServerPlaceholder("%bw_version%", placeholderRefresh, () -> BedWars.plugin.getDescription().getVersion());
-        pm.registerServerPlaceholder("%bw_server_id%", placeholderRefresh, () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
-        pm.registerPlayerPlaceholder("%bw_date%", placeholderRefresh, player -> getDateFormat((Player) player.getPlayer()).format(new Date(System.currentTimeMillis())));
-        pm.registerPlayerPlaceholder("%bw_progress%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getProgress());
-        pm.registerPlayerPlaceholder("%bw_level%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getLevelName());
-        pm.registerPlayerPlaceholder("%bw_level_unformatted%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getLevel());
-        pm.registerPlayerPlaceholder("%bw_current_xp%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getFormattedCurrentXp());
-        pm.registerPlayerPlaceholder("%bw_required_xp%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getFormattedRequiredXp());
-        pm.registerPlayerPlaceholder("%bw_map%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getDisplayName());
-        pm.registerPlayerPlaceholder("%bw_map_name%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getArenaName());
-        pm.registerPlayerPlaceholder("%bw_group%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getDisplayGroup((Player) player.getPlayer()));
-        pm.registerPlayerPlaceholder("%bw_kills%", placeholderRefresh, player -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_v_prefix%",placeholderRefresh, player -> BedWars.getChatSupport().getPrefix((Player) player.getPlayer()));
+        placeholderManager.registerPlayerPlaceholder("%bw_v_suffix%", placeholderRefresh, player -> BedWars.getChatSupport().getSuffix((Player) player.getPlayer()));
+        placeholderManager.registerPlayerPlaceholder("%bw_playername%", placeholderRefresh, TabPlayer::getName);
+        placeholderManager.registerPlayerPlaceholder("%bw_player%", placeholderRefresh, player -> ((Player) player.getPlayer()).getDisplayName());
+        placeholderManager.registerPlayerPlaceholder("%bw_money%", placeholderRefresh, player -> BedWars.getEconomy().getMoney((Player) player.getPlayer()));
+        placeholderManager.registerServerPlaceholder("%bw_server_ip%", placeholderRefresh, () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIG_PLACEHOLDERS_REPLACEMENTS_SERVER_IP));
+        placeholderManager.registerServerPlaceholder("%bw_version%", placeholderRefresh, () -> BedWars.plugin.getDescription().getVersion());
+        placeholderManager.registerServerPlaceholder("%bw_server_id%", placeholderRefresh, () -> BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
+        placeholderManager.registerPlayerPlaceholder("%bw_date%", placeholderRefresh, player -> getDateFormat((Player) player.getPlayer()).format(new Date(System.currentTimeMillis())));
+        placeholderManager.registerPlayerPlaceholder("%bw_progress%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getProgress());
+        placeholderManager.registerPlayerPlaceholder("%bw_level%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getLevelName());
+        placeholderManager.registerPlayerPlaceholder("%bw_level_unformatted%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getLevel());
+        placeholderManager.registerPlayerPlaceholder("%bw_current_xp%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getFormattedCurrentXp());
+        placeholderManager.registerPlayerPlaceholder("%bw_required_xp%", placeholderRefresh, player -> PlayerLevel.getLevelByPlayer(player.getUniqueId()).getFormattedRequiredXp());
+        placeholderManager.registerPlayerPlaceholder("%bw_map%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getDisplayName());
+        placeholderManager.registerPlayerPlaceholder("%bw_map_name%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getArenaName());
+        placeholderManager.registerPlayerPlaceholder("%bw_group%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getDisplayGroup((Player) player.getPlayer()));
+        placeholderManager.registerPlayerPlaceholder("%bw_kills%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerKills((Player) player.getPlayer(), false);
             return BedWars.getStatsManager().get(player.getUniqueId()).getKills();
         });
-        pm.registerPlayerPlaceholder("%bw_final_kills%", placeholderRefresh, player -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_final_kills%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerKills((Player) player.getPlayer(), true);
             return BedWars.getStatsManager().get(player.getUniqueId()).getKills();
         });
-        pm.registerPlayerPlaceholder("%bw_beds%", placeholderRefresh, player -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_beds%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerBedsDestroyed((Player) player.getPlayer());
             return BedWars.getStatsManager().get(player.getUniqueId()).getBedsDestroyed();
         });
-        pm.registerPlayerPlaceholder("%bw_deaths%", placeholderRefresh, player -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_deaths%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerDeaths((Player) player.getPlayer(), false);
             return BedWars.getStatsManager().get(player.getUniqueId()).getDeaths();
         });
-        pm.registerPlayerPlaceholder("%bw_final_deaths%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getFinalDeaths());
-        pm.registerPlayerPlaceholder("%bw_wins%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getWins());
-        pm.registerPlayerPlaceholder("%bw_losses%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getLosses());
-        pm.registerPlayerPlaceholder("%bw_games_played%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getGamesPlayed());
-        pm.registerPlayerPlaceholder("%bw_next_event%", placeholderRefresh, player -> getNextEventName((Player) player.getPlayer()));
-        pm.registerPlayerPlaceholder("%bw_on%", placeholderRefresh, player -> getOnlinePlayers((Player) player.getPlayer()));
-        pm.registerPlayerPlaceholder("%bw_max%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getMaxPlayers());
-        pm.registerPlayerPlaceholder("%bw_time%", placeholderRefresh, tabPlayer -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_final_deaths%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getFinalDeaths());
+        placeholderManager.registerPlayerPlaceholder("%bw_wins%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getWins());
+        placeholderManager.registerPlayerPlaceholder("%bw_losses%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getLosses());
+        placeholderManager.registerPlayerPlaceholder("%bw_games_played%", placeholderRefresh, player -> BedWars.getStatsManager().get(player.getUniqueId()).getGamesPlayed());
+        placeholderManager.registerPlayerPlaceholder("%bw_next_event%", placeholderRefresh, player -> getNextEventName((Player) player.getPlayer()));
+        placeholderManager.registerPlayerPlaceholder("%bw_on%", placeholderRefresh, player -> getOnlinePlayers((Player) player.getPlayer()));
+        placeholderManager.registerPlayerPlaceholder("%bw_max%", placeholderRefresh, player -> Arena.getArenaByPlayer((Player) player.getPlayer()) == null ? "" : Arena.getArenaByPlayer((Player) player.getPlayer()).getMaxPlayers());
+        placeholderManager.registerPlayerPlaceholder("%bw_time%", placeholderRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             Arena arena = (Arena) Arena.getArenaByPlayer(player);
             if (null == arena) return "";
@@ -194,26 +204,26 @@ public class BoardManager implements IScoreboardService {
             return getNextEventDateFormat(player).format(new Date(System.currentTimeMillis()));
         });
 
-        pm.registerPlayerPlaceholder("%bw_team%", placeholderRefresh, tabPlayer -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_team%", placeholderRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
             return null == arena ? "" : null == arena.getTeam(player) ? "" : arena.getTeam(player).getColor().chat() + arena.getTeam(player).getDisplayName(Language.getPlayerLanguage(player));
         });
-        pm.registerPlayerPlaceholder("%bw_team_letter%", placeholderRefresh, tabPlayer -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_team_letter%", placeholderRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
             return null == arena ? "" : null == arena.getTeam(player) ? "" :  arena.getTeam(player).getColor().chat() + (arena.getTeam(player).getDisplayName(Language.getPlayerLanguage(player)).substring(0, 1));
         });
-        pm.registerPlayerPlaceholder("%bw_team_color%", placeholderRefresh, tabPlayer -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_team_color%", placeholderRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
             return null == arena ? "" : null == arena.getTeam(player) ? ""  : arena.getTeam(player).getColor().chat();
         });
 
-        pm.registerPlayerPlaceholder("%bw_prefix%", PrefixRefresh, tabPlayer -> getPrefix(tabPlayer));
-        pm.registerPlayerPlaceholder("%bw_suffix%", SuffixRefresh, tabPlayer -> getSuffix(tabPlayer));
+        placeholderManager.registerPlayerPlaceholder("%bw_prefix%", PrefixRefresh, this::getPrefix);
+        placeholderManager.registerPlayerPlaceholder("%bw_suffix%", SuffixRefresh, this::getSuffix);
 
-        pm.registerPlayerPlaceholder("%bw_scoreboard_title%", titleRefresh, tabPlayer -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_scoreboard_title%", titleRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
             int i = tabPlayersTitle.getOrDefault(tabPlayer,0);
@@ -248,7 +258,7 @@ public class BoardManager implements IScoreboardService {
             return null ==  title? "" : title;
         });
 
-        pm.registerPlayerPlaceholder("%bw_tab_health%", SuffixRefresh, tabPlayer -> {
+        placeholderManager.registerPlayerPlaceholder("%bw_tab_health%", SuffixRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
             // set sidebar lines based on game state or lobby
@@ -280,7 +290,7 @@ public class BoardManager implements IScoreboardService {
 
             TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
 
-            if (TabAPI.getInstance().getNameTagManager() == null || tabPlayer == null) {
+            if (nameTagManager == null || tabPlayer == null) {
                 BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player");
                 return;
             }
@@ -290,18 +300,26 @@ public class BoardManager implements IScoreboardService {
             Language playerLanguage = Language.getPlayerLanguage(player);
 
             // Set scoreboard name and temporary group based on arena status
-            if (arenaStatus == GameState.waiting) {
-                scoreboardName = "bw_" + arena.getGroup() + "_waiting_" + playerLanguage.getIso();
-                tabPlayer.setTemporaryGroup(null);
-            } else if (arenaStatus == GameState.starting) {
-                scoreboardName = "bw_" + arena.getGroup() + "_starting_" + playerLanguage.getIso();
-                tabPlayer.setTemporaryGroup(null);
-            } else if (arenaStatus == GameState.playing || arenaStatus == GameState.restarting) {
-                scoreboardName = "bw_" + arena.getGroup() + "_playing_" + playerLanguage.getIso();
-                tabPlayer.setTemporaryGroup(arena.getTeam(player) != null ? arena.getTeam(player).getName() : "");
-            } else {
+            if (arenaStatus == null){
                 scoreboardName = "bw_lobby_" + playerLanguage.getIso();
-                tabPlayer.setTemporaryGroup(null);
+            } else {
+                String temporaryGroup = null;
+                switch (arenaStatus) {
+                    case waiting:
+                        scoreboardName = "bw_" + arena.getGroup() + "_waiting_" + playerLanguage.getIso();
+                        break;
+                    case starting:
+                        scoreboardName = "bw_" + arena.getGroup() + "_starting_" + playerLanguage.getIso();
+                        break;
+                    case playing:
+                    case restarting:
+                        scoreboardName = "bw_" + arena.getGroup() + "_playing_" + playerLanguage.getIso();
+                        temporaryGroup = arena.getTeam(player) != null ? arena.getTeam(player).getName() : "";
+                        break;
+                    default:
+                        scoreboardName = "bw_lobby_" + playerLanguage.getIso();
+                }
+                tabPlayer.setTemporaryGroup(temporaryGroup);
             }
 
             // Set below name health if enabled in config
@@ -320,13 +338,13 @@ public class BoardManager implements IScoreboardService {
 
             setHeaderFooter(tabPlayer, arena);
 
-            TabAPI.getInstance().getTabListFormatManager().setPrefix(tabPlayer, "%bw_prefix%");
-            TabAPI.getInstance().getTabListFormatManager().setSuffix(tabPlayer, "%bw_suffix%");
+            tabListFormatManager.setPrefix(tabPlayer, "%bw_prefix%");
+            tabListFormatManager.setSuffix(tabPlayer, "%bw_suffix%");
 
-            TabAPI.getInstance().getNameTagManager().setPrefix(tabPlayer, "%bw_prefix%");
-            TabAPI.getInstance().getNameTagManager().setSuffix(tabPlayer, "%bw_suffix%");
+            nameTagManager.setPrefix(tabPlayer, "%bw_prefix%");
+            nameTagManager.setSuffix(tabPlayer, "%bw_suffix%");
 
-            TabAPI.getInstance().getTabListFormatManager().setName(tabPlayer,BedWars.config.getString(ConfigPath.SB_CONFIG_SIDEBAR_TAB_NAME));
+            tabListFormatManager.setName(tabPlayer,BedWars.config.getString(ConfigPath.SB_CONFIG_SIDEBAR_TAB_NAME));
             if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED) && TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager){
                 UnlimitedNameTagManager nameTagManager = (UnlimitedNameTagManager) TabAPI.getInstance().getNameTagManager();
                 nameTagManager.setName(tabPlayer,BedWars.config.getString(ConfigPath.SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME));
@@ -337,7 +355,7 @@ public class BoardManager implements IScoreboardService {
 
     @Override
     public void remove(@NotNull Player player) {
-        scoreboardManager.resetScoreboard(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+        scoreboardManager.resetScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
     }
 
     public String getPrefix(TabPlayer tabPlayer) {
@@ -353,20 +371,33 @@ public class BoardManager implements IScoreboardService {
 
             if (arena.isSpectator(player)) {
                 fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR);
-            } else if (arenaStatus == GameState.playing) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_PLAYING);
-            } else if (arenaStatus == GameState.waiting) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_WAITING);
-            } else if (arenaStatus == GameState.starting) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_STARTING);
-            } else if (arenaStatus == GameState.restarting) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING);
             } else {
-                BedWars.debug("Unhandled game state for BedWars prefix");
-                fixList = Collections.singletonList("");
+                switch (arenaStatus) {
+                    case playing:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_PLAYING);
+                        break;
+                    case waiting:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_WAITING);
+                        break;
+                    case starting:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_STARTING);
+                        break;
+                    case restarting:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING);
+                        break;
+                    default:
+                        BedWars.debug("Unhandled game state for BedWars prefix");
+                        fixList = Collections.singletonList("");
+                        break;
+                }
             }
         }
 
+        return getString(tabPlayer, currentIndex, fixList, tabPlayersPrefix);
+    }
+
+    @NotNull
+    private String getString(TabPlayer tabPlayer, int currentIndex, List<String> fixList, HashMap<TabPlayer, Integer> tabPlayersPrefix) {
         String prefix;
         if (currentIndex + 1 >= fixList.size()) {
             tabPlayersPrefix.put(tabPlayer, 0);
@@ -392,30 +423,29 @@ public class BoardManager implements IScoreboardService {
 
             if (arena.isSpectator(player)) {
                 fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR);
-            } else if (arenaStatus == GameState.playing) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_PLAYING);
-            } else if (arenaStatus == GameState.waiting) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_WAITING);
-            } else if (arenaStatus == GameState.starting) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_STARTING);
-            } else if (arenaStatus == GameState.restarting) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING);
             } else {
-                BedWars.debug("Unhandled game state for BedWars suffix");
-                fixList = Collections.singletonList("");
+                switch (arenaStatus) {
+                    case playing:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_PLAYING);
+                        break;
+                    case waiting:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_WAITING);
+                        break;
+                    case starting:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_STARTING);
+                        break;
+                    case restarting:
+                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING);
+                        break;
+                    default:
+                        BedWars.debug("Unhandled game state for BedWars suffix");
+                        fixList = Collections.singletonList("");
+                        break;
+                }
             }
         }
 
-        String suffix;
-        if (currentIndex + 1 >= fixList.size()) {
-            tabPlayersSuffix.put(tabPlayer, 0);
-            currentIndex = 0;
-        } else {
-            tabPlayersSuffix.put(tabPlayer, currentIndex + 1);
-        }
-
-        suffix = (fixList.isEmpty()) ? null : fixList.get(currentIndex);
-        return (suffix == null) ? "" : suffix;
+        return getString(tabPlayer, currentIndex, fixList, tabPlayersSuffix);
     }
 
     @NotNull
@@ -466,21 +496,18 @@ public class BoardManager implements IScoreboardService {
                 break;
             case GAME_END:
                 if (null == playingTask) {
-                    time = 0;
                     break;
                 }
                 time = (playingTask.getGameEndCountdown()) * 1000L;
                 break;
             case BEDS_DESTROY:
                 if (null == playingTask) {
-                    time = 0;
                     break;
                 }
                 time = (arena.getPlayingTask().getBedsDestroyCountdown()) * 1000L;
                 break;
             case ENDER_DRAGON:
                 if (null == playingTask) {
-                    time = 0;
                     break;
                 }
                 time = (arena.getPlayingTask().getDragonSpawnCountdown()) * 1000L;
@@ -502,14 +529,14 @@ public class BoardManager implements IScoreboardService {
         Language lang = Language.getPlayerLanguage((Player) player.getPlayer());
 
         if (null == arena) {
-            TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
+            Objects.requireNonNull(TabAPI.getInstance().getHeaderFooterManager()).setHeaderAndFooter(
                     player, lang.m(Messages.FORMATTING_SIDEBAR_TAB_HEADER_LOBBY),
                     lang.m(Messages.FORMATTING_SIDEBAR_TAB_FOOTER_LOBBY)
             );
             return;
         }
         if (arena.isSpectator((Player) player.getPlayer())) {
-            TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
+            Objects.requireNonNull(TabAPI.getInstance().getHeaderFooterManager()).setHeaderAndFooter(
                     player, lang.m(Messages.FORMATTING_SIDEBAR_TAB_HEADER_SPECTATOR),
                     lang.m(Messages.FORMATTING_SIDEBAR_TAB_FOOTER_SPECTATOR)
             );
@@ -538,7 +565,7 @@ public class BoardManager implements IScoreboardService {
                 break;
         }
 
-        TabAPI.getInstance().getHeaderFooterManager().setHeaderAndFooter(
+        Objects.requireNonNull(TabAPI.getInstance().getHeaderFooterManager()).setHeaderAndFooter(
                 player, lang.m(headerPath),
                 lang.m(footerPath)
         );
@@ -583,6 +610,6 @@ public class BoardManager implements IScoreboardService {
 
     @Override
     public @Nullable Scoreboard getScoreboard(@NotNull Player player) {
-        return scoreboardManager.getActiveScoreboard(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+        return scoreboardManager.getActiveScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
     }
 }

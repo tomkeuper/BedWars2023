@@ -91,7 +91,7 @@ public class AddonManager implements IAddonManager {
             return;
         }
         else if (registeredAddons.size() == 1) count = "addon";
-        else if (registeredAddons.size() > 1) count = "addons";
+        else count = "addons";
         log(registeredAddons.size() + " " + count + " has been found!");
         log("Loading " + registeredAddons.size() + " " + count);
         for (Addon addon : registeredAddons) {

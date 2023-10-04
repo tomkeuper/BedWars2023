@@ -108,6 +108,15 @@ public class Language extends ConfigManager {
     }
 
     /**
+     * Get message in specific language and apply Papi placeholders to target player
+     */
+    public static String getMsg(Language language, Player papiPlayer, String path) {
+        if (language == null) return getDefaultLanguage().m(path);
+        BedWars api = Bukkit.getServicesManager().getRegistration(BedWars.class).getProvider();
+        return IridiumColorAPI.process(api.getSupportPapi().replace(papiPlayer, language.m(path).replace("%bw_lang_prefix%", (prefixStatic == null ? "" : prefixStatic))));
+    }
+
+    /**
      * Retrieve a player language.
      */
     public static Language getPlayerLanguage(Player p) {

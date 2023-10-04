@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars.support.version.v1_18_R2;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.math.Vector3fa;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -30,8 +32,6 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Vector3fa;
 import net.minecraft.core.particles.ParticleParamRedstone;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.chat.ChatMessageType;
@@ -67,13 +67,13 @@ import org.bukkit.craftbukkit.v1_18_R2.entity.CraftLivingEntity;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftTNTPrimed;
 import org.bukkit.craftbukkit.v1_18_R2.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_18_R2.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -201,6 +201,7 @@ public class v1_18_R2 extends VersionSupport {
 
     @Override
     public boolean isAxe(org.bukkit.inventory.ItemStack itemStack) {
+        if (CraftItemStack.asNMSCopy(itemStack) == null) return false;
         if (CraftItemStack.asNMSCopy(itemStack).c() == null) return false;
         return CraftItemStack.asNMSCopy(itemStack).c() instanceof ItemAxe;
     }
@@ -335,12 +336,33 @@ public class v1_18_R2 extends VersionSupport {
     }
 
     @Override
-    public void registerTntWhitelist() {
+    public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             Field field = BlockBase.class.getDeclaredField("aH");
             field.setAccessible(true);
-            field.set(Blocks.eq, 300f);
-            field.set(Blocks.bQ, 300f);
+            for (net.minecraft.world.level.block.Block glass : new net.minecraft.world.level.block.Block[]{
+                    Blocks.bQ,
+                    Blocks.dg,
+                    Blocks.dh,
+                    Blocks.di,
+                    Blocks.dj,
+                    Blocks.dk,
+                    Blocks.dl,
+                    Blocks.dm,
+                    Blocks.dn,
+                    CraftMagicNumbers.getBlock(Material.LIGHT_GRAY_STAINED_GLASS), //Work around because 'Blocks.do' cant work as 'do' is a java reserved keyword...
+                    Blocks.dp,
+                    Blocks.dq,
+                    Blocks.dr,
+                    Blocks.ds,
+                    Blocks.dt,
+                    Blocks.du,
+                    Blocks.dv,
+            }) {
+                field.set(glass, glassBlast);
+            }
+            field.set(Blocks.eq, endStoneBlast);
+
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -432,12 +454,6 @@ public class v1_18_R2 extends VersionSupport {
             i = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEDROCK);
         }
         return i;
-    }
-
-    @Override
-    public void teamCollideRule(Team team) {
-        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.setCanSeeFriendlyInvisibles(true);
     }
 
     @Override

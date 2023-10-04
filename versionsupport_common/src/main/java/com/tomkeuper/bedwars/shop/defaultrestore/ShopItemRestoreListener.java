@@ -20,7 +20,6 @@
 
 package com.tomkeuper.bedwars.shop.defaultrestore;
 
-import com.tomkeuper.bedwars.api.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;

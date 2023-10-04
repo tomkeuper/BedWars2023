@@ -25,10 +25,8 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.ITeamAssigner;
 import com.tomkeuper.bedwars.api.events.gameplay.TeamAssignEvent;
-import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -103,53 +101,29 @@ public class TeamAssigner implements ITeamAssigner {
             if (skip.contains(player)) continue;
             remainingPlayers.add(player);
         }
-        if (remainingPlayers == null) return;
+        if (remainingPlayers.isEmpty()) return;
 
+        BedWars.debug("Assigning teams for arena: " + arena.getArenaName() + " with; max in team: " + arena.getMaxInTeam() + " size: " + arena.getPlayers().size() + " teams: " + arena.getTeams().size());
         for (Player player: remainingPlayers) {
             player.closeInventory();
-            findTargetTeam(arena.getTeams(),arena.getMaxInTeam(),1).addPlayers(player);
-        }
-
-        // Fallback team assignment
-        BedWars.plugin.getLogger().warning("\n\nBackup Team assigner reached! Please report this on Discord!\nArenaSize: " + arena.getMaxPlayers() + " amount of teams: " + arena.getTeams().size() + " Arena: " + arena.getArenaName());
-        List<Player> remainingPlayersFallback = new ArrayList<>();
-        for (Player player : arena.getPlayers()) {
-            if (null == arena.getTeam(player)) remainingPlayersFallback.add(player);
-        }
-
-        for (Player remaining : remainingPlayersFallback) { //check if left over players need a team
-            BedWars.plugin.getLogger().warning("player: " + remaining.getDisplayName());
-            if (skip.contains(remaining)) continue;
-            for (ITeam team : arena.getTeams()) {
-                if (team.getMembers().size() < arena.getMaxInTeam()) {
-                    TeamAssignEvent e = new TeamAssignEvent(remaining, team, arena);
-                    Bukkit.getPluginManager().callEvent(e);
-                    if (!e.isCancelled()) {
-                        remaining.closeInventory();
-                        team.addPlayers(remaining);
-                    }
-                    break;
-                }
-            }
+            findTargetTeam(arena.getTeams(),arena.getMaxInTeam(), arena.getPlayers().size()).addPlayers(player);
         }
     }
-
-
-
 
     /**
      * Finds the target team to add a player based on the following criteria:
      * - If there is a team with fewer players than the maximum allowed per team, and fewer than maxPlayersPerTeam - 1 players,
      *   it returns that team.
+     * - If player amount > 2, it will check for teams with player count of 1 to return as target
      * - If no such team is found, it returns the first team with available space (i.e., fewer players than maxPlayersPerTeam).
      * - If no team with available space is found, it returns null (arena = full).
      *
      * @param teams             The list of teams to search for the target team.
      * @param maxPlayersPerTeam The maximum number of players allowed per team.
-     * @param soloPlayerThreshold The threshold for the number of players in a team to be considered a solo player.
+     * @param playerAmount      The amount of players in an arena.
      * @return The target team to add a player, or null if no suitable team is found.
      */
-    private static ITeam findTargetTeam(List<ITeam> teams, int maxPlayersPerTeam, int soloPlayerThreshold) {
+    private static ITeam findTargetTeam(List<ITeam> teams, int maxPlayersPerTeam, int playerAmount) {
         ITeam targetTeam = null;
         int minPlayers = Integer.MAX_VALUE;
 
@@ -160,10 +134,29 @@ public class TeamAssigner implements ITeamAssigner {
                 targetTeam = team;
                 minPlayers = numPlayers;
             }
+
+            if (numPlayers == 1 && (playerAmount > 2)) {
+                BedWars.debug("found team with 1 player (" + team.getName() + ")");
+                return team;
+            }
         }
 
-        // If no such team is found, find the first team with available space
-        if (targetTeam == null || minPlayers >= soloPlayerThreshold) {
+        // If no suitable team is found, find the first team with available space and no more than 1 player
+        if (targetTeam == null) {
+            for (ITeam team : teams) {
+                if (team.getSize() == 1 && playerAmount <= maxPlayersPerTeam) {
+                    // Skip teams with 1 player when playerAmount is set to 2
+                    continue;
+                }
+                if (team.getSize() < maxPlayersPerTeam - 1) {
+                    targetTeam = team;
+                    break;
+                }
+            }
+        }
+
+        // If ALL other team assigners fail. Fall back to first open spot
+        if (targetTeam == null) {
             for (ITeam team : teams) {
                 if (team.getSize() < maxPlayersPerTeam) {
                     targetTeam = team;
@@ -174,6 +167,4 @@ public class TeamAssigner implements ITeamAssigner {
 
         return targetTeam;
     }
-
-
 }

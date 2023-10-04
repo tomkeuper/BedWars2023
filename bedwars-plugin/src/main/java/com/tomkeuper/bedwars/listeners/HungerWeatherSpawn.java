@@ -23,9 +23,11 @@ package com.tomkeuper.bedwars.listeners;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.player.PlayerBaseLeaveEvent;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.arena.upgrades.BaseListener;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -112,22 +114,35 @@ public class HungerWeatherSpawn implements Listener {
 
     @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
-        IArena a = Arena.getArenaByPlayer(e.getPlayer());
+        Player p = e.getPlayer();
+        IArena a = Arena.getArenaByPlayer(p);
+
         if (a == null) return;
-        /* remove empty bottle */
+
         switch (e.getItem().getType()) {
+            /* remove empty bottle */
             case GLASS_BOTTLE:
-                nms.minusAmount(e.getPlayer(), e.getItem(), 1);
+                nms.minusAmount(p, e.getItem(), 1);
                 break;
+
             case MILK_BUCKET:
                 e.setCancelled(true);
-                nms.minusAmount(e.getPlayer(), e.getItem(), 1);
+                nms.minusAmount(p, e.getItem(), 1);
+
                 int task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    Arena.magicMilk.remove(e.getPlayer().getUniqueId());
-                    e.getPlayer().sendMessage(getMsg(e.getPlayer(), Messages.INTERACT_MAGIC_MILK_REMOVED));
-                    debug("PlayerItemConsumeEvent player " + e.getPlayer() + " was removed from magicMilk");
+                    Arena.magicMilk.remove(p.getUniqueId());
+                    p.sendMessage(getMsg(p, Messages.INTERACT_MAGIC_MILK_REMOVED));
+                    debug("PlayerItemConsumeEvent player " + p + " was removed from magicMilk");
                 }, 20 * 30L).getTaskId();
-                Arena.magicMilk.put(e.getPlayer().getUniqueId(), task);
+
+                Arena.magicMilk.put(p.getUniqueId(), task);
+
+                if (BaseListener.isOnABase.containsKey(p)) {
+                    if (BaseListener.isOnABase.get(p) != a.getTeam(p)) {
+                        Bukkit.getPluginManager().callEvent(new PlayerBaseLeaveEvent(p, BaseListener.isOnABase.get(p)));
+                        BaseListener.isOnABase.remove(p);
+                    }
+                }
                 break;
         }
     }

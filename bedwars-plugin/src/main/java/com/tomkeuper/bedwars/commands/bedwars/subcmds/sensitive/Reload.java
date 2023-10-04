@@ -48,10 +48,9 @@ public class Reload extends SubCommand {
 
     @Override
     public boolean execute(String[] args, CommandSender s) {
-        if (s instanceof Player) {
-            if (!MainCommand.isLobbySet((Player) s)) return true;
-        } else {
-            if (!MainCommand.isLobbySet(null)) return true;
+        if (!MainCommand.isLobbySet()) {
+            s.sendMessage("§c▪ §7You have to set the lobby location first!");
+            return true;
         }
         for (Language l : Language.getLanguages()){
             l.reload();

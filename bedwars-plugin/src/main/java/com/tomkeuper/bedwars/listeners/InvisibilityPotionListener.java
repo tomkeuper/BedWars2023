@@ -30,7 +30,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -67,21 +66,19 @@ public class InvisibilityPotionListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
         if (!footstepsEnabled) return;
-        if (!this.invisiblePlayers.contains(e.getPlayer())) return;
+        Player p = e.getPlayer();
+        if (!this.invisiblePlayers.contains(p)) return;
 
         //TODO implement particles on higher version (issue: #112)
         if (nms.getVersion() > 5) return; // check if higher than 1.12
 
-        Player p = e.getPlayer();
         if (p.isSneaking())
+            return;
+        if (!p.isOnGround())
             return;
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getBlock() != to.getBlock()) {
-            if (!p.isOnGround())
-                return;
-            Location loc = from.subtract(0.0D, 1.0D, 0.0D);
-            Block b = loc.getBlock();
             if (this.cd == 3) {
                 p.getWorld().playEffect(p.getLocation().add(0.0D, 0.01D, 0.4D), Effect.FOOTSTEP, 1);
                 this.cd--;
@@ -121,8 +118,8 @@ public class InvisibilityPotionListener implements Listener {
                         } else {
                             // if not already invisible
                             ITeam t = a.getTeam(e.getPlayer());
-                            // keep trace of invisible players to send hide armor packet when required
-                            // because potions do not hide armors
+                            // keep track of invisible players to send hide armor packet when required
+                            // because potions do not hide armor
                             a.getShowTime().put(e.getPlayer(), pe.getDuration() / 20);
                             //
                             for (Player p1 : e.getPlayer().getWorld().getPlayers()) {

@@ -26,6 +26,7 @@ public abstract class Addon {
     /**
      * Get the identifier of an addon
      */
+    @SuppressWarnings("unused")
     public abstract String getDescription();
 
     /**

@@ -37,7 +37,6 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
-import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -181,9 +180,11 @@ public class CategoryContent implements ICategoryContent {
             return;
         }
 
+        List<IBuyItem> itemList = contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1).getBuyItemsList();
+
         ShopBuyEvent event;
         //call shop buy event
-        Bukkit.getPluginManager().callEvent(event = new ShopBuyEvent(player, Arena.getArenaByPlayer(player), this));
+        Bukkit.getPluginManager().callEvent(event = new ShopBuyEvent(player, Arena.getArenaByPlayer(player), this, itemList));
 
         if (event.isCancelled()){
             return;
@@ -204,7 +205,7 @@ public class CategoryContent implements ICategoryContent {
 
 
         //give items
-        giveItems(player, shopCache, Arena.getArenaByPlayer(player));
+        giveItems(player, event.getItemList(), Arena.getArenaByPlayer(player));
 
         //play sound
         Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, player);
@@ -224,10 +225,7 @@ public class CategoryContent implements ICategoryContent {
             } else {
                 player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", ""));
             }
-            player.sendMessage(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", ""));
         }
-
-
         shopCache.setCategoryWeight(father, weight);
     }
 
@@ -237,6 +235,16 @@ public class CategoryContent implements ICategoryContent {
     @Override
     public void giveItems(Player player, IShopCache shopCache, IArena arena) {
         for (IBuyItem bi : contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1).getBuyItemsList()) {
+            bi.give(player, arena);
+        }
+    }
+
+    /**
+     * Add tier items to player inventory
+     */
+    @Override
+    public void giveItems(Player player, List<IBuyItem> itemList, IArena arena) {
+        for (IBuyItem bi : itemList) {
             bi.give(player, arena);
         }
     }

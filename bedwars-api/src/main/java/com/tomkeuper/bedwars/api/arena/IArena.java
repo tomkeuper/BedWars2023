@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import org.jetbrains.annotations.Nullable;
 
 public interface IArena {
 
@@ -704,4 +705,28 @@ public interface IArena {
      * @return The list of dragon boss bars.
      */
     List<BossBar> getDragonBossbars();
+
+    /**
+     * Check if breaking map is allowed, otherwise only placed blocks are allowed.
+     * Some blocks like have a special protections, like blocks under shopkeepers, bed, etc.
+     *
+     * @return true if the map break is enabled, false otherwise.
+     */
+    boolean isAllowMapBreak();
+
+    /**
+     * Check if there is a player bed at the specified location.
+     *
+     * @param location The location to check for a bed.
+     * @return true if there is a bed at the given location, false otherwise.
+     */
+    boolean isTeamBed(Location location);
+
+    /**
+     * Get the team that owns the bed at the specified location.
+     *
+     * @param location The location to check for a bed.
+     * @return The team that owns the bed at the given location, or null if there is no bed or if the location is not in this arena's world.
+     */
+    @Nullable ITeam getBedsTeam(Location location);
 }

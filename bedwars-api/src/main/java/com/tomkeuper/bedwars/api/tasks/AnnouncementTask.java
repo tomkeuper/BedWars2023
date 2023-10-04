@@ -17,6 +17,7 @@ public interface AnnouncementTask {
      *
      * @return The arena associated with the task.
      */
+    @SuppressWarnings("unused")
     IArena getArena();
 
     /**
@@ -24,6 +25,7 @@ public interface AnnouncementTask {
      *
      * @return The Bukkit task associated with the task.
      */
+    @SuppressWarnings("unused")
     BukkitTask getBukkitTask();
 
     /**
@@ -31,6 +33,7 @@ public interface AnnouncementTask {
      *
      * @return The task ID of the Bukkit task.
      */
+    @SuppressWarnings("unused")
     int getTask();
 
     /**
@@ -44,6 +47,7 @@ public interface AnnouncementTask {
      * @param p    The player to load the messages for.
      * @param path The message path to load the messages from.
      */
+    @SuppressWarnings("unused")
     void loadMessagesForPlayer(Player p, String path);
 
     /**
@@ -52,6 +56,7 @@ public interface AnnouncementTask {
      * @param p       The player to add the message for.
      * @param message The message to add.
      */
+    @SuppressWarnings("unused")
     void addMessageForPlayer(Player p, String message);
 
     /**
@@ -60,5 +65,6 @@ public interface AnnouncementTask {
      * @param p        The player to add the messages for.
      * @param messages The list of messages to add.
      */
+    @SuppressWarnings("unused")
     void addMessagesForPlayer(Player p, List<String> messages);
 }

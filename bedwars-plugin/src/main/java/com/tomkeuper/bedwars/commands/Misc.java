@@ -43,7 +43,6 @@ public class Misc {
      * This is used to spawn armorStands during the setup
      * so the player knows what he set
      *
-     * @since api v6
      */
     public static void createArmorStand(String name, @NotNull Location location, String configLoc) {
         ArmorStand a = (ArmorStand) location.getWorld().spawnEntity(location.getBlock().getLocation().add(0.5, 2, 0.5), EntityType.ARMOR_STAND);
@@ -52,9 +51,9 @@ public class Misc {
         a.setGravity(false);
         a.setCustomNameVisible(true);
         a.setCustomName(name);
-        a.setMetadata("bw1058-setup", new FixedMetadataValue(BedWars.plugin, "hologram"));
+        a.setMetadata("bw2023-setup", new FixedMetadataValue(BedWars.plugin, "hologram"));
         if (configLoc != null) {
-            a.setMetadata("bw1058-loc", new FixedMetadataValue(BedWars.plugin, configLoc));
+            a.setMetadata("bw2023-loc", new FixedMetadataValue(BedWars.plugin, configLoc));
         }
     }
 
@@ -63,9 +62,9 @@ public class Misc {
      */
     public static void removeArmorStand(String contains, @NotNull Location location, String configLoc) {
         for (Entity e : location.getWorld().getNearbyEntities(location, 1, 3, 1)) {
-            if (e.hasMetadata("bw1058-setup")) {
-                if (e.hasMetadata("bw1058-loc")) {
-                    if (e.getMetadata("bw1058-loc").get(0).asString().equalsIgnoreCase(configLoc)) {
+            if (e.hasMetadata("bw2023-setup")) {
+                if (e.hasMetadata("bw2023-loc")) {
+                    if (e.getMetadata("bw2023-loc").get(0).asString().equalsIgnoreCase(configLoc)) {
                         if (contains != null){
                             if (!contains.isEmpty()){
                                 if (ChatColor.stripColor(e.getCustomName()).contains(contains)){

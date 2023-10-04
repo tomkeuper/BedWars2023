@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public class SpectatorTeleportToPlayerEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();

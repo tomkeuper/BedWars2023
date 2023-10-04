@@ -1,7 +1,6 @@
 package com.tomkeuper.bedwars.api.shop;
 
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 

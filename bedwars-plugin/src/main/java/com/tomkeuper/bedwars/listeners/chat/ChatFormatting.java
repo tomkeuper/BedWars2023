@@ -175,7 +175,7 @@ public class ChatFormatting implements Listener {
     }
 
     public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team){
-        e.setFormat(parsePHolders(format, msg, eventTriggerPlayer,null, team)); // Used for console message only.
+        e.setFormat(parsePHolders(format, msg, eventTriggerPlayer,null, team).replaceAll("%","%%")); // Used for console message only.
         for (Player player : recipients) {
             player.sendMessage(parsePHolders(format, msg, eventTriggerPlayer, player, team));
         }

@@ -24,7 +24,6 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.halloween.shop.PumpkinContent;
 import com.tomkeuper.bedwars.shop.ShopManager;
-import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 

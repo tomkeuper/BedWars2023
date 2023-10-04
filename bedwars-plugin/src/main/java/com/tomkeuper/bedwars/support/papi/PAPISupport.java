@@ -29,7 +29,6 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
-import com.tomkeuper.bedwars.stats.PlayerStats;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -46,13 +45,13 @@ public class PAPISupport extends PlaceholderExpansion {
     @NotNull
     @Override
     public String getIdentifier() {
-        return "bw1058";
+        return "bw2023";
     }
 
     @NotNull
     @Override
     public String getAuthor() {
-        return "andrei1058";
+        return "MrCeasar";
     }
 
     @NotNull

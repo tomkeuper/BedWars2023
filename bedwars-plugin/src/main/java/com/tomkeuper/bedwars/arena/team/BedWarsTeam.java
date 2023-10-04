@@ -876,4 +876,16 @@ public class BedWarsTeam implements ITeam {
         }
         this.killDropsLoc = new Vector(loc.getBlockX() + 0.5, loc.getBlockY(), loc.getBlockZ() + 0.5);
     }
+
+    @Override
+    public boolean isBed(@NotNull Location location) {
+        for (int x = location.getBlockX() - 1; x < location.getBlockX() + 1; x++) {
+            for (int z = location.getBlockZ() - 1; z < location.getBlockZ() + 1; z++) {
+                if (getBed().getBlockX() == x && getBed().getBlockY() == location.getBlockY() && getBed().getBlockZ() == z) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

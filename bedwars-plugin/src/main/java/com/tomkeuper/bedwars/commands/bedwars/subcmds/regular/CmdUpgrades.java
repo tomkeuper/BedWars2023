@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.commands.bedwars.subcmds.regular;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
@@ -47,7 +48,7 @@ public class CmdUpgrades extends SubCommand {
         if (!a.isPlayer((Player) s)) return false;
         ITeam t = a.getTeam((Player) s);
         if (t.getTeamUpgrades().distance(((Player)s).getLocation()) < 4){
-            UpgradesManager.getMenuForArena(a).open((Player) s);
+            BedWars.getUpgradeManager().getMenuForArena(a).open((Player) s);
             return true;
         }
         return false;

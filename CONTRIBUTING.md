@@ -84,7 +84,8 @@ considered by the maintainers:
 | Label name         | Description                                                                              |
 |--------------------|------------------------------------------------------------------------------------------|
 | `work-in-progress` | Pull requests which are still being worked on, more changes will follow.                 |
-| `needs-review`     | Pull requests which need code review, and approval from maintainers or core team.        |
+| `needs-review`     | Pull requests which need code review, and approval from maintainers or                   |
+| core team.         |                                                                                          |
 | `under-review`     | Pull requests being reviewed by maintainers.                                             |
 | `requires-changes` | Pull requests which need to be updated based on review comments and then reviewed again. |
 | `needs-testing`    | Pull requests which need manual testing.                                                 |

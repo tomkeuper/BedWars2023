@@ -56,10 +56,6 @@ public class ArenaList extends SubCommand {
 
     @Override
     public boolean execute(String[] args, CommandSender s) {
-        if (s instanceof ConsoleCommandSender) return false;
-        Player p = (Player) s;
-
-
         int page = 1;
         if (args.length >= 1) {
             try {
@@ -77,33 +73,30 @@ public class ArenaList extends SubCommand {
             start = 0;
         }
 
-        p.sendMessage(color(" \n&1|| &3" + com.tomkeuper.bedwars.BedWars.plugin.getName() + "&7 Instantiated games: \n "));
+        s.sendMessage(color(" &c|| &6" + com.tomkeuper.bedwars.BedWars.plugin.getName() + " &cConfigs found: &f" + getArenas().size() + "&7 Instantiated games:"));
 
         if (arenas.isEmpty()) {
-            p.sendMessage(ChatColor.RED + "No arenas to display.");
+            s.sendMessage(ChatColor.RED + "No arenas to display.");
             return true;
         }
 
         int limit = Math.min(arenas.size(), start + ARENAS_PER_PAGE);
 
         arenas.subList(start, limit).forEach(arena -> {
-            String gameState = arena.getDisplayStatus(Language.getPlayerLanguage(p));
+            String gameState = arena.getDisplayStatus(s instanceof ConsoleCommandSender ? Language.getDefaultLanguage() : Language.getPlayerLanguage((Player) s));
             String msg = color(
                     "ID: &e" + arena.getWorldName() +
-                            " &fG: &e" + arena.getDisplayGroup(p) +
+                            (com.tomkeuper.bedwars.BedWars.autoscale ? " &fN: &e" + arena.getArenaName(): "") +
+                            " &fG: &e" + arena.getDisplayGroup(s instanceof ConsoleCommandSender ? Language.getDefaultLanguage() : Language.getPlayerLanguage((Player) s)) +
                             " &fP: &e" + (arena.getPlayers().size() + arena.getSpectators().size()) +
                             " &fS: " + gameState +
                             " &fWl: &e" + (Bukkit.getWorld(arena.getWorldName()) != null)
             );
-
-
-            p.sendMessage(msg);
+            s.sendMessage(msg + " \n");
         });
 
-        p.sendMessage(" ");
-
         if (arenas.size() > ARENAS_PER_PAGE * page) {
-            p.sendMessage(ChatColor.GRAY + "Type /" + ChatColor.GREEN + MainCommand.getInstance().getName() + " arenaList " + ++page + ChatColor.GRAY + " for next page.");
+            s.sendMessage(ChatColor.GRAY + "Type /" + ChatColor.GREEN + MainCommand.getInstance().getName() + " arenaList " + ++page + ChatColor.GRAY + " for next page.");
         }
         return true;
     }

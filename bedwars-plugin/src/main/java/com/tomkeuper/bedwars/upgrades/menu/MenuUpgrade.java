@@ -31,7 +31,6 @@ import com.tomkeuper.bedwars.api.upgrades.TeamUpgrade;
 import com.tomkeuper.bedwars.api.upgrades.UpgradeAction;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -42,6 +41,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -71,7 +71,7 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
         boolean highest = getTiers().size() == tier + 1 && team.getTeamUpgradeTiers().containsKey(getName());
         if (!highest) tier += 1;
         UpgradeTier ut = getTiers().get(tier);
-        boolean afford = UpgradesManager.getMoney(player, ut.getCurrency()) >= ut.getCost();
+        boolean afford = BedWars.getUpgradeManager().getMoney(player, ut.getCurrency()) >= ut.getCost();
 
         ItemStack i = new ItemStack(tiers.get(tier).getDisplayItem());
         ItemMeta im = i.getItemMeta();
@@ -90,7 +90,7 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
         im.setDisplayName(Language.getMsg(player, Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", this.getName().replace("upgrade-", "")).replace("%bw_tier%", ut.getName())).replace("%bw_color%", color));
 
         List<String> lore = new ArrayList<>();
-        String currencyMsg = UpgradesManager.getCurrencyMsg(player, ut);
+        String currencyMsg = BedWars.getUpgradeManager().getCurrencyMsg(player, ut);
         for (String s : Language.getList(player, Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("%bw_name%", this.getName().replace("upgrade-", "")))){
             if (s.contains("{tier_")){
                 // Get tier number from placeholder
@@ -127,39 +127,45 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
     }
 
     @Override
-    public void onClick(Player player, ClickType clickType, ITeam team) {
+    public boolean onClick(@NotNull Player player, ClickType clickType, ITeam team, boolean forFree, boolean announcePurchase, boolean announceAlreadyUnlocked, boolean openInv) {
         int tier = -1;
         if (team.getTeamUpgradeTiers().containsKey(getName())) {
             tier = team.getTeamUpgradeTiers().get(getName());
         }
         boolean highest = getTiers().size() == tier + 1 && team.getTeamUpgradeTiers().containsKey(getName());
         if (highest) {
-            Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            player.sendMessage(Language.getMsg(player, Messages.UPGRADES_UPGRADE_ALREADY_CHAT));
-            return;
+            if (announceAlreadyUnlocked){
+                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                player.sendMessage(Language.getMsg(player, Messages.UPGRADES_UPGRADE_ALREADY_CHAT));
+            }
+            return false;
         }
         UpgradeTier ut;
         if (getTiers().size() - 1 > tier) {
             ut = getTiers().get(tier + 1);
 
-            int money = UpgradesManager.getMoney(player, ut.getCurrency());
-            if (money < ut.getCost()) {
-                Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
-                        .replace("%bw_currency%", UpgradesManager.getCurrencyMsg(player, ut))
-                        .replace("%bw_amount%", String.valueOf(ut.getCost() - money)));
-                player.closeInventory();
-                return;
+            if (!forFree){
+                int money = BedWars.getUpgradeManager().getMoney(player, ut.getCurrency());
+                if (money < ut.getCost()) {
+                    Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
+                    player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
+                            .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, ut))
+                            .replace("%bw_amount%", String.valueOf(ut.getCost() - money)));
+                    player.closeInventory();
+                    return false;
+                }
             }
 
             final UpgradeBuyEvent event;
             Bukkit.getPluginManager().callEvent(event = new UpgradeBuyEvent(this, player, team));
-            if(event.isCancelled()) return;
-            
-            if (ut.getCurrency() == Material.AIR) {
-                BedWars.getEconomy().buyAction(player, ut.getCost());
-            } else {
-                BedWars.getAPI().getShopUtil().takeMoney(player, ut.getCurrency(), ut.getCost());
+            if(event.isCancelled()) return false;
+
+            if (!forFree){
+                if (ut.getCurrency() == Material.AIR) {
+                    BedWars.getEconomy().buyAction(player, ut.getCost());
+                } else {
+                    BedWars.getAPI().getShopUtil().takeMoney(player, ut.getCurrency(), ut.getCost());
+                }
             }
 
             if (team.getTeamUpgradeTiers().containsKey(getName())) {
@@ -172,19 +178,23 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
                 a.onBuy(player, team);
             }
 
-            for (Player p1 : team.getMembers()) {
-                p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_player%", player.getName()).replace("%bw_playername%", player.getDisplayName()).replace("%bw_upgrade_name%",
-                        ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", getName()
-                                .replace("upgrade-", "")).replace("%bw_tier%", ut.getName())))).replace("%bw_color%", ""));
+            if (announcePurchase){
+                for (Player p1 : team.getMembers()) {
+                    p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_player%", player.getName()).replace("%bw_playername%", player.getDisplayName()).replace("%bw_upgrade_name%",
+                            ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", getName()
+                                    .replace("upgrade-", "")).replace("%bw_tier%", ut.getName())))).replace("%bw_color%", ""));
+                }
             }
 
-            ImmutableMap<Integer, MenuContent> menuContentBySlot = UpgradesManager.getMenuForArena(Arena.getArenaByPlayer(player)).getMenuContentBySlot();
-            Inventory inv = player.getOpenInventory().getTopInventory();
-            for (Map.Entry<Integer, MenuContent> entry : menuContentBySlot.entrySet()) {
-                inv.setItem(entry.getKey(), entry.getValue().getDisplayItem(player, team));
+            if (openInv){
+                ImmutableMap<Integer, MenuContent> menuContentBySlot = BedWars.getUpgradeManager().getMenuForArena(Arena.getArenaByPlayer(player)).getMenuContentBySlot();
+                Inventory inv = player.getOpenInventory().getTopInventory();
+                for (Map.Entry<Integer, MenuContent> entry : menuContentBySlot.entrySet()) {
+                    inv.setItem(entry.getKey(), entry.getValue().getDisplayItem(player, team));
+                }
             }
-
         }
+        return true;
     }
 
     /**

@@ -8,7 +8,6 @@ import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +37,8 @@ public class GenSplitFeature implements Listener {
         if (!e.isCancelled() && (e.getItemStack().getType() == Material.IRON_INGOT || e.getItemStack().getType() == Material.GOLD_INGOT)) {
             Location pl = e.getPlayer().getLocation();
             Player p = e.getPlayer();
-            List<Entity> nearbyEntities = (List) pl.getWorld().getNearbyEntities(pl, 2.0, 2.0, 2.0);
+            int splitRange = Arena.getArenaByPlayer(p).getConfig().getInt(ConfigPath.ARENA_GENERATOR_SPLIT_RANGE);
+            List<Entity> nearbyEntities = (List) pl.getWorld().getNearbyEntities(pl, splitRange, splitRange, 2.0);
             for (Entity entity : pl.getWorld().getEntities()) {
                 if (nearbyEntities.contains(entity) && entity instanceof Player) {
                     Player pickupPlayer = (Player) entity;

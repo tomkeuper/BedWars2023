@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.support.party;
 
+import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.party.Party;
 import org.bukkit.entity.Player;
@@ -98,7 +99,8 @@ public class Internal implements Party {
                 disband(member);
             } else if (p.members.contains(member)) {
                 for (Player mem : p.members) {
-                    mem.sendMessage(getMsg(mem, Messages.COMMAND_PARTY_LEAVE_SUCCESS).replace("{playername}", member.getName()).replace("{player}", member.getDisplayName()));
+                    Language language = Language.getPlayerLanguage(mem);
+                    mem.sendMessage(getMsg(language, member, Messages.COMMAND_PARTY_LEAVE_SUCCESS).replace("%bw_playername%", member.getName()).replace("%bw_player%", member.getDisplayName()));
                 }
                 p.members.remove(member);
                 if (p.members.isEmpty() || p.members.size() == 1) {
@@ -137,7 +139,8 @@ public class Internal implements Party {
         if (p != null) {
             if (p.members.contains(target)) {
                 for (Player mem : p.members) {
-                    mem.sendMessage(getMsg(mem, Messages.COMMAND_PARTY_REMOVE_SUCCESS).replace("{player}", target.getName()));
+                    Language language = Language.getPlayerLanguage(mem);
+                    mem.sendMessage(getMsg(language, mem, Messages.COMMAND_PARTY_REMOVE_SUCCESS).replace("{player}", target.getName()));
                 }
                 p.members.remove(owner);
                 if (p.members.isEmpty() || p.members.size() == 1) {

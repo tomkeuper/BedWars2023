@@ -20,6 +20,9 @@
 
 package com.tomkeuper.bedwars.support.version.v1_16_R3;
 
+import com.mojang.datafixers.DataFixUtils;
+import com.mojang.datafixers.types.Type;
+import com.mojang.datafixers.util.Pair;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -30,9 +33,6 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.mojang.datafixers.DataFixUtils;
-import com.mojang.datafixers.types.Type;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -57,7 +57,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
@@ -186,6 +185,7 @@ public class v1_16_R3 extends VersionSupport {
 
     @Override
     public boolean isAxe(org.bukkit.inventory.ItemStack itemStack) {
+        if (CraftItemStack.asNMSCopy(itemStack) == null) return false;
         if (CraftItemStack.asNMSCopy(itemStack).getItem() == null) return false;
         return CraftItemStack.asNMSCopy(itemStack).getItem() instanceof ItemAxe;
     }
@@ -328,12 +328,32 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public void registerTntWhitelist() {
+    public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             Field field = net.minecraft.server.v1_16_R3.BlockBase.class.getDeclaredField("durability");
             field.setAccessible(true);
-            field.set(Blocks.END_STONE, 12f);
-            field.set(Blocks.GLASS, 300f);
+            for (net.minecraft.server.v1_16_R3.Block glass : new net.minecraft.server.v1_16_R3.Block[]{
+                    Blocks.WHITE_STAINED_GLASS,
+                    Blocks.ORANGE_STAINED_GLASS,
+                    Blocks.MAGENTA_STAINED_GLASS,
+                    Blocks.LIGHT_BLUE_STAINED_GLASS,
+                    Blocks.YELLOW_STAINED_GLASS,
+                    Blocks.LIME_STAINED_GLASS,
+                    Blocks.PINK_STAINED_GLASS,
+                    Blocks.GRAY_STAINED_GLASS,
+                    Blocks.LIGHT_GRAY_STAINED_GLASS,
+                    Blocks.CYAN_STAINED_GLASS,
+                    Blocks.PURPLE_STAINED_GLASS,
+                    Blocks.BLUE_STAINED_GLASS,
+                    Blocks.BROWN_STAINED_GLASS,
+                    Blocks.GREEN_STAINED_GLASS,
+                    Blocks.RED_STAINED_GLASS,
+                    Blocks.BLACK_STAINED_GLASS,
+                    Blocks.GLASS,
+            }) {
+                field.set(glass, glassBlast);
+            }
+            field.set(Blocks.END_STONE, endStoneBlast);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -425,12 +445,6 @@ public class v1_16_R3 extends VersionSupport {
             i = new org.bukkit.inventory.ItemStack(org.bukkit.Material.BEDROCK);
         }
         return i;
-    }
-
-    @Override
-    public void teamCollideRule(Team team) {
-        team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.setCanSeeFriendlyInvisibles(true);
     }
 
     @Override

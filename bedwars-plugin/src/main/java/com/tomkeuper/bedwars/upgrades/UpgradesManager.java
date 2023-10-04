@@ -40,7 +40,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -51,52 +50,40 @@ import static com.tomkeuper.bedwars.BedWars.plugin;
 
 public class UpgradesManager {
 
-    private static final LinkedList<UUID> upgradeViewers = new LinkedList<>();
+    private final LinkedList<UUID> upgradeViewers = new LinkedList<>();
     //store lower case names
-    private static final HashMap<String, MenuContent> menuContentByName = new HashMap<>();
+    private final HashMap<String, MenuContent> menuContentByName = new HashMap<>();
     //store lower case names
-    private static final HashMap<String, UpgradesIndex> menuByName = new HashMap<>();
+    private final HashMap<String, UpgradesIndex> menuByName = new HashMap<>();
 
-    private static final HashMap<IArena, UpgradesIndex> customMenuForArena = new HashMap<>();
+    private final HashMap<IArena, UpgradesIndex> customMenuForArena = new HashMap<>();
 
-    private static UpgradesConfig upgrades;
+    private final UpgradesConfig upgrades;
 
-    private UpgradesManager() {
+    public UpgradesManager() {
+        upgrades = new UpgradesConfig("upgrades", plugin.getDataFolder().getPath());
     }
 
-    public static void init() {
-        upgrades = new UpgradesConfig("upgrades", plugin.getDataFolder().getPath());
+    public void init(){
         String name;
         for (String index : upgrades.getYml().getConfigurationSection("").getKeys(false)) {
             name = index;
             if (index.startsWith("upgrade-")) {
-                //name = index.replace("upgrade-", "");
-                //if (!name.isEmpty()) {
                 if (getMenuContent(name) == null && !loadUpgrade(name)) {
                     Bukkit.getLogger().log(Level.WARNING, "Could not load upgrade: " + name);
                 }
-                //}
             } else if (index.startsWith("separator-")) {
-                //name = index.replace("separator-", "");
-                //if (!name.isEmpty()) {
                 if (getMenuContent(name) == null && !loadSeparator(name)) {
                     Bukkit.getLogger().log(Level.WARNING, "Could not load separator: " + name);
                 }
-                //}
             } else if (index.startsWith("category-")) {
-                //name = index.replace("category-", "");
-                //if (!name.isEmpty()) {
                 if (getMenuContent(name) == null && !loadCategory(name)) {
                     Bukkit.getLogger().log(Level.WARNING, "Could not load category: " + name);
                 }
-                //}
             } else if (index.startsWith("base-trap-")) {
-                //name = index.replace("category-", "");
-                //if (!name.isEmpty()) {
                 if (getMenuContent(name) == null && !loadBaseTrap(name)) {
                     Bukkit.getLogger().log(Level.WARNING, "Could not base trap: " + name);
                 }
-                //}
             } else if (index.endsWith("-upgrades-settings")) {
                 name = index.replace("-upgrades-settings", "");
                 if (!name.isEmpty()) {
@@ -113,21 +100,21 @@ public class UpgradesManager {
     /**
      * @return true if has the upgrades GUI opened.
      */
-    public static boolean isWatchingUpgrades(UUID uuid) {
+    public boolean isWatchingUpgrades(UUID uuid) {
         return upgradeViewers.contains(uuid);
     }
 
     /**
      * Set watching upgrades GUI.
      */
-    public static void setWatchingUpgrades(UUID uuid) {
+    public void setWatchingUpgrades(UUID uuid) {
         if (!upgradeViewers.contains(uuid)) upgradeViewers.add(uuid);
     }
 
     /**
      * Remove from upgrades GUI.
      */
-    public static void removeWatchingUpgrades(UUID uuid) {
+    public void removeWatchingUpgrades(UUID uuid) {
         upgradeViewers.remove(uuid);
     }
 
@@ -137,7 +124,7 @@ public class UpgradesManager {
      * @param groupName arena group name.
      * @return false if cannot be loaded.
      */
-    public static boolean loadMenu(String groupName) {
+    public boolean loadMenu(String groupName) {
         if (!upgrades.getYml().isSet(groupName + "-upgrades-settings.menu-content")) return false;
         if (menuByName.containsKey(groupName.toLowerCase())) return false;
         InternalMenu um = new InternalMenu(groupName);
@@ -183,7 +170,7 @@ public class UpgradesManager {
      * @param name category name. Must start with "category-".
      * @return false if cannot be loaded.
      */
-    private static boolean loadCategory(String name) {
+    private boolean loadCategory(String name) {
         if (name == null) return false;
         if (!name.startsWith("category-")) return false;
         if (upgrades.getYml().get(name) == null) return false;
@@ -236,7 +223,7 @@ public class UpgradesManager {
      * @param name upgrade name. Must start with "upgrade-".
      * @return false if can't be loaded.
      */
-    private static boolean loadUpgrade(String name) {
+    private boolean loadUpgrade(String name) {
         if (name == null) return false;
         if (!name.startsWith("upgrade-")) return false;
         if (upgrades.getYml().get(name) == null) return false;
@@ -278,7 +265,7 @@ public class UpgradesManager {
      * @param name name. Must start with "separator-".
      * @return false if cannot be loaded.
      */
-    private static boolean loadSeparator(String name) {
+    private boolean loadSeparator(String name) {
         if (name == null) return false;
         if (!name.startsWith("separator-")) return false;
         if (upgrades.getYml().get(name) == null) return false;
@@ -295,7 +282,7 @@ public class UpgradesManager {
      * @param name name. Must start with "trap-slot-".
      * @return false if cannot be loaded.
      */
-    private static boolean loadTrapSlot(String name) {
+    private boolean loadTrapSlot(String name) {
         if (name == null) return false;
         if (!name.startsWith("trap-slot-")) return false;
         if (upgrades.getYml().get(name) == null) return false;
@@ -306,7 +293,7 @@ public class UpgradesManager {
         return true;
     }
 
-    private static boolean loadBaseTrap(String name) {
+    private boolean loadBaseTrap(String name) {
         if (name == null) return false;
         if (!name.startsWith("base-trap-")) return false;
         if (upgrades.getYml().get(name) == null) return false;
@@ -332,7 +319,7 @@ public class UpgradesManager {
      * @param currency {@link org.bukkit.Material#AIR} is used for vault, {@link org.bukkit.Material#IRON_INGOT} for iron, {@link org.bukkit.Material#GOLD_INGOT} for gold, {@link org.bukkit.Material#DIAMOND} for diamond, {@link org.bukkit.Material#EMERALD} for emerald.
      * @return the amount of money.
      */
-    public static int getMoney(Player player, Material currency) {
+    public int getMoney(Player player, Material currency) {
         if (currency == Material.AIR) {
             double amount = BedWars.getEconomy().getMoney(player);
             return amount % 2 == 0 ? (int) amount : (int) (amount - 1);
@@ -342,9 +329,9 @@ public class UpgradesManager {
 
     /**
      * @param name the string to be converted.
-     * @return NULL if not a currency. {@link org.bukkit.Material#AIR} is used for vault, {@link org.bukkit.Material#IRON_INGOT} for iron, {@link org.bukkit.Material#GOLD_INGOT} for gold, {@link org.bukkit.Material#DIAMOND} for diamond, {@link org.bukkit.Material#EMERALD} for emerald.
+     * @return null if not a currency. {@link org.bukkit.Material#AIR} is used for vault, {@link org.bukkit.Material#IRON_INGOT} for iron, {@link org.bukkit.Material#GOLD_INGOT} for gold, {@link org.bukkit.Material#DIAMOND} for diamond, {@link org.bukkit.Material#EMERALD} for emerald.
      */
-    public static Material getCurrency(String name) {
+    public Material getCurrency(String name) {
         if (name == null || name.isEmpty()) return null;
         return BedWars.getAPI().getShopUtil().getCurrency(name);
     }
@@ -354,9 +341,9 @@ public class UpgradesManager {
      * Used in inventory click.
      *
      * @param item item to be checked.
-     * @retrun {@link MenuContent} NULL if isn't an element.
+     * @return {@link MenuContent} NULL if isn't an element.
      */
-    public static MenuContent getMenuContent(ItemStack item) {
+    public MenuContent getMenuContent(ItemStack item) {
         if (item == null) return null;
 
         String identifier = nms.getCustomData(item);
@@ -371,9 +358,9 @@ public class UpgradesManager {
     /**
      * Get menu content by identifier.
      *
-     * @retrun null if not found.
+     * @return null if not found.
      */
-    public static MenuContent getMenuContent(String identifier) {
+    public MenuContent getMenuContent(String identifier) {
         return menuContentByName.getOrDefault(identifier.toLowerCase(), null);
     }
 
@@ -383,7 +370,7 @@ public class UpgradesManager {
      * @param arena target arena.
      * @param menu  custom menu.
      */
-    public static void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
+    public void setCustomMenuForArena(IArena arena, UpgradesIndex menu) {
         if (!customMenuForArena.containsKey(arena)) {
             customMenuForArena.put(arena, menu);
             BedWars.debug("Registering custom menu for arena: " + arena.getArenaName() + ". Using index: " + menu.getName());
@@ -399,7 +386,7 @@ public class UpgradesManager {
      * @param arena target arena.
      * @return the default menu if the arena doesn't have an arena group menu set or a custom menu by an addon.
      */
-    public static UpgradesIndex getMenuForArena(IArena arena) {
+    public UpgradesIndex getMenuForArena(IArena arena) {
         if (customMenuForArena.containsKey(arena)) return customMenuForArena.get(arena);
         return menuByName.getOrDefault(arena.getGroup().toLowerCase(), menuByName.get("default"));
     }
@@ -410,7 +397,7 @@ public class UpgradesManager {
      * @param path config path.
      * @return bedrock if given material is null
      */
-    private static ItemStack createDisplayItem(String path) {
+    private ItemStack createDisplayItem(String path) {
         Material m;
         try {
             m = Material.valueOf(upgrades.getYml().getString(path + ".display-item.material"));
@@ -432,7 +419,7 @@ public class UpgradesManager {
     /**
      * Get currency msg.
      */
-    public static String getCurrencyMsg(Player p, UpgradeTier ut) {
+    public String getCurrencyMsg(Player p, UpgradeTier ut) {
         String c = "";
 
         switch (ut.getCurrency()) {
@@ -456,7 +443,7 @@ public class UpgradesManager {
         return Language.getMsg(p, c);
     }
 
-    public static String getCurrencyMsg(Player p, int money, String currency) {
+    public String getCurrencyMsg(Player p, int money, String currency) {
         String c;
         if (currency == null) {
             return Language.getMsg(p, money == 1 ? Messages.MEANING_VAULT_SINGULAR : Messages.MEANING_VAULT_PLURAL);
@@ -483,7 +470,7 @@ public class UpgradesManager {
         return Language.getMsg(p, c);
     }
 
-    public static String getCurrencyMsg(Player p, int money, Material currency) {
+    public String getCurrencyMsg(Player p, int money, Material currency) {
         String c;
 
         switch (currency) {
@@ -507,7 +494,7 @@ public class UpgradesManager {
         return Language.getMsg(p, c);
     }
 
-    public static ChatColor getCurrencyColor(Material currency) {
+    public ChatColor getCurrencyColor(Material currency) {
         switch (currency) {
             case DIAMOND:
                 return ChatColor.AQUA;
@@ -522,17 +509,21 @@ public class UpgradesManager {
         }
     }
 
-    public static UpgradesConfig getConfiguration() {
+    public UpgradesConfig getConfiguration() {
         return upgrades;
     }
 
-    public static int getMenuSize() {
+    public int getMenuSize() {
         int size = getConfiguration().getInt("default-upgrades-settings.menu-size");
         if(size < 0 || size > 54) {
             size = 45;
-        } else if((size >= 0 && size <= 54) && size % 9 != 0) {
+        } else if(size % 9 != 0) {
             size = 45;
         }
         return size;
+    }
+
+    public HashMap<String, MenuContent> menuContentByName() {
+        return menuContentByName;
     }
 }

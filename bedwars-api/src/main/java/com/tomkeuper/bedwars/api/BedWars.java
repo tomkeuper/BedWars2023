@@ -40,13 +40,18 @@ import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -65,75 +70,105 @@ public interface BedWars {
 
     interface IStats {
         /**
-         * Get player first play date.
+         * Get the player's first play date.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The timestamp of the player's first play date.
          */
-        @SuppressWarnings("unused")
         Timestamp getPlayerFirstPlay(UUID p);
 
         /**
-         * Get player last play date.
+         * Get the player's last play date.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The timestamp of the player's last play date.
          */
-        @SuppressWarnings("unused")
         Timestamp getPlayerLastPlay(UUID p);
 
         /**
-         * Get player total wins.
+         * Get the player's total wins.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The total number of wins for the player.
          */
         int getPlayerWins(UUID p);
 
         /**
-         * Get player regular kills.
+         * Get the player's regular kills.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The number of regular kills for the player.
          */
         int getPlayerKills(UUID p);
 
         /**
-         * Get player total kills.
+         * Get the player's total kills.
          * Regular kills + final kills.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The total number of kills for the player.
          */
         int getPlayerTotalKills(UUID p);
 
         /**
-         * Get player total final kills.
+         * Get the player's total final kills.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The total number of final kills for the player.
          */
         int getPlayerFinalKills(UUID p);
 
         /**
-         * Get player total looses.
+         * Get the player's total looses.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The total number of losses for the player.
          */
         int getPlayerLoses(UUID p);
 
         /**
-         * Get player total deaths.
+         * Get the player's total deaths.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The total number of deaths for the player.
          */
         int getPlayerDeaths(UUID p);
 
         /**
-         * Get player total final deaths.
+         * Get the player's total final deaths.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The total number of final deaths for the player.
          */
         int getPlayerFinalDeaths(UUID p);
 
         /**
-         * Get player beds destroyed.
+         * Get the player's beds destroyed.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The number of beds destroyed by the player.
          */
         int getPlayerBedsDestroyed(UUID p);
 
         /**
-         * Get player games played.
+         * Get the player's games played.
          * You get data from the local cache.
+         *
+         * @param p The UUID of the player.
+         * @return The number of games played by the player.
          */
         int getPlayerGamesPlayed(UUID p);
     }
-
 
     /**
      * Get afk system methods. It will only work if the game is started.
@@ -226,9 +261,9 @@ public interface BedWars {
          * Loads an arena and adds it to the enable queue.
          *
          * @param worldName the name of the arena world
-         * @param sender    the player who triggered the load (can be null)
+         * @param sender    the player or console who triggered the load (can be null)
          */
-        void loadArena(String worldName, Player sender);
+        void loadArena(String worldName, @Nullable CommandSender sender);
 
         /**
          * Sets the number of games before the server restarts.
@@ -528,9 +563,33 @@ public interface BedWars {
          * Retrieves the upgrade menu for an arena.
          *
          * @param arena The arena to get the upgrade menu for.
-         * @return The upgrade menu for the specified arena.
+         * @return {@link UpgradesIndex} The upgrade menu for the specified arena.
          */
         UpgradesIndex getMenuForArena(IArena arena);
+
+        /**
+         * Check if is upgradable item.
+         * Used in inventory click.
+         *
+         * @param item item to be checked.
+         * @return {@link MenuContent} null if isn't an element.
+         */
+        MenuContent getMenuContent(ItemStack item);
+
+        /**
+         * Get menu content by identifier.
+         *
+         * @param identifier menu identifier to be checked.
+         * @return {@link MenuContent} null if not found.
+         */
+        MenuContent getMenuContent(String identifier);
+
+        /**
+         * Get a map of menu contents by their identifiers.
+         *
+         * @return A {@link HashMap} containing menu identifiers as keys and corresponding {@link MenuContent} objects as values.
+         */
+        HashMap<String, MenuContent> getMenuContentByName();
     }
 
     /**

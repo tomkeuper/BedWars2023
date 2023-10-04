@@ -284,27 +284,7 @@ public class DamageDeathMove implements Listener {
                     e.setCancelled(true);
                 }
             }
-        } /*else if (e.getEntity() instanceof IronGolem) {
-            Player damager;
-            if (e.getDamager() instanceof Player) {
-                damager = (Player) e.getDamager();
-            } else if (e.getDamager() instanceof Projectile) {
-                Projectile proj = (Projectile) e.getDamager();
-                damager = (Player) proj.getShooter();
-            } else {
-                return;
-            }
-            Arena a = Arena.getArenaByPlayer(damager);
-            if (a != null) {
-                if (a.isPlayer(damager)) {
-                    if (nms.isDespawnable(e.getEntity())) {
-                        if (a.getTeam(damager) == ((OwnedByTeam) nms.getDespawnablesList().get(e.getEntity().getUniqueId())).getOwner()) {
-                            e.setCancelled(true);
-                        }
-                    }
-                }
-            }
-        }*/
+        }
         if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (e.getEntity().getLocation().getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                 e.setCancelled(true);
@@ -585,9 +565,11 @@ public class DamageDeathMove implements Listener {
                     // if the moving player has invisible armor
                     if (a.getShowTime().containsKey(e.getPlayer())) {
                         for (Player p : a.getPlayers()) {
+                            if (a.getTeam(e.getPlayer()).equals(a.getTeam(p))) continue;
                             BedWars.nms.hideArmor(e.getPlayer(), p);
                         }
                     }
+                    /* hide players from spectators */
                     if (a.getShowTime().containsKey(e.getPlayer())) {
                         for (Player p : a.getSpectators()) {
                             BedWars.nms.hideArmor(e.getPlayer(), p);

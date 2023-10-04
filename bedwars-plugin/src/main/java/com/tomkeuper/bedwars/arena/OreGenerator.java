@@ -339,7 +339,6 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void setDelay(double delay) {
-        BedWars.debug("Delay set to: " + delay);
         this.delay = delay * speedMultiplier;
     }
 

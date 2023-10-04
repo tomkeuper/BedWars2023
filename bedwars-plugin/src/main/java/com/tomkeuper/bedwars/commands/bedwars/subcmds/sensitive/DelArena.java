@@ -42,7 +42,7 @@ import java.util.Objects;
 
 public class DelArena extends SubCommand {
 
-    private static HashMap<Player, Long> delArenaConfirm = new HashMap<>();
+    private static final HashMap<CommandSender, Long> delArenaConfirm = new HashMap<>();
 
     public DelArena(ParentCommand parent, String name) {
         super(parent, name);
@@ -55,38 +55,40 @@ public class DelArena extends SubCommand {
 
     @Override
     public boolean execute(String[] args, CommandSender s) {
-        if (s instanceof ConsoleCommandSender) return false;
-        Player p = (Player) s;
-        if (!MainCommand.isLobbySet(p)) return true;
+        assert s != null;
+        if (!MainCommand.isLobbySet()) {
+            s.sendMessage("§c▪ §7You have to set the lobby location first!");
+            return true;
+        }
         if (args.length != 1) {
-            p.sendMessage("§c▪ §7Usage: §o/" + MainCommand.getInstance().getName() + " delArena <mapName>");
+            s.sendMessage("§c▪ §7Usage: §o/" + MainCommand.getInstance().getName() + " delArena <mapName>");
             return true;
         }
         if (!BedWars.getAPI().getRestoreAdapter().isWorld(args[0])) {
-            p.sendMessage("§c▪ §7" + args[0] + " doesn't exist as a world folder!");
+            s.sendMessage("§c▪ §7" + args[0] + " doesn't exist as a world folder!");
             return true;
         }
         if (Arena.getArenaByName(args[0]) != null) {
-            p.sendMessage("§c▪ §7Please disable it first!");
+            s.sendMessage("§c▪ §7Please disable it first!");
             return true;
         }
         File ac = new File(BedWars.plugin.getDataFolder(), "/Arenas/" + args[0]+ ".yml");
         if (!ac.exists()) {
-            p.sendMessage("§c▪ §7This arena doesn't exist!");
+            s.sendMessage("§c▪ §7This arena doesn't exist!");
             return true;
         }
-        if (delArenaConfirm.containsKey(p)) {
-            if (System.currentTimeMillis() - 2000 <= delArenaConfirm.get(p)) {
+        if (delArenaConfirm.containsKey(s)) {
+            if (System.currentTimeMillis() - 2000 <= delArenaConfirm.get(s)) {
                 BedWars.getAPI().getRestoreAdapter().deleteWorld(args[0]);
                 FileUtils.deleteQuietly(ac);
-                p.sendMessage("§c▪ §7" + args[0] + " was deleted!");
+                s.sendMessage("§c▪ §7" + args[0] + " was deleted!");
                 return true;
             }
-            p.sendMessage("§6 ▪ §7Type again to confirm.");
-            delArenaConfirm.replace(p, System.currentTimeMillis());
+            s.sendMessage("§6 ▪ §7Type again to confirm.");
+            delArenaConfirm.replace(s, System.currentTimeMillis());
         } else {
-            p.sendMessage("§6 ▪ §7Type again to confirm.");
-            delArenaConfirm.put(p, System.currentTimeMillis());
+            s.sendMessage("§6 ▪ §7Type again to confirm.");
+            delArenaConfirm.put(s, System.currentTimeMillis());
         }
         return true;
     }
@@ -110,12 +112,13 @@ public class DelArena extends SubCommand {
 
     @Override
     public boolean canSee(CommandSender s, com.tomkeuper.bedwars.api.BedWars api) {
-        if (s instanceof ConsoleCommandSender) return false;
+        if (s instanceof Player) {
+            Player p = (Player) s;
+            if (Arena.isInArena(p)) return false;
 
-        Player p = (Player) s;
-        if (Arena.isInArena(p)) return false;
+            if (SetupSession.isInSetupSession(p.getUniqueId())) return false;
+        }
 
-        if (SetupSession.isInSetupSession(p.getUniqueId())) return false;
         return hasPermission(s);
     }
 }

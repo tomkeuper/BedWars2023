@@ -78,6 +78,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -87,6 +88,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.time.Instant;
@@ -193,7 +195,7 @@ public class Arena implements IArena {
      * @param name - world name
      * @param p    - This will send messages to the player if something went wrong while loading the arena. Can be NULL.
      */
-    public Arena(String name, Player p) {
+    public Arena(String name, @Nullable CommandSender p) {
         if (!autoscale) {
             for (IArena mm : enableQueue) {
                 if (mm.getArenaName().equalsIgnoreCase(name)) {
@@ -218,11 +220,6 @@ public class Arena implements IArena {
         }
 
         cm = new ArenaConfig(BedWars.plugin, name, plugin.getDataFolder().getPath() + "/Arenas");
-
-        //if (mapManager.isLevelWorld()) {
-        //    Main.plugin.getLogger().severe("COULD NOT LOAD ARENA: " + name);
-        //    //return;
-        //}
 
         yml = cm.getYml();
         if (yml.get("Team") == null) {
@@ -521,14 +518,19 @@ public class Arena implements IArena {
             p.setAllowFlight(false);
             p.setHealth(20);
             for (Player on : players) {
-                on.sendMessage(getMsg(on, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
+                Language language = Language.getPlayerLanguage(on);
+                if (ev.getMessage().equals("")){
+                    on.sendMessage(getMsg(language, p, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                             .replace("%bw_playername%", p.getName())
                             .replace("%bw_player%", p.getDisplayName())
                             .replace("%bw_on%", String.valueOf(getPlayers().size()))
                             .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                );
+                    );
+                } else {
+                    if (ev.getMessage() != null) on.sendMessage(ev.getMessage());
+                }
             }
             setArenaByPlayer(p, this);
 
@@ -900,7 +902,8 @@ public class Arena implements IArena {
             }
         }
         for (Player on : getPlayers()) {
-            on.sendMessage(getMsg(on, Messages.COMMAND_LEAVE_MSG)
+            Language language = Language.getPlayerLanguage(on);
+            on.sendMessage(getMsg(language, p, Messages.COMMAND_LEAVE_MSG)
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                             .replace("%bw_playername%", p.getName())
@@ -909,7 +912,12 @@ public class Arena implements IArena {
             );
         }
         for (Player on : getSpectators()) {
-            on.sendMessage(getMsg(on, Messages.COMMAND_LEAVE_MSG).replace("%bw_v_prefix%", getChatSupport().getPrefix(p)).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()));
+            Language language = Language.getPlayerLanguage(on);
+            on.sendMessage(getMsg(language, p, Messages.COMMAND_LEAVE_MSG)
+                    .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
+                    .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
+                    .replace("%bw_playername%", p.getName())
+                    .replace("%bw_player%", p.getDisplayName()));
         }
 
         if (getServerType() == ServerType.SHARED) {
@@ -1606,23 +1614,23 @@ public class Arena implements IArena {
         } else if (status == GameState.restarting) {
             restartingTask = new GameRestartingTask(this);
         }
-        if (TabAPI.getInstance() != null){
-            PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
-            PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
-            players.forEach(c -> {
-                BoardManager.getInstance().giveTabFeatures(c, this, false);
-                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
-                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
-            });
+        PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
+        PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
+        players.forEach(c -> {
+            BoardManager.getInstance().giveTabFeatures(c, this, false);
+            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+            assert tabPlayer != null;
+            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+        });
 
-            spectators.forEach(c -> {
-                BoardManager.getInstance().giveTabFeatures(c, this, false);
-                TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
-                prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-                suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
-            });
-        }
+        spectators.forEach(c -> {
+            BoardManager.getInstance().giveTabFeatures(c, this, false);
+            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
+            assert tabPlayer != null;
+            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
+            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+        });
     }
 
     /**
@@ -2357,6 +2365,7 @@ public class Arena implements IArena {
 
     public static List<IArena> getSorted(List<IArena> arenas) {
         List<IArena> sorted = new ArrayList<>(arenas);
+        Collections.shuffle(sorted); // pre shuffle arena list
         sorted.sort(new Comparator<>() {
             @Override
             public int compare(IArena o1, IArena o2) {
@@ -2611,8 +2620,31 @@ public class Arena implements IArena {
     }
 
     @Override
-    public void setAllowMapBreak(boolean value) {
-        this.allowMapBreak = value;
+    public void setAllowMapBreak(boolean allowMapBreak) {
+        this.allowMapBreak = allowMapBreak;
+    }
+
+    @Override
+    public boolean isTeamBed(Location location) {
+        return null != getBedsTeam(location);
+    }
+
+    @Override
+    public @Nullable ITeam getBedsTeam(@NotNull Location location) {
+        if (!location.getWorld().getName().equals(this.worldName)) {
+            throw new RuntimeException("Given location is not on this game world.");
+        }
+
+        if (!nms.isBed(location.getBlock().getType())) {
+            return null;
+        }
+
+        for (ITeam team : this.teams) {
+            if (team.isBed(location)) {
+                return team;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -2777,6 +2809,10 @@ public class Arena implements IArena {
     @Override
     public List<BossBar> getDragonBossbars(){
         return dragonBossbars;
+    }
+
+    public boolean isAllowMapBreak() {
+        return allowMapBreak;
     }
 
     /**

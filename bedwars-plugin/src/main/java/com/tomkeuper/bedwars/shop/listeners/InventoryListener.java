@@ -30,12 +30,10 @@ import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyAdd;
-import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyElement;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -84,7 +82,7 @@ public class InventoryListener implements Listener {
             for (IQuickBuyElement element : cache.getElements()) {
                 if (element.getSlot() == e.getSlot()) {
                     if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-                        cache.setElement(element.getSlot(), null);
+                        cache.setElement(element.getSlot(), (ICategoryContent) null);
                         p.closeInventory();
                         return;
                     }
@@ -211,6 +209,7 @@ public class InventoryListener implements Listener {
      */
     public static boolean shouldCancelMovement(ItemStack i, ShopCache sc) {
         if (i == null) return false;
+        if (i.getType() == Material.AIR) return false;
         if (sc == null) return false;
 
         if (BedWars.nms.isCustomBedWarsItem(i)){

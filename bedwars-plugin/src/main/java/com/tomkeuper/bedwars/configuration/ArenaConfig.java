@@ -33,8 +33,8 @@ public class ArenaConfig extends ConfigManager {
         super(plugin, name, dir);
 
         YamlConfiguration yml = getYml();
-        yml.options().header(plugin.getName() + " arena configuration file.\n" +
-                "Documentation here: https://gitlab.com/andrei1058/BedWars1058/wikis/configuration/Arena-Configuration");
+        yml.options().header(plugin.getDescription().getName() + " arena configuration file.\n" +
+                "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023/configuration/Arena-Configuration\n");
         yml.addDefault("group", "Default");
         yml.addDefault(ConfigPath.ARENA_DISPLAY_NAME, "");
         yml.addDefault("minPlayers", 2);
@@ -44,10 +44,10 @@ public class ArenaConfig extends ConfigManager {
         yml.addDefault(ConfigPath.ARENA_SHOP_PROTECTION, 1);
         yml.addDefault(ConfigPath.ARENA_UPGRADES_PROTECTION, 1);
         yml.addDefault(ConfigPath.ARENA_GENERATOR_PROTECTION, 1);
+        yml.addDefault(ConfigPath.ARENA_GENERATOR_SPLIT_RANGE, 2.0);
         yml.addDefault(ConfigPath.ARENA_ISLAND_RADIUS, 17);
         yml.addDefault("worldBorder", 300);
         yml.addDefault(ConfigPath.ARENA_Y_LEVEL_KILL, -1);
-        //yml.addDefault("disableGeneratorsOnOrphanIslands", false);
         yml.addDefault(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y, 180);
         yml.addDefault(ConfigPath.ARENA_CONFIGURATION_MIN_BUILD_Y, 0);
         yml.addDefault(ConfigPath.ARENA_DISABLE_GENERATOR_FOR_EMPTY_TEAMS, false);

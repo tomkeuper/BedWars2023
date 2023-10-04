@@ -20,14 +20,16 @@
 
 package com.tomkeuper.bedwars;
 
-import com.tomkeuper.bedwars.addon.AddonManager;
-import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.andrei1058.vipfeatures.api.IVipFeatures;
 import com.andrei1058.vipfeatures.api.MiniGameAlreadyRegistered;
+import com.tomkeuper.bedwars.addon.AddonManager;
+import com.tomkeuper.bedwars.api.addon.Addon;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -53,7 +55,6 @@ import com.tomkeuper.bedwars.commands.party.PartyCommand;
 import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
-import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
@@ -82,11 +83,17 @@ import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.papi.PAPISupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.party.*;
-import com.tomkeuper.bedwars.support.vault.*;
+import com.tomkeuper.bedwars.support.vault.NoChat;
+import com.tomkeuper.bedwars.support.vault.NoEconomy;
+import com.tomkeuper.bedwars.support.vault.WithChat;
+import com.tomkeuper.bedwars.support.vault.WithEconomy;
 import com.tomkeuper.bedwars.support.vipfeatures.VipFeatures;
 import com.tomkeuper.bedwars.support.vipfeatures.VipListeners;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
+import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
+import io.github.slimjar.app.builder.ApplicationBuilder;
+import io.github.slimjar.resolver.data.Repository;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
@@ -109,8 +116,14 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
@@ -122,6 +135,7 @@ public class BedWars extends JavaPlugin {
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    private static UpgradesManager upgradesManager;
     public static PlayerQuickBuyCache playerQuickBuyCache;
     public static ShopCache shopCache;
     public static StatsManager statsManager;
@@ -158,6 +172,19 @@ public class BedWars extends JavaPlugin {
             serverSoftwareSupport = false;
             return;
         }
+
+        try {
+            Path downloadPath = Paths.get(getDataFolder().getPath() + File.separator + "libs");
+            ApplicationBuilder.appending("ajLeaderboards")
+                    .logger(new SlimLogger(this))
+                    .downloadDirectoryPath(downloadPath)
+                    .mirrorSelector((a, b) -> a)
+                    .internalRepositories(Collections.singleton(new Repository(new URI("https://repo1.maven.org/maven2/").toURL())))
+                    .build();
+        } catch (IOException | ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
 
         try {
             Class.forName("com.destroystokyo.paper.PaperConfig");
@@ -470,7 +497,10 @@ public class BedWars extends JavaPlugin {
         }
 
         /* Protect glass walls from tnt explosion */
-        nms.registerTntWhitelist();
+        nms.registerTntWhitelist(
+                (float) config.getDouble(ConfigPath.GENERAL_TNT_PROTECTION_END_STONE_BLAST),
+                (float) config.getDouble(ConfigPath.GENERAL_TNT_PROTECTION_GLASS_BLAST)
+        );
 
         /* Prevent issues on reload */
         for (Player p : Bukkit.getOnlinePlayers()) {
@@ -524,12 +554,18 @@ public class BedWars extends JavaPlugin {
         }
 
         // Initialize team upgrades
-        UpgradesManager.init();
+        upgradesManager = new UpgradesManager();
+        upgradesManager.init();
 
         // Initialize sidebar manager
         Bukkit.getScheduler().runTask(this, () -> {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
-                getLogger().info("Hooked into TAB support!");
+                getLogger().info("Hooking into TAB support!");
+                if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())){
+                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v4.0.2 or higher is required!" );
+                    Bukkit.getPluginManager().disablePlugin(this);
+                    return;
+                }
                 if (BoardManager.init()) {
                     getLogger().info("TAB support has been loaded");
 
@@ -538,7 +574,6 @@ public class BedWars extends JavaPlugin {
 
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
-                    Bukkit.getPluginManager().disablePlugin(this);
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
@@ -559,11 +594,9 @@ public class BedWars extends JavaPlugin {
         AntiDropFeature.init();
 
         // Initialize the addons
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            addonManager.loadAddons();
-        }, 60L);
+        Bukkit.getScheduler().runTaskLater(this, () -> addonManager.loadAddons(), 60L);
 
-        // Initialize the addons
+        // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
@@ -572,15 +605,33 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Auto Scale enabled: " + autoscale);
             this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
             this.getLogger().info("");
+            this.getLogger().info("Arena's enabled: " + api.getArenaUtil().getArenas().size());
+
+            StringJoiner stringJoiner = new StringJoiner(", ");
+            if (api.getArenaUtil().getArenas().isEmpty()) stringJoiner.add("none");
+            for (IArena arena : api.getArenaUtil().getArenas()){
+                stringJoiner.add(arena.getArenaName());
+            }
+
+            this.getLogger().info("being: " + stringJoiner);
+            this.getLogger().info("");
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
             this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
+
+            StringJoiner stringJoiner2 = new StringJoiner(", ");
+            if (api.getAddonsUtil().getAddons().isEmpty()) stringJoiner2.add("none");
+            for (Addon addon : api.getAddonsUtil().getAddons()){
+                stringJoiner2.add(addon.getName());
+            }
+
+            this.getLogger().info("being: " + stringJoiner2);
             this.getLogger().info("");
             this.getLogger().info("PAPI support: " + papiSupportLoaded);
             this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
             this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
             this.getLogger().info("");
             this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBarr: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "true" : "false"));
+            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true") + ", TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
@@ -761,6 +812,10 @@ public class BedWars extends JavaPlugin {
         return statsManager;
     }
 
+    public static UpgradesManager getUpgradeManager(){
+        return upgradesManager;
+    }
+
     public static com.tomkeuper.bedwars.api.BedWars getAPI() {
         return api;
     }
@@ -833,5 +888,37 @@ public class BedWars extends JavaPlugin {
 
     public static void setRemoteDatabase(IDatabase database){
         remoteDatabase = database;
+    }
+
+
+    private boolean checkTABVersion(String version) {
+        String targetVersion = "4.0.2";
+
+        String[] currentParts = version.split("\\.");
+        String[] targetParts = targetVersion.split("\\.");
+
+        // Compare major version
+        int currentMajor = Integer.parseInt(currentParts[0]);
+        int targetMajor = Integer.parseInt(targetParts[0]);
+        if (currentMajor < targetMajor) {
+            return false;
+        } else if (currentMajor > targetMajor) {
+            return true;
+        }
+
+        // Compare minor version
+        int currentMinor = Integer.parseInt(currentParts[1]);
+        int targetMinor = Integer.parseInt(targetParts[1]);
+        if (currentMinor < targetMinor) {
+            return false;
+        } else if (currentMinor > targetMinor) {
+            return true;
+        }
+
+        // Compare patch version
+        int currentPatch = Integer.parseInt(currentParts[2]);
+        int targetPatch = Integer.parseInt(targetParts[2]);
+
+        return currentPatch >= targetPatch;
     }
 }

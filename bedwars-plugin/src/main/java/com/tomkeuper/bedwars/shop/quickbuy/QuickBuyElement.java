@@ -23,7 +23,6 @@ package com.tomkeuper.bedwars.shop.quickbuy;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.shop.ShopManager;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
 
 public class QuickBuyElement implements IQuickBuyElement {
