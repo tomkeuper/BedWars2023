@@ -142,7 +142,7 @@ public class BedWars extends JavaPlugin {
     public static BedWars plugin;
     public static VersionSupport nms;
 
-    private static Party party = new NoParty();
+    private static Party partyManager = new NoParty();
     private static IChat chat = new NoChat();
     protected static Level level;
     private static IEconomy economy;
@@ -367,21 +367,21 @@ public class BedWars extends JavaPlugin {
 
                 if (getServer().getPluginManager().isPluginEnabled("Parties")) {
                     getLogger().info("Hook into Parties (by AlessioDP) support!");
-                    party = new PartiesAdapter();
+                    partyManager = new PartiesAdapter();
                 } else if (Bukkit.getServer().getPluginManager().isPluginEnabled("PartyAndFriends")) {
                     getLogger().info("Hook into Party and Friends for Spigot (by Simonsator) support!");
-                    party = new PAF();
+                    partyManager = new PAF();
                 } else if (Bukkit.getServer().getPluginManager().isPluginEnabled("Spigot-Party-API-PAF")) {
                     getLogger().info("Hook into Spigot Party API for Party and Friends Extended (by Simonsator) support!");
-                    party = new PAFBungeecordRedisApi();
+                    partyManager = new PAFBungeecordRedisApi();
                 }
 
-                if (party instanceof NoParty) {
-                    party = new Internal();
+                if (partyManager instanceof NoParty) {
+                    partyManager = new Internal();
                     getLogger().info("Loading internal Party system. /party");
                 }
             } else {
-                party = new NoParty();
+                partyManager = new NoParty();
             }
         }, 10L);
 
@@ -534,7 +534,7 @@ public class BedWars extends JavaPlugin {
         metrics.addCustomChart(new SimplePie("server_type", () -> getServerType().toString()));
         metrics.addCustomChart(new SimplePie("default_language", () -> Language.getDefaultLanguage().getIso()));
         metrics.addCustomChart(new SimplePie("auto_scale", () -> String.valueOf(autoscale)));
-        metrics.addCustomChart(new SimplePie("party_adapter", () -> party.getClass().getSimpleName()));
+        metrics.addCustomChart(new SimplePie("party_adapter", () -> partyManager.getClass().getSimpleName()));
         metrics.addCustomChart(new SimplePie("chat_adapter", () -> chat.getClass().getSimpleName()));
         metrics.addCustomChart(new SimplePie("level_adapter", () -> getLevelSupport().getClass().getSimpleName()));
         metrics.addCustomChart(new SimplePie("db_adapter", () -> getRemoteDatabase().getClass().getSimpleName()));
@@ -738,8 +738,8 @@ public class BedWars extends JavaPlugin {
         return serverType;
     }
 
-    public static Party getParty() {
-        return party;
+    public static Party getPartyManager() {
+        return partyManager;
     }
 
     public static IChat getChatSupport() {
@@ -873,8 +873,8 @@ public class BedWars extends JavaPlugin {
         return shuttingDown;
     }
 
-    public static void setParty(Party party) {
-        BedWars.party = party;
+    public static void setPartyManager(Party partyManager) {
+        BedWars.partyManager = partyManager;
     }
 
     public static void setEconomy(IEconomy economy) {

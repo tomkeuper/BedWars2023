@@ -59,7 +59,7 @@ public class PreLoadedParty {
         if (!owner.isOnline()) return;
         for (Player player : members){
             if (!player.getName().equalsIgnoreCase(this.owner)){
-                BedWars.getParty().addMember(owner, player);
+                BedWars.getPartyManager().addMember(owner, player);
             }
         }
         preLoadedParties.remove(this.owner);

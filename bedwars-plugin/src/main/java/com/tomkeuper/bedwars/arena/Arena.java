@@ -442,13 +442,13 @@ public class Arena implements IArena {
         if (getArenaByPlayer(p) != null) {
             return false;
         }
-        if (getParty().hasParty(p)) {
+        if (getPartyManager().hasParty(p)) {
             if (!skipOwnerCheck) {
-                if (!getParty().isOwner(p)) {
+                if (!getPartyManager().isOwner(p)) {
                     p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_DENIED_NOT_PARTY_LEADER));
                     return false;
                 }
-                int partySize = (int) getParty().getMembers(p).stream().filter(member -> {
+                int partySize = (int) getPartyManager().getMembers(p).stream().filter(member -> {
                     IArena arena = Arena.getArenaByPlayer(member);
                     if (arena == null) {
                         return true;
@@ -460,7 +460,7 @@ public class Arena implements IArena {
                     p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_DENIED_PARTY_TOO_BIG));
                     return false;
                 }
-                for (Player mem : getParty().getMembers(p)) {
+                for (Player mem : getPartyManager().getMembers(p)) {
                     if (mem == p) continue;
                     IArena a = Arena.getArenaByPlayer(mem);
                     if (a != null) {
@@ -538,10 +538,10 @@ public class Arena implements IArena {
             if (status == GameState.waiting) {
                 int teams = 0, teammates = 0;
                 for (Player on : getPlayers()) {
-                    if (getParty().isOwner(on)) {
+                    if (getPartyManager().isOwner(on)) {
                         teams++;
                     }
-                    if (getParty().hasParty(on)) {
+                    if (getPartyManager().hasParty(on)) {
                         teammates++;
                     }
                 }
@@ -825,7 +825,7 @@ public class Arena implements IArena {
 
         boolean teamuri = false;
         for (Player on : getPlayers()) {
-            if (getParty().hasParty(on)) {
+            if (getPartyManager().hasParty(on)) {
                 teamuri = true;
             }
         }
@@ -835,7 +835,6 @@ public class Arena implements IArena {
                 on.sendMessage(getMsg(on, Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT));
             }
         } else if (status == GameState.playing) {
-            BedWars.debug("removePlayer debug1");
             int alive_teams = 0;
             for (ITeam t : getTeams()) {
                 if (t == null) continue;
@@ -931,6 +930,10 @@ public class Arena implements IArena {
             this.sendToMainLobby(p);
         }
 
+        /**
+         * Below is *only* executed if serverType != BUNGEE
+         */
+
         /* restore player inventory */
         PlayerGoods pg = PlayerGoods.getPlayerGoods(p);
         if (pg == null) {
@@ -964,20 +967,20 @@ public class Arena implements IArena {
         }
 
         /* Remove also the party */
-        if (getParty().hasParty(p)) {
-            if (getParty().isOwner(p)) {
+        if (getPartyManager().hasParty(p)) {
+            if (getPartyManager().isOwner(p)) {
                 if (status != GameState.restarting) {
-                    if (getParty().isInternal()) {
-                        for (Player mem : new ArrayList<>(getParty().getMembers(p))) {
+                    if (getPartyManager().isInternal()) {
+                        for (Player mem : new ArrayList<>(getPartyManager().getMembers(p))) {
                             mem.sendMessage(getMsg(mem, Messages.ARENA_LEAVE_PARTY_DISBANDED));
                         }
                     }
-                    getParty().disband(p);
+                    getPartyManager().disband(p);
 
                     // prevent arena from staring with a single player
                     teamuri = false;
                     for (Player on : getPlayers()) {
-                        if (getParty().hasParty(on)) {
+                        if (getPartyManager().hasParty(on)) {
                             teamuri = true;
                         }
                     }
@@ -1020,10 +1023,10 @@ public class Arena implements IArena {
         // fix #340
         // remove player from party if leaves and the owner is still in the arena while waiting or starting
         if (status == GameState.waiting || status == GameState.starting) {
-            if (BedWars.getParty().hasParty(p) && !BedWars.getParty().isOwner(p)) {
-                for (Player pl : BedWars.getParty().getMembers(p)) {
-                    if (BedWars.getParty().isOwner(pl) && pl.getWorld().getName().equalsIgnoreCase(getArenaName())) {
-                        BedWars.getParty().removeFromParty(p);
+            if (BedWars.getPartyManager().hasParty(p) && !BedWars.getPartyManager().isOwner(p)) {
+                for (Player pl : BedWars.getPartyManager().getMembers(p)) {
+                    if (BedWars.getPartyManager().isOwner(pl) && pl.getWorld().getName().equalsIgnoreCase(getArenaName())) {
+                        BedWars.getPartyManager().removeFromParty(p);
                         break;
                     }
                 }
@@ -1105,15 +1108,15 @@ public class Arena implements IArena {
         }
 
         /* Remove also the party */
-        if (getParty().hasParty(p)) {
-            if (getParty().isOwner(p)) {
+        if (getPartyManager().hasParty(p)) {
+            if (getPartyManager().isOwner(p)) {
                 if (status != GameState.restarting) {
-                    if (getParty().isInternal()) {
-                        for (Player mem : new ArrayList<>(getParty().getMembers(p))) {
+                    if (getPartyManager().isInternal()) {
+                        for (Player mem : new ArrayList<>(getPartyManager().getMembers(p))) {
                             mem.sendMessage(getMsg(mem, Messages.ARENA_LEAVE_PARTY_DISBANDED));
                         }
                     }
-                    getParty().disband(p);
+                    getPartyManager().disband(p);
                 }
             }
         }
@@ -2346,7 +2349,7 @@ public class Arena implements IArena {
     public static boolean joinRandomArena(Player p) {
         List<IArena> arenas = getSorted(getArenas());
 
-        int amount = getParty().hasParty(p) ? (int) getParty().getMembers(p).stream().filter(member -> {
+        int amount = getPartyManager().hasParty(p) ? (int) getPartyManager().getMembers(p).stream().filter(member -> {
             IArena arena = Arena.getArenaByPlayer(member);
             if (arena == null) {
                 return true;
@@ -2403,7 +2406,7 @@ public class Arena implements IArena {
 
         List<IArena> arenas = getSorted(getArenas());
 
-        int amount = getParty().hasParty(p) ? (int) getParty().getMembers(p).stream().filter(member -> {
+        int amount = getPartyManager().hasParty(p) ? (int) getPartyManager().getMembers(p).stream().filter(member -> {
             IArena arena = Arena.getArenaByPlayer(member);
             if (arena == null) {
                 return true;
