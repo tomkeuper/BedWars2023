@@ -68,9 +68,9 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.chat.ChatAFK;
 import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.listeners.joinhandler.*;
-import com.tomkeuper.bedwars.lobbysocket.ArenaSocket;
-import com.tomkeuper.bedwars.lobbysocket.LoadedUsersCleaner;
-import com.tomkeuper.bedwars.lobbysocket.SendTask;
+import com.tomkeuper.bedwars.lobbyconnection.socket.SocketConnection;
+import com.tomkeuper.bedwars.lobbyconnection.LoadedUsersCleaner;
+import com.tomkeuper.bedwars.lobbyconnection.socket.SocketSendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -332,8 +332,8 @@ public class BedWars extends JavaPlugin {
         if (getServerType() == ServerType.BUNGEE) {
             if (autoscale) {
                 //registerEvents(new ArenaListeners());
-                ArenaSocket.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
-                new SendTask();
+                SocketConnection.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
+                new SocketSendTask();
                 registerEvents(new AutoscaleListener(), new JoinListenerBungee());
                 Bukkit.getScheduler().runTaskTimerAsynchronously(this, new LoadedUsersCleaner(), 60L, 60L);
             } else {
@@ -656,7 +656,7 @@ public class BedWars extends JavaPlugin {
         addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
-            ArenaSocket.disable();
+            SocketConnection.disable();
         }
         for (IArena a : new LinkedList<>(Arena.getArenas())) {
             try {

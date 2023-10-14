@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.party.Party;
-import com.tomkeuper.bedwars.lobbysocket.ArenaSocket;
+import com.tomkeuper.bedwars.lobbyconnection.socket.SocketConnection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -109,7 +109,7 @@ public class Internal implements Party {
                 JsonObject json = new JsonObject();
                 json.addProperty("type", "PR"); // PR = Party Remove
                 json.addProperty("owner", member.getUniqueId().toString());
-                ArenaSocket.sendMessage(json.toString());
+                SocketConnection.sendMessage(json.toString());
 
                 if (p.members.isEmpty() || p.members.size() == 1) {
                     disband(p.owner);
@@ -133,7 +133,7 @@ public class Internal implements Party {
         JsonObject json = new JsonObject();
         json.addProperty("type", "PD"); // PD = Party Disband
         json.addProperty("owner", owner.getUniqueId().toString());
-        ArenaSocket.sendMessage(json.toString());
+        SocketConnection.sendMessage(json.toString());
     }
 
     @Override

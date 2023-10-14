@@ -18,7 +18,7 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.lobbysocket;
+package com.tomkeuper.bedwars.lobbyconnection.socket;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.arena.Misc;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.tomkeuper.bedwars.lobbyconnection.LoadedUser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -40,7 +41,7 @@ import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class ArenaSocket {
+public class SocketConnection {
 
     public static List<String> lobbies = new ArrayList<>();
     private static final ConcurrentHashMap<String, RemoteLobby> sockets = new ConcurrentHashMap<>();

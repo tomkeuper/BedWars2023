@@ -18,7 +18,7 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.lobbysocket;
+package com.tomkeuper.bedwars.lobbyconnection.socket;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -30,33 +30,33 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class ArenaListeners implements Listener {
+public class SocketArenaListeners implements Listener {
 
     @EventHandler
     public void onPlayerJoinArena(PlayerJoinArenaEvent e) {
         if (e == null) return;
         final IArena a = e.getArena();
-        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> ArenaSocket.sendMessage(ArenaSocket.formatUpdateMessage(a)));
+        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> SocketConnection.sendMessage(SocketConnection.formatUpdateMessage(a)));
     }
 
     @EventHandler
     public void onPlayerLeaveArena(PlayerLeaveArenaEvent e){
         if (e == null) return;
         final IArena a = e.getArena();
-        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> ArenaSocket.sendMessage(ArenaSocket.formatUpdateMessage(a)));
+        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> SocketConnection.sendMessage(SocketConnection.formatUpdateMessage(a)));
     }
 
     @EventHandler
     public void onArenaStatusChange(GameStateChangeEvent e){
         if (e == null) return;
         final IArena a = e.getArena();
-        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> ArenaSocket.sendMessage(ArenaSocket.formatUpdateMessage(a)));
+        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> SocketConnection.sendMessage(SocketConnection.formatUpdateMessage(a)));
     }
 
     @EventHandler
     public void onArenaLoad(ArenaEnableEvent e){
         if (e == null) return;
         final IArena a = e.getArena();
-        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> ArenaSocket.sendMessage(ArenaSocket.formatUpdateMessage(a)));
+        Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, ()-> SocketConnection.sendMessage(SocketConnection.formatUpdateMessage(a)));
     }
 }
