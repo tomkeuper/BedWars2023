@@ -28,7 +28,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.tasks.ReJoinTask;
-import com.tomkeuper.bedwars.lobbyconnection.socket.SocketConnection;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketConnection;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;

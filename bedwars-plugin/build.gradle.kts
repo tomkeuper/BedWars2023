@@ -55,7 +55,9 @@ dependencies {
 
     implementation("io.github.slimjar:slimjar:1.2.7")
     compileOnly("de.simonsator:Party-and-Friends-MySQL-Edition-Spigot-API:1.5.4-RELEASE")
-    compileOnly("de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT")
+    compileOnly("de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT") {
+        exclude("redis.clients", "jedis")
+    }
     compileOnly("de.simonsator:DevelopmentPAFSpigot:1.0.67")
     compileOnly("com.alessiodp.parties:parties-api:3.2.9")
     compileOnly("net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT") {
@@ -69,6 +71,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.2")
     compileOnly("me.neznamy:tab-api:4.0.2")
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
+    slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
 }
 
@@ -140,7 +143,8 @@ tasks {
         relocate("org.slf4j", "com.tomkeuper.bedwars.libs.slf4j")
         relocate("org.h2", "com.tomkeuper.bedwars.libs.h2")
         relocate("org.bstats", "com.tomkeuper.bedwars.libs.bstats")
-        relocate("org.apache", "com.tomkeuper.bedwars.libs.apache")
+        relocate("org.apache.commons.io", "com.tomkeuper.bedwars.libs.apache.commons.io")
+        relocate("org.apache.commons.lang", "com.tomkeuper.bedwars.libs.apache.commons.lang")
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")

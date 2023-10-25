@@ -18,7 +18,7 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.lobbyconnection.socket;
+package com.tomkeuper.bedwars.connectionmanager.socket;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -28,7 +28,7 @@ import com.tomkeuper.bedwars.arena.Misc;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.tomkeuper.bedwars.lobbyconnection.LoadedUser;
+import com.tomkeuper.bedwars.connectionmanager.LoadedUser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

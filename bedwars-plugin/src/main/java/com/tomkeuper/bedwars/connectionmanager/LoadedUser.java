@@ -18,7 +18,7 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.lobbyconnection;
+package com.tomkeuper.bedwars.connectionmanager;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;

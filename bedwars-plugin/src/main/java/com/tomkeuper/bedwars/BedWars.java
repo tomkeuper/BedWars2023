@@ -68,9 +68,11 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.chat.ChatAFK;
 import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.listeners.joinhandler.*;
-import com.tomkeuper.bedwars.lobbyconnection.socket.SocketConnection;
-import com.tomkeuper.bedwars.lobbyconnection.LoadedUsersCleaner;
-import com.tomkeuper.bedwars.lobbyconnection.socket.SocketSendTask;
+import com.tomkeuper.bedwars.connectionmanager.LoadedUsersCleaner;
+import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
+import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketConnection;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketSendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -155,6 +157,8 @@ public class BedWars extends JavaPlugin {
 
     //remote database
     private static IDatabase remoteDatabase;
+
+    private static RedisConnection redisConnection;
 
     private boolean serverSoftwareSupport = true, papiSupportLoaded = false, vaultEconomyLoaded = false, vaultChatLoaded = false;
 
@@ -331,9 +335,19 @@ public class BedWars extends JavaPlugin {
 
         if (getServerType() == ServerType.BUNGEE) {
             if (autoscale) {
-                //registerEvents(new ArenaListeners());
-                SocketConnection.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
-                new SocketSendTask();
+                String messagingProtocol = config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL);
+
+                if (messagingProtocol.equalsIgnoreCase("redis")){
+                    redisConnection = new RedisConnection();
+                    registerEvents(new RedisArenaListeners(redisConnection));
+                } else if (messagingProtocol.equalsIgnoreCase("socket")){
+//                  registerEvents(new SocketArenaListeners());
+                    new SocketSendTask();
+                    SocketConnection.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
+                } else {
+                    throw new IllegalStateException("Invalid messaging protocol provided `" + messagingProtocol + "`, possible options are `redis` or `socket`!");
+                }
+
                 registerEvents(new AutoscaleListener(), new JoinListenerBungee());
                 Bukkit.getScheduler().runTaskTimerAsynchronously(this, new LoadedUsersCleaner(), 60L, 60L);
             } else {
@@ -656,7 +670,11 @@ public class BedWars extends JavaPlugin {
         addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
-            SocketConnection.disable();
+            if (redisConnection != null){
+                redisConnection.close();
+            } else {
+                SocketConnection.disable();
+            }
         }
         for (IArena a : new LinkedList<>(Arena.getArenas())) {
             try {
@@ -806,6 +824,13 @@ public class BedWars extends JavaPlugin {
      */
     public static IDatabase getRemoteDatabase() {
         return remoteDatabase;
+    }
+
+    /**
+     * Get redis connection.
+     */
+    public static RedisConnection getRedisConnection() {
+        return redisConnection;
     }
 
     public static StatsManager getStatsManager() {

@@ -24,7 +24,7 @@ import com.google.gson.JsonObject;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.party.Party;
-import com.tomkeuper.bedwars.lobbyconnection.socket.SocketConnection;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketConnection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
