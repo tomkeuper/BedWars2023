@@ -43,6 +43,12 @@ public class Language extends ConfigManager {
     private static Language defaultLanguage;
     private String serverIp;
 
+    /**
+     * Constructs a Language object with the specified plugin and ISO language code.
+     *
+     * @param plugin the reference to the plugin
+     * @param iso the ISO language code
+     */
     public Language(Plugin plugin, String iso) {
         super(plugin, "messages_" + iso, plugin.getDataFolder().getPath() + "/Languages");
         this.iso = iso;
@@ -50,18 +56,30 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Set chat prefix.
+     * Sets the chat prefix for the language.
+     *
+     * @param prefix the chat prefix to be set
      */
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
+    /**
+     * Sets the chat prefix for the language.
+     *
+     * @param prefix the chat prefix to be set
+     */
     public void setPrefixStatic(String prefix) {
         prefixStatic = prefix;
     }
 
     /**
-     * Get scoreboard strings by player.
+     * Retrieves the scoreboard strings for the specified player in the player's language, with an alternative fallback if the message is not found.
+     *
+     * @param p the player for whom to retrieve the scoreboard strings
+     * @param path the path of the scoreboard strings
+     * @param alternative the alternative string if the specified path is not found
+     * @return the retrieved scoreboard strings for the specified player, or the alternative string if not found
      */
     public static List<String> getScoreboard(Player p, String path, String alternative) {
         Language language = getPlayerLanguage(p);
@@ -69,7 +87,12 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Get scoreboard strings by language.
+     * Retrieves the scoreboard strings in the specified language, with an alternative fallback if the message is not found.
+     *
+     * @param language the language from which to retrieve the scoreboard strings
+     * @param path the path of the scoreboard strings
+     * @param alternative the alternative string if the specified path is not found
+     * @return the retrieved scoreboard strings in the specified language, or the alternative string if not found
      */
     public static List<String> getScoreboard(Language language, String path, String alternative) {
         if (language.exists(path)) {
@@ -90,16 +113,21 @@ public class Language extends ConfigManager {
         return language.l(alternative);
     }
 
-
     /**
-     * Get language display name.
+     * Retrieves the display name of the language.
+     *
+     * @return the display name of the language
      */
     public String getLangName() {
         return getYml().getString("name");
     }
 
     /**
-     * Get message in player's language and apply Papi placeholders
+     * Retrieves a message in the player's language and applies PlaceholderAPI placeholders.
+     *
+     * @param p the player for whom to retrieve the message
+     * @param path the path of the message
+     * @return the retrieved message in the player's language with applied placeholders
      */
     public static String getMsg(Player p, String path) {
         if (p == null) return getDefaultLanguage().m(path);
@@ -108,7 +136,12 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Get message in specific language and apply Papi placeholders to target player
+     * Retrieves a message in the specific language and applies PlaceholderAPI (Papi) placeholders to the target player.
+     *
+     * @param language the language from which to retrieve the message
+     * @param papiPlayer the target player for the PlaceholderAPI placeholders
+     * @param path the path of the message
+     * @return the retrieved message with applied placeholders
      */
     public static String getMsg(Language language, Player papiPlayer, String path) {
         if (language == null) return getDefaultLanguage().m(path);
@@ -117,33 +150,52 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Retrieve a player language.
+     * Retrieves the language of a player.
+     *
+     * @param p the player for whom to retrieve the language
+     * @return the language of the player
      */
     public static Language getPlayerLanguage(Player p) {
         if (p == null) return getDefaultLanguage();
         return langByPlayer.getOrDefault(p.getUniqueId(), getDefaultLanguage());
     }
 
+    /**
+     * Retrieves the language of a player.
+     *
+     * @param p the unique identifier of the player for whom to retrieve the language
+     * @return the language of the player
+     */
     public static Language getPlayerLanguage(UUID p) {
         return langByPlayer.getOrDefault(p, getDefaultLanguage());
     }
 
     /**
-     * Check if a message was set.
+     * Checks if a message is set.
+     *
+     * @param path the path of the message
+     * @return true if the message exists, otherwise false
      */
     public boolean exists(String path) {
         return getYml().get(path) != null;
     }
 
     /**
-     * Get a string list in player's language.
+     * Retrieves a string list in the player's language.
+     *
+     * @param p the player for whom to retrieve the string list
+     * @param path the path of the string list
+     * @return the string list in the player's language
      */
     public static List<String> getList(Player p, String path) {
         return langByPlayer.getOrDefault(p.getUniqueId(), getDefaultLanguage()).l(path);
     }
 
     /**
-     * Save a value to file if not exists.
+     * Saves a value to the file if the specified path does not already exist.
+     *
+     * @param path the path at which to save the data if it does not exist
+     * @param data the data to be saved if the path does not already exist
      */
     public static void saveIfNotExists(String path, Object data) {
         for (Language l : languages) {
@@ -153,8 +205,12 @@ public class Language extends ConfigManager {
         }
     }
 
+
     /**
      * Get a color translated message.
+     *
+     * @param path The path to the message
+     * @return The message.
      */
     public String m(String path) {
         String message = getYml().getString(path);
@@ -178,6 +234,9 @@ public class Language extends ConfigManager {
 
     /**
      * Get a color translated list.
+     *
+     * @param path The path to the list.
+     * @return The list of mesaages.
      */
     public List<String> l(String path) {
         List<String> result = new ArrayList<>();
@@ -192,12 +251,20 @@ public class Language extends ConfigManager {
         return result;
     }
 
+    /**
+     * Retrieves the language mapping by player UUID.
+     *
+     * @return the language mapping by player UUID
+     */
     public static HashMap<UUID, Language> getLangByPlayer() {
         return langByPlayer;
     }
 
     /**
-     * Check if a language exists.
+     * Checks if a language with the specified ISO code exists.
+     *
+     * @param iso the ISO language code to check
+     * @return true if the language with the specified ISO code exists, otherwise false
      */
     public static boolean isLanguageExist(String iso) {
         for (Language l : languages) {
@@ -209,9 +276,10 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Get language with given info.
+     * Retrieves the language with the given ISO code.
      *
-     * @return null if could not find.
+     * @param iso the ISO language code to retrieve
+     * @return the language with the given ISO code, or null if not found
      */
     public static Language getLang(String iso) {
         for (Language l : languages) {
@@ -223,14 +291,18 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Get language iso code.
+     * Retrieves the ISO code of the language.
+     *
+     * @return the ISO code of the language
      */
     public String getIso() {
         return iso;
     }
 
     /**
-     * Get loaded languages list.
+     * Retrieves the list of loaded languages.
+     *
+     * @return the list of loaded languages
      */
     public static List<Language> getLanguages() {
         return languages;
@@ -258,6 +330,14 @@ public class Language extends ConfigManager {
         }
     }
 
+    /**
+     * Adds a default stats message to the YAML configuration.
+     *
+     * @param yml  the YAML configuration to which the default message is to be added
+     * @param path the path in the YAML configuration
+     * @param name the name of the stats message
+     * @param lore the lore of the stats message
+     */
     @SuppressWarnings("WeakerAccess")
     public void addDefaultStatsMsg(YamlConfiguration yml, String path, String name, String... lore) {
         if (yml.getDefaults() == null || !yml.getDefaults().contains(Messages.PLAYER_STATS_GUI_PATH + "-" + path + "-name"))
@@ -267,7 +347,10 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Create missing name/ lore for items: multi arena lobby, waiting, spectating
+     * Creates missing name/lore for items: multi-arena lobby, waiting, spectating.
+     * Adds default values to the provided language's YAML configuration.
+     *
+     * @param language the language for which the default values are to be added
      */
     public static void addDefaultMessagesCommandItems(Language language) {
         if (language == null) return;
@@ -312,7 +395,7 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Create messages paths for new shop categories
+     * Creates message paths for new shop categories and adds default messages to the corresponding YAML configuration.
      */
     @SuppressWarnings("DuplicateExpressions")
     public void setupUnSetCategories() {
@@ -344,7 +427,13 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Add required messages for a shop category to the given yml
+     * Adds required messages for a shop category to the provided YAML configuration.
+     *
+     * @param yml         the YAML configuration to which the messages are to be added
+     * @param categoryName the name of the category
+     * @param invName     the name of the inventory
+     * @param itemName    the name of the item
+     * @param itemLore    the lore of the item
      */
     public static void addCategoryMessages(YamlConfiguration yml, String categoryName, String invName, String itemName, List<String> itemLore) {
         if (yml.getDefaults() == null || !yml.getDefaults().contains(Messages.SHOP_CATEGORY_INVENTORY_NAME.replace("%category%", categoryName)))
@@ -356,7 +445,13 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Add required messages for a shop category to the given yml
+     * Adds required messages for a shop content to the provided YAML configuration.
+     *
+     * @param yml          the YAML configuration to which the messages are to be added
+     * @param contentName  the name of the content
+     * @param categoryName the name of the category
+     * @param itemName     the name of the item
+     * @param itemLore     the lore of the item
      */
     public static void addContentMessages(YamlConfiguration yml, String contentName, String categoryName, String itemName, List<String> itemLore) {
         final String path1 = Messages.SHOP_CONTENT_TIER_ITEM_NAME.replace("%category%", categoryName).replace("%content%", contentName),
@@ -366,8 +461,11 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Change a player language and refresh
-     * scoreboard and custom join items.
+     * Changes a player's language and refreshes the scoreboard and custom join items accordingly.
+     *
+     * @param uuid the UUID of the player
+     * @param iso  the ISO code for the language
+     * @return true if the language change was successful, false otherwise
      */
     public static boolean setPlayerLanguage(UUID uuid, String iso) {
 
@@ -409,6 +507,13 @@ public class Language extends ConfigManager {
         return true;
     }
 
+    /**
+     * Retrieves the countdown title for a specific language and second.
+     *
+     * @param playerLang the language of the player
+     * @param second     the countdown second
+     * @return an array of two strings representing the countdown title and subtitle
+     */
     public static String[] getCountDownTitle(Language playerLang, int second) {
         String[] result = new String[2];
         result[0] = ChatColor.translateAlternateColorCodes('&', playerLang.getYml().get(Messages.ARENA_STATUS_START_COUNTDOWN_TITLE + "-" + second, playerLang.getString(Messages.ARENA_STATUS_START_COUNTDOWN_TITLE)).toString().replace("%bw_seconds%", String.valueOf(second)));
@@ -423,14 +528,18 @@ public class Language extends ConfigManager {
     }
 
     /**
-     * Change server default language.
+     * Sets the server's default language.
+     *
+     * @param defaultLanguage the default language to be set
      */
     public static void setDefaultLanguage(Language defaultLanguage) {
         Language.defaultLanguage = defaultLanguage;
     }
 
     /**
-     * Get server default language.
+     * Retrieves the server's default language.
+     *
+     * @return the default language of the server
      */
     public static Language getDefaultLanguage() {
         return defaultLanguage;
