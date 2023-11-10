@@ -48,6 +48,9 @@ public class RedisPubSubListener extends JedisPubSub {
                         }
                     }
                     break;
+                default:
+                    BedWars.debug("Found unexpected data from redis in `" + BW_CHANNEL + "` with message: " + json);
+                    break;
             }
         }
     }
