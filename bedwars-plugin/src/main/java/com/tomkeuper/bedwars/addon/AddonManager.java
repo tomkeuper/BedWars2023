@@ -37,7 +37,7 @@ public class AddonManager implements IAddonManager {
 
     @Override
     public List<Addon> getAddonsByAuthor(String author) {
-        return registeredAddons.stream().filter(a -> a.getAuthor().equals(author)).collect(Collectors.toList());
+        return registeredAddons.stream().filter(a -> a.getAuthor().equalsIgnoreCase(author)).collect(Collectors.toList());
     }
 
     @Override
@@ -64,6 +64,7 @@ public class AddonManager implements IAddonManager {
         if (loadedAddons.isEmpty()) return;
         log("Unloading addons...");
         for (Addon addon : loadedAddons) {
+            if (unloadedAddons.contains(addon)) continue;
             String name, author;
             try{
                 name = addon.getName();
@@ -77,6 +78,8 @@ public class AddonManager implements IAddonManager {
             }
 
             log("Unloading " + name + " by " + author);
+            unloadedAddons.add(addon);
+            loadedAddons.remove(addon);
             addon.unload();
             Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
             log("Addon unloaded successfully!");
@@ -85,15 +88,23 @@ public class AddonManager implements IAddonManager {
 
     @Override
     public void loadAddons() {
-        String count = "";
-        if (registeredAddons.size() < 1) {
+        String count, message;
+
+        if (registeredAddons.isEmpty()) {
             log("No addons were found!");
             return;
         }
-        else if (registeredAddons.size() == 1) count = "addon";
-        else count = "addons";
-        log(registeredAddons.size() + " " + count + " has been found!");
+        else if (registeredAddons.size() == 1) {
+            count = "addon";
+            message = "has been found!";
+        } else {
+            count = "addons";
+            message = "were found!";
+        }
+
+        log(registeredAddons.size() + " " + count + " " + message);
         log("Loading " + registeredAddons.size() + " " + count);
+
         for (Addon addon : registeredAddons) {
             if (loadedAddons.contains(addon)) continue;
             String name, author, version;
@@ -115,6 +126,7 @@ public class AddonManager implements IAddonManager {
 
             log("Loading " + name + " by " + author +". " + "Version " + version);
             loadedAddons.add(addon);
+            unloadedAddons.remove(addon);
             addon.load();
             log(name + " addon loaded and registered successfully!");
         }
@@ -124,6 +136,7 @@ public class AddonManager implements IAddonManager {
     public void registerAddon(Addon addon){
         if (addon == null) return;
         if (registeredAddons.contains(addon)) return;
+        if (registeredAddons.stream().map(Addon::getPlugin).collect(Collectors.toList()).contains(addon.getPlugin())) return;
         registeredAddons.add(addon);
     }
 
