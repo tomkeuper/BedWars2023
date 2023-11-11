@@ -132,9 +132,14 @@ public class RedisConnection {
         if (message == null) return;
         if (message.isEmpty()) return;
 
-        //TODO: Send message to redis channel.
-
-        BedWars.debug("sending redis message: " +  message);
+        try (Jedis jedis = dataPool.getResource()) {
+            // Publish the message to the specified channel
+            BedWars.debug("sending message: " + message + " on channel: " + channel);
+            jedis.publish(channel, message);
+        } catch (Exception e) {
+            // Handle the exception
+            e.printStackTrace();
+        }
     }
 
     public void close(){
