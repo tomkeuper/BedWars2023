@@ -286,6 +286,8 @@ public class BreakPlace implements Listener {
                 case "SUGAR_CANE":
                 case "SUGAR_CANE_BLOCK":
                 case "GRASS_PATH":
+                case "BROWN_MUSHROOM":
+                case "RED_MUSHROOM":
                 case "DOUBLE_PLANT":
                     if (e.isCancelled()) {
                         e.setCancelled(false);
