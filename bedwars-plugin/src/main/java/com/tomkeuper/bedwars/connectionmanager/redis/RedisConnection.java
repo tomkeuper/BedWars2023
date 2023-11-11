@@ -1,8 +1,11 @@
 package com.tomkeuper.bedwars.connectionmanager.redis;
 
+import com.google.gson.JsonObject;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -13,7 +16,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class RedisConnection {
+public class RedisConnection implements IRedisClient {
 
     private final String channel;
     private final JedisPool dataPool;
@@ -138,6 +141,23 @@ public class RedisConnection {
             // Publish the message to the specified channel
             BedWars.debug("sending message: " + message + " on channel: " + channel);
             jedis.publish(channel, message);
+        } catch (Exception e) {
+            // Handle the exception
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendMessage(@NotNull JsonObject data, @NotNull String addonIdentifier) {
+        try (Jedis jedis = dataPool.getResource()) {
+            // Publish the message to the specified channel
+
+            JsonObject json = new JsonObject();
+            json.addProperty("addon_name", addonIdentifier); // PR = Party Remove
+            json.addProperty("addon_data", data.toString());
+
+            BedWars.debug("sending message: " + json + " on channel: " + channel);
+            jedis.publish(channel, json.toString());
         } catch (Exception e) {
             // Handle the exception
             e.printStackTrace();

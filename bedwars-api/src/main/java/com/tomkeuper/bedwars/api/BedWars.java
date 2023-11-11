@@ -25,6 +25,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.chat.IChat;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
+import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
@@ -823,5 +824,7 @@ public interface BedWars {
      * @param economyAdapter the economy adapter to set
      */
     void setEconomyAdapter(IEconomy economyAdapter);
+
+    IRedisClient getRedisClient();
 
 }

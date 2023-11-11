@@ -6,6 +6,7 @@ import com.google.gson.JsonSyntaxException;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.communication.RedisMessageEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.connectionmanager.LoadedUser;
 import org.bukkit.Bukkit;
@@ -49,7 +50,11 @@ public class RedisPubSubListener extends JedisPubSub {
                     }
                     break;
                 default:
-                    BedWars.debug("Found unexpected data from redis in `" + BW_CHANNEL + "` with message: " + json);
+                    if (json.has("addon_name")){
+                        Bukkit.getPluginManager().callEvent(new RedisMessageEvent(json.get("addon_data").getAsJsonObject(), json.get("addon_name").getAsString()));
+                    } else {
+                        BedWars.debug("Found unexpected data from redis in `" + BW_CHANNEL + "` with message: " + json);
+                    }
                     break;
             }
         }
