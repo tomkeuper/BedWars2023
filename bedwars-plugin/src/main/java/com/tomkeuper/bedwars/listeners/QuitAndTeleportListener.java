@@ -77,9 +77,9 @@ public class QuitAndTeleportListener implements Listener {
             e.setQuitMessage(null);
         }
         // Manage internal parties
-        if (getParty().isInternal()) {
-            if (getParty().hasParty(p)) {
-                getParty().removeFromParty(p);
+        if (getPartyManager().isInternal()) {
+            if (getPartyManager().hasParty(p)) {
+                getPartyManager().removeFromParty(p);
             }
         }
         // Check if was doing a setup and remove the session

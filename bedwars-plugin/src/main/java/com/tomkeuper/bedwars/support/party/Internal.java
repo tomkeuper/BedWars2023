@@ -20,9 +20,11 @@
 
 package com.tomkeuper.bedwars.support.party;
 
+import com.google.gson.JsonObject;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.party.Party;
+import com.tomkeuper.bedwars.lobbysocket.ArenaSocket;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -35,11 +37,11 @@ import java.util.List;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class Internal implements Party {
-    private static List<Internal.Party> parites = new ArrayList<>();
+    private static List<Internal.Party> parties = new ArrayList<>();
 
     @Override
     public boolean hasParty(Player p) {
-        for (Party party : getParites()) {
+        for (Party party : getParties()) {
             if (party.members.contains(p)) return true;
         }
         return false;
@@ -47,7 +49,7 @@ public class Internal implements Party {
 
     @Override
     public int partySize(Player p) {
-        for (Party party : getParites()) {
+        for (Party party : getParties()) {
             if (party.members.contains(p)) {
                 return party.members.size();
             }
@@ -57,7 +59,7 @@ public class Internal implements Party {
 
     @Override
     public boolean isOwner(Player p) {
-        for (Party party : getParites()) {
+        for (Party party : getParties()) {
             if (party.members.contains(p)) {
                 if (party.owner == p) return true;
             }
@@ -67,7 +69,7 @@ public class Internal implements Party {
 
     @Override
     public List<Player> getMembers(Player owner) {
-        for (Party party : getParites()) {
+        for (Party party : getParties()) {
             if (party.members.contains(owner)) {
                 return party.members;
             }
@@ -94,7 +96,7 @@ public class Internal implements Party {
 
     @Override
     public void removeFromParty(Player member) {
-        for (Party p : new ArrayList<>(getParites())) {
+        for (Party p : new ArrayList<>(getParties())) {
             if (p.owner == member) {
                 disband(member);
             } else if (p.members.contains(member)) {
@@ -103,9 +105,15 @@ public class Internal implements Party {
                     mem.sendMessage(getMsg(language, member, Messages.COMMAND_PARTY_LEAVE_SUCCESS).replace("%bw_playername%", member.getName()).replace("%bw_player%", member.getDisplayName()));
                 }
                 p.members.remove(member);
+
+                JsonObject json = new JsonObject();
+                json.addProperty("type", "PR"); // PR = Party Remove
+                json.addProperty("owner", member.getUniqueId().toString());
+                ArenaSocket.sendMessage(json.toString());
+
                 if (p.members.isEmpty() || p.members.size() == 1) {
                     disband(p.owner);
-                    parites.remove(p);
+                    parties.remove(p);
                 }
                 return;
             }
@@ -120,12 +128,17 @@ public class Internal implements Party {
             p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_DISBAND_SUCCESS));
         }
         pa.members.clear();
-        Internal.parites.remove(pa);
+        Internal.parties.remove(pa);
+
+        JsonObject json = new JsonObject();
+        json.addProperty("type", "PD"); // PD = Party Disband
+        json.addProperty("owner", owner.getUniqueId().toString());
+        ArenaSocket.sendMessage(json.toString());
     }
 
     @Override
     public boolean isMember(Player owner, Player check) {
-        for (Party p : parites) {
+        for (Party p : parties) {
             if (p.owner == owner) {
                 if (p.members.contains(check)) return true;
             }
@@ -145,7 +158,7 @@ public class Internal implements Party {
                 p.members.remove(owner);
                 if (p.members.isEmpty() || p.members.size() == 1) {
                     disband(p.owner);
-                    parites.remove(p);
+                    parties.remove(p);
                 }
             }
         }
@@ -153,7 +166,7 @@ public class Internal implements Party {
 
     @Override
     public Player getOwner(Player member) {
-        for (Internal.Party party: Internal.getParites()) {
+        for (Internal.Party party: Internal.getParties()) {
             if (party.members.contains(member)){
                 return party.owner;
             }
@@ -176,7 +189,7 @@ public class Internal implements Party {
 
     @Nullable
     private Party getParty(Player owner) {
-        for (Party p : getParites()) {
+        for (Party p : getParties()) {
             if (p.getOwner() == owner) return p;
         }
         return null;
@@ -184,8 +197,8 @@ public class Internal implements Party {
 
     @NotNull
     @Contract(pure = true)
-    public static List<Party> getParites() {
-        return Collections.unmodifiableList(parites);
+    public static List<Party> getParties() {
+        return Collections.unmodifiableList(parties);
     }
 
     static class Party {
@@ -195,7 +208,7 @@ public class Internal implements Party {
 
         public Party(Player p) {
             owner = p;
-            Internal.parites.add(this);
+            Internal.parties.add(this);
         }
 
         public Player getOwner() {

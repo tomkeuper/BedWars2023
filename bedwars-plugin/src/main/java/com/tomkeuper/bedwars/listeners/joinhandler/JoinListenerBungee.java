@@ -202,7 +202,7 @@ public class JoinListenerBungee implements Listener {
                         if (partyOwner != null && partyOwner.isOnline()) {
                             // If joiner is the party owner create the party
                             if (partyOwner.equals(p)) {
-                                BedWars.getParty().createParty(p);
+                                BedWars.getPartyManager().createParty(p);
 
                                 // Handle to-be-teamed-up players. A list used if some party members join before the party owner.
                                 PreLoadedParty preLoadedParty = PreLoadedParty.getPartyByOwner(partyOwner.getName());
@@ -211,7 +211,7 @@ public class JoinListenerBungee implements Listener {
                                 }
                             } else {
                                 // Add to a existing party
-                                BedWars.getParty().addMember(partyOwner, p);
+                                BedWars.getPartyManager().addMember(partyOwner, p);
                             }
                         } else {
                             // If a party member joined before the party owner create a waiting list

@@ -428,7 +428,7 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     @SuppressWarnings("unused")
     @Override
     public Party getPartyUtil() {
-        return BedWars.getParty();
+        return BedWars.getPartyManager();
     }
 
     @SuppressWarnings("unused")
@@ -479,8 +479,8 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     @Override
     public void setPartyAdapter(Party partyAdapter) throws IllegalAccessError {
         if (partyAdapter == null) return;
-        if (partyAdapter.equals(BedWars.getParty())) return;
-        BedWars.setParty(partyAdapter);
+        if (partyAdapter.equals(BedWars.getPartyManager())) return;
+        BedWars.setPartyManager(partyAdapter);
         BedWars.plugin.getLogger().log(Level.WARNING,  "One of your plugins changed the Party adapter to: " + partyAdapter.getClass().getName());
     }
 

@@ -51,9 +51,9 @@ public class TeamAssigner implements ITeamAssigner {
             // get all parties
             List<Player> members;
             for (Player player : arena.getPlayers()) {
-                if (!BedWars.getParty().isOwner(player)) continue; //prevent processing 1 party multiple times
+                if (!BedWars.getPartyManager().isOwner(player)) continue; //prevent processing 1 party multiple times
 
-                members = BedWars.getParty().getMembers(player);
+                members = BedWars.getPartyManager().getMembers(player);
                 if (members == null) continue;
                 members = new ArrayList<>(members);
 

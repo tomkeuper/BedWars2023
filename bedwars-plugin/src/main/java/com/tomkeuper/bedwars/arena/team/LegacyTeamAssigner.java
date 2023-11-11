@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.tomkeuper.bedwars.BedWars.getParty;
+import static com.tomkeuper.bedwars.BedWars.getPartyManager;
 
 public class LegacyTeamAssigner {
 
@@ -41,7 +41,7 @@ public class LegacyTeamAssigner {
         //Check who is having parties
         List<Player> skip = new ArrayList<>(), owners = new ArrayList<>();
         for (Player p : arena.getPlayers()) {
-            if (getParty().hasParty(p) && getParty().isOwner(p)) {
+            if (getPartyManager().hasParty(p) && getPartyManager().isOwner(p)) {
                 owners.add(p);
             }
         }
@@ -54,7 +54,7 @@ public class LegacyTeamAssigner {
             if (owners.contains(p)) {
                 for (ITeam t : arena.getTeams()) {
                     if (skip.contains(p)) continue;
-                    if (t.getSize() + getParty().partySize(p) <= arena.getMaxInTeam()) {
+                    if (t.getSize() + getPartyManager().partySize(p) <= arena.getMaxInTeam()) {
                         skip.add(p);
                         p.closeInventory();
                         TeamAssignEvent e = new TeamAssignEvent(p, t, arena);
@@ -62,7 +62,7 @@ public class LegacyTeamAssigner {
                         if (!e.isCancelled()) {
                             t.addPlayers(p);
                         }
-                        for (Player mem : getParty().getMembers(p)) {
+                        for (Player mem : getPartyManager().getMembers(p)) {
                             if (mem != p) {
                                 IArena ia = Arena.getArenaByPlayer(mem);
                                 if (ia == null) {
