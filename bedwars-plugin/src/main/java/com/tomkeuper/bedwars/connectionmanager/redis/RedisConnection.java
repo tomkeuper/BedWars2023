@@ -126,7 +126,9 @@ public class RedisConnection {
     }
 
     /**
+     * Send data to all subscribed redis clients.
      *
+     * @param message the message to be sent
      */
     public void sendMessage(String message) {
         if (message == null) return;
