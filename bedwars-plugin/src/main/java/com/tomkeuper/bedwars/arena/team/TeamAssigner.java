@@ -135,7 +135,8 @@ public class TeamAssigner implements ITeamAssigner {
                 minPlayers = numPlayers;
             }
 
-            if (numPlayers == 1 && (playerAmount > 2)) {
+            // Group players together if 1 player in team. Only if playerAmount > 2 and team size is not bigger than maxPlayersPerTeam
+            if (numPlayers == 1 && (playerAmount > 2) && (maxPlayersPerTeam > numPlayers)){
                 BedWars.debug("found team with 1 player (" + team.getName() + ")");
                 return team;
             }

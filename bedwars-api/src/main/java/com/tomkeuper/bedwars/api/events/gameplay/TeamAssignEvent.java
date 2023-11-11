@@ -42,7 +42,7 @@ public class TeamAssignEvent extends Event {
      * but make sure to set BedWarsTeam#setBedDestroyed(false) if teams are marked as eliminated when they are not,
      * and use BedWarsTeam#firstSpawn(p) to spawn them. But first assign them to a team BedWarsTeam#addPlayers(p).
      * <p>
-     * READ THIS: If you want to assign the player another team there's no ned of a setTeam method in this event.
+     * READ THIS: If you want to assign the player another team there's no need of a setTeam method in this event.
      * Just use {@link ITeam#addPlayers(Player...)} right after using {@link #setCancelled(boolean)}.
      */
     public TeamAssignEvent(Player player, ITeam team, IArena arena) {
