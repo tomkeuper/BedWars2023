@@ -18,7 +18,7 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.lobbysocket;
+package com.tomkeuper.bedwars.connectionmanager;
 
 import com.tomkeuper.bedwars.support.preloadedparty.PreLoadedParty;
 import org.bukkit.Bukkit;

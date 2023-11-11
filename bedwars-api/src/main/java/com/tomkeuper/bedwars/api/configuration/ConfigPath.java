@@ -65,7 +65,12 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_GAMES_BEFORE_RESTART = "bungeecord-settings.games-before-restart";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_AUTO_SCALE_LIMIT = "bungeecord-settings.auto-scale-clone-limit";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_RESTART_CMD = "bungeecord-settings.restart-cmd";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS = "bungeecord-settings.lobby-sockets";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL = "bungeecord-settings.messaging-protocol";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS = "bungeecord-settings.socket-configuration.lobby-sockets";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_HOST = "bungeecord-settings.redis-configuration.host";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_PORT = "bungeecord-settings.redis-configuration.port";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_PASSWORD = "bungeecord-settings.redis-configuration.password";
+    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_CHANNEL = "bungeecord-settings.redis-configuration.channel";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID = "bungeecord-settings.server-id";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_BWP_TIME_OUT = "bungeecord-settings.bwp-time-out";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_CLOUDNET_SUPPORT = "bungeecord-settings.cloudnet-support";

@@ -2565,6 +2565,9 @@ public class Arena implements IArena {
         moneyperMinuteTask = null;
         leaving.clear();
         fireballCooldowns.clear();
+
+        // Cleanup remote data.
+        if (BedWars.getRedisConnection() != null) BedWars.getRedisConnection().cleanupRedisEntry(this);
     }
 
     /**

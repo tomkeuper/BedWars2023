@@ -28,7 +28,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.tasks.ReJoinTask;
-import com.tomkeuper.bedwars.lobbysocket.ArenaSocket;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketConnection;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
@@ -78,7 +78,11 @@ public class ReJoin {
             json.addProperty("uuid", player.getUniqueId().toString());
             json.addProperty("arena_id", arena.getWorldName());
             json.addProperty("server", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
-            ArenaSocket.sendMessage(json.toString());
+            if (BedWars.getRedisConnection() == null){
+                SocketConnection.sendMessage(json.toString());
+            } else {
+                BedWars.getRedisConnection().sendMessage(json.toString());
+            }
         }
     }
 
@@ -162,7 +166,11 @@ public class ReJoin {
         json.addProperty("type", "RD");
         json.addProperty("uuid", player.toString());
         json.addProperty("server", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
-        ArenaSocket.sendMessage(json.toString());
+        if (BedWars.getRedisConnection() == null){
+            SocketConnection.sendMessage(json.toString());
+        } else {
+            BedWars.getRedisConnection().sendMessage(json.toString());
+        }
         if (bwt != null && destroyTeam && bwt.getMembers().isEmpty()) {
             bwt.setBedDestroyed(true);
             if (bwt != null) {

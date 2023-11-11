@@ -18,7 +18,7 @@
  * Contact e-mail: andrew.dascalu@gmail.com
  */
 
-package com.tomkeuper.bedwars.lobbysocket;
+package com.tomkeuper.bedwars.connectionmanager.socket;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -29,19 +29,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SendTask {
+public class SocketSendTask {
 
     /**
      * This is used to send data to new lobby servers to improve data sync
      */
-    public SendTask() {
+    public SocketSendTask() {
         Bukkit.getScheduler().runTaskTimer(BedWars.plugin, () -> {
             List<IArena> arenas = new ArrayList<>(Arena.getArenas());
             new BukkitRunnable() {
                 @Override
                 public void run() {
                     for (IArena a : arenas){
-                        ArenaSocket.sendMessage(ArenaSocket.formatUpdateMessage(a));
+                        SocketConnection.sendMessage(SocketConnection.formatUpdateMessage(a));
                     }
                 }
             }.runTaskAsynchronously(BedWars.plugin);

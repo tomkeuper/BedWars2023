@@ -68,9 +68,11 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.chat.ChatAFK;
 import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.listeners.joinhandler.*;
-import com.tomkeuper.bedwars.lobbysocket.ArenaSocket;
-import com.tomkeuper.bedwars.lobbysocket.LoadedUsersCleaner;
-import com.tomkeuper.bedwars.lobbysocket.SendTask;
+import com.tomkeuper.bedwars.connectionmanager.LoadedUsersCleaner;
+import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
+import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketConnection;
+import com.tomkeuper.bedwars.connectionmanager.socket.SocketSendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -156,6 +158,8 @@ public class BedWars extends JavaPlugin {
     //remote database
     private static IDatabase remoteDatabase;
 
+    private static RedisConnection redisConnection;
+
     private boolean serverSoftwareSupport = true, papiSupportLoaded = false, vaultEconomyLoaded = false, vaultChatLoaded = false;
 
     private static com.tomkeuper.bedwars.api.BedWars api;
@@ -168,7 +172,7 @@ public class BedWars extends JavaPlugin {
             Class.forName("org.spigotmc.SpigotConfig");
         } catch (Exception ignored) {
             this.getLogger().severe("I can't run on your server software. Please check:");
-            this.getLogger().severe("https://gitlab.com/tomkeuper/BedWars2023/wikis/compatibility");
+            this.getLogger().severe("https://wiki.tomkeuper.com/docs/BedWars2023/compatibility");
             serverSoftwareSupport = false;
             return;
         }
@@ -331,9 +335,24 @@ public class BedWars extends JavaPlugin {
 
         if (getServerType() == ServerType.BUNGEE) {
             if (autoscale) {
-                //registerEvents(new ArenaListeners());
-                ArenaSocket.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
-                new SendTask();
+                String messagingProtocol = config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL);
+
+                if (messagingProtocol.equalsIgnoreCase("redis")){
+                    redisConnection = new RedisConnection();
+                    registerEvents(new RedisArenaListeners(redisConnection));
+                    if (!redisConnection.connect()){
+                        getLogger().severe("Could not connect to redis server! Please check the redis configuration and make sure the redis server is running! Disabling the plugin...");
+                        setEnabled(false);
+                        return;
+                    }
+                } else if (messagingProtocol.equalsIgnoreCase("socket")){
+//                  registerEvents(new SocketArenaListeners());
+                    new SocketSendTask();
+                    SocketConnection.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
+                } else {
+                    throw new IllegalStateException("Invalid messaging protocol provided `" + messagingProtocol + "`, possible options are `redis` or `socket`!");
+                }
+
                 registerEvents(new AutoscaleListener(), new JoinListenerBungee());
                 Bukkit.getScheduler().runTaskTimerAsynchronously(this, new LoadedUsersCleaner(), 60L, 60L);
             } else {
@@ -656,7 +675,11 @@ public class BedWars extends JavaPlugin {
         addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
-            ArenaSocket.disable();
+            if (redisConnection != null){
+                redisConnection.close();
+            } else {
+                SocketConnection.disable();
+            }
         }
         for (IArena a : new LinkedList<>(Arena.getArenas())) {
             try {
@@ -806,6 +829,13 @@ public class BedWars extends JavaPlugin {
      */
     public static IDatabase getRemoteDatabase() {
         return remoteDatabase;
+    }
+
+    /**
+     * Get redis connection.
+     */
+    public static RedisConnection getRedisConnection() {
+        return redisConnection;
     }
 
     public static StatsManager getStatsManager() {

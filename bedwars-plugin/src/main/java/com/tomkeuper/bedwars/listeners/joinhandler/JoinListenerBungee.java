@@ -29,7 +29,7 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.ReJoin;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.lobbysocket.LoadedUser;
+import com.tomkeuper.bedwars.connectionmanager.LoadedUser;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import com.tomkeuper.bedwars.support.preloadedparty.PreLoadedParty;
 import org.bukkit.Bukkit;
