@@ -615,6 +615,7 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     }
 
     @SuppressWarnings("unused")
+    @Override
     public IRedisClient getRedisClient() {
         return BedWars.getRedisConnection();
     }

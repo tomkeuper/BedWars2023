@@ -825,6 +825,11 @@ public interface BedWars {
      */
     void setEconomyAdapter(IEconomy economyAdapter);
 
+    /**
+     * Get the redis communication client.
+     *
+     * @return the {@link IRedisClient} utility class
+     */
     IRedisClient getRedisClient();
 
 }
