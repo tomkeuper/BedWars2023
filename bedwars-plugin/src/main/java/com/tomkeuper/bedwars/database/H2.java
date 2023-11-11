@@ -34,7 +34,7 @@ import java.util.*;
 
 public class H2 implements IDatabase {
 
-    private String url;
+    private final String url;
 
     private Connection connection;
 
@@ -45,19 +45,7 @@ public class H2 implements IDatabase {
                 BedWars.plugin.getLogger().severe("Could not create /Cache folder!");
             }
         }
-        File dataFolder = new File(folder.getPath() + "/player_data.db");
-
-        if (!dataFolder.exists()) {
-            try {
-                if (!dataFolder.createNewFile()) {
-                    BedWars.plugin.getLogger().severe("Could not create /Cache/player_data.db file!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-        }
-        this.url = "jdbc:h2:"+ BedWars.plugin.getDataFolder().getAbsolutePath() + File.separator + dataFolder + ";TRACE_LEVEL_FILE=0";
+        this.url = "jdbc:h2:" + BedWars.plugin.getDataFolder().getAbsolutePath() + File.separator + "Cache"+ File.separator + "player_data.h2" + ";TRACE_LEVEL_FILE=0";
         try {
             Class.forName("com.tomkeuper.bedwars.libs.h2.Driver");
             DriverManager.getConnection(url);
