@@ -82,7 +82,9 @@ public class AddonManager implements IAddonManager {
             unloadedAddons.add(addon);
             loadedAddonsToRemove.add(addon);
             addon.unload();
-            Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
+            if (Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin())) {
+                Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
+            }
             log("Addon unloaded successfully!");
         }
 
