@@ -46,4 +46,8 @@ public class RedisMessageEvent extends Event {
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+
+    public HandlerList getHandlerList() {
+        return HANDLERS;
+    }
 }
