@@ -122,11 +122,11 @@ public class JoinNPC {
             ArmorStand a = createArmorStand(l.clone().add(0, 0.05, 0));
             a.setMarker(false);
             a.setCustomNameVisible(true);
-            a.setCustomName(ChatColor.translateAlternateColorCodes('&', nume[0]).replace("{players}", String.valueOf(Arena.getPlayers(group))));
+            a.setCustomName(ChatColor.translateAlternateColorCodes('&', nume[0]).replace("%bw_players%", String.valueOf(Arena.getPlayers(group))));
             npcs.put(npc.getId(), group);
             ArmorStand a2 = createArmorStand(l.clone().subtract(0, 0.25, 0));
             a2.setMarker(false);
-            a2.setCustomName(ChatColor.translateAlternateColorCodes('&', nume[1].replace("{players}", String.valueOf(Arena.getPlayers(group)))));
+            a2.setCustomName(ChatColor.translateAlternateColorCodes('&', nume[1].replace("%bw_players%", String.valueOf(Arena.getPlayers(group)))));
             a2.setCustomNameVisible(true);
             npcs_holos.put(a, Arrays.asList(group, nume[0]));
             npcs_holos.put(a2, Arrays.asList(group, nume[1]));
@@ -134,7 +134,7 @@ public class JoinNPC {
             npcs.put(npc.getId(), group);
             ArmorStand a2 = createArmorStand(l.clone().subtract(0, 0.25, 0));
             a2.setMarker(false);
-            a2.setCustomName(ChatColor.translateAlternateColorCodes('&', nume[0]).replace("{players}", String.valueOf(Arena.getPlayers(group))));
+            a2.setCustomName(ChatColor.translateAlternateColorCodes('&', nume[0]).replace("%bw_players%", String.valueOf(Arena.getPlayers(group))));
             a2.setCustomNameVisible(true);
             npcs_holos.put(a2, Arrays.asList(group, nume[0]));
         }
@@ -188,7 +188,7 @@ public class JoinNPC {
             if (e.getValue().get(0).equalsIgnoreCase(group)) {
                 if (e.getKey() != null) {
                     if (!e.getKey().isDead()) {
-                        e.getKey().setCustomName(ChatColor.translateAlternateColorCodes('&', e.getValue().get(1).replace("{players}", x)));
+                        e.getKey().setCustomName(ChatColor.translateAlternateColorCodes('&', e.getValue().get(1).replace("%bw_players%", x)));
                     }
                 }
 
