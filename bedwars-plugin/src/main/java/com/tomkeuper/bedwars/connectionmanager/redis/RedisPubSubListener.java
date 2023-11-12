@@ -1,5 +1,6 @@
 package com.tomkeuper.bedwars.connectionmanager.redis;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
@@ -49,12 +50,27 @@ public class RedisPubSubListener extends JedisPubSub {
                         }
                     }
                     break;
-                default:
-                    if (json.has("addon_name")){
-                        Bukkit.getPluginManager().callEvent(new RedisMessageEvent(json.get("addon_data").getAsJsonObject(), json.get("addon_name").getAsString()));
-                    } else {
-                        BedWars.debug("Found unexpected data from redis in `" + BW_CHANNEL + "` with message: " + json);
+                case "AM":
+                    // Addon Message
+                    if (!json.has("addon_name") || !json.has("addon_data")) {
+                        break;
                     }
+
+                    BedWars.debug("Calling RedisMessageEvent");
+                    JsonElement addonDataElement = json.get("addon_data");
+
+                    if (addonDataElement.isJsonPrimitive()) {
+                        // Assuming addon_data is a string representation of a JSON object
+                        String addonDataString = addonDataElement.getAsString();
+                        JsonObject addonDataObject = new JsonParser().parse(addonDataString).getAsJsonObject();
+                        Bukkit.getPluginManager().callEvent(new RedisMessageEvent(addonDataObject, json.get("addon_name").getAsString()));
+                    } else {
+                        // Handle other types if necessary
+                        BedWars.debug("Unexpected type for 'addon_data': " + addonDataElement.getClass().getSimpleName());
+                    }
+                    break;
+                default:
+                    BedWars.debug("Found unexpected data from redis in `" + BW_CHANNEL + "` with message: " + json);
                     break;
             }
         }

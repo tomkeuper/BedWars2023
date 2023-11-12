@@ -153,6 +153,7 @@ public class RedisConnection implements IRedisClient {
             // Publish the message to the specified channel
 
             JsonObject json = new JsonObject();
+            json.addProperty("type", "AM");
             json.addProperty("addon_name", addonIdentifier); // PR = Party Remove
             json.addProperty("addon_data", data.toString());
 
