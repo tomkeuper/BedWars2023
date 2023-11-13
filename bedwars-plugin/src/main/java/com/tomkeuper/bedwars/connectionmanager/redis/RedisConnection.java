@@ -167,6 +167,7 @@ public class RedisConnection implements IRedisClient {
 
     public void close(){
         BedWars.debug("Closing redis connections...");
+        cleanupRedisEntries();
         redisPubSubListener.unsubscribe();
         dataPool.close();
     }
