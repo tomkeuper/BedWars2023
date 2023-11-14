@@ -212,7 +212,7 @@ public class BoardManager implements IScoreboardService {
         placeholderManager.registerPlayerPlaceholder("%bw_team_letter%", placeholderRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
-            return null == arena ? "" : null == arena.getTeam(player) ? "" :  arena.getTeam(player).getColor().chat() + (arena.getTeam(player).getDisplayName(Language.getPlayerLanguage(player)).substring(0, 1));
+            return null == arena ? "" : null == arena.getTeam(player) ? "" :  (arena.getTeam(player).getDisplayName(Language.getPlayerLanguage(player)).substring(0, 1));
         });
         placeholderManager.registerPlayerPlaceholder("%bw_team_color%", placeholderRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
