@@ -3,6 +3,7 @@ package com.tomkeuper.bedwars.sidebar;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
@@ -270,6 +271,13 @@ public class BoardManager implements IScoreboardService {
             }
             return null ==  line? "" : line;
         });
+
+        // register arena placeholders
+        PlaceholderManager pm = TabAPI.getInstance().getPlaceholderManager();
+        for (int i = 1; i <= 32; i++) {
+            int finalI = i;
+            pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI));
+        }
     }
 
     public static BoardManager getInstance() {
@@ -351,6 +359,62 @@ public class BoardManager implements IScoreboardService {
             }
 
         }, delay ? 5 : 0);
+    }
+
+    /**
+     * Get the Placeholder string for a given team
+     *
+     * @param player Target player for localization
+     * @param teamNumber number of team in array
+     * @return formatted placeholder string with status. Can be NULL if no arena is found
+     */
+    private String getTeamPlaceholder(Player player, int teamNumber){
+        Arena arena = (Arena) Arena.getArenaByPlayer(player);
+        if (arena == null) return null;
+        Language language = Language.getPlayerLanguage(player);
+        String genericTeamFormat = language.m(Messages.FORMATTING_SCOREBOARD_TEAM_GENERIC);
+        ITeam team;
+        try {
+            team = arena.getTeams().get(teamNumber-1);
+        } catch (IndexOutOfBoundsException ignored){
+            return null;
+        }
+        String teamName = team.getDisplayName(language);
+        if (arena.getTeams().size() >= teamNumber) {
+            return genericTeamFormat
+                    .replace("%bw_team_letter%", String.valueOf(teamName.length() != 0 ? teamName.charAt(0) : ""))
+                    .replace("%bw_team_color%", team.getColor().chat().toString())
+                    .replace("%bw_team_name%", teamName)
+                    .replace("%bw_team_status%", getTeamStatus(team, player));
+        } else {
+            // skip line
+            return null;
+        }
+    }
+
+    /**
+     * Get the current status of a team. Alive/Dead/Num of players alive.
+     *
+     * @param currentTeam Target team to process
+     * @param player Target player for localization
+     * @return team status string
+     */
+    private String getTeamStatus(ITeam currentTeam, Player player){
+        String result;
+        if (currentTeam.isBedDestroyed()) {
+            if (currentTeam.getSize() > 0) {
+                result = getMsg(player, Messages.FORMATTING_SCOREBOARD_BED_DESTROYED)
+                        .replace("%bw_players_remaining%", String.valueOf(currentTeam.getSize()));
+            } else {
+                result = getMsg(player, Messages.FORMATTING_SCOREBOARD_TEAM_ELIMINATED);
+            }
+        } else {
+            result = getMsg(player, Messages.FORMATTING_SCOREBOARD_TEAM_ALIVE);
+        }
+        if (currentTeam.isMember(player)) {
+            result += getMsg(player, Messages.FORMATTING_SCOREBOARD_YOUR_TEAM);
+        }
+        return result;
     }
 
     @Override

@@ -128,7 +128,6 @@ public class Arena implements IArena {
     private List<String> nextEvents = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
-    private List<PlayerPlaceholder> playerPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
     private int renderDistance;
 
@@ -410,13 +409,6 @@ public class Arena implements IArena {
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(new File("spigot.yml"));
         renderDistance = yaml.get("world-settings." + getWorldName() + ".entity-tracking-range.players") == null ?
                 yaml.getInt("world-settings.default.entity-tracking-range.players") : yaml.getInt("world-settings." + getWorldName() + ".entity-tracking-range.players");
-
-        // register arena placeholders
-        PlaceholderManager pm = TabAPI.getInstance().getPlaceholderManager();
-        for (int i = 1; i <= teams.size(); i++) {
-            int finalI = i;
-            playerPlaceholders.add(pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI)));
-        }
 
         //register scoreboards
         BoardManager.getInstance().registerArenaScoreboards(this);
@@ -1359,62 +1351,6 @@ public class Arena implements IArena {
     @Override
     public int getMaxPlayers() {
         return maxPlayers;
-    }
-
-    /**
-     * Get the Placeholder string for a given team
-     *
-     * @param player Target player for localization
-     * @param teamNumber number of team in array
-     * @return formatted placeholder string with status. Can be NULL if no arena is found
-     */
-    private String getTeamPlaceholder(Player player, int teamNumber){
-        Arena arena = (Arena) Arena.getArenaByPlayer(player);
-        if (arena == null) return null;
-        Language language = Language.getPlayerLanguage(player);
-        String genericTeamFormat = language.m(Messages.FORMATTING_SCOREBOARD_TEAM_GENERIC);
-        ITeam team;
-        try {
-            team = arena.getTeams().get(teamNumber-1);
-        } catch (IndexOutOfBoundsException ignored){
-            return null;
-        }
-        String teamName = team.getDisplayName(language);
-        if (arena.getTeams().size() >= teamNumber) {
-            return genericTeamFormat
-                    .replace("%bw_team_letter%", String.valueOf(teamName.length() != 0 ? teamName.charAt(0) : ""))
-                    .replace("%bw_team_color%", team.getColor().chat().toString())
-                    .replace("%bw_team_name%", teamName)
-                    .replace("%bw_team_status%", getTeamStatus(team, player));
-        } else {
-            // skip line
-            return null;
-        }
-    }
-
-    /**
-     * Get the current status of a team. Alive/Dead/Num of players alive.
-     *
-     * @param currentTeam Target team to process
-     * @param player Target player for localization
-     * @return team status string
-     */
-    private String getTeamStatus(ITeam currentTeam, Player player){
-        String result;
-        if (currentTeam.isBedDestroyed()) {
-            if (currentTeam.getSize() > 0) {
-                result = getMsg(player, Messages.FORMATTING_SCOREBOARD_BED_DESTROYED)
-                        .replace("%bw_players_remaining%", String.valueOf(currentTeam.getSize()));
-            } else {
-                result = getMsg(player, Messages.FORMATTING_SCOREBOARD_TEAM_ELIMINATED);
-            }
-        } else {
-            result = getMsg(player, Messages.FORMATTING_SCOREBOARD_TEAM_ALIVE);
-        }
-        if (currentTeam.isMember(player)) {
-            result += getMsg(player, Messages.FORMATTING_SCOREBOARD_YOUR_TEAM);
-        }
-        return result;
     }
 
     /**
@@ -2521,9 +2457,6 @@ public class Arena implements IArena {
         for (ServerPlaceholder placeholder : serverPlaceholders){
             TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
         }
-        for (PlayerPlaceholder placeholder : playerPlaceholders){
-            TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
-        }
         if (TabAPI.getInstance().getBossBarManager() != null){
             for (BossBar bossBar : dragonBossbars){
                 bossBar.getPlayers().forEach(bossBar::removePlayer);
@@ -2870,7 +2803,7 @@ public class Arena implements IArena {
         for (Player player : team.getArena().getPlayers()){
             String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
             BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar( name, dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
-            bb.addPlayer(TabAPI.getInstance().getPlayer(player.getUniqueId()));
+            bb.addPlayer(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
             dragonBossbars.add(bb);
         }
     }
