@@ -513,7 +513,7 @@ public class BreakPlace implements Listener {
         IArena a = Arena.getArenaByIdentifier(e.getLocation().getWorld().getName());
         if (a != null) {
             if (a.getStatus() == GameState.playing) {
-                e.blockList().removeIf((b) -> blastProtection.isProtected(a, e.getLocation(), b, 0.3));
+                e.blockList().removeIf((b) -> blastProtection.isProtected(a, e.getLocation(), e.getEntity(), b, 0.3));
                 return;
             }
         }
@@ -528,7 +528,7 @@ public class BreakPlace implements Listener {
         IArena a = Arena.getArenaByIdentifier(e.blockList().get(0).getWorld().getName());
         if (a != null) {
             if (a.getNextEvent() != NextEvent.GAME_END) {
-                e.blockList().removeIf((b) -> blastProtection.isProtected(a, e.getBlock().getLocation(), b, 0.3));
+                e.blockList().removeIf((b) -> blastProtection.isProtected(a, e.getBlock().getLocation(), null, b, 0.3));
             }
         }
     }

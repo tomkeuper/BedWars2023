@@ -4,11 +4,15 @@ import com.tomkeuper.bedwars.api.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,13 +42,16 @@ public class BlastProtectionUtil {
      * @param step  how frequent to check the ray (0.25 - 0.5 recommended).
      * @return whether there's unbreakable block between the pov and the block
      */
-    public boolean isProtected(@NotNull IArena arena, Location pov, @NotNull Block block, double step) {
+    public boolean isProtected(@NotNull IArena arena, Location pov, @Nullable Entity explodedEntity, @NotNull Block block, double step) {
 
         if (arena.isProtected(block.getLocation()) || arena.isTeamBed(block.getLocation())) {
             return true;
         }
 
         boolean rayBlockedByGlass = api.getConfigs().getMainConfig().getBoolean(ConfigPath.GENERAL_TNT_RAY_BLOCKED_BY_GLASS);
+
+        // Check if the explodedEntity is FireBall
+        boolean isFireBallExplosion = explodedEntity != null && explodedEntity.getType() == EntityType.FIREBALL;
 
         // Trace blocks from pov to the block location
         final Location target = block.getLocation();
@@ -53,11 +60,11 @@ public class BlastProtectionUtil {
 
         double alteredRayStep = 0.73;
         // x
-        for (double XrayRadius = alteredRayStep * -1; XrayRadius <= alteredRayStep; XrayRadius+= alteredRayStep) {
+        for (double XrayRadius = alteredRayStep * -1; XrayRadius <= alteredRayStep; XrayRadius += alteredRayStep) {
             // y
-            for (double YrayRadius = alteredRayStep * -1; YrayRadius <= alteredRayStep; YrayRadius+= alteredRayStep) {
+            for (double YrayRadius = alteredRayStep * -1; YrayRadius <= alteredRayStep; YrayRadius += alteredRayStep) {
                 // z
-                for (double ZrayRadius = alteredRayStep * -1; ZrayRadius <= alteredRayStep; ZrayRadius+= alteredRayStep) {
+                for (double ZrayRadius = alteredRayStep * -1; ZrayRadius <= alteredRayStep; ZrayRadius += alteredRayStep) {
                     targetVectors.add(pov.clone().toVector().toBlockVector().add(new Vector(XrayRadius, YrayRadius, ZrayRadius)));
                 }
             }
@@ -83,6 +90,12 @@ public class BlastProtectionUtil {
 
                 if (rayBlockedByGlass && versionSupport.isGlass(nextBlock.getType())) {
                     // If a block is a glass
+                    protectedTimes.getAndIncrement();
+                    return;
+                }
+
+                if (isFireBallExplosion && nextBlock.getType() == Material.END_STONE) {
+                    // If a block is an end stone
                     protectedTimes.getAndIncrement();
                     return;
                 }
