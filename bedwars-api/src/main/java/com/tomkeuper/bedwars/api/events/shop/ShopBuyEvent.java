@@ -21,15 +21,13 @@
 package com.tomkeuper.bedwars.api.events.shop;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
+import com.tomkeuper.bedwars.api.shop.IShopCache;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Represents an event triggered when a player buys items from the shop.
@@ -41,7 +39,7 @@ public class ShopBuyEvent extends Event implements Cancellable {
     private final Player buyer;
     private final IArena arena;
     private final ICategoryContent categoryContent;
-    private List<IBuyItem> itemList;
+    private IShopCache shopCache;
     private boolean cancelled = false;
 
     /**
@@ -50,14 +48,13 @@ public class ShopBuyEvent extends Event implements Cancellable {
      * @param buyer            The player who made the purchase.
      * @param arena            The arena where the purchase occurred.
      * @param categoryContent  The category content from the shop where the purchase was made.
-     * @param itemList         The list of items bought by the player.
-     * @param slot             The slot in the shop where the purchase was made.
+     * @param shopCache         The cache that contains the items bought by the player.
      */
-    public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent, List<IBuyItem> itemList) {
+    public ShopBuyEvent(Player buyer, IArena arena, ICategoryContent categoryContent, IShopCache shopCache) {
         this.categoryContent = categoryContent;
         this.buyer = buyer;
         this.arena = arena;
-        this.itemList = itemList;
+        this.shopCache = shopCache;
     }
 
     /**
@@ -92,17 +89,17 @@ public class ShopBuyEvent extends Event implements Cancellable {
      *
      * @return The list of items.
      */
-    public List<IBuyItem> getItemList() {
-        return itemList;
+    public IShopCache getShopCache() {
+        return shopCache;
     }
 
     /**
-     * Sets the list of items bought by the player.
+     * Sets the shop cache for the player
      *
-     * @param itemList The list of items.
+     * @param shopCache The complete shop cache.
      */
-    public void setItemList(List<IBuyItem> itemList) {
-        this.itemList = itemList;
+    public void setShopCache(IShopCache shopCache) {
+        this.shopCache = shopCache;
     }
 
     @Override
