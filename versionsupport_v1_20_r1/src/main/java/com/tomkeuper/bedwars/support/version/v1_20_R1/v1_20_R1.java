@@ -504,6 +504,11 @@ public class v1_20_R1 extends VersionSupport {
     }
 
     @Override
+    public org.bukkit.Material materialEndStone() {
+        return Material.END_STONE;
+    }
+
+    @Override
     public org.bukkit.Material woolMaterial() {
         return org.bukkit.Material.WHITE_WOOL;
     }

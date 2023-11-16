@@ -94,7 +94,7 @@ public class BlastProtectionUtil {
                     return;
                 }
 
-                if (isFireBallExplosion && nextBlock.getType() == Material.END_STONE) {
+                if (isFireBallExplosion && nextBlock.getType() == versionSupport.materialEndStone()) {
                     // If a block is an end stone
                     protectedTimes.getAndIncrement();
                     return;

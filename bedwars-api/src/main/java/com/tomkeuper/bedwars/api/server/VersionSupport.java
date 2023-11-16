@@ -344,6 +344,8 @@ public abstract class VersionSupport {
      */
     public abstract Material materialEnchantingTable();
 
+    public abstract Material materialEndStone();
+
     /**
      * Check if bed
      */
