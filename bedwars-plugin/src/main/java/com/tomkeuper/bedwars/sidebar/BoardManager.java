@@ -298,8 +298,12 @@ public class BoardManager implements IScoreboardService {
 
             TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
 
-            if (nameTagManager == null || tabPlayer == null) {
-                BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player");
+            if (nameTagManager == null) {
+                BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player, TAB nameTagManager is null!");
+                return;
+            }
+            if (tabPlayer == null){
+                BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player, TAB tabPlayer is null!");
                 return;
             }
 
