@@ -52,6 +52,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
@@ -443,6 +444,11 @@ public class DamageDeathMove implements Listener {
 
             // handle drops
             if (PlayerDrops.handlePlayerDrops(a, victim, killer, victimsTeam, killersTeam, cause, e.getDrops())) {
+                e.getDrops().clear();
+            } else {
+                for (ItemStack inventoryItem: e.getDrops()) {
+                    e.getEntity().getLocation().getWorld().dropItemNaturally(e.getEntity().getLocation(), inventoryItem);
+                }
                 e.getDrops().clear();
             }
 
