@@ -33,7 +33,6 @@ import com.tomkeuper.bedwars.arena.VoidChunkGenerator;
 import com.tomkeuper.bedwars.maprestore.internal.files.WorldZipper;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.*;
-import org.bukkit.entity.Item;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -45,6 +44,7 @@ import java.util.Objects;
 import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.BedWars.plugin;
 
+@SuppressWarnings("CallToPrintStackTrace")
 public class InternalAdapter extends RestoreAdapter {
 
     public static File backupFolder = new File(BedWars.plugin.getDataFolder() + "/Cache");
@@ -187,35 +187,6 @@ public class InternalAdapter extends RestoreAdapter {
     }
 
     @Override
-    public void onLobbyRemoval(IArena a) {
-        Location loc1 = a.getConfig().getArenaLoc(ConfigPath.ARENA_WAITING_POS1),
-                loc2 = a.getConfig().getArenaLoc(ConfigPath.ARENA_WAITING_POS2);
-        if (loc1 == null || loc2 == null) return;
-        Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
-            int minX, minY, minZ;
-            int maxX, maxY, maxZ;
-            minX = Math.min(loc1.getBlockX(), loc2.getBlockX());
-            maxX = Math.max(loc1.getBlockX(), loc2.getBlockX());
-            minY = Math.min(loc1.getBlockY(), loc2.getBlockY());
-            maxY = Math.max(loc1.getBlockY(), loc2.getBlockY());
-            minZ = Math.min(loc1.getBlockZ(), loc2.getBlockZ());
-            maxZ = Math.max(loc1.getBlockZ(), loc2.getBlockZ());
-
-            for (int x = minX; x < maxX; x++) {
-                for (int y = minY; y < maxY; y++) {
-                    for (int z = minZ; z < maxZ; z++) {
-                        loc1.getWorld().getBlockAt(x, y, z).setType(Material.AIR);
-                    }
-                }
-            }
-            Bukkit.getScheduler().runTaskLater(plugin, () ->
-                    loc1.getWorld().getEntities().forEach(e -> {
-                        if (e instanceof Item) e.remove();
-                    }), 15L);
-        });
-    }
-
-    @Override
     public boolean isWorld(String name) {
         return new File(Bukkit.getWorldContainer(), name + "/region").exists();
     }
@@ -322,6 +293,11 @@ public class InternalAdapter extends RestoreAdapter {
         });
     }
 
+    @Override
+    public String getDisplayName() {
+        return "Internal Restore Adapter";
+    }
+
     private void deleteWorldTrash(String world) {
         for (File f : new File[]{new File(Bukkit.getWorldContainer(), world + "/level.dat"),
                 new File(Bukkit.getWorldContainer(), world + "/level.dat_mcr"),
@@ -335,10 +311,5 @@ public class InternalAdapter extends RestoreAdapter {
                 }
             }
         }
-    }
-
-    @Override
-    public String getDisplayName() {
-        return "Internal Restore Adapter";
     }
 }
