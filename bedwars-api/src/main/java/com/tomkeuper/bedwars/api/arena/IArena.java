@@ -180,14 +180,6 @@ public interface IArena {
     int getMaxInTeam();
 
     /**
-     * Get the registered scoreboard name.
-     *
-     * @return The name of the registered scoreboard.
-     */
-    @SuppressWarnings("unused")
-    String getScoreboardName();
-
-    /**
      * Get a map of players in the respawn screen and their remaining time.
      * The map key is the player in the respawn screen, and the value is the remaining time.
      *
