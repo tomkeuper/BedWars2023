@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -415,7 +416,7 @@ public class PAPISupport extends PlaceholderExpansion {
     }
 
     private String getSpectatorLetter(Language lang) {
-        String letter = lang.m("format-papi-player-spectator-letter");
+        String letter = lang.m(ConfigPath.FORMAT_PAPI_PLAYER_TEAM_SPECTATOR+"-letter");
         return letter.equals("MISSING_LANG") ? "S" : letter;
     }
     
