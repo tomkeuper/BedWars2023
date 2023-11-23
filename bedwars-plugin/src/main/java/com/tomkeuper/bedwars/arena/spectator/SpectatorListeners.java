@@ -75,9 +75,9 @@ public class SpectatorListeners implements Listener {
     public void onSpectatorBlockInteract(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null) return;
         if (!BedWars.getAPI().getArenaUtil().isSpectating(e.getPlayer())) return;
-        if (e.getClickedBlock().getType().toString().contains("DOOR"))
-        // Disable spectator interact
-            e.setCancelled(true);
+
+        // Disable spectator interact with any entity
+        e.setCancelled(true);
     }
 
     @EventHandler
