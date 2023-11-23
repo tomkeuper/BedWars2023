@@ -1441,8 +1441,10 @@ public class Arena implements IArena {
     }
 
     //SETTER METHODS
+    @Override
     public void setGroup(String group) {
         this.group = group;
+        BoardManager.getInstance().registerArenaScoreboards(this);
     }
 
     public static void setArenaByPlayer(Player p, IArena arena) {
