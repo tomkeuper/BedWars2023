@@ -21,7 +21,6 @@
 package com.tomkeuper.bedwars.api.command;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 

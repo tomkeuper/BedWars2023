@@ -28,7 +28,6 @@ import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.stats.PlayerStats;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 

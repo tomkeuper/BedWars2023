@@ -55,9 +55,7 @@ public class PlayerEffectAction implements UpgradeAction {
             bwt.addBaseEffect(potionEffectType, amplifier, duration);
         } else if (type == ApplyType.TEAM){
             bwt.addTeamEffect(potionEffectType, amplifier, duration);
-        }/* else if (type == ApplyType.ENEMY_BASE_ENTER){
-            bwt.addEnemyBaseEnterEffect(potionEffectType, amplifier, duration);
-        }*/
+        }
     }
 
     public enum ApplyType {

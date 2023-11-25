@@ -70,7 +70,6 @@ import com.tomkeuper.bedwars.support.vault.WithEconomy;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
-import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.placeholder.PlayerPlaceholder;
 import me.neznamy.tab.api.placeholder.ServerPlaceholder;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -2116,44 +2115,8 @@ public class Arena implements IArena {
             setNextEvent(NextEvent.GAME_END);
         }
 
-        //if (nextEvent.getValue(this) > 0) return;
-
-        //nextEvents.remove(nextEvent.toString());
-
-        //for (String s : nextEvents) {
-        //    debug(s);
-        //}
-
-        //if (nextEvents.isEmpty()) return;
-
-        //NextEvent next = NextEvent.valueOf(nextEvents.get(0));
-        //int lowest = next.getValue(this);
-
-        //for (String ne : nextEvents) {
-        //    int value = NextEvent.valueOf(ne).getValue(this);
-        //    if (value == -1) continue;
-        //    if (lowest > value) next = NextEvent.valueOf(ne);
-        //}
-
         debug("---");
 
-    /*if (nextEvent == NextEvent.DIAMOND_GENERATOR_TIER_II) {
-        setNextEvent(NextEvent.DIAMOND_GENERATOR_TIER_III);
-    } else if (nextEvent == NextEvent.DIAMOND_GENERATOR_TIER_III) {
-        if (emeraldTier == 1) {
-            setNextEvent(NextEvent.EMERALD_GENERATOR_TIER_II);
-        } else if (emeraldTier == 2) {
-            setNextEvent(NextEvent.EMERALD_GENERATOR_TIER_III);
-        } else {
-            setNextEvent(NextEvent.BEDS_DESTROY);
-        }
-    } else if (emeraldTier >= 3 && diamondTier >= 3 && (playingTask != null && playingTask.getBedsDestroyCountdown() == 0)) {
-        setNextEvent(NextEvent.BEDS_DESTROY);
-    } else if (nextEvent == NextEvent.BEDS_DESTROY && (playingTask != null && playingTask.getDragonSpawnCountdown() >= 0)) {
-        setNextEvent(NextEvent.ENDER_DRAGON);
-    } else if (nextEvent == NextEvent.ENDER_DRAGON && (playingTask != null && playingTask.getBedsDestroyCountdown() == 0) && (playingTask != null && playingTask.getDragonSpawnCountdown() == 0)) {
-        setNextEvent(NextEvent.GAME_END);
-    }*/
         debug(nextEvent.toString());
     }
 

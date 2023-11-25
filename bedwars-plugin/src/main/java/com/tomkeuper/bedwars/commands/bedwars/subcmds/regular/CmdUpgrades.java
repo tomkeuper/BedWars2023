@@ -26,7 +26,6 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.command.SubCommand;
 import com.tomkeuper.bedwars.arena.Arena;
-import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

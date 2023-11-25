@@ -29,9 +29,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class PlayerEffectAction implements TrapAction {
 
-    private PotionEffectType potionEffectType;
-    private int amplifier, duration;
-    private ApplyType type;
+    private final PotionEffectType potionEffectType;
+    private final int amplifier;
+    private int duration;
+    private final ApplyType type;
 
     public PlayerEffectAction(PotionEffectType potionEffectType, int amplifier, int duration, ApplyType type){
         this.potionEffectType = potionEffectType;
@@ -39,9 +40,6 @@ public class PlayerEffectAction implements TrapAction {
         this.type = type;
         this.duration = duration;
         if (duration < 0 ) this.duration *= -1;
-        /*if (type == ApplyType.ENEMY_BASE_ENTER && duration <= 0){
-            this.duration = 20;
-        }*/
         if (duration == 0){
             this.duration = Integer.MAX_VALUE;
         } else {

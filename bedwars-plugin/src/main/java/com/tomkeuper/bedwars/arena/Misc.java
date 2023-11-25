@@ -163,19 +163,6 @@ public class Misc {
         return text.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
     }
 
-    /*public static void checkLobbyServer() {
-        if (spigot.getBoolean("settings.bungeecord")) {
-            ByteArrayDataOutput out = ByteStreams.newDataOutput();
-            out.writeUTF("GetServers");
-            plugin.getServer().sendPluginMessage(plugin, "BungeeCord", out.toByteArray());
-            debug("Requesting bungee servers.");
-        } else {
-            if (getServerType() == ServerType.BUNGEE) {
-                plugin.getLogger().severe("Please set bungeecord to true in spigot.yml");
-            }
-        }
-    }*/
-
     /**
      * Create an item stack
      *

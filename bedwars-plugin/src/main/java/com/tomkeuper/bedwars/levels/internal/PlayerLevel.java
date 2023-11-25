@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("WeakerAccess")
 public class PlayerLevel {
 
-    private UUID uuid;
+    private final UUID uuid;
     private int level;
     private int nextLevelCost;
     private String levelName;
@@ -64,8 +64,6 @@ public class PlayerLevel {
         this.level = level;
         this.currentXp = currentXp;
         updateProgressBar();
-        //requiredXp = nextLevelCost >= 1000 ? nextLevelCost % 1000 == 0 ? nextLevelCost / 1000 + "k" : (double) nextLevelCost / 1000 + "k" : String.valueOf(nextLevelCost);
-        //formattedCurrentXp = currentXp >= 1000 ? currentXp % 1000 == 0 ? currentXp / 1000 + "k" : (double) currentXp / 1000 + "k" : String.valueOf(currentXp);
         if (!levelByPlayer.containsKey(player)) levelByPlayer.put(player, this);
     }
 
@@ -251,8 +249,6 @@ public class PlayerLevel {
      */
     public void destroy() {
         levelByPlayer.remove(uuid);
-        //BedWars.getRemoteDatabase().setLevelData(uuid, level, currentXp, LevelsConfig.levels.getYml().get("levels." + level + ".name") == null ?
-        //        LevelsConfig.levels.getYml().getString("levels.others.name") : LevelsConfig.levels.getYml().getString("levels." + level + ".name"), nextLevelCost);
         updateDatabase();
     }
 

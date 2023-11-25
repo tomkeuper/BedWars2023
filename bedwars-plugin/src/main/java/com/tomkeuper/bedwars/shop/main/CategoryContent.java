@@ -180,8 +180,6 @@ public class CategoryContent implements ICategoryContent {
             return;
         }
 
-        List<IBuyItem> itemList = contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1).getBuyItemsList();
-
         ShopBuyEvent event;
         //call shop buy event
         Bukkit.getPluginManager().callEvent(event = new ShopBuyEvent(player, Arena.getArenaByPlayer(player), this, shopCache));
