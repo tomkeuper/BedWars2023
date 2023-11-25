@@ -36,7 +36,6 @@ import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.scoreboard.Team;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
@@ -378,6 +377,22 @@ public abstract class VersionSupport {
      * Wool material
      */
     public abstract Material woolMaterial();
+
+    /**
+     * Red glass pane item stack
+     *
+     * @return the itemStack
+     * @param amount the amount of the stack
+     */
+    public abstract ItemStack redGlassPane(int amount);
+
+    /**
+     * Green glass pane item stack
+     *
+     * @return the itemStack
+     * @param amount the amount of the stack
+     */
+    public abstract ItemStack greenGlassPane(int amount);
 
     /**
      * Get an ItemStack identifier

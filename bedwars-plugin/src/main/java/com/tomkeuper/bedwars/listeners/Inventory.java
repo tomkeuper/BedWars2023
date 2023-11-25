@@ -29,7 +29,9 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.SetupType;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.arena.SetupSession;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.CmdLeave;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -246,6 +248,31 @@ public class Inventory implements Listener {
                 }
                 slotNum++;
             }
+        }
+    }
+
+    /**
+     * Manage click events for leave GUI
+     */
+    @EventHandler
+    public void onLeaveWithPartyClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        if (!(player.getOpenInventory().getTopInventory().getHolder() instanceof CmdLeave.LeaveGuiHolder)) return;
+
+        event.setCancelled(true);
+
+        ItemStack item = event.getCurrentItem();
+        if (item == null) return;
+        if (item.getType() == Material.AIR) return;
+        if (!BedWars.nms.isCustomBedWarsItem(item)) return;
+
+        String data = BedWars.nms.getCustomData(item);
+
+        if (data.startsWith("LEAVE")) {
+            IArena arena = Arena.getArenaByPlayer(player);
+            Misc.moveToLobbyOrKick(player, arena, arena.isSpectator(player.getUniqueId()));
+        } else if (data.startsWith("STAY")) {
+            player.closeInventory();
         }
     }
 

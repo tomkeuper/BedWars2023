@@ -514,6 +514,16 @@ public class v1_20_R1 extends VersionSupport {
     }
 
     @Override
+    public org.bukkit.inventory.ItemStack redGlassPane(int amount) {
+        return new org.bukkit.inventory.ItemStack(Material.RED_STAINED_GLASS_PANE, amount);
+    }
+
+    @Override
+    public org.bukkit.inventory.ItemStack greenGlassPane(int amount) {
+        return new org.bukkit.inventory.ItemStack(Material.LIME_STAINED_GLASS_PANE, amount);
+    }
+
+    @Override
     public String getShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack) {
         var tag = getCreateTag(itemStack);
         return tag.e(VersionSupport.PLUGIN_TAG_TIER_KEY) ? tag.l(VersionSupport.PLUGIN_TAG_TIER_KEY) : "null";

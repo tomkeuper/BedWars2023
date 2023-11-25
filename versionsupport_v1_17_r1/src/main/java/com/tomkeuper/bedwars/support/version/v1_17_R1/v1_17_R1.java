@@ -549,6 +549,16 @@ public class v1_17_R1 extends VersionSupport {
     }
 
     @Override
+    public org.bukkit.inventory.ItemStack redGlassPane(int amount) {
+        return new org.bukkit.inventory.ItemStack(Material.RED_STAINED_GLASS_PANE, amount);
+    }
+
+    @Override
+    public org.bukkit.inventory.ItemStack greenGlassPane(int amount) {
+        return new org.bukkit.inventory.ItemStack(Material.LIME_STAINED_GLASS_PANE, amount);
+    }
+
+    @Override
     public String getShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack) {
         ItemStack i = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound tag = i.getTag();

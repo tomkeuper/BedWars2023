@@ -602,6 +602,16 @@ public class v1_8_R3 extends VersionSupport {
     }
 
     @Override
+    public ItemStack redGlassPane(int amount) {
+        return new ItemStack(Material.STAINED_GLASS_PANE, amount, (byte) 14);
+    }
+
+    @Override
+    public ItemStack greenGlassPane(int amount) {
+        return new ItemStack(Material.STAINED_GLASS_PANE, amount, (byte) 5);
+    }
+
+    @Override
     public String getShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack) {
         net.minecraft.server.v1_8_R3.ItemStack i = CraftItemStack.asNMSCopy(itemStack);
         NBTTagCompound tag = i.getTag();

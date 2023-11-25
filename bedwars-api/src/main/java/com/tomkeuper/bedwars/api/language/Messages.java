@@ -74,6 +74,13 @@ public class Messages {
     public static String COMMAND_LEAVE_CANCELED = "leave-canceled";
     public static String COMMAND_NOT_ALLOWED_IN_GAME = "cmd-blocked-in-game";
     public static String COMMAND_LEAVE_DENIED_NOT_IN_ARENA = "cmd-not-in-arena";
+    public static String COMMAND_LEAVE_HAS_PARTY_POPUP = "leave-has-party-popup";
+    public static String COMMAND_LEAVE_HAS_PARTY_POPUP_TITLE = COMMAND_LEAVE_HAS_PARTY_POPUP + ".inventory-name";
+    public static String COMMAND_LEAVE_HAS_PARTY_POPUP_STAY = COMMAND_LEAVE_HAS_PARTY_POPUP + ".stay-title";
+    public static String COMMAND_LEAVE_HAS_PARTY_POPUP_STAY_LORE = COMMAND_LEAVE_HAS_PARTY_POPUP + ".stay-lore";
+    public static String COMMAND_LEAVE_HAS_PARTY_POPUP_BRING_PARTY = COMMAND_LEAVE_HAS_PARTY_POPUP + ".bring-party-title";
+    public static String COMMAND_LEAVE_HAS_PARTY_POPUP_BRING_PARTY_LORE = COMMAND_LEAVE_HAS_PARTY_POPUP + ".bring-party-lore";
+
     public static String COMMAND_PARTY_HELP = "cmd-party-help";
     public static String COMMAND_PARTY_INVITE_USAGE = "cmd-party-invite-usage";
     public static String COMMAND_PARTY_INVITE_SENT = "cmd-party-invite";

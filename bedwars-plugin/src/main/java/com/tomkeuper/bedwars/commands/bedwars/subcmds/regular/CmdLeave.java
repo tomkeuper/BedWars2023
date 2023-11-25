@@ -32,9 +32,14 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -74,33 +79,62 @@ public class CmdLeave extends SubCommand {
                 p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
                 return true;
             }
-            if (args.length > 0 && args[0].equalsIgnoreCase("delayed")) {
-                int leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY);
-                if (leaveDelay == 0) {
-                    Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                } else {
-                    BukkitTask qt = leaving.get(p.getUniqueId());
-                    if (qt != null) {
-                        update(p.getUniqueId());
-                        qt.cancel();
-                        leaving.remove(p.getUniqueId());
-                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_CANCELED));
-                        return true;
-                    }
-                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(leaveDelay)));
-                    BukkitTask bukkitTask = new BukkitRunnable() {
-                        public void run() {
-                            Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                            leaving.remove(p.getUniqueId());
-                        }
-                    }.runTaskLater(BedWars.plugin, leaveDelay * 20L);
-                    leaving.put(p.getUniqueId(), bukkitTask);
-                }
+
+            if (BedWars.getPartyManager().hasParty(p)){
+                openLeaveGUI(p);
             } else {
-                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+                if (args.length > 0 && args[0].equalsIgnoreCase("delayed")) {
+                    int leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY);
+                    if (leaveDelay == 0) {
+                        Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+                    } else {
+                        BukkitTask qt = leaving.get(p.getUniqueId());
+                        if (qt != null) {
+                            update(p.getUniqueId());
+                            qt.cancel();
+                            leaving.remove(p.getUniqueId());
+                            p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_CANCELED));
+                            return true;
+                        }
+                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(leaveDelay)));
+                        BukkitTask bukkitTask = new BukkitRunnable() {
+                            public void run() {
+                                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+                                leaving.remove(p.getUniqueId());
+                            }
+                        }.runTaskLater(BedWars.plugin, leaveDelay * 20L);
+                        leaving.put(p.getUniqueId(), bukkitTask);
+                    }
+                } else {
+                    Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
+                }
             }
         }
         return true;
+    }
+
+    private void openLeaveGUI(Player player) {
+        LeaveGuiHolder holder = new LeaveGuiHolder();
+        Inventory inv = Bukkit.createInventory(holder, 9, Language.getMsg(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_TITLE));
+        ItemStack leaveItem = BedWars.nms.greenGlassPane(1);
+        ItemMeta leave = leaveItem.getItemMeta();
+        leave.setDisplayName(Language.getMsg(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_BRING_PARTY));
+        leave.setLore(Language.getList(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_BRING_PARTY_LORE));
+        leaveItem.setItemMeta(leave);
+        inv.setItem(1, BedWars.nms.addCustomData(leaveItem, "LEAVE"));
+        inv.setItem(2, BedWars.nms.addCustomData(leaveItem, "LEAVE"));
+        inv.setItem(3, BedWars.nms.addCustomData(leaveItem, "LEAVE"));
+
+        ItemStack stayItem = BedWars.nms.redGlassPane(1);
+        ItemMeta bringParty = stayItem.getItemMeta();
+        bringParty.setDisplayName(Language.getMsg(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_STAY));
+        bringParty.setLore(Language.getList(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_STAY_LORE));
+        stayItem.setItemMeta(bringParty);
+        inv.setItem(5, BedWars.nms.addCustomData(stayItem, "STAY"));
+        inv.setItem(6, BedWars.nms.addCustomData(stayItem, "STAY"));
+        inv.setItem(7, BedWars.nms.addCustomData(stayItem, "STAY"));
+
+        player.openInventory(inv);
     }
 
     @Override
@@ -131,4 +165,17 @@ public class CmdLeave extends SubCommand {
         }
         delay.put(player, System.currentTimeMillis() + 2500L);
     }
+
+    public static class LeaveGuiHolder implements InventoryHolder {
+
+        public LeaveGuiHolder(){
+        }
+
+        @Override
+        public Inventory getInventory() {
+            return null;
+        }
+
+    }
+
 }
