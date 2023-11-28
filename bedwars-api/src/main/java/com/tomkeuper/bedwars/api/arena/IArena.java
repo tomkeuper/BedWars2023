@@ -195,8 +195,8 @@ public interface IArena {
     /**
      * Add a player to the arena
      *
-     * @param p              - Player to add.
-     * @param skipOwnerCheck - True if you want to skip the party checking for this player. This
+     * @param p              Player to add.
+     * @param skipOwnerCheck True if you want to skip the party checking for this player. This
      * @return true if was added.
      */
     boolean addPlayer(Player p, boolean skipOwnerCheck);
@@ -210,12 +210,23 @@ public interface IArena {
     boolean addSpectator(Player p, boolean playerBefore, Location staffTeleport);
 
     /**
-     * Remove a player from the arena
+     * Remove a player from the arena and execute party checks.
      *
      * @param p          Player to be removed
      * @param disconnect True if the player was disconnected
      */
     void removePlayer(Player p, boolean disconnect);
+
+    /**
+     * Remove a player from the arena
+     *
+     * @param p              Player to be removed
+     * @param disconnect     True if the player was disconnected
+     * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
+     *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
+     *                       player is the owner.
+     */
+    void removePlayer(Player p, boolean disconnect, boolean skipPartyCheck);
 
     /**
      * Remove a spectator from the arena

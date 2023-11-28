@@ -76,12 +76,19 @@ public class QuitAndTeleportListener implements Listener {
         if (getServerType() != ServerType.SHARED) {
             e.setQuitMessage(null);
         }
+
         // Manage internal parties
         if (getPartyManager().isInternal()) {
             if (getPartyManager().hasParty(p)) {
-                getPartyManager().removeFromParty(p);
+                if (getPartyManager().isOwner(p)) {
+                    for (Player partyMember: getPartyManager().getMembers(p)) {
+                        assert a != null;
+                        a.removePlayer(partyMember, false, true);
+                    }
+                }
             }
         }
+
         // Check if was doing a setup and remove the session
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss != null) {

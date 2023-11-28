@@ -765,6 +765,16 @@ public class Arena implements IArena {
      * @param disconnect True if the player was disconnected
      */
     public void removePlayer(@NotNull Player p, boolean disconnect) {
+        removePlayer(p, disconnect, false);
+    }
+
+    /**
+     * Remove a player from the arena
+     *
+     * @param p          Player to be removed
+     * @param disconnect True if the player was disconnected
+     */
+    public void removePlayer(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
         if(leaving.contains(p)) {
             return;
         } else {
@@ -958,29 +968,26 @@ public class Arena implements IArena {
         }
 
         /* Remove also the party */
-        if (getPartyManager().hasParty(p)) {
-            if (getPartyManager().isOwner(p)) {
-                if (status != GameState.restarting) {
-                    if (getPartyManager().isInternal()) {
-                        for (Player mem : new ArrayList<>(getPartyManager().getMembers(p))) {
-                            mem.sendMessage(getMsg(mem, Messages.ARENA_LEAVE_PARTY_DISBANDED));
+        if (!skipPartyCheck){
+            if (getPartyManager().hasParty(p)) {
+                if (getPartyManager().isOwner(p)) {
+                    if (status != GameState.restarting) {
+                        // prevent arena from staring with a single player
+                        teamuri = false;
+                        for (Player on : getPlayers()) {
+                            if (getPartyManager().hasParty(on)) {
+                                teamuri = true;
+                            }
+                        }
+                        if (status == GameState.starting && (maxInTeam > players.size() && teamuri || players.size() < minPlayers && !teamuri)) {
+                            changeStatus(GameState.waiting);
+                            for (Player on : players) {
+                                on.sendMessage(getMsg(on, Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT));
+                            }
                         }
                     }
-                    getPartyManager().disband(p);
-
-                    // prevent arena from staring with a single player
-                    teamuri = false;
-                    for (Player on : getPlayers()) {
-                        if (getPartyManager().hasParty(on)) {
-                            teamuri = true;
-                        }
-                    }
-                    if (status == GameState.starting && (maxInTeam > players.size() && teamuri || players.size() < minPlayers && !teamuri)) {
-                        changeStatus(GameState.waiting);
-                        for (Player on : players) {
-                            on.sendMessage(getMsg(on, Messages.ARENA_START_COUNTDOWN_STOPPED_INSUFF_PLAYERS_CHAT));
-                        }
-                    }
+                } else {
+                    getPartyManager().removeFromParty(p);
                 }
             }
         }
@@ -1010,19 +1017,6 @@ public class Arena implements IArena {
 
         refreshSigns();
         JoinNPC.updateNPCs(getGroup());
-
-        // fix #340
-        // remove player from party if leaves and the owner is still in the arena while waiting or starting
-        if (status == GameState.waiting || status == GameState.starting) {
-            if (BedWars.getPartyManager().hasParty(p) && !BedWars.getPartyManager().isOwner(p)) {
-                for (Player pl : BedWars.getPartyManager().getMembers(p)) {
-                    if (BedWars.getPartyManager().isOwner(pl) && pl.getWorld().getName().equalsIgnoreCase(getArenaName())) {
-                        BedWars.getPartyManager().removeFromParty(p);
-                        break;
-                    }
-                }
-            }
-        }
 
         if (lastHit != null) {
             lastHit.remove();
@@ -1105,6 +1099,7 @@ public class Arena implements IArena {
                     if (getPartyManager().isInternal()) {
                         for (Player mem : new ArrayList<>(getPartyManager().getMembers(p))) {
                             mem.sendMessage(getMsg(mem, Messages.ARENA_LEAVE_PARTY_DISBANDED));
+                            //TODO
                         }
                     }
                     getPartyManager().disband(p);
