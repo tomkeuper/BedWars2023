@@ -121,7 +121,6 @@ public class PAPISupport extends PlaceholderExpansion {
 
         /* Arena required placeholders */
         IArena arena = BedWars.getAPI().getArenaUtil().getArenaByPlayer(player);
-        if (arena == null) return "";
         
         // stats placeholders
         if(s.startsWith("stats_")) {
@@ -204,6 +203,7 @@ public class PAPISupport extends PlaceholderExpansion {
         // team placeholders
         if (s.startsWith("team_status")) {
             ITeam team;
+            if (arena == null) return "";
             if (s.equalsIgnoreCase("team_status"))
                 team = arena.getTeam(player);
             else team = arena.getTeam(s.replace("team_status_", ""));
@@ -212,6 +212,7 @@ public class PAPISupport extends PlaceholderExpansion {
         }
         if (s.startsWith("team_color")) {
             ITeam team;
+            if (arena == null) return "";
             if (s.equalsIgnoreCase("team_color"))
                 team = arena.getTeam(player);
             else team = arena.getTeam(s.replace("team_color_", ""));
@@ -220,6 +221,7 @@ public class PAPISupport extends PlaceholderExpansion {
         }
         if (s.startsWith("team_letter")) {
             ITeam team;
+            if (arena == null) return "";
             if (s.equalsIgnoreCase("team_letter"))
                 team = arena.getTeam(player);
             else team = arena.getTeam(s.replace("team_letter_", ""));
@@ -228,6 +230,7 @@ public class PAPISupport extends PlaceholderExpansion {
         }
         if (s.startsWith("team_players_amount")) {
             ITeam team;
+            if (arena == null) return "";
             if (s.equalsIgnoreCase("team_players_amount"))
                 team = arena.getTeam(player);
             else team = arena.getTeam(s.replace("team_players_amount_", ""));
@@ -236,6 +239,7 @@ public class PAPISupport extends PlaceholderExpansion {
         }
         if (s.startsWith("team_players")) {
             ITeam team;
+            if (arena == null) return "";
             if (s.equalsIgnoreCase("team_players"))
                 team = arena.getTeam(player);
             else team = arena.getTeam(s.replace("team_players_", ""));
@@ -253,36 +257,36 @@ public class PAPISupport extends PlaceholderExpansion {
         // arena info placeholders
         switch (s) {
             case "arena_nextevent_name":
-                return arena.getNextEvent().toString().toLowerCase().replace("_", " ");
+                return (arena != null) ? arena.getNextEvent().toString().toLowerCase().replace("_", " ") : "";
             case "arena_nextevent_time":
-                return String.valueOf(getNextEventTime(arena));
+                return (arena != null) ? String.valueOf(getNextEventTime(arena)) : "";
             case "arena_nextevent_time_formatted":
-                return nextEventFormat.format(new Date(getNextEventTime(arena) * 1000L));
+                return (arena != null) ? nextEventFormat.format(new Date(getNextEventTime(arena) * 1000L)) : "";
             case "arena_name":
-                return arena.getArenaName();
+                return (arena != null) ? arena.getArenaName() : "";
             case "arena_display_name":
-                return arena.getDisplayName();
+                return (arena != null) ? arena.getDisplayName() : "";
             case "arena_group":
-                return arena.getGroup();
+                return (arena != null) ? arena.getGroup() : "";
             case "arena_world":
-                return arena.getWorldName();
+                return (arena != null) ? arena.getWorldName() : "";
             case "arena_status_plocale":
-                return arena.getDisplayStatus(lang);
+                return (arena != null) ? arena.getDisplayStatus(lang) : "";
             case "arena_status":
-                return arena.getDisplayStatus(BedWars.getAPI().getDefaultLang());
+                return (arena != null) ? arena.getDisplayStatus(BedWars.getAPI().getDefaultLang()) : "";
         }
         
         // inside arena stats placeholders
         switch (s) {
-            case "player_kills": return String.valueOf(arena.getPlayerKills(player, false));
-            case "player_kills_total": return String.valueOf(arena.getPlayerKills(player,true)+arena.getPlayerKills(player,false));
-            case "player_kills_final": return String.valueOf(arena.getPlayerKills(player, true));
-            case "player_deaths": return String.valueOf(arena.getPlayerDeaths(player, false));
-            case "player_deaths_total": return String.valueOf(arena.getPlayerDeaths(player,true)+arena.getPlayerDeaths(player,false));
-            case "player_deaths_final": return String.valueOf(arena.getPlayerDeaths(player, true));
-            case "player_beds": return String.valueOf(arena.getPlayerBedsDestroyed(player));
-            case "status_color": return (arena.isSpectator(player) ? ChatColor.GRAY : arena.getTeam(player).getColor().chat()).toString();
-            case "status_letter": return arena.isSpectator(player) ? getSpectatorLetter(lang) : arena.getTeam(player).getName().substring(0,1).toUpperCase();
+            case "player_kills": return (arena != null) ? String.valueOf(arena.getPlayerKills(player, false)) : "";
+            case "player_kills_total": return (arena != null) ? String.valueOf(arena.getPlayerKills(player,true)+arena.getPlayerKills(player,false)) : "";
+            case "player_kills_final": return (arena != null) ? String.valueOf(arena.getPlayerKills(player, true)) : "";
+            case "player_deaths": return (arena != null) ? String.valueOf(arena.getPlayerDeaths(player, false)) : "";
+            case "player_deaths_total": return (arena != null) ? String.valueOf(arena.getPlayerDeaths(player,true)+arena.getPlayerDeaths(player,false)) : "";
+            case "player_deaths_final": return (arena != null) ? String.valueOf(arena.getPlayerDeaths(player, true)) : "";
+            case "player_beds": return (arena != null) ? String.valueOf(arena.getPlayerBedsDestroyed(player)) : "";
+            case "status_color": return (arena != null) ? (arena.isSpectator(player) ? ChatColor.GRAY : arena.getTeam(player).getColor().chat()).toString() : "";
+            case "status_letter": return (arena != null) ? arena.isSpectator(player) ? getSpectatorLetter(lang) : arena.getTeam(player).getName().substring(0,1).toUpperCase() : "";
         }
         if (s.startsWith("players")) {
             StringBuilder output = new StringBuilder();
