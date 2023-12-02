@@ -773,6 +773,9 @@ public class Arena implements IArena {
      *
      * @param p          Player to be removed
      * @param disconnect True if the player was disconnected
+     * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
+     *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
+     *                       player is the owner.
      */
     public void removePlayer(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
         if(leaving.contains(p)) {
@@ -967,7 +970,7 @@ public class Arena implements IArena {
             }, 5L);
         }
 
-        /* Remove also the party */
+        /* Check if party need to be left */
         if (!skipPartyCheck){
             if (getPartyManager().hasParty(p)) {
                 if (getPartyManager().isOwner(p)) {
@@ -1023,6 +1026,7 @@ public class Arena implements IArena {
         }
     }
 
+
     /**
      * Remove a spectator from the arena
      *
@@ -1030,6 +1034,19 @@ public class Arena implements IArena {
      * @param disconnect True if the player was disconnected
      */
     public void removeSpectator(@NotNull Player p, boolean disconnect) {
+        removeSpectator(p, disconnect, false);
+    }
+
+    /**
+     * Remove a spectator from the arena
+     *
+     * @param p              Player to be removed
+     * @param disconnect     True if the player was disconnected
+     * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
+     *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
+     *                       player is the owner.
+     */
+    public void removeSpectator(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
         debug("Spectator removed: " + p.getName() + " arena: " + getArenaName());
 
         if(leaving.contains(p)) {
@@ -1092,17 +1109,11 @@ public class Arena implements IArena {
             });
         }
 
-        /* Remove also the party */
-        if (getPartyManager().hasParty(p)) {
-            if (getPartyManager().isOwner(p)) {
-                if (status != GameState.restarting) {
-                    if (getPartyManager().isInternal()) {
-                        for (Player mem : new ArrayList<>(getPartyManager().getMembers(p))) {
-                            mem.sendMessage(getMsg(mem, Messages.ARENA_LEAVE_PARTY_DISBANDED));
-                            //TODO
-                        }
-                    }
-                    getPartyManager().disband(p);
+        /* Check if party need to be left */
+        if (!skipPartyCheck){
+            if (getPartyManager().hasParty(p)) {
+                if (!getPartyManager().isOwner(p)) {
+                    getPartyManager().removeFromParty(p);
                 }
             }
         }

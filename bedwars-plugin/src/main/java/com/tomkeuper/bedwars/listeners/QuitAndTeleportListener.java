@@ -82,14 +82,19 @@ public class QuitAndTeleportListener implements Listener {
             if (getPartyManager().hasParty(p)) {
                 if (getPartyManager().isOwner(p)) {
                     for (Player partyMember: getPartyManager().getMembers(p)) {
-                        assert a != null;
-                        a.removePlayer(partyMember, false, true);
+                        if (a != null) {
+                            if (a.isPlayer(partyMember)) a.removePlayer(partyMember, false, true);
+                            else if (a.isSpectator(partyMember)) a.removeSpectator(partyMember, false, true);
+                            else {
+                                BedWars.debug("Cannot remove " + partyMember.getName() + " from " + a.getDisplayName() + " because member is not a player nor a spectator.");
+                            }
+                        }
                     }
                 }
             }
         }
 
-        // Check if was doing a setup and remove the session
+        // Check if player was in a setup and remove the session
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss != null) {
             ss.cancel();

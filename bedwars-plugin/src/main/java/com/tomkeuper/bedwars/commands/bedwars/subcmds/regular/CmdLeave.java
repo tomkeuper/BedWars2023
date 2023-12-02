@@ -80,7 +80,7 @@ public class CmdLeave extends SubCommand {
                 return true;
             }
 
-            if (BedWars.getPartyManager().hasParty(p)){
+            if (BedWars.getPartyManager().isOwner(p)){
                 openLeaveGUI(p);
             } else {
                 if (args.length > 0 && args[0].equalsIgnoreCase("delayed")) {

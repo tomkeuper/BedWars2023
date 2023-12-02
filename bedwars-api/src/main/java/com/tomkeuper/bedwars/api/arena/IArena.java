@@ -237,6 +237,17 @@ public interface IArena {
     void removeSpectator(Player p, boolean disconnect);
 
     /**
+     * Remove a spectator from the arena
+     *
+     * @param p          Player to be removed
+     * @param disconnect True if the player was disconnected
+     * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
+     *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
+     *                       player is the owner.
+     */
+    void removeSpectator(Player p, boolean disconnect, boolean skipPartyCheck);
+
+    /**
      * Rejoin an arena.
      *
      * @param p The player who wants to rejoin the arena.
