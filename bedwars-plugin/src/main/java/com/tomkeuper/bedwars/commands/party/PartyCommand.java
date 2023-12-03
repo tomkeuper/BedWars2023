@@ -83,6 +83,7 @@ public class PartyCommand extends BukkitCommand {
                 break;
             case "accept":
                 if (args.length < 2) {
+                    p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_USAGE));
                     return true;
                 }
                 if (BedWars.getPartyManager().hasParty(p)) {
