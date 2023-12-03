@@ -82,7 +82,7 @@ bukkit {
     apiVersion = "1.13"
 
     author = "Mr. Ceasar"
-    description = "BedWars minigame by Tom Keuper forked from BedWars1058"
+    description = "BedWars minigame by Mr Ceasar forked from BedWars1058"
     version = "${project.version}"
 
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
