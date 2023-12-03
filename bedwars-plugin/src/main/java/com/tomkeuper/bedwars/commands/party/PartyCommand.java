@@ -72,10 +72,10 @@ public class PartyCommand extends BukkitCommand {
                     TextComponent tc = new TextComponent(getMsg(p, Messages.COMMAND_PARTY_INVITE_SENT_TARGET_RECEIVE_MSG).replace("%bw_player%", p.getName()));
                     tc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/party accept " + p.getName()));
                     Bukkit.getPlayer(args[1]).spigot().sendMessage(tc);
-                    if (partySessionRequest.containsKey(p.getUniqueId())) {
-                        partySessionRequest.replace(p.getUniqueId(), Bukkit.getPlayer(args[1]).getUniqueId());
+                    if (partySessionRequest.containsKey(Bukkit.getPlayer(args[1]).getUniqueId())) {
+                        partySessionRequest.replace( Bukkit.getPlayer(args[1]).getUniqueId(), p.getUniqueId());
                     } else {
-                        partySessionRequest.put(p.getUniqueId(), Bukkit.getPlayer(args[1]).getUniqueId());
+                        partySessionRequest.put( Bukkit.getPlayer(args[1]).getUniqueId(), p.getUniqueId());
                     }
                 } else {
                     p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE).replace("%bw_player%", args[1]));
@@ -93,12 +93,12 @@ public class PartyCommand extends BukkitCommand {
                     p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE).replace("%bw_player%", args[1]));
                     return true;
                 }
-                if (!partySessionRequest.containsKey(Bukkit.getPlayer(args[1]).getUniqueId())) {
+                if (!partySessionRequest.containsKey(p.getUniqueId())) {
                     p.sendMessage(getMsg(p, Messages.COMMAND_PARTY_ACCEPT_DENIED_NO_INVITE));
                     return true;
                 }
-                if (partySessionRequest.get(Bukkit.getPlayer(args[1]).getUniqueId()).equals(p.getUniqueId())) {
-                    partySessionRequest.remove(Bukkit.getPlayer(args[1]).getUniqueId());
+                if (partySessionRequest.get(p.getUniqueId()).toString().equalsIgnoreCase(Bukkit.getPlayer(args[1]).getUniqueId().toString())) {
+                    partySessionRequest.remove(p.getUniqueId());
                     if (BedWars.getPartyManager().hasParty(Bukkit.getPlayer(args[1]))) {
                         BedWars.getPartyManager().addMember(Bukkit.getPlayer(args[1]), p);
                         for (Player on : BedWars.getPartyManager().getMembers(Bukkit.getPlayer(args[1]))) {
