@@ -47,6 +47,7 @@ public class RedisPubSubListener extends JedisPubSub {
                             jo.addProperty("requester", json.get("requester").getAsString());
                             jo.addProperty("server_name", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
                             jo.addProperty("arena_id", a.getWorldName());
+                            BedWars.getRedisConnection().sendMessage(jo.toString());
                         }
                     }
                     break;
