@@ -71,8 +71,6 @@ import com.tomkeuper.bedwars.listeners.joinhandler.*;
 import com.tomkeuper.bedwars.connectionmanager.LoadedUsersCleaner;
 import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
 import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
-import com.tomkeuper.bedwars.connectionmanager.socket.SocketConnection;
-import com.tomkeuper.bedwars.connectionmanager.socket.SocketSendTask;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
 import com.tomkeuper.bedwars.shop.ShopCache;
@@ -345,12 +343,8 @@ public class BedWars extends JavaPlugin {
                         setEnabled(false);
                         return;
                     }
-                } else if (messagingProtocol.equalsIgnoreCase("socket")){
-//                  registerEvents(new SocketArenaListeners());
-                    new SocketSendTask();
-                    SocketConnection.lobbies.addAll(config.getList(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_LOBBY_SERVERS));
                 } else {
-                    throw new IllegalStateException("Invalid messaging protocol provided `" + messagingProtocol + "`, possible options are `redis` or `socket`!");
+                    throw new IllegalStateException("Invalid messaging protocol provided `" + messagingProtocol + "`, possible option is `redis`!");
                 }
 
                 registerEvents(new AutoscaleListener(), new JoinListenerBungee());
@@ -678,11 +672,7 @@ public class BedWars extends JavaPlugin {
         addonManager.unloadAddons();
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
-            if (redisConnection != null){
-                redisConnection.close();
-            } else {
-                SocketConnection.disable();
-            }
+            redisConnection.close();
         }
         for (IArena a : new LinkedList<>(Arena.getArenas())) {
             try {
