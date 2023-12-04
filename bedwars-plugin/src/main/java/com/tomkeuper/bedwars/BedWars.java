@@ -333,20 +333,13 @@ public class BedWars extends JavaPlugin {
 
         if (getServerType() == ServerType.BUNGEE) {
             if (autoscale) {
-                String messagingProtocol = config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL);
-
-                if (messagingProtocol.equalsIgnoreCase("redis")){
-                    redisConnection = new RedisConnection();
-                    registerEvents(new RedisArenaListeners(redisConnection));
-                    if (!redisConnection.connect()){
-                        getLogger().severe("Could not connect to redis server! Please check the redis configuration and make sure the redis server is running! Disabling the plugin...");
-                        setEnabled(false);
-                        return;
-                    }
-                } else {
-                    throw new IllegalStateException("Invalid messaging protocol provided `" + messagingProtocol + "`, possible option is `redis`!");
+                redisConnection = new RedisConnection();
+                registerEvents(new RedisArenaListeners(redisConnection));
+                if (!redisConnection.connect()){
+                    getLogger().severe("Could not connect to redis server! Please check the redis configuration and make sure the redis server is running! Disabling the plugin...");
+                    setEnabled(false);
+                    return;
                 }
-
                 registerEvents(new AutoscaleListener(), new JoinListenerBungee());
                 Bukkit.getScheduler().runTaskTimerAsynchronously(this, new LoadedUsersCleaner(), 60L, 60L);
             } else {
