@@ -76,10 +76,4 @@ public class OverrideShopCategory extends ShopCategory {
         }
         instance = this;
     }
-
-    @Override
-    public String getName() {
-        return super.getName();
-    }
-
 }

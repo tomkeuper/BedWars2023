@@ -1,9 +1,6 @@
 package com.tomkeuper.bedwars.shop;
 
 import com.tomkeuper.bedwars.BedWars;
-import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
-import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
-import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
