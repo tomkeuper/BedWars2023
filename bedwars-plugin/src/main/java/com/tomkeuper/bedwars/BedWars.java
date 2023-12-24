@@ -521,7 +521,7 @@ public class BedWars extends JavaPlugin {
         shop = new ShopManager();
         shop.loadShop();
 
-
+        /* Load shop overrides */
         File dir = new File(BedWars.plugin.getDataFolder(), "/Shops");
         if (dir.exists()) {
             List<File> files = new ArrayList<>();
