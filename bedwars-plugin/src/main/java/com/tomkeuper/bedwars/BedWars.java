@@ -73,6 +73,7 @@ import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
 import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
+import com.tomkeuper.bedwars.shop.OverrideShop;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
@@ -519,6 +520,24 @@ public class BedWars extends JavaPlugin {
         /* Initialize shop */
         shop = new ShopManager();
         shop.loadShop();
+
+
+        File dir = new File(BedWars.plugin.getDataFolder(), "/Shops");
+        if (dir.exists()) {
+            List<File> files = new ArrayList<>();
+            File[] fls = dir.listFiles();
+            for (File fl : Objects.requireNonNull(fls)) {
+                if (fl.isFile()) {
+                    if (fl.getName().endsWith(".yml")) {
+                        files.add(fl);
+                    }
+                }
+            }
+            for (File file : files) {
+                if (file.getName().equalsIgnoreCase("default-shop.yml")) continue;
+                new OverrideShop(shop, file.getName().replace(".yml", ""));
+            }
+        }
 
         /* Initialize instances */
         shopCache = new ShopCache();

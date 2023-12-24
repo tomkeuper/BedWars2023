@@ -46,6 +46,7 @@ public class HalloweenSpecial {
         IShopCategory blockCategory = ShopManager.shop.getCategoryList().stream().filter(category -> category.getName().equals("blocks-category")).findFirst().orElse(null);
         if (blockCategory != null) {
             PumpkinContent content = new PumpkinContent(blockCategory);
+            content.setCategoryIdentifier("default-" + content.getCategoryIdentifier());
             if (content.isLoaded()) {
                 blockCategory.getCategoryContentList().add(content);
             }
