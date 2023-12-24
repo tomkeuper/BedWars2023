@@ -29,8 +29,7 @@ public class OverrideShop extends ConfigManager {
             if (s.equals(ConfigPath.SHOP_QUICK_DEFAULTS_PATH)) continue;
             if (s.equalsIgnoreCase(ConfigPath.SHOP_SPECIALS_PATH)) continue;
 
-            ShopCategory sc = new OverrideShopCategory(s, yml);
-            sc.setName(name + "-" + s); // Overwrite normal name (as its just path value)
+            ShopCategory sc = new OverrideShopCategory(s, yml, name + "-" + s); // Identify shop with group name + shop name
 
             if (sc.isLoaded()) shopManager.getShop().addShopCategory(sc);
 

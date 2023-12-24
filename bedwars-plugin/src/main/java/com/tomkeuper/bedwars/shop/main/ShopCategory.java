@@ -58,9 +58,9 @@ public class ShopCategory implements IShopCategory {
     /**
      * Load a shop category from the given path
      */
-    public ShopCategory(String path, YamlConfiguration yml) {
+    public ShopCategory(String path, YamlConfiguration yml, String name) {
         BedWars.debug("Loading shop category: " + path);
-        this.name = path;
+        this.name = name;
 
         if (yml.get(path + ConfigPath.SHOP_CATEGORY_ITEM_MATERIAL) == null) {
             BedWars.plugin.getLogger().severe("Category material not set at: " + path);
@@ -127,7 +127,7 @@ public class ShopCategory implements IShopCategory {
     }
 
     public void open(Player player, IShopIndex index, IShopCache shopCache){
-        BedWars.debug("opening ShopCategory: " + getName() + " for player: " + player.getName());
+        BedWars.debug("opening ShopCategory: " + name + " for player: " + player.getName());
         if (player.getOpenInventory().getTopInventory() == null) return;
         ShopIndex.indexViewers.remove(player.getUniqueId());
 
@@ -216,10 +216,5 @@ public class ShopCategory implements IShopCategory {
 
     public static ShopCategory getInstance() {
         return instance;
-    }
-
-    public void setName(String name) {
-        BedWars.debug("Setting name of shop category: " + this.name + " to: " + name);
-        this.name = name;
     }
 }

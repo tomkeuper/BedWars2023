@@ -6,11 +6,11 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import org.bukkit.configuration.file.YamlConfiguration;
 public class OverrideShopCategory extends ShopCategory {
 
-    public OverrideShopCategory(String path, YamlConfiguration yml) {
+    public OverrideShopCategory(String path, YamlConfiguration yml, String name) {
         super();
 
         BedWars.debug("Loading override shop category: " + path);
-        name = path;
+        super.name = name;
 
         if (yml.get(path + ConfigPath.SHOP_CATEGORY_ITEM_MATERIAL) == null) {
             BedWars.plugin.getLogger().severe("Category material not set at: " + path);
