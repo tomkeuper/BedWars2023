@@ -60,7 +60,6 @@ public class OverrideShopCategory extends ShopCategory {
         CategoryContent cc;
         for (String s : yml.getConfigurationSection(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_PATH).getKeys(false)) {
             cc = new CategoryContent(path + ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + s, s, path, yml, this);
-            BedWars.debug("blabla: " + s + cc.getCategoryIdentifier());
             cc.setCategoryIdentifier(s + cc.getCategoryIdentifier());
             if (cc.isLoaded()) {
                 categoryContentList.add(cc);
