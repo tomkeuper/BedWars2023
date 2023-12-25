@@ -138,6 +138,7 @@ public class ShopCategory implements IShopCategory {
         IArena arena = Arena.getArenaByPlayer(player);
 
         for (IShopCategory sc : index.getCategoryList()) {
+            // If we don't check this, the shop will be displayed in all arenas
             if (sc.getName().startsWith("default") || sc.getName().startsWith(arena.getGroup().toLowerCase()))
                 inv.setItem(sc.getSlot(), sc.getItemStack(player));
         }

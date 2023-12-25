@@ -147,6 +147,8 @@ public class InventoryListener implements Listener {
             }
             if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
             for (ICategoryContent cc : sc.getCategoryContentList()) {
+                // If we don't check this, the shop will be displayed in all arenas
+                // Default category is already checked and thus does not need to be added here
                 if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
                     if (cc.getSlot() == e.getSlot()) {
                         if (e.isShiftClick()) {

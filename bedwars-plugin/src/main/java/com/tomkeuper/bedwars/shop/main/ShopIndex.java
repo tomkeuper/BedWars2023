@@ -95,6 +95,7 @@ public class ShopIndex implements IShopIndex {
         IArena arena = Arena.getArenaByPlayer(player);
         for (IShopCategory sc : getCategoryList()) {
             // Check if the shop name starts with "default" or matches the arena group name
+            // If we don't check this, the shop will be displayed in all arenas
             if (sc.getName().toLowerCase().startsWith("default") || sc.getName().toLowerCase().startsWith(arena.getGroup().toLowerCase())) {
                 inv.setItem(sc.getSlot(), sc.getItemStack(player));
             }
