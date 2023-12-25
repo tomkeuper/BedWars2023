@@ -150,28 +150,25 @@ public class InventoryListener implements Listener {
                 // If we don't check this, the shop will be displayed in all arenas
                 // Default category is already checked and thus does not need to be added here
                 if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
-                    if (cc.getSlot() == e.getSlot()) {
-                        if (e.isShiftClick()) {
-                            if (cache.hasCategoryContent(cc)) return true;
-                            new QuickBuyAdd(p, cc);
-                            return true;
-                        }
-                        cc.execute(p, shopCache, cc.getSlot());
-                        return true;
-                    }
+                    if (checkSlot(e, p, shopCache, cache, cc)) return true;
                 }
             }
             for (ICategoryContent cc : sc.getCategoryContentList()) {
-                if (cc.getSlot() == e.getSlot()) {
-                    if (e.isShiftClick()) {
-                        if (cache.hasCategoryContent(cc)) return true;
-                        new QuickBuyAdd(p, cc);
-                        return true;
-                    }
-                    cc.execute(p, shopCache, cc.getSlot());
-                    return true;
-                }
+                if (checkSlot(e, p, shopCache, cache, cc)) return true;
             }
+        }
+        return false;
+    }
+
+    private boolean checkSlot(InventoryClickEvent e, Player p, ShopCache shopCache, IPlayerQuickBuyCache cache, ICategoryContent cc) {
+        if (cc.getSlot() == e.getSlot()) {
+            if (e.isShiftClick()) {
+                if (cache.hasCategoryContent(cc)) return true;
+                new QuickBuyAdd(p, cc);
+                return true;
+            }
+            cc.execute(p, shopCache, cc.getSlot());
+            return true;
         }
         return false;
     }
