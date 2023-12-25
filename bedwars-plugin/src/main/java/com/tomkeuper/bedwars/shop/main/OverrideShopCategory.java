@@ -28,13 +28,6 @@ public class OverrideShopCategory extends ShopCategory {
             return;
         }
 
-//        for (IShopCategory sc : ShopManager.shopIndex.getCategoryList()){
-//            if (sc.getSlot() == slot){
-//                BedWars.plugin.getLogger().severe("Slot is already in use at: " + path);
-//                return;
-//            }
-//        }
-
         itemStack = BedWars.nms.createItemStack(yml.getString(path + ConfigPath.SHOP_CATEGORY_ITEM_MATERIAL),
                 yml.get(path + ConfigPath.SHOP_CATEGORY_ITEM_AMOUNT) == null ? 1 : yml.getInt(path + ConfigPath.SHOP_CATEGORY_ITEM_AMOUNT),
                 (short) (yml.get(path + ConfigPath.SHOP_CATEGORY_ITEM_DATA) == null ? 0 : yml.getInt(path + ConfigPath.SHOP_CATEGORY_ITEM_DATA)));
