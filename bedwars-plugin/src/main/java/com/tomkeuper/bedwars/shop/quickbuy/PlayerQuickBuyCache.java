@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.shop.quickbuy;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -28,6 +29,8 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
+import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -41,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
 
@@ -74,18 +78,44 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         quickBuyCaches.put(this.player, this);
     }
 
-
     /**
      * Add the player's preferences to the given inventory.
      * This will also add the red empty item.
      */
     @Override
     public void addInInventory(Inventory inv, IShopCache shopCache) {
-
         Player p = Bukkit.getPlayer(player);
+        IArena arena = Arena.getArenaByPlayer(p);
+
+        List<IShopCategory> registeredShops = BedWars.getAPI().getShopUtil().getShopManager().getShop().getCategoryList();
+
+        // First, identify and remove categories with overrides
+        List<IQuickBuyElement> elementsToRemove = new ArrayList<>();
+
+        List<IShopCategory> matchingShops = registeredShops.stream()
+                .filter(shopCategory -> shopCategory.getName().toLowerCase().startsWith(arena.getGroup().toLowerCase()))
+                .collect(Collectors.toList());
 
         for (IQuickBuyElement qbe : elements) {
-            inv.setItem(qbe.getSlot(), qbe.getCategoryContent().getItemStack(p, shopCache));
+            String categoryIdentifier = qbe.getCategoryContent().getCategoryIdentifier().toLowerCase();
+            if (categoryIdentifier.startsWith("default")){
+                for (IShopCategory matchingShop : matchingShops){
+                    String matchingShopName = matchingShop.getName().toLowerCase().replace(arena.getGroup() + "-shop-", "");
+                    String qbeCategoryName = qbe.getCategoryContent().getCategoryIdentifier().toLowerCase().replace("default-","").split("\\.")[0];
+                    if (matchingShopName.equalsIgnoreCase(qbeCategoryName)){
+                        elementsToRemove.add(qbe);
+                    }
+                }
+            }
+        }
+
+        // Remove categories with overrides
+        elements.removeAll(elementsToRemove);
+
+        // Second, add the remaining categories to the inventory
+        for (IQuickBuyElement qbe : elements) {
+            ICategoryContent categoryContent = qbe.getCategoryContent();
+            inv.setItem(qbe.getSlot(), categoryContent.getItemStack(p, shopCache));
         }
 
         if (elements.size() == 21) return;

@@ -62,6 +62,8 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.money.internal.MoneyPerMinuteTask;
 import com.tomkeuper.bedwars.shop.ShopCache;
+import com.tomkeuper.bedwars.shop.main.CategoryContent;
+import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -125,6 +127,7 @@ public class Arena implements IArena {
     private List<ITeam> teams = new ArrayList<>();
     private LinkedList<org.bukkit.util.Vector> placed = new LinkedList<>();
     private List<String> nextEvents = new ArrayList<>();
+    private List<String> shopOverrideCategories = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
@@ -2336,6 +2339,14 @@ public class Arena implements IArena {
      */
     public List<String> getNextEvents() {
         return new ArrayList<>(nextEvents);
+    }
+
+    public List<String> getShopOverrideCategories() {
+        return shopOverrideCategories;
+    }
+
+    public void addShopOverrideCategory(String shopOverrideCategory) {
+        this.shopOverrideCategories.add(shopOverrideCategory);
     }
 
     /**

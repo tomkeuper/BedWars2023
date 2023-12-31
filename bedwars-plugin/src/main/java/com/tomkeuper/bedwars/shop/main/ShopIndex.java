@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.shop.main;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.events.shop.ShopOpenEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
@@ -91,17 +92,22 @@ public class ShopIndex implements IShopIndex {
 
         inv.setItem(getQuickBuyButton().getSlot(), getQuickBuyButton().getItemStack(player));
 
+        IArena arena = Arena.getArenaByPlayer(player);
         for (IShopCategory sc : getCategoryList()) {
-            inv.setItem(sc.getSlot(), sc.getItemStack(player));
+            // Check if the shop name starts with "default" or matches the arena group name
+            // If we don't check this, the shop will be displayed in all arenas
+            if (sc.getName().toLowerCase().startsWith("default") || sc.getName().toLowerCase().startsWith(arena.getGroup().toLowerCase())) {
+                inv.setItem(sc.getSlot(), sc.getItemStack(player));
+            }
         }
 
         addSeparator(player, inv);
 
         inv.setItem(getQuickBuyButton().getSlot() + 9, getSelectedItem(player));
-        //noinspection ConstantConditions
-        ShopCache.getInstance().getShopCache(player.getUniqueId()).setSelectedCategory(getQuickBuyButton().getSlot());
 
-        quickBuyCache.addInInventory(inv, ShopCache.getInstance().getShopCache(player.getUniqueId()));
+        ShopCache playerShopCache = ShopCache.getInstance().getShopCache(player.getUniqueId());
+        playerShopCache.setSelectedCategory(getQuickBuyButton().getSlot());
+        quickBuyCache.addInInventory(inv, playerShopCache);
 
         player.openInventory(inv);
         if (!indexViewers.contains(player.getUniqueId())) {

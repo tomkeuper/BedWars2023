@@ -77,6 +77,7 @@ public class BoardManager implements IScoreboardService {
 
     public void registerArenaScoreboards(Arena arena) {
         // Technically it's possible to have per arena scoreboards. Future feature?
+        // TODO fix issue with scoreboard overwrites
         for (Language language : Language.getLanguages()) {
             List<String> waiting = getScoreboardLines(arena, language, "waiting", Messages.SCOREBOARD_DEFAULT_WAITING);
             String scoreboardWaitingName = "bw_" + arena.getGroup() + "_waiting_" + language.getIso();

@@ -76,6 +76,13 @@ public interface ICategoryContent {
     String getIdentifier();
 
     /**
+     * Get the path name of the category content.
+     *
+     * @return The path name of the category content.
+     */
+    String getCategoryIdentifier();
+
+    /**
      * Get the list of content tiers for the category content.
      *
      * @return The list of content tiers.

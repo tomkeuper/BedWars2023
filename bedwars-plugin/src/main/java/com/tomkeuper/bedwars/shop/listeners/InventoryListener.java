@@ -73,6 +73,19 @@ public class InventoryListener implements Listener {
         if (ShopIndex.getIndexViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
+            // Check shop overrides categories (Will return if a shop has been found)
+            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
+                // Check if the shop name starts with the group name
+                if (sc.getName().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
+                    // Check if the clicked slot matches the current shop's slot
+                    if (e.getSlot() == sc.getSlot()) {
+                        sc.open(p, ShopManager.shop, shopCache);
+                        return;
+                    }
+                }
+            }
+
+            // Check normal shop categories
             for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
                 if (e.getSlot() == sc.getSlot()) {
                     sc.open(p, ShopManager.shop, shopCache);
@@ -92,28 +105,16 @@ public class InventoryListener implements Listener {
             }
         } else if (ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
-            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
-                if (ShopManager.shop.getQuickBuyButton().getSlot() == e.getSlot()) {
-                    ShopManager.shop.open(p, cache, false);
-                    return;
-                }
-                if (e.getSlot() == sc.getSlot()) {
-                    sc.open(p, ShopManager.shop, shopCache);
-                    return;
-                }
-                if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
-                for (ICategoryContent cc : sc.getCategoryContentList()) {
-                    if (cc.getSlot() == e.getSlot()) {
-                        if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
-                            if (cache.hasCategoryContent(cc)) return;
-                            new QuickBuyAdd(p, cc);
-                            return;
-                        }
-                        cc.execute(p, shopCache, cc.getSlot());
-                        return;
-                    }
-                }
-            }
+
+            // Check if item is null or air (don't process clicks on air)
+            if (e.getCurrentItem() == null) return;
+            if (e.getCurrentItem().getType() == Material.AIR) return;
+
+            // Check overrides
+            if (checkShops(e, p, a, shopCache, cache, true)) return;
+
+            checkShops(e, p, a, shopCache, cache, false);
+
         } else if (QuickBuyAdd.getQuickBuyAdds().containsKey(e.getWhoClicked().getUniqueId())) {
             e.setCancelled(true);
             boolean add = false;
@@ -131,9 +132,49 @@ public class InventoryListener implements Listener {
         }
     }
 
+    private boolean checkShops(InventoryClickEvent e, Player p, IArena a, ShopCache shopCache, IPlayerQuickBuyCache cache, boolean overrides) {
+        for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
+            // Check if the shop name starts with the group name
+            if (overrides && !sc.getName().toLowerCase().startsWith(a.getGroup().toLowerCase())) continue;
+
+            if (ShopManager.shop.getQuickBuyButton().getSlot() == e.getSlot()) {
+                ShopManager.shop.open(p, cache, false);
+                return true;
+            }
+            if (e.getSlot() == sc.getSlot()) {
+                sc.open(p, ShopManager.shop, shopCache);
+                return true;
+            }
+            if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
+            for (ICategoryContent cc : sc.getCategoryContentList()) {
+                // If we don't check this, the shop will be displayed in all arenas
+                // Default category is already checked and thus does not need to be added here
+                if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
+                    if (checkSlot(e, p, shopCache, cache, cc)) return true;
+                }
+            }
+            for (ICategoryContent cc : sc.getCategoryContentList()) {
+                if (checkSlot(e, p, shopCache, cache, cc)) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkSlot(InventoryClickEvent e, Player p, ShopCache shopCache, IPlayerQuickBuyCache cache, ICategoryContent cc) {
+        if (cc.getSlot() == e.getSlot()) {
+            if (e.isShiftClick()) {
+                if (cache.hasCategoryContent(cc)) return true;
+                new QuickBuyAdd(p, cc);
+                return true;
+            }
+            cc.execute(p, shopCache, cc.getSlot());
+            return true;
+        }
+        return false;
+    }
+
     @EventHandler
     public void onUpgradableMove(InventoryClickEvent e) {
-
         Player p = (Player) e.getWhoClicked();
         ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());
         if (sc == null) return;

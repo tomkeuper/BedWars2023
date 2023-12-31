@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.shop.main;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -28,6 +29,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.shop.IShopIndex;
+import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -42,21 +44,23 @@ import java.util.UUID;
 
 public class ShopCategory implements IShopCategory {
 
-    private int slot;
-    private ItemStack itemStack;
-    private String itemNamePath, itemLorePath, invNamePath;
-    private boolean loaded = false;
-    private final List<ICategoryContent> categoryContentList = new ArrayList<>();
+    public int slot;
+    public ItemStack itemStack;
+    public String itemNamePath, itemLorePath, invNamePath;
+    public boolean loaded = false;
+    public final List<ICategoryContent> categoryContentList = new ArrayList<>();
     public static List<UUID> categoryViewers = new ArrayList<>();
-    private final String name;
-    private static ShopCategory instance;
+    public String name;
+    public static ShopCategory instance;
+    ShopCategory() {
+    }
 
     /**
      * Load a shop category from the given path
      */
-    public ShopCategory(String path, YamlConfiguration yml) {
+    public ShopCategory(String path, YamlConfiguration yml, String name) {
         BedWars.debug("Loading shop category: " + path);
-        this.name = path;
+        this.name = name;
 
         if (yml.get(path + ConfigPath.SHOP_CATEGORY_ITEM_MATERIAL) == null) {
             BedWars.plugin.getLogger().severe("Category material not set at: " + path);
@@ -113,6 +117,7 @@ public class ShopCategory implements IShopCategory {
         CategoryContent cc;
         for (String s : yml.getConfigurationSection(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_PATH).getKeys(false)) {
             cc = new CategoryContent(path + ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + s, s, path, yml, this);
+            cc.setCategoryIdentifier("default-" + cc.getCategoryIdentifier());
             if (cc.isLoaded()) {
                 categoryContentList.add(cc);
                 BedWars.debug("Adding CategoryContent: " + s + " to Shop Category: " + path);
@@ -122,6 +127,7 @@ public class ShopCategory implements IShopCategory {
     }
 
     public void open(Player player, IShopIndex index, IShopCache shopCache){
+        BedWars.debug("opening ShopCategory: " + name + " for player: " + player.getName());
         if (player.getOpenInventory().getTopInventory() == null) return;
         ShopIndex.indexViewers.remove(player.getUniqueId());
 
@@ -129,8 +135,12 @@ public class ShopCategory implements IShopCategory {
 
         inv.setItem(index.getQuickBuyButton().getSlot(), index.getQuickBuyButton().getItemStack(player));
 
+        IArena arena = Arena.getArenaByPlayer(player);
+
         for (IShopCategory sc : index.getCategoryList()) {
-            inv.setItem(sc.getSlot(), sc.getItemStack(player));
+            // If we don't check this, the shop will be displayed in all arenas
+            if (sc.getName().startsWith("default") || sc.getName().startsWith(arena.getGroup().toLowerCase()))
+                inv.setItem(sc.getSlot(), sc.getItemStack(player));
         }
 
         index.addSeparator(player, inv);

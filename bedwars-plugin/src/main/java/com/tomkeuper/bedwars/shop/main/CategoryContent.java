@@ -59,6 +59,7 @@ public class CategoryContent implements ICategoryContent {
     private String contentName;
     private String itemNamePath, itemLorePath;
     private String identifier;
+    private String categoryIdentifier;
     private boolean permanent = false, downgradable = false, unbreakable = false;
     private byte weight = 0;
     private IShopCategory father;
@@ -67,7 +68,7 @@ public class CategoryContent implements ICategoryContent {
      * Load a new category
      */
     public CategoryContent(String path, String name, String categoryName, YamlConfiguration yml, IShopCategory father) {
-        BedWars.debug("Loading CategoryContent " + path);
+        BedWars.debug("Loading CategoryContent " + path + " name: " + name);
         this.contentName = name;
         this.father = father;
 
@@ -132,6 +133,7 @@ public class CategoryContent implements ICategoryContent {
         }
 
         identifier = path;
+        categoryIdentifier = path;
 
         loaded = true;
 
@@ -503,5 +505,13 @@ public class CategoryContent implements ICategoryContent {
 
     public List<IContentTier> getContentTiers() {
         return contentTiers;
+    }
+
+    public String getCategoryIdentifier() {
+        return categoryIdentifier;
+    }
+
+    public void setCategoryIdentifier(String categoryIdentifier) {
+        this.categoryIdentifier = categoryIdentifier;
     }
 }

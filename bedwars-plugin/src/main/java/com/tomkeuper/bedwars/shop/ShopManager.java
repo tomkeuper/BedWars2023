@@ -43,7 +43,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
     public static ShopIndex shop;
 
     public ShopManager() {
-        super(BedWars.plugin, "shop", BedWars.plugin.getDataFolder().getPath());
+        super(BedWars.plugin, "default-shop", BedWars.plugin.getDataFolder().getPath() + "/Shops");
         saveDefaults();
         registerListeners();
     }
@@ -407,7 +407,7 @@ public class ShopManager extends ConfigManager implements IShopManager {
             if (s.equalsIgnoreCase(ConfigPath.SHOP_SETTINGS_PATH)) continue;
             if (s.equals(ConfigPath.SHOP_QUICK_DEFAULTS_PATH)) continue;
             if (s.equalsIgnoreCase(ConfigPath.SHOP_SPECIALS_PATH)) continue;
-            ShopCategory sc = new ShopCategory(s, getYml());
+            ShopCategory sc = new ShopCategory(s, getYml(), "default-" + s); // Identify shop with default name + shop name
             if (sc.isLoaded()) shop.addShopCategory(sc);
         }
     }

@@ -32,6 +32,8 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.CmdLeave;
+import com.tomkeuper.bedwars.shop.main.ShopCategory;
+import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -203,6 +205,16 @@ public class Inventory implements Listener {
 
         // Check if player is in an arena or if they are watching a GUI
         if (arena == null || BedWars.getAPI().getTeamUpgradesUtil().isWatchingGUI(player)) {
+            return;
+        }
+
+        // Check if player is watching a shop GUI
+        if (ShopCategory.categoryViewers.contains(player.getUniqueId())) {
+            return;
+        }
+
+        // Check if player is watching quick buy menu
+        if (ShopIndex.indexViewers.contains(player.getUniqueId())) {
             return;
         }
 
