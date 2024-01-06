@@ -20,8 +20,6 @@
 
 package com.tomkeuper.bedwars.listeners;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,10 +28,6 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.support.version.common.VersionCommon.api;
 import static com.tomkeuper.bedwars.utils.MainUtils.*;
@@ -53,11 +47,7 @@ public class ItemDropPickListener {
         @SuppressWarnings("deprecation")
         @EventHandler
         public void onPickUp(PlayerPickupItemEvent e) {
-            if (managePickup(e.getItem(), e.getPlayer(), getItemsAround(e.getItem()).size())) {
-                e.setCancelled(true);
-                return;
-            }
-            manageGeneratorPickUp(e, e.getPlayer(), e.getItem(), getItemsAround(e.getItem()));
+            if (managePickup(e.getItem(), e.getPlayer(), getItemsAround(e.getItem()).size())) e.setCancelled(true);
         }
     }
 
@@ -74,11 +64,7 @@ public class ItemDropPickListener {
         @EventHandler
         public void onPickup(EntityPickupItemEvent e) {
             if (!(e.getEntity() instanceof Player)) return;
-            if (managePickup(e.getItem(), e.getEntity(), getItemsAround(e.getItem()).size())) {
-                e.setCancelled(true);
-                return;
-            }
-            manageGeneratorPickUp(e, (Player) e.getEntity(), e.getItem(), getItemsAround(e.getItem()));
+            if (managePickup(e.getItem(), e.getEntity(), getItemsAround(e.getItem()).size())) e.setCancelled(true);
         }
     }
 

@@ -10,8 +10,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,26 +30,18 @@ public class MainUtils {
         return items;
     }
 
-    public static void manageGeneratorPickUp(PlayerPickupItemEvent e, Player player, Item item, List<Item> items) {
-        int am = items.size();
+    public static void manageGeneratorPickUp(Player player, Item item, List<Item> items) {
+        int amount = items.size();
 
         if (items.size() > 1) {
+            // We remove the item that is being picked up from the list.
             items.remove(item);
+            // We remove the entities to prevent more than one item from being picked up.
             items.forEach(Entity::remove);
         }
-        if (am == 1) return;
-        player.getInventory().addItem(new ItemStack(item.getItemStack().getType(), am));
-    }
-
-    public static void manageGeneratorPickUp(EntityPickupItemEvent e, Player player, Item item, List<Item> items) {
-        int am = items.size();
-
-        if (items.size() > 1) {
-            items.remove(item);
-            items.forEach(Entity::remove);
-        }
-        if (am == 1) return;
-        player.getInventory().addItem(new ItemStack(item.getItemStack().getType(), am));
+        // If the amount is 1, then the player is already picking up the item, so we don't need to add it to their inventory again.
+        if (amount == 1) return;
+        player.getInventory().addItem(new ItemStack(item.getItemStack().getType(), amount));
     }
 
     /**
@@ -98,8 +88,9 @@ public class MainUtils {
                             return true;
                         } else {
                             iStack.setItemMeta(itemMeta);
+                            manageGeneratorPickUp(p, item, getItemsAround(item));
                         }
-                    } else return true; //Cancel event if player is afk
+                    } else return true; // Cancel event if player is afk
                 }
             }
         }
