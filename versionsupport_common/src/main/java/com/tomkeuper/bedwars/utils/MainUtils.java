@@ -41,7 +41,8 @@ public class MainUtils {
         }
         // If the amount is 1, then the player is already picking up the item, so we don't need to add it to their inventory again.
         if (amount == 1) return;
-        player.getInventory().addItem(new ItemStack(item.getItemStack().getType(), amount));
+        // We add the item to the player's inventory and remove 1 from the amount to account for the item that is already being picked up.
+        player.getInventory().addItem(new ItemStack(item.getItemStack().getType(), amount-1));
     }
 
     /**
