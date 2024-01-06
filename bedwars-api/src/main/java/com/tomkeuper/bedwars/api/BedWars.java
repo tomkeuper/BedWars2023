@@ -394,6 +394,7 @@ public interface BedWars {
          *
          * @param p the player
          */
+        @Deprecated
         void sendLobbyCommandItems(Player p);
     }
 
@@ -433,6 +434,7 @@ public interface BedWars {
      * Get shop util.
      */
     ShopUtil getShopUtil();
+
     /**
      * The ShopUtil interface provides utility methods for managing player's money, currency, and purchases in the shop.
      */
@@ -441,8 +443,8 @@ public interface BedWars {
         /**
          * Retrieves the amount of money a player has in the specified currency.
          *
-         * @param player    the player
-         * @param currency  the currency material
+         * @param player   the player
+         * @param currency the currency material
          * @return the amount of money the player has
          */
         int calculateMoney(Player player, Material currency);
@@ -450,7 +452,7 @@ public interface BedWars {
         /**
          * Retrieves the currency material based on its name.
          *
-         * @param currency  the currency name
+         * @param currency the currency name
          * @return the currency material, or {@link Material#AIR} if it is a vault currency
          */
         Material getCurrency(String currency);
@@ -458,7 +460,7 @@ public interface BedWars {
         /**
          * Retrieves the color associated with the specified currency material.
          *
-         * @param currency  the currency material
+         * @param currency the currency material
          * @return the color associated with the currency
          */
         ChatColor getCurrencyColor(Material currency);
@@ -466,7 +468,7 @@ public interface BedWars {
         /**
          * Retrieves the currency message path for the specified content tier.
          *
-         * @param contentTier  the content tier
+         * @param contentTier the content tier
          * @return the currency message path
          */
         String getCurrencyMsgPath(IContentTier contentTier);
@@ -474,7 +476,7 @@ public interface BedWars {
         /**
          * Retrieves the Roman numeral representation of the specified integer.
          *
-         * @param n  the integer value (1-10)
+         * @param n the integer value (1-10)
          * @return the Roman numeral representation
          */
         String getRomanNumber(int n);
@@ -482,9 +484,9 @@ public interface BedWars {
         /**
          * Takes the specified amount of money from the player in the specified currency.
          *
-         * @param player    the player
-         * @param currency  the currency material
-         * @param amount    the amount of money to take
+         * @param player   the player
+         * @param currency the currency material
+         * @param amount   the amount of money to take
          */
         void takeMoney(Player player, Material currency, int amount);
 
