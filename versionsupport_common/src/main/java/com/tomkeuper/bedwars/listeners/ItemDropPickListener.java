@@ -40,6 +40,9 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.tomkeuper.bedwars.support.version.common.VersionCommon.api;
 
 public class ItemDropPickListener {
@@ -56,8 +59,29 @@ public class ItemDropPickListener {
     public static class PlayerPickup implements Listener {
         @SuppressWarnings("deprecation")
         @EventHandler
-        public void onDrop(PlayerPickupItemEvent e){
-            if (managePickup(e.getItem(), e.getPlayer())) e.setCancelled(true);
+        public void onPickUp(PlayerPickupItemEvent e) {
+            Player p = e.getPlayer();
+
+            List<Item> items = e.getItem().getNearbyEntities(0.5, 0.5, 0.5).stream()
+                    .filter(entity -> entity instanceof Item)
+                    .filter(entity -> ((Item) entity).getItemStack().getType() == e.getItem().getItemStack().getType())
+                    .filter(entity -> entity.getLocation().distance(e.getItem().getLocation()) < 0.1)
+                    .map(entity -> (Item) entity)
+                    .collect(Collectors.toList());
+            items.add(e.getItem());
+            int amount = items.size();
+
+            if (managePickup(e.getItem(), e.getPlayer(), items.size())) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (items.size() > 1) {
+                items.remove(e.getItem());
+                items.forEach(Entity::remove);
+            }
+            if (items.size() == 1) return;
+            p.getInventory().addItem(new ItemStack(e.getItem().getItemStack().getType(), amount));
         }
     }
 
@@ -72,8 +96,31 @@ public class ItemDropPickListener {
     // 1.12 or newer
     public static class EntityPickup implements Listener {
         @EventHandler
-        public void onPickup(EntityPickupItemEvent e){
-            if (managePickup(e.getItem(), e.getEntity())) e.setCancelled(true);
+        public void onPickup(EntityPickupItemEvent e) {
+            if (!(e.getEntity() instanceof Player)) return;
+            Player p = e.getEntity() instanceof Player ? (Player) e.getEntity() : null;
+            if (p == null) return;
+
+            List<Item> items = e.getItem().getNearbyEntities(0.5, 0.5, 0.5).stream()
+                    .filter(entity -> entity instanceof Item)
+                    .filter(entity -> ((Item) entity).getItemStack().getType() == e.getItem().getItemStack().getType())
+                    .filter(entity -> entity.getLocation().distance(e.getItem().getLocation()) < 0.1)
+                    .map(entity -> (Item) entity)
+                    .collect(Collectors.toList());
+            items.add(e.getItem());
+            int amount = items.size();
+
+            if (managePickup(e.getItem(), e.getEntity(), items.size())) {
+                e.setCancelled(true);
+                return;
+            }
+
+            if (items.size() > 1) {
+                items.remove(e.getItem());
+                items.forEach(Entity::remove);
+            }
+            if (items.size() == 1) return;
+            p.getInventory().addItem(new ItemStack(e.getItem().getItemStack().getType(), amount));
         }
     }
 
@@ -90,50 +137,49 @@ public class ItemDropPickListener {
     /**
      * @return true if event should be cancelled
      */
-    private static boolean managePickup(Item item, LivingEntity player) {
+    private static boolean managePickup(Item item, LivingEntity player, int amount) {
         if (!(player instanceof Player)) return false;
+
         if (api.getServerType() == ServerType.MULTIARENA) {
             //noinspection ConstantConditions
             if (player.getLocation().getWorld().getName().equalsIgnoreCase(api.getLobbyWorld())) {
                 return true;
             }
         }
-        IArena a = api.getArenaUtil().getArenaByPlayer((Player) player);
+        Player p = (Player) player;
+        IArena a = api.getArenaUtil().getArenaByPlayer(p);
+        ItemStack iStack = item.getItemStack();
+
         if (a == null) return false;
-        if (!a.isPlayer((Player) player)) {
-            return true;
-        }
-        if (a.getStatus() != GameState.playing) {
-            return true;
-        }
-        if (a.getRespawnSessions().containsKey(player)) {
-            return true;
-        }
-        if (item.getItemStack().getType() == Material.ARROW) {
-            item.setItemStack(api.getVersionSupport().createItemStack(item.getItemStack().getType().toString(), item.getItemStack().getAmount(), (short) 0));
+        if (!a.isPlayer(p)) return true;
+        if (a.getStatus() != GameState.playing) return true;
+        if (a.getRespawnSessions().containsKey(p)) return true;
+
+        if (iStack.getType() == Material.ARROW) {
+            item.setItemStack(api.getVersionSupport().createItemStack(iStack.getType().toString(), iStack.getAmount(), (short) 0));
             return false;
         }
 
-        if (item.getItemStack().getType().toString().equals("BED")) {
+        if (iStack.getType().toString().equals("BED")) {
             item.remove();
             return true;
-        } else if (item.getItemStack().hasItemMeta()) {
+        } else if (iStack.hasItemMeta()) {
             //noinspection ConstantConditions
-            if (item.getItemStack().getItemMeta().hasDisplayName()) {
-                if (item.getItemStack().getItemMeta().getDisplayName().contains("custom")) {
+            if (iStack.getItemMeta().hasDisplayName()) {
+                if (iStack.getItemMeta().getDisplayName().contains("custom")) {
                     Material material = item.getItemStack().getType();
                     ItemMeta itemMeta = new ItemStack(material).getItemMeta();
 
                     //Call ore pick up event
-                    if (!api.getAFKUtil().isPlayerAFK(((Player) player).getPlayer())){
-                        PlayerGeneratorCollectEvent event = new PlayerGeneratorCollectEvent((Player) player, item, a);
+                    if (!api.getAFKUtil().isPlayerAFK(p)){
+                        PlayerGeneratorCollectEvent event = new PlayerGeneratorCollectEvent(p, item, a, amount);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
                             return true;
                         } else {
-                            item.getItemStack().setItemMeta(itemMeta);
+                            iStack.setItemMeta(itemMeta);
                         }
-                    }else return true; //Cancel event if player is afk
+                    } else return true; //Cancel event if player is afk
                 }
             }
         }
