@@ -238,13 +238,6 @@ public class PlayerLevel {
     }
 
     /**
-     * Get player level as int.
-     */
-    public int getPlayerLevel() {
-        return level;
-    }
-
-    /**
      * Destroy data.
      */
     public void destroy() {

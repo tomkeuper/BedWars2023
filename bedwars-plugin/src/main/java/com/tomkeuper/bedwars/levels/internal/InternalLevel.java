@@ -33,7 +33,7 @@ public class InternalLevel implements Level {
 
     @Override
     public int getPlayerLevel(Player p) {
-        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getPlayerLevel();
+        return PlayerLevel.getLevelByPlayer(p.getUniqueId()).getLevel();
     }
 
     @Override
