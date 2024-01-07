@@ -47,7 +47,7 @@ public class ItemDropPickListener {
         @SuppressWarnings("deprecation")
         @EventHandler
         public void onPickUp(PlayerPickupItemEvent e) {
-            if (managePickup(e.getItem(), e.getPlayer(), getItemsAround(e.getItem()).size())) e.setCancelled(true);
+            if (managePickup(e.getItem(), e.getPlayer(), getSimilarItemsAround(e.getItem()).size())) e.setCancelled(true);
         }
     }
 
@@ -64,7 +64,7 @@ public class ItemDropPickListener {
         @EventHandler
         public void onPickup(EntityPickupItemEvent e) {
             if (!(e.getEntity() instanceof Player)) return;
-            if (managePickup(e.getItem(), e.getEntity(), getItemsAround(e.getItem()).size())) e.setCancelled(true);
+            if (managePickup(e.getItem(), e.getEntity(), getSimilarItemsAround(e.getItem()).size())) e.setCancelled(true);
         }
     }
 

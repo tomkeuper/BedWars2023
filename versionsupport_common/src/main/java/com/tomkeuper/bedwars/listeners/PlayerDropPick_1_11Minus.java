@@ -28,7 +28,6 @@ import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +38,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static com.tomkeuper.bedwars.utils.MainUtils.getSimilarItemsAround;
+import static com.tomkeuper.bedwars.utils.MainUtils.manageGeneratorPickUp;
 
 public class PlayerDropPick_1_11Minus implements Listener {
 
@@ -108,26 +109,14 @@ public class PlayerDropPick_1_11Minus implements Listener {
                             e.getItem().setItemStack(stack);
                             Player p = e.getPlayer();
 
-                            List<Item> items = e.getItem().getNearbyEntities(0.5, 0.5, 0.5).stream()
-                                    .filter(entity -> entity instanceof Item)
-                                    .filter(entity -> ((Item) entity).getItemStack().getType() == e.getItem().getItemStack().getType())
-                                    .filter(entity -> entity.getLocation().distance(e.getItem().getLocation()) < 0.1)
-                                    .map(entity -> (Item) entity)
-                                    .collect(Collectors.toList());
+                            List<Item> items = getSimilarItemsAround(e.getItem());
                             items.add(e.getItem());
-                            int amount = items.size();
 
                             if (event.isCancelled()) return;
 
-                            if (items.size() > 1) {
-                                items.remove(e.getItem());
-                                items.forEach(Entity::remove);
-                            }
-                            if (items.size() == 1) return;
-                            p.getInventory().addItem(new ItemStack(e.getItem().getItemStack().getType(), amount));
+                            manageGeneratorPickUp(p, e.getItem(), items);
                         }
-                    }
-                    else {  //Cancel Event if play is afk
+                    } else {  // Cancel Event if play is afk
                         e.setCancelled(true);
                     }
                 }

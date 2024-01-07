@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 import static com.tomkeuper.bedwars.support.version.common.VersionCommon.api;
 
 public class MainUtils {
-    public static List<Item> getItemsAround(Item item) {
+    public static List<Item> getSimilarItemsAround(Item item) {
+        // We get all the items around the item that are of the same type.
         List<Item> items = item.getNearbyEntities(0.5, 0.5, 0.5).stream()
                 .filter(entity -> entity instanceof Item)
                 .filter(entity -> ((Item) entity).getItemStack().getType() == item.getItemStack().getType())
@@ -33,7 +34,7 @@ public class MainUtils {
     public static void manageGeneratorPickUp(Player player, Item item, List<Item> items) {
         int amount = items.size();
 
-        if (items.size() > 1) {
+        if (amount > 1) {
             // We remove the item that is being picked up from the list.
             items.remove(item);
             // We remove the entities to prevent more than one item from being picked up.
@@ -89,7 +90,7 @@ public class MainUtils {
                             return true;
                         } else {
                             iStack.setItemMeta(itemMeta);
-                            manageGeneratorPickUp(p, item, getItemsAround(item));
+                            manageGeneratorPickUp(p, item, getSimilarItemsAround(item));
                         }
                     } else return true; // Cancel event if player is afk
                 }
