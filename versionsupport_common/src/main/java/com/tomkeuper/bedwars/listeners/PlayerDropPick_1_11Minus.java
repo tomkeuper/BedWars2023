@@ -28,12 +28,19 @@ import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.List;
+
+import static com.tomkeuper.bedwars.utils.MainUtils.getSimilarItemsAround;
+import static com.tomkeuper.bedwars.utils.MainUtils.manageGeneratorPickUp;
 
 public class PlayerDropPick_1_11Minus implements Listener {
 
@@ -58,6 +65,7 @@ public class PlayerDropPick_1_11Minus implements Listener {
 
         IArena a = api.getArenaUtil().getArenaByPlayer(e.getPlayer());
         if (a == null) return;
+        ItemStack stack = e.getItem().getItemStack();
 
         if (!a.isPlayer(e.getPlayer())) {
             e.setCancelled(true);
@@ -74,33 +82,41 @@ public class PlayerDropPick_1_11Minus implements Listener {
             return;
         }
 
-        if (e.getItem().getItemStack().getType() == Material.ARROW){
-            e.getItem().setItemStack(api.getVersionSupport().createItemStack(e.getItem().getItemStack().getType().toString(), e.getItem().getItemStack().getAmount(), (short) 0));
+        if (stack.getType() == Material.ARROW){
+            e.getItem().setItemStack(api.getVersionSupport().createItemStack(stack.getType().toString(), stack.getAmount(), (short) 0));
             return;
         }
 
-        if (VersionCommon.api.getVersionSupport().isBed(e.getItem().getItemStack().getType())) {
+        if (VersionCommon.api.getVersionSupport().isBed(stack.getType())) {
             e.setCancelled(true);
             e.getItem().remove();
-        } else if (e.getItem().getItemStack().hasItemMeta()) {
+        } else if (stack.hasItemMeta()) {
             //noinspection ConstantConditions
-            if (e.getItem().getItemStack().getItemMeta().hasDisplayName()) {
-                if (e.getItem().getItemStack().getItemMeta().getDisplayName().contains("custom")) {
-                    Material material = e.getItem().getItemStack().getType();
+            if (stack.getItemMeta().hasDisplayName()) {
+                if (stack.getItemMeta().getDisplayName().contains("custom")) {
+                    Material material = stack.getType();
                     ItemMeta itemMeta = new ItemStack(material).getItemMeta();
 
                     //Call ore pick up event
 
                     if (!api.getAFKUtil().isPlayerAFK(e.getPlayer())){
-                        PlayerGeneratorCollectEvent event = new PlayerGeneratorCollectEvent(e.getPlayer(), e.getItem(), a);
+                        PlayerGeneratorCollectEvent event = new PlayerGeneratorCollectEvent(e.getPlayer(), e.getItem(), a, e.getRemaining());
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()){
                             e.setCancelled(true);
                         } else {
-                            e.getItem().getItemStack().setItemMeta(itemMeta);
+                            stack.setItemMeta(itemMeta);
+                            e.getItem().setItemStack(stack);
+                            Player p = e.getPlayer();
+
+                            List<Item> items = getSimilarItemsAround(e.getItem());
+                            items.add(e.getItem());
+
+                            if (event.isCancelled()) return;
+
+                            manageGeneratorPickUp(p, e.getItem(), items);
                         }
-                    }
-                    else {  //Cancel Event if play is afk
+                    } else {  // Cancel Event if play is afk
                         e.setCancelled(true);
                     }
                 }

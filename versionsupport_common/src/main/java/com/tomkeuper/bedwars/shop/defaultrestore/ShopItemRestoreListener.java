@@ -55,7 +55,7 @@ public class ShopItemRestoreListener {
     public static class PlayerPickup implements Listener {
         @SuppressWarnings("deprecation")
         @EventHandler
-        public void onDrop(PlayerPickupItemEvent e) {
+        public void onPickup(PlayerPickupItemEvent e) {
             if (managePickup(e.getItem(), e.getPlayer())) e.setCancelled(true);
         }
     }
