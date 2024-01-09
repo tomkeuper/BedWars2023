@@ -47,7 +47,7 @@ public class GenSplitFeature implements Listener {
                         ITeam team = Arena.getArenaByPlayer(pickupPlayer).getTeam(p);
                         ITeam rt = Arena.getArenaByPlayer(pickupPlayer).getTeam(pickupPlayer);
                         if (team == rt) {
-                            ItemStack item = new ItemStack(e.getItemStack().getType(),e.getItemStack().getAmount());
+                            ItemStack item = new ItemStack(e.getItemStack().getType(),e.getAmount());
                             if (!BedWars.getAPI().getAFKUtil().isPlayerAFK(pickupPlayer)) pickupPlayer.getInventory().addItem(item);
                         }
                     }
