@@ -428,10 +428,10 @@ public class v1_8_R3 extends VersionSupport {
         NBTTagCompound tag = itemStack.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
-            itemStack.setTag(tag);
         }
 
         tag.setString("BedWars2023", data);
+        itemStack.setTag(tag);
         return CraftItemStack.asBukkitCopy(itemStack);
     }
 
@@ -441,10 +441,10 @@ public class v1_8_R3 extends VersionSupport {
         NBTTagCompound tag = is.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
-            is.setTag(tag);
         }
 
         tag.setString(key, value);
+        is.setTag(tag);
         return CraftItemStack.asBukkitCopy(is);
     }
 
