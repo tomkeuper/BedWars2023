@@ -403,10 +403,10 @@ public class v1_18_R2 extends VersionSupport {
         NBTTagCompound tag = is.t();
         if (tag == null) {
             tag = new NBTTagCompound();
-            is.c(tag);
         }
 
         tag.a(key, value);
+        is.c(tag);
         return CraftItemStack.asBukkitCopy(is);
     }
 
