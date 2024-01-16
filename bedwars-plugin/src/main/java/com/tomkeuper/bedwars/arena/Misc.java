@@ -172,7 +172,7 @@ public class Misc {
      * @param lore     item lore
      * @param owner    in case of skull, can be null, don't worry
      */
-    static ItemStack createItem(Material material, byte data, boolean enchanted, String name, List<String> lore, Player owner, @SuppressWarnings("SameParameterValue") String metaKey, String metaData) {
+    public static ItemStack createItem(Material material, byte data, boolean enchanted, String name, List<String> lore, Player owner, @SuppressWarnings("SameParameterValue") String metaKey, String metaData) {
         ItemStack i = new ItemStack(material, 1, data);
         ItemMeta im = i.getItemMeta();
         im.setDisplayName(name);
