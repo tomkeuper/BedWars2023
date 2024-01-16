@@ -24,21 +24,6 @@ public class LobbyItem implements ILobbyItem {
     }
 
     @Override
-    public void addCommand(String command) {
-        if (command != null) commands.add(command);
-    }
-
-    @Override
-    public boolean removeCommand(String command) {
-        return commands.remove(command);
-    }
-
-    @Override
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    @Override
     public ILobbyItemHandler getHandler() {
         return handler;
     }
