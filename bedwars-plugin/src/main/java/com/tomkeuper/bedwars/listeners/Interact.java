@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -58,17 +59,32 @@ public class Interact implements Listener {
     /* Handle custom items with commands on them */
     public void onItemCommand(PlayerInteractEvent e) {
         if (e == null) return;
-        Player p = e.getPlayer();
+        Player player = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
-            ItemStack i = BedWars.nms.getItemInHand(p);
-            if (!nms.isCustomBedWarsItem(i)) return;
-            final String[] customData = nms.getCustomData(i).split("_");
+            ItemStack item = BedWars.nms.getItemInHand(player);
+            if (!nms.isCustomBedWarsItem(item)) return;
+            final String[] customData = nms.getCustomData(item).split("_");
+
+            // Handle command execution
             if (customData.length >= 2) {
                 if (customData[0].equals("RUNCOMMAND")) {
                     e.setCancelled(true);
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(p, customData[1]));
+                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(player, customData[1]));
+                    return;
                 }
             }
+
+            String action = BedWars.nms.getTag(item, "ACTION");
+            if (action == null) return;
+
+            //* Get the item handler for the correct item
+            for (ILobbyItem lobbyItem : BedWars.getLobbyItems()) {
+                if (lobbyItem.getIdentifier().equalsIgnoreCase(action)) {
+                    lobbyItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), lobbyItem);
+                    return;
+                }
+            }
+            Bukkit.getLogger().warning("Could not find a handler for item: " + action);
         }
     }
 

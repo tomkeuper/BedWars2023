@@ -29,6 +29,9 @@ import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.items.handlers.IItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
+import com.tomkeuper.bedwars.api.items.handlers.ILobbyItemHandler;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -48,13 +51,12 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public interface BedWars {
@@ -834,4 +836,17 @@ public interface BedWars {
      */
     IRedisClient getRedisClient();
 
+    /**
+     * Retrieves the ItemUtil interface for in game lobby items
+     *
+     * @return the ItemUtil interface
+     */
+    ItemUtil getItemUtil();
+
+    interface ItemUtil {
+
+        Collection<ILobbyItem> getLobbyItems();
+
+        boolean registerLobbyItemHandler(ILobbyItemHandler handler, Plugin plugin);
+    }
 }
