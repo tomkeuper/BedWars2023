@@ -81,6 +81,18 @@ public class SpectatorListeners implements Listener {
     }
 
     @EventHandler
+    // Disable spectator interact with item frames
+    public void onItemFrame(PlayerInteractEntityEvent e) {
+        IArena a = Arena.getArenaByPlayer(e.getPlayer());
+        if (a == null) return;
+        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
+            if (a.isSpectator(e.getPlayer()) || a.getRespawnSessions().containsKey(e.getPlayer())) {
+                e.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler
     public void onSpectatorInventoryClose(InventoryCloseEvent e) {
         Player p = (Player) e.getPlayer();
         TeleporterGUI.closeGUI(p);
