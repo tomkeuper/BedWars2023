@@ -32,7 +32,7 @@ BedWars2023 will hook into it and do everything for you.
 
 # Pre-made setups and community addons
 
-You can find a list of pre-made setups and community addons [on the wiki](https://javadocs.tomkeuper.com/docs/BedWars2023/addons)
+You can find a list of pre-made setups and community addons [on the wiki](https://wiki.tomkeuper.com/docs/BedWars2023/addons)
 
 # Main features
 
