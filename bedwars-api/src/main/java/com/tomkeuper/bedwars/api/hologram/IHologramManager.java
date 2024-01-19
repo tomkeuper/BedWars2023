@@ -9,8 +9,6 @@ public interface IHologramManager {
 
     /**
      * Create a hologram with the given lines at the given location.
-     * <p>
-     * NOTE: Please, note that the lines WILL BE REVERSED, so the first line will be the last line in the hologram.
      *
      * @param p - the player to create the hologram for
      * @param location - the location to create the hologram at
@@ -21,8 +19,6 @@ public interface IHologramManager {
 
     /**
      * Create a hologram with the given lines at the given location.
-     * <p>
-     * NOTE: Please, note that the lines WILL BE REVERSED, so the first line will be the last line in the hologram.
      *
      * @param p - the player to create the hologram for
      * @param location - the location to create the hologram at

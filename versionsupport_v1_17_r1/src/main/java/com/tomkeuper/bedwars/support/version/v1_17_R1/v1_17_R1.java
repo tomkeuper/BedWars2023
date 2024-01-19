@@ -785,12 +785,16 @@ public class v1_17_R1 extends VersionSupport {
     @Override
     public IHologram createHologram(Player p, Location location, String... lines) {
         List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
         return new Hologram(p, location, linesList);
     }
 
     @Override
     public IHologram createHologram(Player p, Location location, IHoloLine... lines) {
         List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
         return new Hologram(p, linesList, location);
     }
 

@@ -58,10 +58,7 @@ import org.bukkit.util.Vector;
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -802,6 +799,8 @@ public class v1_8_R3 extends VersionSupport {
     @Override
     public IHologram createHologram(Player p, Location location, String... lines) {
         List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
         return new Hologram(p, location, linesList);
     }
 
