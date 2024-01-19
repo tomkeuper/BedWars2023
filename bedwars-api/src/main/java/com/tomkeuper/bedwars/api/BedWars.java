@@ -29,6 +29,7 @@ import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -68,6 +69,11 @@ public interface BedWars {
      * Get addon util
      */
     IAddonManager getAddonsUtil();
+
+    /**
+     * Get holograms util.
+     */
+    IHologramManager getHologramsUtil();
 
     interface IStats {
         /**

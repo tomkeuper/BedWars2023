@@ -27,10 +27,14 @@ import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.exceptions.InvalidEffectException;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
+import com.tomkeuper.bedwars.support.version.v1_12_R1.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_12_R1.hologram.Hologram;
 import net.minecraft.server.v1_12_R1.Item;
 import net.minecraft.server.v1_12_R1.*;
 import org.bukkit.Color;
@@ -54,7 +58,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -741,5 +748,22 @@ public class v1_12_R1 extends VersionSupport {
     @Override
     public void playVillagerEffect(Player player, Location location){
         player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, String... lines) {
+        List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        return new Hologram(p, location, linesList);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, IHoloLine... lines) {
+        List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
+        return new Hologram(p, linesList, location);
+    }
+
+    @Override
+    public IHoloLine lineFromText(String text, @Nonnull IHologram hologram) {
+        return new HoloLine(text, hologram);
     }
 }

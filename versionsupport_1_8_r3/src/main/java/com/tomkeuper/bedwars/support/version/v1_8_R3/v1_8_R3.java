@@ -27,10 +27,14 @@ import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.exceptions.InvalidEffectException;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
+import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.Hologram;
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -38,10 +42,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftFireball;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftTNTPrimed;
+import org.bukkit.craftbukkit.v1_8_R3.entity.*;
 import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.*;
@@ -54,9 +55,11 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -394,8 +397,7 @@ public class v1_8_R3 extends VersionSupport {
             getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
             return null;
         }
-        EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
-        return ed;
+        return (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
     }
 
     @Override
@@ -795,5 +797,22 @@ public class v1_8_R3 extends VersionSupport {
     public void playVillagerEffect(Player player, Location location){
         PacketPlayOutWorldParticles pwp = new PacketPlayOutWorldParticles(EnumParticle.VILLAGER_HAPPY, true, (float) location.getX(), (float) location.getY(), (float) location.getZ(), (float) 0, (float) 0, (float) 0, (float) 0, 1);
         ((CraftPlayer) player).getHandle().playerConnection.sendPacket(pwp);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, String... lines) {
+        List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        return new Hologram(p, location, linesList);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, IHoloLine... lines) {
+        List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
+        return new Hologram(p, linesList, location);
+    }
+
+    @Override
+    public IHoloLine lineFromText(String text, @Nonnull IHologram hologram) {
+        return new HoloLine(text, hologram);
     }
 }

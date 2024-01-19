@@ -6,6 +6,8 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
@@ -14,6 +16,8 @@ import com.tomkeuper.bedwars.support.version.v1_19_R3.despawnable.DespawnableAtt
 import com.tomkeuper.bedwars.support.version.v1_19_R3.despawnable.DespawnableFactory;
 import com.tomkeuper.bedwars.support.version.v1_19_R3.despawnable.DespawnableType;
 import com.mojang.datafixers.util.Pair;
+import com.tomkeuper.bedwars.support.version.v1_19_R3.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_19_R3.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -58,6 +62,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -838,5 +843,22 @@ public class v1_19_R3 extends VersionSupport {
     @Override
     public void playVillagerEffect(@NotNull Player player, Location location){
         player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, String... lines) {
+        List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        return new Hologram(p, location, linesList);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, IHoloLine... lines) {
+        List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
+        return new Hologram(p, linesList, location);
+    }
+
+    @Override
+    public IHoloLine lineFromText(String text, @Nonnull IHologram hologram) {
+        return new HoloLine(text, hologram);
     }
 }

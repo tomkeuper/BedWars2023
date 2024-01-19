@@ -30,6 +30,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -332,6 +333,11 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     @Override
     public IAddonManager getAddonsUtil() {
         return BedWars.addonManager;
+    }
+
+    @Override
+    public IHologramManager getHologramsUtil() {
+        return BedWars.hologramManager;
     }
 
     @SuppressWarnings("unused")

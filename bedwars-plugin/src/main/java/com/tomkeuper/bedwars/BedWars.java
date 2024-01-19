@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -59,6 +60,7 @@ import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
+import com.tomkeuper.bedwars.hologram.HologramManager;
 import com.tomkeuper.bedwars.language.*;
 import com.tomkeuper.bedwars.levels.internal.InternalLevel;
 import com.tomkeuper.bedwars.levels.internal.LevelListeners;
@@ -153,6 +155,7 @@ public class BedWars extends JavaPlugin {
 
     public static ArenaManager arenaManager = new ArenaManager();
     public static IAddonManager addonManager = new AddonManager();
+    public static IHologramManager hologramManager = new HologramManager();
 
     //remote database
     private static IDatabase remoteDatabase;
