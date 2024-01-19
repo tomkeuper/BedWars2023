@@ -599,6 +599,7 @@ public class BedWars extends JavaPlugin {
 
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
+                    Bukkit.getPluginManager().disablePlugin(this);
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
