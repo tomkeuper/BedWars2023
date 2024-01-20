@@ -6,6 +6,7 @@ import net.minecraft.network.protocol.game.*;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R2.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_18_R2.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R2.util.CraftChatMessage;
 
@@ -19,9 +20,9 @@ public class HoloLine implements IHoloLine {
         this.text = text;
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
-        entity.j(true);
         entity.a(CraftChatMessage.fromStringOrNull(text));
         entity.n(true);
+        entity.j(true);
         entity.Q = true;
 
         Location loc = hologram.getLocation();
@@ -78,14 +79,14 @@ public class HoloLine implements IHoloLine {
     @Override
     public void show() {
         this.showing = true;
-        entity.j(false);
+        entity.n(true);
         update();
     }
 
     @Override
     public void hide() {
         this.showing = false;
-        entity.j(true);
+        entity.n(false);
         update();
     }
 

@@ -84,7 +84,7 @@ public class HoloLine implements IHoloLine {
     @Override
     public void hide() {
         this.showing = false;
-        entity.setInvisible(false);
+        entity.setCustomNameVisible(false);
         update();
     }
 

@@ -80,14 +80,14 @@ public class HoloLine implements IHoloLine {
     @Override
     public void show() {
         this.showing = true;
-        entity.j(true);
+        entity.n(true);
         update();
     }
 
     @Override
     public void hide() {
         this.showing = false;
-        entity.j(false);
+        entity.n(false);
         update();
     }
 

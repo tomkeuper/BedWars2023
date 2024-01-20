@@ -72,7 +72,7 @@ public class OreGenerator implements IGenerator {
     /**
      * Generator holograms per language <iso, holo></iso,>
      */
-    private HashMap<String, IGenHolo> armorStands = new HashMap<>();
+    private HashMap<Player, IGenHolo> holograms = new HashMap<>();
 
     private ArmorStand item;
     public boolean stack = BedWars.getGeneratorsCfg().getBoolean(ConfigPath.GENERATOR_STACK_ITEMS);
@@ -119,7 +119,7 @@ public class OreGenerator implements IGenerator {
                             "Default." + ConfigPath.GENERATOR_DIAMOND_TIER_III_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_III_SPAWN_LIMIT);
                 }
                 ore = new ItemStack(Material.DIAMOND);
-                for (IGenHolo e : armorStands.values()) {
+                for (IGenHolo e : holograms.values()) {
                     e.setTierName(Language.getLang(e.getIso()).m(Messages.GENERATOR_HOLOGRAM_TIER).replace("%bw_tier%", Language.getLang(e.getIso())
                             .m(upgradeStage == 2 ? Messages.FORMATTING_GENERATOR_TIER2 : Messages.FORMATTING_GENERATOR_TIER3)));
                 }
@@ -142,7 +142,7 @@ public class OreGenerator implements IGenerator {
                             "Default." + ConfigPath.GENERATOR_EMERALD_TIER_III_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_EMERALD_TIER_III_SPAWN_LIMIT);
                 }
                 ore = new ItemStack(Material.EMERALD);
-                for (IGenHolo e : armorStands.values()) {
+                for (IGenHolo e : holograms.values()) {
                     e.setTierName(Language.getLang(e.getIso()).m(Messages.GENERATOR_HOLOGRAM_TIER).replace("%bw_tier%",
                             Language.getLang(e.getIso()).m(upgradeStage == 2 ? Messages.FORMATTING_GENERATOR_TIER2 : Messages.FORMATTING_GENERATOR_TIER3)));
                 }
@@ -186,8 +186,15 @@ public class OreGenerator implements IGenerator {
             return;
         }
         lastSpawn--;
-        for (IGenHolo e : armorStands.values()) {
-            e.setTimerName(Language.getLang(e.getIso()).m(Messages.GENERATOR_HOLOGRAM_TIMER).replace("%bw_seconds%", String.valueOf((int) Math.ceil(lastSpawn/speedMultiplier))));
+
+        if (getType() == GeneratorType.EMERALD || getType() == GeneratorType.DIAMOND) {
+            for (Player p : arena.getWorld().getPlayers()) {
+                IGenHolo e = holograms.get(p);
+                if (e == null) holograms.put(p, new HoloGram(p));
+                e = holograms.get(p);
+
+                e.setTimerName(Language.getLang(e.getIso()).m(Messages.GENERATOR_HOLOGRAM_TIMER).replace("%bw_seconds%", String.valueOf((int) Math.ceil(lastSpawn/speedMultiplier))));
+            }
         }
     }
 
@@ -219,8 +226,8 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    public HashMap<String, IGenHolo> getLanguageHolograms() {
-        return armorStands;
+    public HashMap<Player, IGenHolo> getPlayerHolograms() {
+        return holograms;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -234,13 +241,15 @@ public class OreGenerator implements IGenerator {
             this.p = p;
             this.iso = Language.getPlayerLanguage(p).getIso();
 
+            if (getOre().getType() != Material.EMERALD && getOre().getType() != Material.DIAMOND) return;
+
             String tierText = Language.getLang(iso).m(Messages.GENERATOR_HOLOGRAM_TIER)
                     .replace("%bw_tier%", Language.getLang(iso).m(Messages.FORMATTING_GENERATOR_TIER1));
             String timerText = Language.getLang(iso).m(Messages.GENERATOR_HOLOGRAM_TIMER)
                     .replace("%bw_seconds%", String.valueOf(lastSpawn));
             String nameText = Language.getLang(iso).m(getOre().getType() == Material.DIAMOND ? Messages.GENERATOR_HOLOGRAM_TYPE_DIAMOND
                     : Messages.GENERATOR_HOLOGRAM_TYPE_EMERALD);
-            hologram = BedWars.getAPI().getHologramsUtil().createHologram(p, location.clone().add(0, 0.5, 0), timerText, tierText, nameText);
+            hologram = BedWars.getAPI().getHologramsUtil().createHologram(p, location.clone().add(0, 0.5, 0), nameText, tierText, timerText);
             hologram.setGap(0.3);
 
             this.timer = hologram.getLine(0);
@@ -251,6 +260,11 @@ public class OreGenerator implements IGenerator {
         @Override
         public void setTierName(String name) {
             tier.setText(name);
+        }
+
+        @Override
+        public void setTimerName(String name) {
+            timer.setText(name);
         }
 
         @Override
@@ -274,11 +288,6 @@ public class OreGenerator implements IGenerator {
         }
 
         @Override
-        public void setTimerName(String name) {
-            timer.setText(name);
-        }
-
-        @Override
         public void destroy() {
             tier.remove();
             timer.remove();
@@ -286,11 +295,11 @@ public class OreGenerator implements IGenerator {
         }
     }
 
-    private static ArmorStand createArmorStand(String name, Location l) {
+    private static ArmorStand createArmorStand(Location l) {
         ArmorStand a = (ArmorStand) l.getWorld().spawnEntity(l, EntityType.ARMOR_STAND);
         a.setGravity(false);
-        if (name != null) {
-            a.setCustomName(name);
+        if (null != null) {
+            a.setCustomName(null);
             a.setCustomNameVisible(true);
         }
         a.setRemoveWhenFarAway(false);
@@ -368,13 +377,13 @@ public class OreGenerator implements IGenerator {
     public void disable() {
         if (getOre().getType() == Material.EMERALD || getOre().getType() == Material.DIAMOND) {
             rotation.remove(this);
-            for (IGenHolo a : armorStands.values()) {
+            for (IGenHolo a : holograms.values()) {
                 a.destroy();
             }
             if (item != null) {
                 item.remove();
             }
-            armorStands.clear();
+            holograms.clear();
         }
         disabled = true;
     }
@@ -388,10 +397,14 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    public void updateHolograms(Player p, String iso) {
-        for (IGenHolo h : armorStands.values()) {
-            h.update();
-        }
+    public void updateHolograms(Player p) {
+        if (!arena.getWorld().getPlayers().contains(p)) return;
+
+        IGenHolo h = holograms.get(p);
+        if (h == null) holograms.put(p, new HoloGram(p));
+        h = holograms.get(p);
+
+        h.update();
     }
 
     @Override
@@ -399,17 +412,17 @@ public class OreGenerator implements IGenerator {
         //loadDefaults(false);
         //if (getType() == GeneratorType.EMERALD || getType() == GeneratorType.DIAMOND) {
         rotation.add(this);
-        for (Player p : arena.getPlayers()) {
-            IGenHolo h = armorStands.get(Language.getPlayerLanguage(p).getIso());
+        for (Player p : arena.getWorld().getPlayers()) {
+            IGenHolo h = holograms.get(p);
             if (h == null) {
-                armorStands.put(Language.getPlayerLanguage(p).getIso(), new HoloGram(p));
+                holograms.put(p, new HoloGram(p));
             }
         }
-        for (IGenHolo hg : armorStands.values()) {
+        for (IGenHolo hg : holograms.values()) {
             hg.update();
         }
 
-        item = createArmorStand(null, location.clone().add(0, 0.5, 0));
+        item = createArmorStand(location.clone().add(0, 0.5, 0));
         item.setHelmet(new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
         //}
     }
@@ -528,7 +541,7 @@ public class OreGenerator implements IGenerator {
         arena = null;
         ore = null;
         bwt = null;
-        armorStands = null;
+        holograms = null;
         item = null;
     }
 }

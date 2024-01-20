@@ -138,12 +138,29 @@ public class Hologram implements IHologram {
 
     @Override
     public void setLine(int index, String line) {
+        if (this.lines.isEmpty()) {
+            this.lines.add(new HoloLine(line, this));
+            return;
+        }
+
+        if (this.lines.get(index) == null) {
+            this.lines.add(index, new HoloLine(line, this));
+            return;
+        }
         this.lines.get(index).setText(line);
     }
 
     @Override
     public void setLine(int index, String line, boolean update) {
-        this.lines.remove(index);
+        if (this.lines.isEmpty()) {
+            this.lines.add(new HoloLine(line, this));
+            return;
+        }
+
+        if (this.lines.get(index) == null) {
+            this.lines.add(index, new HoloLine(line, this));
+            return;
+        }
         this.lines.get(index).setText(line, update);
     }
 

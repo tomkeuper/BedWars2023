@@ -9,6 +9,7 @@ import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_19_R3.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 
@@ -23,8 +24,8 @@ public class HoloLine implements IHoloLine {
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
         entity.b(CraftChatMessage.fromStringOrNull(text));
-        entity.j(true);
         entity.n(true);
+        entity.j(true);
         entity.ae = true;
         Location loc = hologram.getLocation();
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity, 78);
@@ -80,14 +81,14 @@ public class HoloLine implements IHoloLine {
     @Override
     public void show() {
         this.showing = true;
-        entity.j(true);
+        entity.n(true);
         update();
     }
 
     @Override
     public void hide() {
         this.showing = false;
-        entity.j(false);
+        entity.n(false);
         update();
     }
 

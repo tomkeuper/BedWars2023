@@ -23,6 +23,7 @@ package com.tomkeuper.bedwars.listeners;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -487,11 +488,11 @@ public class DamageDeathMove implements Listener {
                 e.setRespawnLocation(a.getSpectatorLocation());
                 String iso = Language.getPlayerLanguage(e.getPlayer()).getIso();
                 for (IGenerator o : a.getOreGenerators()) {
-                    o.updateHolograms(e.getPlayer(), iso);
+                    o.updateHolograms(e.getPlayer());
                 }
                 for (ITeam t : a.getTeams()) {
                     for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer(), iso);
+                        o.updateHolograms(e.getPlayer());
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolo()) {
@@ -547,11 +548,15 @@ public class DamageDeathMove implements Listener {
                 /* update armor-stands hidden by nms */
                 String iso = Language.getPlayerLanguage(e.getPlayer()).getIso();
                 for (IGenerator o : a.getOreGenerators()) {
-                    o.updateHolograms(e.getPlayer(), iso);
+                    if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
+                        o.updateHolograms(e.getPlayer());
+                    }
                 }
                 for (ITeam t : a.getTeams()) {
                     for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer(), iso);
+                        if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
+                            o.updateHolograms(e.getPlayer());
+                        }
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolo()) {

@@ -737,11 +737,11 @@ public class Arena implements IArena {
             /* update generator holograms for spectators */
             String iso = Language.getPlayerLanguage(p).getIso();
             for (IGenerator o : getOreGenerators()) {
-                o.updateHolograms(p, iso);
+                o.updateHolograms(p);
             }
             for (ITeam t : getTeams()) {
                 for (IGenerator o : t.getGenerators()) {
-                    o.updateHolograms(p, iso);
+                    o.updateHolograms(p);
                 }
             }
             for (ShopHolo sh : ShopHolo.getShopHolo()) {

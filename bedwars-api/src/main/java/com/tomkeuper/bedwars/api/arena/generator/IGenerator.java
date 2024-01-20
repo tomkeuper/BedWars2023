@@ -34,10 +34,9 @@ import java.util.HashMap;
 public interface IGenerator {
 
     /**
-     * Get holograms associated to this generator.
-     * Language iso, Hologram instance.
+     * Get holograms associated to players and generators
      */
-    HashMap<String, IGenHolo> getLanguageHolograms();
+    HashMap<Player, IGenHolo> getPlayerHolograms();
 
     /**
      * Disable a generator and remove the holograms.
@@ -109,11 +108,15 @@ public interface IGenerator {
     ItemStack getOre();
 
     /**
-     * This will hide generator holograms with a different iso.
-     *
-     * @param iso player language iso.
+     * This will update the holograms for one player.
+     * Holograms are only visible to players in the same world.
+     * <p>
+     * @param p player to update holograms for.
+     * <p>
+     * This method only works for generators that are not team generators,
+     * executing it on a team generator will do nothing.
      */
-    void updateHolograms(Player p, String iso);
+    void updateHolograms(Player p);
 
     /**
      * Enable generator rotation.
