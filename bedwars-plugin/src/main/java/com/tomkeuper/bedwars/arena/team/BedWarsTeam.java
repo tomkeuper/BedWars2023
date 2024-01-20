@@ -481,7 +481,7 @@ public class BedWarsTeam implements ITeam {
         @Getter
         private Arena arena;
         @Getter
-        private boolean hidden = false, bedDestroyed = false;
+        private boolean hidden = false;
 
         public BedHolo(@NotNull Player p, Arena arena) {
             this.p = p.getUniqueId();
@@ -505,7 +505,6 @@ public class BedWarsTeam implements ITeam {
 
         public void hide() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
-            if (bedDestroyed) return;
             hidden = true;
             line.remove();
         }
@@ -522,10 +521,13 @@ public class BedWarsTeam implements ITeam {
             line.reveal();
             if (isBedDestroyed()) {
                 line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
-                bedDestroyed = true;
             } else {
                 line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
             }
+        }
+
+        public boolean isBedDestroyed()  {
+            return arena.getTeam(Bukkit.getPlayer(p)).isBedDestroyed();
         }
 
     }
