@@ -15,6 +15,7 @@ public class HoloLine implements IHoloLine {
     private IHologram hologram;
     public final EntityArmorStand entity;
     private boolean showing = true;
+    private boolean destroyed = false;
 
     public HoloLine(String text, IHologram hologram) {
         this.text = text;
@@ -70,6 +71,7 @@ public class HoloLine implements IHoloLine {
         entity.a(CraftChatMessage.fromStringOrNull(text));
         int position = hologram.getLines().indexOf(this);
         entity.o(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        if (destroyed) return;
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ae(), entity.ai(), true);
         ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
@@ -96,9 +98,29 @@ public class HoloLine implements IHoloLine {
     }
 
     @Override
+    public void reveal() {
+        destroyed = false;
+        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entity);
+        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
+        hologram.addLine(this);
+        hologram.update();
+    }
+
+    @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.ae());
         ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
+    }
+
+    @Override
+    public void destroy() {
+        destroyed = true;
+        remove();
         hologram.removeLine(this);
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

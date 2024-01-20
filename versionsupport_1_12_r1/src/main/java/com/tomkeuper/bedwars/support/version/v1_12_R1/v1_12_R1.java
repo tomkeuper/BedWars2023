@@ -29,7 +29,6 @@ import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.exceptions.InvalidEffectException;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
-import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
@@ -65,6 +64,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+
+import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 @SuppressWarnings("unused")
 public class v1_12_R1 extends VersionSupport {
@@ -247,20 +248,17 @@ public class v1_12_R1 extends VersionSupport {
         vlg.setSilent(true);
 
         for (Player p : players) {
-            String[] name = Language.getMsg(p, name1).split(",");
-            if (name.length == 1) {
-                ArmorStand a = createArmorStand(name[0], l.clone().add(0, 1.85, 0));
-                new ShopHolo(Language.getPlayerLanguage(p).getIso(), a, null, l, arena);
-            } else {
-                ArmorStand a = createArmorStand(name[0], l.clone().add(0, 2.1, 0));
-                ArmorStand b = createArmorStand(name[1], l.clone().add(0, 1.85, 0));
-                new ShopHolo(Language.getPlayerLanguage(p).getIso(), a, b, l, arena);
-            }
+            String[] nume = getMsg(p, name1).split(",");
+            IHologram h;
+
+            if (nume.length == 1) h = createHologram(p, loc, nume[0]);
+            else h = createHologram(p, loc, nume[1], nume[0]);
+
+            new ShopHolo(h, l, arena);
         }
+
         for (ShopHolo sh : ShopHolo.getShopHolo()) {
-            if (sh.getA() == arena) {
-                sh.update();
-            }
+            if (sh.getArena() == arena) sh.update();
         }
     }
 

@@ -264,6 +264,7 @@ public class Hologram implements IHologram {
 
     @Override
     public void remove() {
-        this.lines.forEach(IHoloLine::remove);
+        for (IHoloLine line : this.lines) line.remove();
+        lines.clear();
     }
 }

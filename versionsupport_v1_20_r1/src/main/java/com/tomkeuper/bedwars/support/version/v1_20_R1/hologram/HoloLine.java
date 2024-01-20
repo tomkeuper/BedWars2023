@@ -6,7 +6,6 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
-import net.minecraft.network.syncher.DataWatcher;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R1.CraftWorld;
@@ -18,6 +17,7 @@ public class HoloLine implements IHoloLine {
     private IHologram hologram;
     public final EntityArmorStand entity;
     private boolean showing = true;
+    private boolean destroyed = false;
 
     public HoloLine(String text, IHologram hologram) {
         this.text = text;
@@ -72,6 +72,7 @@ public class HoloLine implements IHoloLine {
         entity.b(CraftChatMessage.fromStringOrNull(text));
         int position = hologram.getLines().indexOf(this);
         entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        if (isDestroyed()) return;
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
         ((CraftPlayer) hologram.getPlayer()).getHandle().c.a(metadataPacket);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
@@ -98,9 +99,29 @@ public class HoloLine implements IHoloLine {
     }
 
     @Override
+    public void reveal() {
+        destroyed = false;
+        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
+        ((CraftPlayer) hologram.getPlayer()).getHandle().c.a(packet);
+        hologram.addLine(this);
+        hologram.update();
+    }
+
+    @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.af());
         ((CraftPlayer) hologram.getPlayer()).getHandle().c.a(packet);
+    }
+
+    @Override
+    public void destroy() {
+        destroyed = true;
+        remove();
         hologram.removeLine(this);
+    }
+
+    @Override
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }

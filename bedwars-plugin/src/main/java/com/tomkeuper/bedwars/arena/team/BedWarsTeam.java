@@ -519,13 +519,13 @@ public class BedWarsTeam implements ITeam {
         public void show() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             hidden = false;
+            line.reveal();
             if (isBedDestroyed()) {
-                h.setLine(0, getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
+                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
                 bedDestroyed = true;
             } else {
-                h.setLine(0, getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
+                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
             }
-            line = h.getLine(0);
         }
 
     }

@@ -62,8 +62,6 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.money.internal.MoneyPerMinuteTask;
 import com.tomkeuper.bedwars.shop.ShopCache;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
-import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -735,7 +733,6 @@ public class Arena implements IArena {
             p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_SPECTATOR_MSG).replace("%bw_arena%", this.getDisplayName()));
 
             /* update generator holograms for spectators */
-            String iso = Language.getPlayerLanguage(p).getIso();
             for (IGenerator o : getOreGenerators()) {
                 o.updateHolograms(p);
             }
@@ -745,8 +742,8 @@ public class Arena implements IArena {
                 }
             }
             for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                if (sh.getA() == this) {
-                    sh.updateForPlayer(p, iso);
+                if (sh.getArena() == this) {
+                    sh.updateForPlayer(p);
                 }
             }
 

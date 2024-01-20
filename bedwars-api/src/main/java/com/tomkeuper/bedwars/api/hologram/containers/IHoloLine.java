@@ -36,6 +36,12 @@ public interface IHoloLine {
     boolean isShowing();
 
     /**
+     * Check if the hologram line is destroyed.
+     * @return true if the hologram line is destroyed
+     */
+    boolean isDestroyed();
+
+    /**
      * Set the hologram bounded to.
      * @param hologram - the hologram
      */
@@ -55,7 +61,17 @@ public interface IHoloLine {
     void setText(String text, boolean update);
 
     /**
-     * Remove the hologram line.
+     * Reveals the hologram line (Still in the hologram)
+     */
+    void reveal();
+
+    /**
+     * Remove the hologram line (Still in the hologram)
      */
     void remove();
+
+    /**
+     * Destroy the hologram line (Will be removed from the hologram)
+     */
+    void destroy();
 }

@@ -496,8 +496,8 @@ public class DamageDeathMove implements Listener {
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                    if (sh.getA() == a) {
-                        sh.updateForPlayer(e.getPlayer(), iso);
+                    if (sh.getArena() == a) {
+                        sh.updateForPlayer(e.getPlayer());
                     }
                 }
                 a.sendSpectatorCommandItems(e.getPlayer());
@@ -560,8 +560,8 @@ public class DamageDeathMove implements Listener {
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                    if (sh.getA() == a) {
-                        sh.updateForPlayer(e.getPlayer(), iso);
+                    if (sh.getArena() == a) {
+                        sh.updateForPlayer(e.getPlayer());
                     }
                 }
 
