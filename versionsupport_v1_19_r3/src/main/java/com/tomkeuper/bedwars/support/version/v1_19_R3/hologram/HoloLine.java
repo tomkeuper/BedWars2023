@@ -104,7 +104,7 @@ public class HoloLine implements IHoloLine {
         destroyed = false;
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
         ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
-        hologram.addLine(this);
+        if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
     }
 

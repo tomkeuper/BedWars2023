@@ -88,6 +88,11 @@ public interface ITeam {
     Location getBed();
 
     /**
+     * Get the bed hologram of a player
+     */
+    IBedHolo getBedHologram(Player player);
+
+    /**
      * Get list of team upgrades.
      * Upgrade identifier, tier.
      */

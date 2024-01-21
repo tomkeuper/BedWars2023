@@ -21,15 +21,16 @@
 package com.tomkeuper.bedwars.api.arena.shop;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShopHolo {
     /**
@@ -38,10 +39,10 @@ public class ShopHolo {
     @Getter
     private static List<ShopHolo> shopHolo = new ArrayList<>();
 
+    @Getter
     private final IHologram hologram;
     private final Location l;
     private final IArena a;
-
     public ShopHolo(@Nonnull IHologram hologram, Location l, IArena a) {
         this.l = l;
         this.hologram = hologram;
@@ -49,35 +50,18 @@ public class ShopHolo {
         shopHolo.add(this);
     }
 
-    public void updateForPlayer(Player p) {
-        if (p == null) return;
-        if (l == null) Bukkit.broadcastMessage("LOCATION IS NULL");
-
-        for (ShopHolo h : shopHolo) {
-            IHologram holo = h.getHologram();
-            if (holo.getPlayer() == p) holo.update();
-        }
-    }
     public void update() {
         if (l == null) Bukkit.broadcastMessage("LOCATION IS NULL");
-        hologram.update();
+        hologram.getLines().forEach(IHoloLine::reveal);
     }
 
     public static void clearForArena(IArena arena) {
-        for (ShopHolo sh : new ArrayList<>(getShopHolo())) {
-            if (sh.getArena() == arena) {
-                sh.getHologram().remove();
-                shopHolo.remove(sh);
-            }
-        }
-    }
-
-    private IHologram getHologram() {
-        return hologram;
+        shopHolo.stream().filter(h -> h.getArena() == arena)
+                .collect(Collectors.toList())
+                .forEach(h -> h.getHologram().remove());
     }
 
     public IArena getArena() {
         return a;
     }
-
 }

@@ -72,7 +72,7 @@ public class OreGenerator implements IGenerator {
     /**
      * Generator holograms per language <iso, holo></iso,>
      */
-    private HashMap<Player, IGenHolo> holograms = new HashMap<>();
+    public HashMap<Player, IGenHolo> holograms = new HashMap<>();
 
     private ArmorStand item;
     public boolean stack = BedWars.getGeneratorsCfg().getBoolean(ConfigPath.GENERATOR_STACK_ITEMS);
@@ -284,7 +284,7 @@ public class OreGenerator implements IGenerator {
 
         @Override
         public void update() {
-            hologram.update();
+            hologram.getLines().forEach(IHoloLine::reveal);
         }
 
         @Override

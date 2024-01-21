@@ -67,6 +67,7 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
@@ -239,16 +240,21 @@ public class v1_16_R3 extends VersionSupport {
         vlg.setCollidable(false);
         vlg.setInvulnerable(true);
         vlg.setSilent(true);
+    }
 
+    @Override
+    public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena) {
         for (Player p : players) {
             String[] nume = getMsg(p, name1).split(",");
             IHologram h = createHologram(p, loc, nume);
 
-            new ShopHolo(h, l, arena);
+            new ShopHolo(h, loc, arena);
         }
 
-        for (ShopHolo sh : ShopHolo.getShopHolo()) {
-            if (sh.getArena() == arena) sh.update();
+        for (Player p : players) {
+            ShopHolo.getShopHolo().stream().filter(h -> h.getHologram().getPlayer() == p)
+                    .collect(Collectors.toList())
+                    .forEach(ShopHolo::update);
         }
     }
 

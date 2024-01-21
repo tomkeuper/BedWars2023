@@ -61,17 +61,20 @@ public interface IHoloLine {
     void setText(String text, boolean update);
 
     /**
-     * Reveals the hologram line (Still in the hologram)
+     * Reveals the hologram line if the line has disappeared
+     * been removed by the server or another plugin
      */
     void reveal();
 
     /**
-     * Remove the hologram line (Still in the hologram)
+     * Remove the hologram line but keeping the line object
+     * in its bounded hologram
      */
     void remove();
 
     /**
-     * Destroy the hologram line (Will be removed from the hologram)
+     * Destroy the hologram line and also remove it
+     * from the hologram
      */
     void destroy();
 }

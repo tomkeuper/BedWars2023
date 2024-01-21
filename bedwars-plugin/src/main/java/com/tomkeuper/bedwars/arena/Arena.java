@@ -740,11 +740,8 @@ public class Arena implements IArena {
                 for (IGenerator o : t.getGenerators()) {
                     o.updateHolograms(p);
                 }
-            }
-            for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                if (sh.getArena() == this) {
-                    sh.updateForPlayer(p);
-                }
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(p), this);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(p), this);
             }
 
         } else {

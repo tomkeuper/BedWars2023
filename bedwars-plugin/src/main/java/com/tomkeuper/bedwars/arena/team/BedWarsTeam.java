@@ -22,7 +22,10 @@ package com.tomkeuper.bedwars.arena.team;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
+import com.tomkeuper.bedwars.api.arena.generator.IGenHolo;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
+import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
+import com.tomkeuper.bedwars.api.arena.team.IBedHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.arena.team.TeamEnchant;
@@ -318,6 +321,11 @@ public class BedWarsTeam implements ITeam {
         }
     }
 
+    @Override
+    public IBedHolo getBedHologram(Player player) {
+        return beds.get(player.getUniqueId());
+    }
+
     /**
      * Spawn iron and gold generators
      */
@@ -443,6 +451,15 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
+        List<ShopHolo> sh = ShopHolo.getShopHolo().stream().filter(h -> h.getHologram().getPlayer() == p).collect(Collectors.toList());
+        if (!sh.isEmpty()) sh.forEach(ShopHolo::update);
+
+        for (IGenerator gen : getArena().getOreGenerators()) {
+            IGenHolo h = gen.getPlayerHolograms().get(p);
+            if (h != null) h.update();
+        }
+        beds.get(p.getUniqueId()).getHologram().getLines().forEach(IHoloLine::reveal);
+
         Sounds.playSound("player-re-spawn", p);
     }
 
@@ -474,7 +491,7 @@ public class BedWarsTeam implements ITeam {
      * Creates a hologram on the team bed's per player
      */
     @SuppressWarnings("WeakerAccess")
-    public class BedHolo {
+    public class BedHolo implements IBedHolo {
         private IHologram h;
         private IHoloLine line;
         private final UUID p;
@@ -524,6 +541,10 @@ public class BedWarsTeam implements ITeam {
             } else {
                 line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
             }
+        }
+
+        public IHologram getHologram() {
+            return h;
         }
 
         public boolean isBedDestroyed()  {
