@@ -286,10 +286,7 @@ public class v1_8_R3 extends VersionSupport {
 
         for (Player p : players) {
             String[] nume = getMsg(p, name1).split(",");
-            IHologram h;
-
-            if (nume.length == 1) h = createHologram(p, loc, nume[0]);
-            else h = createHologram(p, loc, nume[0], nume[1]);
+            IHologram h = createHologram(p, loc, nume);
 
             new ShopHolo(h, l, arena);
         }
