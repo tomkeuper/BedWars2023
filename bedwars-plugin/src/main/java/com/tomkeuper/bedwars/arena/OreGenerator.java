@@ -398,6 +398,7 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void updateHolograms(Player p) {
+        if (getType() != GeneratorType.EMERALD && getType() != GeneratorType.DIAMOND) return;
         if (!arena.getWorld().getPlayers().contains(p)) return;
 
         IGenHolo h = holograms.get(p);
