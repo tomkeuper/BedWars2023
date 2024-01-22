@@ -65,6 +65,13 @@ public interface ITeam {
     boolean isMember(Player player);
 
     /**
+     * Check if the shop has been spawned.
+     *
+     * @return true if the shop has been spawned.
+     */
+    boolean isShopSpawned();
+
+    /**
      * Get the team arena.
      */
     IArena getArena();

@@ -508,7 +508,7 @@ public class Arena implements IArena {
             players.add(p);
             p.setFlying(false);
             p.setAllowFlight(false);
-            p.setHealth(20);
+            p.setHealth(p.getMaxHealth());
             for (Player on : players) {
                 Language language = Language.getPlayerLanguage(on);
                 if (ev.getMessage().equals("")){
@@ -737,11 +737,12 @@ public class Arena implements IArena {
                 o.updateHolograms(p);
             }
             for (ITeam t : getTeams()) {
+                if (!t.isShopSpawned()) continue;
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(p), this);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(p), this);
                 for (IGenerator o : t.getGenerators()) {
                     o.updateHolograms(p);
                 }
-                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(p), this);
-                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(p), this);
             }
 
         } else {

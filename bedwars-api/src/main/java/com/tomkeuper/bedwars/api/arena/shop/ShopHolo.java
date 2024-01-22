@@ -26,9 +26,11 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,7 @@ public class ShopHolo {
      * Shop holograms per language <iso, holo></iso,>
      */
     @Getter
-    private static List<ShopHolo> shopHolo = new ArrayList<>();
+    private static HashMap<Player, List<ShopHolo>> shopHolo = new HashMap<>();
 
     @Getter
     private final IHologram hologram;
@@ -47,7 +49,8 @@ public class ShopHolo {
         this.l = l;
         this.hologram = hologram;
         this.a = a;
-        shopHolo.add(this);
+        shopHolo.putIfAbsent(hologram.getPlayer(), new ArrayList<>());
+        shopHolo.get(hologram.getPlayer()).add(this);
     }
 
     public void update() {
@@ -56,12 +59,38 @@ public class ShopHolo {
     }
 
     public static void clearForArena(IArena arena) {
-        shopHolo.stream().filter(h -> h.getArena() == arena)
+        shopHolo.forEach((p, h) -> h.stream()
+                .filter(holo -> holo.getArena() == arena)
                 .collect(Collectors.toList())
-                .forEach(h -> h.getHologram().remove());
+                .forEach(holo -> holo.getHologram().remove()));
+        shopHolo.entrySet().removeIf(entry -> entry.getValue().stream().anyMatch(holo -> holo.getArena() == arena));
     }
 
     public IArena getArena() {
         return a;
+    }
+
+    public static void clearForPlayer(Player p) {
+        shopHolo.get(p).forEach(h -> h.getHologram().remove());
+        shopHolo.remove(p);
+    }
+
+    public static void clear() {
+        shopHolo.forEach((p, h) -> h.forEach(holo -> holo.getHologram().remove()));
+        shopHolo.clear();
+    }
+
+    public static void add(Player p, ShopHolo holo) {
+        if (shopHolo.containsKey(p)) {
+            shopHolo.get(p).add(holo);
+        } else {
+            shopHolo.put(p, new ArrayList<>());
+            shopHolo.get(p).add(holo);
+        }
+    }
+
+    public static List<ShopHolo> getShopHolograms(Player p) {
+        if (!shopHolo.containsKey(p)) shopHolo.put(p, new ArrayList<>());
+        return shopHolo.get(p);
     }
 }

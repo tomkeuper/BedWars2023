@@ -261,9 +261,7 @@ public class v1_18_R2 extends VersionSupport {
         }
 
         for (Player p : players) {
-            ShopHolo.getShopHolo().stream().filter(h -> h.getHologram().getPlayer() == p)
-                    .toList()
-                    .forEach(ShopHolo::update);
+            ShopHolo.getShopHolograms(p).forEach(ShopHolo::update);
         }
     }
 

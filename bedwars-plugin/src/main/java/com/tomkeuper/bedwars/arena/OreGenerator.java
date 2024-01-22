@@ -241,7 +241,7 @@ public class OreGenerator implements IGenerator {
             this.p = p;
             this.iso = Language.getPlayerLanguage(p).getIso();
 
-            if (getOre().getType() != Material.EMERALD && getOre().getType() != Material.DIAMOND) return;
+            if (getType() != GeneratorType.EMERALD && getType() != GeneratorType.DIAMOND) return;
 
             String tierText = Language.getLang(iso).m(Messages.GENERATOR_HOLOGRAM_TIER)
                     .replace("%bw_tier%", Language.getLang(iso).m(Messages.FORMATTING_GENERATOR_TIER1));
@@ -313,6 +313,8 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void rotate() {
+        if (item == null) return;
+
         if (up) {
             if (rotate >= 540) {
                 up = false;
@@ -375,7 +377,7 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void disable() {
-        if (getOre().getType() == Material.EMERALD || getOre().getType() == Material.DIAMOND) {
+        if (getType() == GeneratorType.DIAMOND || getType() == GeneratorType.EMERALD) {
             rotation.remove(this);
             for (IGenHolo a : holograms.values()) {
                 a.destroy();
@@ -390,7 +392,7 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void enable() {
-        if (getOre().getType() == Material.EMERALD || getOre().getType() == Material.DIAMOND) {
+        if (getType() == GeneratorType.DIAMOND || getType() == GeneratorType.EMERALD) {
             enableRotation();
         }
         disabled = false;

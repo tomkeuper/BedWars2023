@@ -75,6 +75,7 @@ public class BedWarsTeam implements ITeam {
     private String name;
     private Arena arena;
     private boolean bedDestroyed = false;
+    private boolean shopSpawned = false;
     private Vector killDropsLoc = null;
 
     // team generators
@@ -162,13 +163,14 @@ public class BedWarsTeam implements ITeam {
      * Spawn shopkeepers for target team (if enabled).
      */
     public void spawnNPCs() {
-        if (getMembers().isEmpty() && getArena().getConfig().getBoolean(ConfigPath.ARENA_DISABLE_NPCS_FOR_EMPTY_TEAMS))
-            return;
+        if (getMembers().isEmpty() && getArena().getConfig().getBoolean(ConfigPath.ARENA_DISABLE_NPCS_FOR_EMPTY_TEAMS)) return;
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             nms.colorBed(this);
             nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), getArena().getPlayers(), getArena());
             nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Shop"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), getArena().getPlayers(), getArena());
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), getArena().getPlayers(), arena);
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), getArena().getPlayers(), arena);
         }, 20L);
 
         Cuboid c1 = new Cuboid(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), getArena().getConfig().getInt(ConfigPath.ARENA_UPGRADES_PROTECTION), true);
@@ -180,6 +182,7 @@ public class BedWarsTeam implements ITeam {
         c2.setMinY(c2.getMinY() - 1);
         c2.setMaxY(c2.getMaxY() + 4);
         getArena().getRegionsList().add(c2);
+        shopSpawned = true;
     }
 
     /**
@@ -451,8 +454,12 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
-        List<ShopHolo> sh = ShopHolo.getShopHolo().stream().filter(h -> h.getHologram().getPlayer() == p).collect(Collectors.toList());
+        List<ShopHolo> sh = ShopHolo.getShopHolograms(p);
         if (!sh.isEmpty()) sh.forEach(ShopHolo::update);
+        else {
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(p), arena);
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(p), arena);
+        }
 
         for (IGenerator gen : getArena().getOreGenerators()) {
             IGenHolo h = gen.getPlayerHolograms().get(p);
@@ -669,6 +676,11 @@ public class BedWarsTeam implements ITeam {
     public boolean isMember(Player u) {
         if (u == null) return false;
         return members.contains(u);
+    }
+
+    @Override
+    public boolean isShopSpawned() {
+        return shopSpawned;
     }
 
     /**

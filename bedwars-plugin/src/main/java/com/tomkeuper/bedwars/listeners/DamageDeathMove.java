@@ -495,14 +495,14 @@ public class DamageDeathMove implements Listener {
                     o.updateHolograms(e.getPlayer());
                 }
                 for (ITeam t : a.getTeams()) {
-                    for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer());
-                    }
-                    List<ShopHolo> sh = ShopHolo.getShopHolo().stream().filter(h -> h.getHologram().getPlayer() == e.getPlayer()).collect(Collectors.toList());
+                    List<ShopHolo> sh = ShopHolo.getShopHolograms(e.getPlayer());
                     if (!sh.isEmpty()) sh.forEach(ShopHolo::update);
                     else {
                         nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(e.getPlayer()), a);
                         nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(e.getPlayer()), a);
+                    }
+                    for (IGenerator o : t.getGenerators()) {
+                        o.updateHolograms(e.getPlayer());
                     }
                 }
 
@@ -559,16 +559,11 @@ public class DamageDeathMove implements Listener {
                 }
                 for (ITeam t : a.getTeams()) {
                     for (IGenerator o : t.getGenerators()) {
-                        if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
-                            o.updateHolograms(e.getPlayer());
-                        }
+                        o.updateHolograms(e.getPlayer());
                     }
-                    List<ShopHolo> sh = ShopHolo.getShopHolo().stream().filter(h -> h.getHologram().getPlayer() == e.getPlayer()).collect(Collectors.toList());
-                    if (!sh.isEmpty()) sh.forEach(h -> h.getHologram().getLines().forEach(IHoloLine::update));
-                    else {
-                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(e.getPlayer()), a);
-                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(e.getPlayer()), a);
-                    }
+                }
+                for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
+                    sh.update();
                 }
 
                 // hide armor for those with invisibility potions
