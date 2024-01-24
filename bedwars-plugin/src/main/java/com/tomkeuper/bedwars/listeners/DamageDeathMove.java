@@ -498,8 +498,8 @@ public class DamageDeathMove implements Listener {
                     List<ShopHolo> sh = ShopHolo.getShopHolograms(e.getPlayer());
                     if (!sh.isEmpty()) sh.forEach(ShopHolo::update);
                     else {
-                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), Collections.singletonList(e.getPlayer()), a);
-                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), Collections.singletonList(e.getPlayer()), a);
+                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", a.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES).replace("%group%", a.getGroup()), Collections.singletonList(e.getPlayer()), a);
+                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", a.getGroup()) : Messages.NPC_NAME_SOLO_SHOP).replace("%group%", a.getGroup()), Collections.singletonList(e.getPlayer()), a);
                     }
                     for (IGenerator o : t.getGenerators()) {
                         o.updateHolograms(e.getPlayer());
@@ -607,16 +607,16 @@ public class DamageDeathMove implements Listener {
                         if (!e.getPlayer().getLocation().getWorld().equals(t.getBed().getWorld())) continue;
                         if (e.getPlayer().getLocation().distance(t.getBed()) < 4) {
                             if (t.isMember(e.getPlayer()) && t instanceof BedWarsTeam) {
-                                if (((BedWarsTeam) t).getBedHolo(e.getPlayer()) == null) continue;
-                                if (!((BedWarsTeam) t).getBedHolo(e.getPlayer()).isHidden()) {
-                                    ((BedWarsTeam) t).getBedHolo(e.getPlayer()).hide();
+                                if (((BedWarsTeam) t).getBedHologram(e.getPlayer()) == null) continue;
+                                if (!((BedWarsTeam) t).getBedHologram(e.getPlayer()).isHidden()) {
+                                    ((BedWarsTeam) t).getBedHologram(e.getPlayer()).hide();
                                 }
                             }
                         } else {
                             if (t.isMember(e.getPlayer()) && t instanceof BedWarsTeam) {
-                                if (((BedWarsTeam) t).getBedHolo(e.getPlayer()) == null) continue;
-                                if (((BedWarsTeam) t).getBedHolo(e.getPlayer()).isHidden()) {
-                                    ((BedWarsTeam) t).getBedHolo(e.getPlayer()).show();
+                                if (((BedWarsTeam) t).getBedHologram(e.getPlayer()) == null) continue;
+                                if (((BedWarsTeam) t).getBedHologram(e.getPlayer()).isHidden()) {
+                                    ((BedWarsTeam) t).getBedHologram(e.getPlayer()).show();
                                 }
                             }
                         }

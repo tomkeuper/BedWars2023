@@ -61,6 +61,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import static com.tomkeuper.bedwars.api.language.Language.getList;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 @SuppressWarnings("unused")
@@ -288,7 +289,7 @@ public class v1_8_R3 extends VersionSupport {
     @Override
     public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena) {
         for (Player p : players) {
-            String[] nume = getMsg(p, name1).split(",");
+            String[] nume = (getList(p, name1) == null || getList(p, name1).isEmpty() ? getList(p, name1.replace(name1.split("\\.")[2], "default")) : getList(p, name1)).toArray(new String[0]);
             IHologram h = createHologram(p, loc, nume);
 
             new ShopHolo(h, loc, arena);
