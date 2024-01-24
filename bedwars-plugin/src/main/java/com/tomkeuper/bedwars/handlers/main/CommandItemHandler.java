@@ -1,7 +1,7 @@
 package com.tomkeuper.bedwars.handlers.main;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -11,7 +11,7 @@ public class CommandItemHandler extends LobbyItemHandler{
     }
 
     @Override
-    public void handleUse(Player player, IArena arena, ILobbyItem lobbyItem) {
+    public void handleUse(Player player, IArena arena, IPermanentItem lobbyItem) {
         player.sendMessage("CommandItemHandler handleUse");
     }
 }

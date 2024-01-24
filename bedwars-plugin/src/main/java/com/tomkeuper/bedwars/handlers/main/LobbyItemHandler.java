@@ -1,14 +1,13 @@
 package com.tomkeuper.bedwars.handlers.main;
 
-import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.items.handlers.HandlerType;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class LobbyItemHandler implements ILobbyItemHandler {
+public abstract class LobbyItemHandler implements IPermanentItemHandler {
     private final String id;
     private final Plugin plugin;
 

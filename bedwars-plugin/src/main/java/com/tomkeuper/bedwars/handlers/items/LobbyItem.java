@@ -1,21 +1,21 @@
 package com.tomkeuper.bedwars.handlers.items;
 
 import com.tomkeuper.bedwars.BedWars;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class LobbyItem implements ILobbyItem {
+public class LobbyItem implements IPermanentItem {
 
-    private ILobbyItemHandler handler;
+    private IPermanentItemHandler handler;
     private ItemStack item;
     private int slot;
     private List<String> commands;
     private String identifier;
 
-    public LobbyItem(ILobbyItemHandler handler, ItemStack item, int slot, List<String> commands, String identifier) {
+    public LobbyItem(IPermanentItemHandler handler, ItemStack item, int slot, List<String> commands, String identifier) {
             this.handler = handler;
             this.item = BedWars.nms.setTag(item, "ACTION", identifier);
             this.slot = slot;
@@ -24,12 +24,12 @@ public class LobbyItem implements ILobbyItem {
     }
 
     @Override
-    public ILobbyItemHandler getHandler() {
+    public IPermanentItemHandler getHandler() {
         return handler;
     }
 
     @Override
-    public void setHandler(ILobbyItemHandler handler) {
+    public void setHandler(IPermanentItemHandler handler) {
         this.handler = handler;
     }
 

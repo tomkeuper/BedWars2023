@@ -31,7 +31,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -158,7 +158,7 @@ public class BedWars extends JavaPlugin {
     public static IAddonManager addonManager = new AddonManager();
 
     // BedWars Items;
-    private static Collection<ILobbyItem> lobbyItems = new ArrayList<>();
+    private static Collection<IPermanentItem> lobbyItems = new ArrayList<>();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -966,7 +966,7 @@ public class BedWars extends JavaPlugin {
         return currentPatch >= targetPatch;
     }
 
-    public static Collection<ILobbyItem> getLobbyItems() {
+    public static Collection<IPermanentItem> getLobbyItems() {
         return lobbyItems;
     }
 

@@ -2,10 +2,10 @@ package com.tomkeuper.bedwars.api.items.handlers;
 
 import org.bukkit.inventory.ItemStack;
 
-public interface ILobbyItem {
-    ILobbyItemHandler getHandler();
+public interface IPermanentItem {
+    IPermanentItemHandler getHandler();
 
-    void setHandler(ILobbyItemHandler handler);
+    void setHandler(IPermanentItemHandler handler);
 
     void setItem(ItemStack item);
 

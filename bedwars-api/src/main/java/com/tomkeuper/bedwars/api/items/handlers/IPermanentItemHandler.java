@@ -4,9 +4,9 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-public interface ILobbyItemHandler {
+public interface IPermanentItemHandler {
 
-    void handleUse(Player player, IArena arena, ILobbyItem item);
+    void handleUse(Player player, IArena arena, IPermanentItem item);
 
     boolean isVisible(Player player, IArena arena);
 

@@ -43,7 +43,7 @@ import com.tomkeuper.bedwars.api.events.server.ArenaDisableEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaEnableEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaRestartEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaSpectateEvent;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.region.Region;
@@ -1757,7 +1757,7 @@ public class Arena implements IArena {
     public void sendPreGameCommandItems(Player p) {
         p.getInventory().clear();
 
-        for (ILobbyItem lobbyItem: BedWars.getAPI().getItemUtil().getLobbyItems()) {
+        for (IPermanentItem lobbyItem: BedWars.getAPI().getItemUtil().getLobbyItems()) {
             ItemStack item = lobbyItem.getItem();
             ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
             if (itemMeta != null){

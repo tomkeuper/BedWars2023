@@ -29,9 +29,8 @@ import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
-import com.tomkeuper.bedwars.api.items.handlers.IItemHandler;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -845,8 +844,8 @@ public interface BedWars {
 
     interface ItemUtil {
 
-        Collection<ILobbyItem> getLobbyItems();
+        Collection<IPermanentItem> getLobbyItems();
 
-        boolean registerLobbyItemHandler(ILobbyItemHandler handler, Plugin plugin);
+        boolean registerLobbyItemHandler(IPermanentItemHandler handler, Plugin plugin);
     }
 }

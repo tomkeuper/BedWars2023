@@ -30,8 +30,8 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -632,13 +632,13 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     private final ItemUtil itemUtil = new ItemUtil() {
         @SuppressWarnings("unused")
         @Override
-        public Collection<ILobbyItem> getLobbyItems() {
+        public Collection<IPermanentItem> getLobbyItems() {
             return BedWars.getLobbyItems();
         }
 
         @SuppressWarnings("unused")
         @Override
-        public boolean registerLobbyItemHandler(ILobbyItemHandler handler, Plugin plugin) {
+        public boolean registerLobbyItemHandler(IPermanentItemHandler handler, Plugin plugin) {
             return false;
         }
 

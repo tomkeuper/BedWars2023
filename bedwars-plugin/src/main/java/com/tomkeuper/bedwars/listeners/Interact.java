@@ -24,7 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
-import com.tomkeuper.bedwars.api.items.handlers.ILobbyItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -78,7 +78,7 @@ public class Interact implements Listener {
             if (action == null) return;
 
             //* Get the item handler for the correct item
-            for (ILobbyItem lobbyItem : BedWars.getLobbyItems()) {
+            for (IPermanentItem lobbyItem : BedWars.getLobbyItems()) {
                 if (lobbyItem.getIdentifier().equalsIgnoreCase(action)) {
                     lobbyItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), lobbyItem);
                     return;
