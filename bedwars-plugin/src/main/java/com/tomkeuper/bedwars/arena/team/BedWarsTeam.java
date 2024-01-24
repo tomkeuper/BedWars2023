@@ -324,11 +324,6 @@ public class BedWarsTeam implements ITeam {
         }
     }
 
-    @Override
-    public IBedHolo getBedHologram(Player player) {
-        return beds.get(player.getUniqueId());
-    }
-
     /**
      * Spawn iron and gold generators
      */
@@ -465,7 +460,7 @@ public class BedWarsTeam implements ITeam {
             IGenHolo h = gen.getPlayerHolograms().get(p);
             if (h != null) h.update();
         }
-        beds.get(p.getUniqueId()).getHologram().getLines().forEach(IHoloLine::reveal);
+        if (getBedHologram(p) != null) getBedHologram(p).show();
 
         Sounds.playSound("player-re-spawn", p);
     }
@@ -733,7 +728,8 @@ public class BedWarsTeam implements ITeam {
         return teamUpgradeList;
     }
 
-    public BedHolo getBedHolo(@NotNull Player p) {
+    @Override
+    public BedHolo getBedHologram(@NotNull Player p) {
         return beds.get(p.getUniqueId());
     }
 
