@@ -636,6 +636,11 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
             return BedWars.getLobbyItems();
         }
 
+        @Override
+        public Collection<IPermanentItem> getSpectatorItems() {
+            return BedWars.getSpectatorItems();
+        }
+
         @SuppressWarnings("unused")
         @Override
         public boolean registerLobbyItemHandler(IPermanentItemHandler handler, Plugin plugin) {

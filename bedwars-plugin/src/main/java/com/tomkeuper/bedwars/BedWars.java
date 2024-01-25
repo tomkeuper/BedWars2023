@@ -160,6 +160,8 @@ public class BedWars extends JavaPlugin {
     // BedWars Items;
     private static Collection<IPermanentItem> lobbyItems = new ArrayList<>();
 
+    private static Collection<IPermanentItem> spectatorItems = new ArrayList<>();
+
     //remote database
     private static IDatabase remoteDatabase;
 
@@ -968,6 +970,10 @@ public class BedWars extends JavaPlugin {
 
     public static Collection<IPermanentItem> getLobbyItems() {
         return lobbyItems;
+    }
+
+    public static Collection<IPermanentItem> getSpectatorItems() {
+        return spectatorItems;
     }
 
     private void loadLobbyItems() {

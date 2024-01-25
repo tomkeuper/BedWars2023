@@ -845,6 +845,7 @@ public interface BedWars {
     interface ItemUtil {
 
         Collection<IPermanentItem> getLobbyItems();
+        Collection<IPermanentItem> getSpectatorItems();
 
         boolean registerLobbyItemHandler(IPermanentItemHandler handler, Plugin plugin);
     }

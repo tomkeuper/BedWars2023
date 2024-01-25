@@ -77,10 +77,21 @@ public class Interact implements Listener {
             String action = BedWars.nms.getTag(item, "ACTION");
             if (action == null) return;
 
+            if (Arena.getArenaByPlayer(player) != null) {
+                if (Arena.getArenaByPlayer(player).isSpectator(player)) {
+                    for (IPermanentItem permanentItem : BedWars.getSpectatorItems()) {
+                        if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                            permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                            return;
+                        }
+                    }
+                }
+            }
+
             //* Get the item handler for the correct item
-            for (IPermanentItem lobbyItem : BedWars.getLobbyItems()) {
-                if (lobbyItem.getIdentifier().equalsIgnoreCase(action)) {
-                    lobbyItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), lobbyItem);
+            for (IPermanentItem permanentItem : BedWars.getLobbyItems()) {
+                if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                    permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
                     return;
                 }
             }
