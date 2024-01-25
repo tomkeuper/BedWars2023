@@ -723,7 +723,7 @@ public class Arena implements IArena {
                 /* Spectator items */
                 sendSpectatorCommandItems(p);
                 // make invisible because it is annoying whene there are many spectators around the map
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
 
                 p.getInventory().setArmorContents(null);
             });
