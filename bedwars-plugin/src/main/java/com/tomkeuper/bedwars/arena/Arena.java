@@ -1793,8 +1793,8 @@ public class Arena implements IArena {
                 List<String> lore;
 
                 // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
+                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
 
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
