@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -62,6 +63,7 @@ import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
+import com.tomkeuper.bedwars.handlers.items.SpectatorItem;
 import com.tomkeuper.bedwars.handlers.main.CommandItemHandler;
 import com.tomkeuper.bedwars.handlers.main.StatsItemHandler;
 import com.tomkeuper.bedwars.language.*;
@@ -129,6 +131,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+
+import static com.tomkeuper.bedwars.api.language.Language.getList;
+import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 @SuppressWarnings("WeakerAccess")
 public class BedWars extends JavaPlugin {
@@ -547,8 +552,9 @@ public class BedWars extends JavaPlugin {
             }
         }
 
-        /* Load lobby items */
+        /* Load permanent join items */
         loadLobbyItems();
+        loadSpectatorItems();
 
         /* Initialize instances */
         shopCache = new ShopCache();
@@ -1027,6 +1033,57 @@ public class BedWars extends JavaPlugin {
 
             debug("Loaded lobby item: " + lobbyItem.getIdentifier());
             lobbyItems.add(lobbyItem);
+        }
+    }
+
+    void loadSpectatorItems(){
+        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH) == null) return;
+
+        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH).getKeys(false)) {
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            ItemStack i = Misc.createItem(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item))),
+                    (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item)),
+                    config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item)),
+                    null,
+                    null,
+                    null, "HANDLER", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)));
+
+            SpectatorItem spectatorItem = null;
+            if (item.equalsIgnoreCase("stats")){
+                spectatorItem = new SpectatorItem(
+                        new StatsItemHandler(item, this),
+                        i,
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            } else {
+                spectatorItem = new SpectatorItem(
+                        new CommandItemHandler(item,this),
+                        i,
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            }
+
+            debug("Loaded spectator item: " + spectatorItem.getIdentifier());
+            spectatorItems.add(spectatorItem);
         }
     }
 }
