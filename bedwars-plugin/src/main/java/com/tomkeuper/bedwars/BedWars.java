@@ -602,6 +602,7 @@ public class BedWars extends JavaPlugin {
 
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
+                    Bukkit.getPluginManager().disablePlugin(this);
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
@@ -632,9 +633,6 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("ServerType: " + getServerType().toString());
             this.getLogger().info("Auto Scale enabled: " + autoscale);
             this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
-            if (getServerType() == ServerType.BUNGEE) {
-                this.getLogger().info("Messaging protocol: " + config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL));
-            }
             this.getLogger().info("");
             this.getLogger().info("Arena's enabled: " + api.getArenaUtil().getArenas().size());
 
