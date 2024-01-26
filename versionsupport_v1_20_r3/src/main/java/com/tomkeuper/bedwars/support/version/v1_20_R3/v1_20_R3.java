@@ -1,4 +1,4 @@
-package com.tomkeuper.bedwars.support.version.v1_20_R1;
+package com.tomkeuper.bedwars.support.version.v1_20_R3;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
@@ -10,10 +10,10 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.tomkeuper.bedwars.support.version.v1_20_R1.despawnable.DespawnableAttributes;
-import com.tomkeuper.bedwars.support.version.v1_20_R1.despawnable.DespawnableFactory;
-import com.tomkeuper.bedwars.support.version.v1_20_R1.despawnable.DespawnableType;
 import com.mojang.datafixers.util.Pair;
+import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableAttributes;
+import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableFactory;
+import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableType;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -41,12 +41,12 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_20_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftFireball;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftTNTPrimed;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftFireball;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R3.entity.CraftTNTPrimed;
+import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -65,12 +65,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
-@SuppressWarnings("unused")
-public class v1_20_R1 extends VersionSupport {
+public class v1_20_R3 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
 
-    public v1_20_R1(Plugin plugin, String name) {
+    public v1_20_R3(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);
@@ -112,7 +111,7 @@ public class v1_20_R1 extends VersionSupport {
 
     @Override
     public void spawnIronGolem(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn) {
-        var attr = new DespawnableAttributes(DespawnableType.IRON_GOLEM, speed, health,4, despawn);
+        var attr = new DespawnableAttributes(DespawnableType.IRON_GOLEM, speed, health, 4, despawn);
         var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
         new Despawnable(
                 entity,
@@ -337,7 +336,7 @@ public class v1_20_R1 extends VersionSupport {
     public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             // blast resistance
-            Field field = BlockBase.class.getDeclaredField("aF");
+            Field field = BlockBase.class.getDeclaredField("aH");
             field.setAccessible(true);
             // end stone
             field.set(Blocks.fz, endStoneBlast);
@@ -564,7 +563,7 @@ public class v1_20_R1 extends VersionSupport {
         if (arena.getRespawnSessions().containsKey(respawned)) return;
 
         EntityPlayer entityPlayer = getPlayer(respawned);
-        PacketPlayOutNamedEntitySpawn show = new PacketPlayOutNamedEntitySpawn(entityPlayer);
+        PacketPlayOutSpawnEntity show = new PacketPlayOutSpawnEntity(entityPlayer);
         PacketPlayOutEntityVelocity playerVelocity = new PacketPlayOutEntityVelocity(entityPlayer);
         // we send head rotation packet because sometimes on respawn others see him with bad rotation
         PacketPlayOutEntityHeadRotation head = new PacketPlayOutEntityHeadRotation(entityPlayer, getCompressedAngle(entityPlayer.getBukkitYaw()));
@@ -595,7 +594,7 @@ public class v1_20_R1 extends VersionSupport {
                     if (p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                         hideArmor(p, respawned);
                     } else {
-                        PacketPlayOutNamedEntitySpawn show2 = new PacketPlayOutNamedEntitySpawn(boundTo);
+                        PacketPlayOutSpawnEntity show2 = new PacketPlayOutSpawnEntity(boundTo);
                         PacketPlayOutEntityVelocity playerVelocity2 = new PacketPlayOutEntityVelocity(boundTo);
                         PacketPlayOutEntityHeadRotation head2 = new PacketPlayOutEntityHeadRotation(boundTo, getCompressedAngle(boundTo.getBukkitYaw()));
                         sendPackets(respawned, show2, playerVelocity2, head2);
@@ -641,7 +640,7 @@ public class v1_20_R1 extends VersionSupport {
 
     @Override
     public int getVersion() {
-        return 9;
+        return 10;
     }
 
     @Override

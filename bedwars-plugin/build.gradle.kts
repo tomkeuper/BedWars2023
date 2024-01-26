@@ -41,6 +41,9 @@ dependencies {
     api(projects.versionsupportV118R2)
     api(projects.versionsupportV119R3)
     api(projects.versionsupportV120R1)
+    api(projects.versionsupportV120R2)
+    api(projects.versionsupportV120R3)
+    api(projects.versionsupportV120R4)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1") {
@@ -112,6 +115,9 @@ val versions = setOf(
     projects.versionsupportV118R2,
     projects.versionsupportV119R3,
     projects.versionsupportV120R1,
+    projects.versionsupportV120R2,
+    projects.versionsupportV120R3,
+    projects.versionsupportV120R4,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.resetadapterAswm
