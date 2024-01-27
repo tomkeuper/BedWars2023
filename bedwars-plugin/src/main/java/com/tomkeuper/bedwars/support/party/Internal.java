@@ -106,10 +106,12 @@ public class Internal implements Party {
                 }
                 p.members.remove(member);
 
-                JsonObject json = new JsonObject();
-                json.addProperty("type", "PR"); // PR = Party Remove
-                json.addProperty("owner", member.getUniqueId().toString());
-                BedWars.getRedisConnection().sendMessage(json.toString());
+                if (BedWars.getRedisConnection() != null) {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("type", "PR"); // PR = Party Remove
+                    json.addProperty("owner", member.getUniqueId().toString());
+                    BedWars.getRedisConnection().sendMessage(json.toString());
+                }
 
                 if (p.members.isEmpty() || p.members.size() == 1) {
                     disband(p.owner);
@@ -130,10 +132,12 @@ public class Internal implements Party {
         pa.members.clear();
         Internal.parties.remove(pa);
 
-        JsonObject json = new JsonObject();
-        json.addProperty("type", "PD"); // PD = Party Disband
-        json.addProperty("owner", owner.getUniqueId().toString());
-        BedWars.getRedisConnection().sendMessage(json.toString());
+        if (BedWars.getRedisConnection() != null) {
+            JsonObject json = new JsonObject();
+            json.addProperty("type", "PD"); // PD = Party Disband
+            json.addProperty("owner", owner.getUniqueId().toString());
+            BedWars.getRedisConnection().sendMessage(json.toString());
+        }
     }
 
     @Override
