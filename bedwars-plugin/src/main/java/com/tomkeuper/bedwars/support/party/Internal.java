@@ -157,7 +157,7 @@ public class Internal implements Party {
             if (p.members.contains(target)) {
                 for (Player mem : p.members) {
                     Language language = Language.getPlayerLanguage(mem);
-                    mem.sendMessage(getMsg(language, mem, Messages.COMMAND_PARTY_REMOVE_SUCCESS).replace("{player}", target.getName()));
+                    mem.sendMessage(getMsg(language, mem, Messages.COMMAND_PARTY_REMOVE_SUCCESS).replace("%bw_playername%", mem.getName()).replace("%bw_player%", mem.getDisplayName()));
                 }
                 p.members.remove(owner);
                 if (p.members.isEmpty() || p.members.size() == 1) {
