@@ -158,11 +158,13 @@ public class ReJoin {
     public void destroy(boolean destroyTeam) {
         BedWars.debug("ReJoin destroy for " + player.toString());
         reJoinList.remove(this);
-        JsonObject json = new JsonObject();
-        json.addProperty("type", "RD");
-        json.addProperty("uuid", player.toString());
-        json.addProperty("server", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
-        BedWars.getRedisConnection().sendMessage(json.toString());
+        if (BedWars.getRedisConnection() != null){
+            JsonObject json = new JsonObject();
+            json.addProperty("type", "RD");
+            json.addProperty("uuid", player.toString());
+            json.addProperty("server", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
+            BedWars.getRedisConnection().sendMessage(json.toString());
+        }
 
         if (bwt != null && destroyTeam && bwt.getMembers().isEmpty()) {
             bwt.setBedDestroyed(true);
