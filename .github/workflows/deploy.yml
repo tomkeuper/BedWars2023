@@ -20,7 +20,7 @@ jobs:
           java-version: '17.0.7'
           distribution: 'temurin'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@2.4.2
+        uses: gradle/gradle-build-action@2.11.1
         with:
           gradle-version: release-candidate
       - name: Package with Gradle
@@ -79,7 +79,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@2.4.2
+        uses: gradle/gradle-build-action@2.11.1
         with:
           gradle-version: release-candidate
       - name: Deploy Package
@@ -113,7 +113,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@2.4.2
+        uses: gradle/gradle-build-action@2.11.1
         with:
           gradle-version: release-candidate
       - name: Install Packages
