@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@2.11.1
+        uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: release-candidate
       - name: Deploy Package
@@ -82,7 +82,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@2.11.1
+        uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: release-candidate
       - name: Install Packages
