@@ -80,9 +80,25 @@ public class Misc {
                 }
                 if (arena != null) {
                     if (arena.isSpectator(p)) {
-                        arena.removeSpectator(p, false);
+                        arena.removeSpectator(p, false, true);
                     } else {
-                        arena.removePlayer(p, false);
+                        arena.removePlayer(p, false, true);
+
+                        // Manage internal parties
+                        if (getPartyManager().isInternal()) {
+                            if (getPartyManager().hasParty(p)) {
+                                if (getPartyManager().isOwner(p)) {
+                                    for (Player partyMember: getPartyManager().getMembers(p)) {
+                                        if (arena.isPlayer(partyMember)) arena.removePlayer(partyMember, false, true);
+                                        else if (arena.isSpectator(partyMember)) arena.removeSpectator(partyMember, false, true);
+                                        else {
+                                            BedWars.debug("Cannot remove " + partyMember.getName() + " from " + arena.getDisplayName() + " because member is not a player nor a spectator.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         if (!notAbandon && arena.getStatus() == GameState.playing) {
                             if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_MARK_LEAVE_AS_ABANDON)) {
                                 arena.abandonGame(p);
