@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
+import com.tomkeuper.bedwars.api.arena.generator.IGenHolo;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -542,21 +543,34 @@ public class DamageDeathMove implements Listener {
     public void onMove(PlayerMoveEvent e) {
         if (Arena.isInArena(e.getPlayer())) {
             IArena a = Arena.getArenaByPlayer(e.getPlayer());
+            int updateDistance = 50; // update distance measured in blocks
             if (e.getFrom().getChunk() != e.getTo().getChunk()) {
 
                 /* update armor-stands hidden by nms */
                 for (IGenerator o : a.getOreGenerators()) {
                     if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
-                        o.updateHolograms(e.getPlayer());
+                        IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
+                        if (h != null) {
+                            if (o.getLocation().distance(e.getTo()) > updateDistance) {
+                                h.update();
+                            }
+                        }
                     }
                 }
                 for (ITeam t : a.getTeams()) {
                     for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer());
+                        IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
+                        if (h != null) {
+                            if (o.getLocation().distance(e.getTo()) > updateDistance) {
+                                h.update();
+                            }
+                        }
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
-                    sh.update();
+                    if (sh.getHologram().getLocation().distance(e.getTo()) > updateDistance) {
+                        sh.update();
+                    }
                 }
 
                 // hide armor for those with invisibility potions
