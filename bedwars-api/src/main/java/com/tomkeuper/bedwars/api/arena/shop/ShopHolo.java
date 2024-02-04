@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.api.arena.shop;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import lombok.Getter;
@@ -45,10 +46,13 @@ public class ShopHolo {
     private final IHologram hologram;
     private final Location l;
     private final IArena a;
-    public ShopHolo(@Nonnull IHologram hologram, Location l, IArena a) {
+    private final ITeam t;
+
+    public ShopHolo(@Nonnull IHologram hologram, Location l, IArena a, ITeam t) {
         this.l = l;
         this.hologram = hologram;
         this.a = a;
+        this.t = t;
         shopHolo.putIfAbsent(hologram.getPlayer(), new ArrayList<>());
         shopHolo.get(hologram.getPlayer()).add(this);
     }
@@ -68,6 +72,10 @@ public class ShopHolo {
 
     public IArena getArena() {
         return a;
+    }
+
+    public ITeam getTeam() {
+        return t;
     }
 
     public static void clearForPlayer(Player p) {

@@ -32,7 +32,6 @@ import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.events.team.TeamEliminatedEvent;
-import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
@@ -63,7 +62,6 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -162,7 +160,6 @@ public class DamageDeathMove implements Listener {
                 }
 
                 Player damager = null;
-                boolean projectile = false;
                 if (e.getDamager() instanceof Player) {
                     damager = (Player) e.getDamager();
                 } else if (e.getDamager() instanceof Projectile) {
@@ -170,7 +167,6 @@ public class DamageDeathMove implements Listener {
                     if (shooter instanceof Player) {
                         damager = (Player) shooter;
                     } else return;
-                    projectile = true;
                 } else if (e.getDamager() instanceof Player) {
                     damager = (Player) e.getDamager();
                     if (a.isReSpawning(damager)) {
@@ -495,15 +491,12 @@ public class DamageDeathMove implements Listener {
                     o.updateHolograms(e.getPlayer());
                 }
                 for (ITeam t : a.getTeams()) {
-                    List<ShopHolo> sh = ShopHolo.getShopHolograms(e.getPlayer());
-                    if (!sh.isEmpty()) sh.forEach(ShopHolo::update);
-                    else {
-                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", a.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES).replace("%group%", a.getGroup()), Collections.singletonList(e.getPlayer()), a);
-                        nms.spawnShopHologram(a.getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (a.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", a.getGroup()) : Messages.NPC_NAME_SOLO_SHOP).replace("%group%", a.getGroup()), Collections.singletonList(e.getPlayer()), a);
-                    }
                     for (IGenerator o : t.getGenerators()) {
                         o.updateHolograms(e.getPlayer());
                     }
+                }
+                for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
+                    sh.update();
                 }
 
                 a.sendSpectatorCommandItems(e.getPlayer());

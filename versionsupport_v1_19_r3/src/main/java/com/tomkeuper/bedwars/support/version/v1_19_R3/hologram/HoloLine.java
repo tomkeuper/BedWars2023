@@ -29,12 +29,14 @@ public class HoloLine implements IHoloLine {
         entity.j(true);
         entity.ae = true;
         Location loc = hologram.getLocation();
-        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity, 78);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
         entity.p(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
+
+        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity, 78);
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+
+        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
+        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
         ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(teleportPacket);
     }
 
@@ -74,9 +76,11 @@ public class HoloLine implements IHoloLine {
         int position = hologram.getLines().indexOf(this);
         entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
         if (isDestroyed()) return;
+
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+
+        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
         ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(teleportPacket);
     }
 
@@ -103,8 +107,6 @@ public class HoloLine implements IHoloLine {
     public void reveal() {
         destroyed = false;
 
-        PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(entity.af());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(destroy);
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
         ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
 

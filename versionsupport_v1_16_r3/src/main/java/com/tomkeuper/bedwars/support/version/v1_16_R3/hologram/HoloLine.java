@@ -25,12 +25,14 @@ public class HoloLine implements IHoloLine {
         entity.setInvisible(true);
         entity.setNoGravity(true);
         Location loc = hologram.getLocation();
-        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entity);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
         entity.setLocation(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ(), loc.getYaw(), loc.getPitch());
+
+        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entity);
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+
+        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
+        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
         ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(teleportPacket);
     }
 
@@ -71,9 +73,11 @@ public class HoloLine implements IHoloLine {
         int position = hologram.getLines().indexOf(this);
         entity.setLocation(loc.getX(), loc.getY() + position * hologram.getGap(), loc.getZ(), loc.getYaw(), loc.getPitch());
         if (destroyed) return;
+
         PacketPlayOutEntityTeleport packet = new PacketPlayOutEntityTeleport(entity);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
+
+        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
         ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
     }
 
@@ -100,8 +104,6 @@ public class HoloLine implements IHoloLine {
     public void reveal() {
         destroyed = false;
 
-        PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(entity.getId());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(destroy);
         PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entity);
         ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
 

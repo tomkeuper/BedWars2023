@@ -270,12 +270,12 @@ public class v1_17_R1 extends VersionSupport {
     }
 
     @Override
-    public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena) {
+    public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena, ITeam team) {
         for (Player p : players) {
             String[] nume = (getList(p, name1) == null || getList(p, name1).isEmpty() ? getList(p, name1.replace(name1.split("\\.")[2], "default")) : getList(p, name1)).toArray(new String[0]);
             IHologram h = createHologram(p, loc, nume);
 
-            new ShopHolo(h, loc, arena);
+            new ShopHolo(h, loc, arena, team);
         }
 
         for (Player p : players) {
