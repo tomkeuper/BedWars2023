@@ -60,11 +60,8 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import static com.tomkeuper.bedwars.BedWars.nms;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class DamageDeathMove implements Listener {
@@ -543,7 +540,6 @@ public class DamageDeathMove implements Listener {
     public void onMove(PlayerMoveEvent e) {
         if (Arena.isInArena(e.getPlayer())) {
             IArena a = Arena.getArenaByPlayer(e.getPlayer());
-            int updateDistance = 50; // update distance measured in blocks
             if (e.getFrom().getChunk() != e.getTo().getChunk()) {
 
                 /* update armor-stands hidden by nms */
@@ -551,7 +547,7 @@ public class DamageDeathMove implements Listener {
                     if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
                         IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
                         if (h != null) {
-                            if (o.getLocation().distance(e.getTo()) > updateDistance) {
+                            if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
                                 h.update();
                             }
                         }
@@ -561,14 +557,14 @@ public class DamageDeathMove implements Listener {
                     for (IGenerator o : t.getGenerators()) {
                         IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
                         if (h != null) {
-                            if (o.getLocation().distance(e.getTo()) > updateDistance) {
+                            if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
                                 h.update();
                             }
                         }
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
-                    if (sh.getHologram().getLocation().distance(e.getTo()) > updateDistance) {
+                    if (sh.getHologram().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
                         sh.update();
                     }
                 }
