@@ -407,10 +407,10 @@ public class v1_17_R1 extends VersionSupport {
         NBTTagCompound tag = itemStack.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
-            itemStack.setTag(tag);
         }
 
         tag.setString("BedWars2023", data);
+        itemStack.setTag(tag);
         return CraftItemStack.asBukkitCopy(itemStack);
     }
 
@@ -420,10 +420,10 @@ public class v1_17_R1 extends VersionSupport {
         NBTTagCompound tag = is.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
-            is.setTag(tag);
         }
 
         tag.setString(key, value);
+        is.setTag(tag);
         return CraftItemStack.asBukkitCopy(is);
     }
 
@@ -571,9 +571,10 @@ public class v1_17_R1 extends VersionSupport {
         NBTTagCompound tag = i.getTag();
         if (tag == null) {
             tag = new NBTTagCompound();
-            i.setTag(tag);
         }
-        tag.setString("tierIdentifier", identifier);
+
+        tag.setString(VersionSupport.PLUGIN_TAG_TIER_KEY, identifier);
+        i.setTag(tag);
         return CraftItemStack.asBukkitCopy(i);
     }
 

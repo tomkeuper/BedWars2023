@@ -403,10 +403,10 @@ public class v1_18_R2 extends VersionSupport {
         NBTTagCompound tag = is.t();
         if (tag == null) {
             tag = new NBTTagCompound();
-            is.c(tag);
         }
 
         tag.a(key, value);
+        is.c(tag);
         return CraftItemStack.asBukkitCopy(is);
     }
 
@@ -553,9 +553,10 @@ public class v1_18_R2 extends VersionSupport {
         NBTTagCompound tag = i.t();
         if (tag == null) {
             tag = new NBTTagCompound();
-            i.c(tag);
         }
-        tag.a("tierIdentifier", identifier);
+
+        tag.a(VersionSupport.PLUGIN_TAG_TIER_KEY, identifier);
+        i.c(tag);
         return CraftItemStack.asBukkitCopy(i);
     }
 

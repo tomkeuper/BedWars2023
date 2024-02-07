@@ -65,6 +65,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 
+@SuppressWarnings("unused")
 public class v1_20_R1 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
@@ -714,7 +715,7 @@ public class v1_20_R1 extends VersionSupport {
         if (null == i) {
             return null;
         }
-        return i.G();
+        return i.H();
     }
 
     private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
@@ -836,7 +837,6 @@ public class v1_20_R1 extends VersionSupport {
         player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
     }
 
-
     private void sendPacket(Player player, Packet<?> packet) {
         ((CraftPlayer) player).getHandle().c.a(packet);
     }
@@ -847,5 +847,4 @@ public class v1_20_R1 extends VersionSupport {
             connection.a(p);
         }
     }
-
 }

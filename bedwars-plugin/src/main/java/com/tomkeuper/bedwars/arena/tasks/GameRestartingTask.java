@@ -81,10 +81,10 @@ public class GameRestartingTask implements Runnable, RestartingTask {
         if (getArena().getPlayers().isEmpty() && restarting > 9) restarting = 9;
         if (restarting == 7) {
             for (Player on : new ArrayList<>(getArena().getPlayers())) {
-                getArena().removePlayer(on, BedWars.getServerType() == ServerType.BUNGEE);
+                getArena().removePlayer(on, BedWars.getServerType() == ServerType.BUNGEE, true);
             }
             for (Player on : new ArrayList<>(getArena().getSpectators())) {
-                getArena().removeSpectator(on, BedWars.getServerType() == ServerType.BUNGEE);
+                getArena().removeSpectator(on, BedWars.getServerType() == ServerType.BUNGEE, true);
             }
         } else if (restarting == 4) {
             ShopHolo.clearForArena(getArena());
