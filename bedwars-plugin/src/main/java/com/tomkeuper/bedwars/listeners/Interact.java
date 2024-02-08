@@ -65,15 +65,6 @@ public class Interact implements Listener {
             if (!nms.isCustomBedWarsItem(item)) return;
             final String[] customData = nms.getCustomData(item).split("_");
 
-            // Handle command execution
-            if (customData.length >= 2) {
-                if (customData[0].equals("RUNCOMMAND")) {
-                    e.setCancelled(true);
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(player, customData[1]));
-                    return;
-                }
-            }
-
             String action = BedWars.nms.getTag(item, "ACTION");
             if (action == null) return;
 

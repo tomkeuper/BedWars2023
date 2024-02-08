@@ -164,8 +164,8 @@ public class BedWars extends JavaPlugin {
 
     // BedWars Items;
     private static Collection<IPermanentItem> lobbyItems = new ArrayList<>();
-
     private static Collection<IPermanentItem> spectatorItems = new ArrayList<>();
+    private static Collection<IPermanentItem> preGameItems = new ArrayList<>();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -555,6 +555,7 @@ public class BedWars extends JavaPlugin {
         /* Load permanent join items */
         loadLobbyItems();
         loadSpectatorItems();
+        loadPreGameItems();
 
         /* Initialize instances */
         shopCache = new ShopCache();
@@ -980,7 +981,11 @@ public class BedWars extends JavaPlugin {
         return spectatorItems;
     }
 
-    private void loadLobbyItems() {
+    public static Collection<IPermanentItem> getPreGameItems() {
+        return preGameItems;
+    }
+
+    private void loadPreGameItems() {
 
         if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) == null) return;
 
@@ -1012,16 +1017,16 @@ public class BedWars extends JavaPlugin {
                     null,
                     null, "HANDLER", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)));
 
-            LobbyItem lobbyItem = null;
+            LobbyItem preGameItem = null;
             if (item.equalsIgnoreCase("stats")){
-                lobbyItem = new LobbyItem(
+                preGameItem = new LobbyItem(
                     new StatsItemHandler(item, this),
                     i,
                     config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
                     null,
                     item);
             } else {
-                lobbyItem = new LobbyItem(
+                preGameItem = new LobbyItem(
                     new CommandItemHandler(item,this),
                     i,
                     config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
@@ -1029,8 +1034,8 @@ public class BedWars extends JavaPlugin {
                     item);
             }
 
-            debug("Loaded lobby item: " + lobbyItem.getIdentifier());
-            lobbyItems.add(lobbyItem);
+            debug("Loaded pre-game item: " + preGameItem.getIdentifier());
+            lobbyItems.add(preGameItem);
         }
     }
 
@@ -1082,6 +1087,58 @@ public class BedWars extends JavaPlugin {
 
             debug("Loaded spectator item: " + spectatorItem.getIdentifier());
             spectatorItems.add(spectatorItem);
+        }
+    }
+
+    void loadLobbyItems(){
+        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH) == null) return;
+
+        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH).getKeys(false)) {
+
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item) + " is not set!");
+                continue;
+            }
+            ItemStack i = Misc.createItem(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item))),
+                    (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)),
+                    config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item)),
+                    null,
+                    null,
+                    null, "HANDLER", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)));
+
+            SpectatorItem lobbyItem = null;
+            if (item.equalsIgnoreCase("stats")){
+                lobbyItem = new SpectatorItem(
+                        new StatsItemHandler(item, this),
+                        i,
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            } else {
+                lobbyItem = new SpectatorItem(
+                        new CommandItemHandler(item,this),
+                        i,
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            }
+
+            debug("Loaded lobby item: " + lobbyItem.getIdentifier());
+            spectatorItems.add(lobbyItem);
         }
     }
 }

@@ -1710,51 +1710,7 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public static void sendLobbyCommandItems(Player p) {
-        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH) == null) return;
         if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
-        p.getInventory().clear();
-
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
-            for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH).getKeys(false)) {
-
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                ItemStack i = Misc.createItem(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item))),
-                        (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)),
-                        config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item)),
-                        SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", item))),
-                        SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", item))),
-                        p, "RUNCOMMAND", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)));
-
-                p.getInventory().setItem(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)), i);
-            }
-        }, 15L);
-    }
-
-    /**
-     * This will give the pre-game command Items.
-     * This will clear the inventory first.
-     */
-    public void sendPreGameCommandItems(Player p) {
         p.getInventory().clear();
 
         for (IPermanentItem lobbyItem: BedWars.getAPI().getItemUtil().getLobbyItems()) {
@@ -1765,16 +1721,43 @@ public class Arena implements IArena {
                 List<String> lore;
 
                 // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
+                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
 
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
 
                 item.setItemMeta(itemMeta);
             }
-            if (lobbyItem.getHandler().isVisible(p, this))
-            p.getInventory().setItem(lobbyItem.getSlot(), item);
+            if (lobbyItem.getHandler().isVisible(p, null)) p.getInventory().setItem(lobbyItem.getSlot(), item);
+        }
+    }
+
+    /**
+     * This will give the pre-game command Items.
+     * This will clear the inventory first.
+     */
+    public void sendPreGameCommandItems(Player p) {
+        p.getInventory().clear();
+
+        for (IPermanentItem preGameItem: BedWars.getAPI().getItemUtil().getPreGameItems()) {
+            ItemStack item = preGameItem.getItem();
+            ItemMeta itemMeta = preGameItem.getItem().getItemMeta();
+            if (itemMeta != null){
+                String name;
+                List<String> lore;
+
+                // Add correct name and lore for the player language
+                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
+                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
+
+                itemMeta.setDisplayName(name);
+                itemMeta.setLore(lore);
+
+                item.setItemMeta(itemMeta);
+            }
+            if (preGameItem.getHandler().isVisible(p, this))
+            p.getInventory().setItem(preGameItem.getSlot(), item);
         }
     }
 
