@@ -1035,7 +1035,7 @@ public class BedWars extends JavaPlugin {
             }
 
             debug("Loaded pre-game item: " + preGameItem.getIdentifier());
-            lobbyItems.add(preGameItem);
+            preGameItems.add(preGameItem);
         }
     }
 
@@ -1138,7 +1138,7 @@ public class BedWars extends JavaPlugin {
             }
 
             debug("Loaded lobby item: " + lobbyItem.getIdentifier());
-            spectatorItems.add(lobbyItem);
+            lobbyItems.add(lobbyItem);
         }
     }
 }
