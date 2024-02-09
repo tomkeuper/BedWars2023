@@ -64,6 +64,7 @@ import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
+import com.tomkeuper.bedwars.handlers.items.PreGameItem;
 import com.tomkeuper.bedwars.handlers.items.SpectatorItem;
 import com.tomkeuper.bedwars.handlers.main.CommandItemHandler;
 import com.tomkeuper.bedwars.handlers.main.StatsItemHandler;
@@ -126,6 +127,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.persistence.Lob;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -1015,10 +1017,10 @@ public class BedWars extends JavaPlugin {
             }
             i.setItemMeta(im);
 
-            LobbyItem preGameItem;
+            PreGameItem preGameItem;
             IPermanentItemHandler handler = itemHandlers.get(item);
             if (handler != null) {
-                preGameItem = new LobbyItem(
+                preGameItem = new PreGameItem(
                         handler,
                         i,
                         config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
@@ -1026,7 +1028,7 @@ public class BedWars extends JavaPlugin {
             } else {
                 // Check if item has a command listed instead
                 if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
-                    preGameItem = new LobbyItem(
+                    preGameItem = new PreGameItem(
                             itemHandlers.get("command"),
                             i,
                             config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
@@ -1110,11 +1112,11 @@ public class BedWars extends JavaPlugin {
             }
             i.setItemMeta(im);
 
-            SpectatorItem lobbyItem;
+            LobbyItem lobbyItem;
 
             IPermanentItemHandler handler = itemHandlers.get(item);
             if (handler != null) {
-                lobbyItem = new SpectatorItem(
+                lobbyItem = new LobbyItem(
                         handler,
                         i,
                         config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
@@ -1122,7 +1124,7 @@ public class BedWars extends JavaPlugin {
             } else {
                 // Check if item has a command listed instead
                 if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) != null){
-                    lobbyItem = new SpectatorItem(
+                    lobbyItem = new LobbyItem(
                             itemHandlers.get("command"),
                             i,
                             config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
