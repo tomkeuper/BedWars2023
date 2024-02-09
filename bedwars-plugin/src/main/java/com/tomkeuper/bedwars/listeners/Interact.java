@@ -63,16 +63,25 @@ public class Interact implements Listener {
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
             ItemStack item = BedWars.nms.getItemInHand(player);
             if (!nms.isCustomBedWarsItem(item)) return;
-            final String[] customData = nms.getCustomData(item).split("_");
 
             String action = BedWars.nms.getTag(item, "ACTION");
             if (action == null) return;
 
+            BedWars.debug("Item action: " + action);
             if (Arena.getArenaByPlayer(player) != null) {
                 if (Arena.getArenaByPlayer(player).isSpectator(player)) {
                     for (IPermanentItem permanentItem : BedWars.getSpectatorItems()) {
                         if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
                             permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                } else {
+                    for (IPermanentItem permanentItem : BedWars.getPreGameItems()) {
+                        if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                            permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                            e.setCancelled(true);
                             return;
                         }
                     }
@@ -80,12 +89,16 @@ public class Interact implements Listener {
             }
 
             //* Get the item handler for the correct item
-            for (IPermanentItem permanentItem : BedWars.getLobbyItems()) {
-                if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
-                    permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
-                    return;
+            if (BedWars.config.getLobbyWorldName().equalsIgnoreCase(player.getWorld().getName())) {
+                for (IPermanentItem permanentItem : BedWars.getLobbyItems()) {
+                    if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                        permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                        e.setCancelled(true);
+                        return;
+                    }
                 }
-            }
+            };
+
             Bukkit.getLogger().warning("Could not find a handler for item: " + action);
         }
     }

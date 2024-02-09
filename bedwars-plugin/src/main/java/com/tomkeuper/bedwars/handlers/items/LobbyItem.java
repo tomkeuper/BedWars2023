@@ -12,14 +12,12 @@ public class LobbyItem implements IPermanentItem {
     private IPermanentItemHandler handler;
     private ItemStack item;
     private int slot;
-    private List<String> commands;
     private String identifier;
 
-    public LobbyItem(IPermanentItemHandler handler, ItemStack item, int slot, List<String> commands, String identifier) {
+    public LobbyItem(IPermanentItemHandler handler, ItemStack item, int slot, String identifier) {
             this.handler = handler;
             this.item = BedWars.nms.setTag(item, "ACTION", identifier);
             this.slot = slot;
-            this.commands = commands;
             this.identifier = identifier;
     }
 

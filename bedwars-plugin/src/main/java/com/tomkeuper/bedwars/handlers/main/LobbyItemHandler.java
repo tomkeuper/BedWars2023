@@ -1,5 +1,6 @@
 package com.tomkeuper.bedwars.handlers.main;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.items.handlers.HandlerType;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
@@ -36,9 +37,8 @@ public abstract class LobbyItemHandler implements IPermanentItemHandler {
     }
 
     public final boolean isRegistered() {
-        // TODO is always null
-//        ILobbyItemHandler handler = BedWars.getAPI().getItemUtil().getItemHandler().getLobbyItemHandler(this.getId());
-//        return handler != null && handler == this;
-        return true;
+        if (!BedWars.getItemHandlers().containsKey(this.getId())) return false;
+        IPermanentItemHandler handler = BedWars.getItemHandlers().get(this.getId());
+        return handler == this;
     }
 }
