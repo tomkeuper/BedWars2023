@@ -4,12 +4,13 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.items.handlers.HandlerType;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.handlers.PermanentItemHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import static com.tomkeuper.bedwars.BedWars.config;
 
-public class CommandItemHandler extends LobbyItemHandler{
+public class CommandItemHandler extends PermanentItemHandler {
     public CommandItemHandler(String id, Plugin plugin) {
         super(id, plugin);
     }
