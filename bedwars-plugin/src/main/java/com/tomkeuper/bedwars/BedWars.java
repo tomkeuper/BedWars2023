@@ -1022,7 +1022,7 @@ public class BedWars extends JavaPlugin {
             if (handler != null) {
                 preGameItem = new PreGameItem(
                         handler,
-                        i,
+                        nms.addCustomData(i, "preGameItem"),
                         config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
                         item);
             } else {
@@ -1030,7 +1030,7 @@ public class BedWars extends JavaPlugin {
                 if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
                     preGameItem = new PreGameItem(
                             itemHandlers.get("command"),
-                            i,
+                            nms.addCustomData(i, "preGameItem"),
                             config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
                             item);
                 } else {
@@ -1069,7 +1069,7 @@ public class BedWars extends JavaPlugin {
             if (handler != null) {
                 spectatorItem = new SpectatorItem(
                         handler,
-                        i,
+                        nms.addCustomData(i, "spectatorItem"),
                         config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
                         item);
             } else {
@@ -1077,7 +1077,7 @@ public class BedWars extends JavaPlugin {
                 if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
                     spectatorItem = new SpectatorItem(
                             itemHandlers.get("command"),
-                            i,
+                            nms.addCustomData(i, "spectatorItem"),
                             config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
                             item);
                 } else {
@@ -1118,7 +1118,7 @@ public class BedWars extends JavaPlugin {
             if (handler != null) {
                 lobbyItem = new LobbyItem(
                         handler,
-                        i,
+                        nms.addCustomData(i, "lobbyItem"),
                         config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
                         item);
             } else {
@@ -1126,7 +1126,7 @@ public class BedWars extends JavaPlugin {
                 if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) != null){
                     lobbyItem = new LobbyItem(
                             itemHandlers.get("command"),
-                            i,
+                            nms.addCustomData(i, "lobbyItem"),
                             config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
                             item);
                 } else {
