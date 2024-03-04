@@ -648,7 +648,10 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
 
         @SuppressWarnings("unused")
         @Override
-        public boolean registerItemHandler(IPermanentItemHandler handler) {
+        public boolean registerItemHandler(IPermanentItemHandler handler) throws IllegalArgumentException {
+            if (handler.getId() == null) throw new IllegalArgumentException("Handler ID is not set!");
+            if (handler.getPlugin() == null) throw new IllegalArgumentException("Handler plugin is not set!");
+            if (handler.getType() == null)  throw new IllegalArgumentException("Handler type is not set!");
             return BedWars.registerItemHandler(handler);
         }
 

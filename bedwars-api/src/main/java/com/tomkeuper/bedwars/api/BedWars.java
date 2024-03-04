@@ -848,6 +848,6 @@ public interface BedWars {
         Collection<IPermanentItem> getSpectatorItems();
         Collection<IPermanentItem> getPreGameItems();
 
-        boolean registerItemHandler(IPermanentItemHandler handler);
+        boolean registerItemHandler(IPermanentItemHandler handler) throws IllegalArgumentException;
     }
 }
