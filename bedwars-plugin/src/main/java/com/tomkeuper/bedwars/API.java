@@ -648,7 +648,7 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
 
         @SuppressWarnings("unused")
         @Override
-        public boolean registerLobbyItemHandler(IPermanentItemHandler handler) {
+        public boolean registerItemHandler(IPermanentItemHandler handler) {
             return BedWars.registerItemHandler(handler);
         }
 
