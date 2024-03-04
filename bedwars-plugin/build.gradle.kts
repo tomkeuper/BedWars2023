@@ -30,7 +30,7 @@ dependencies {
     api("io.papermc:paperlib:1.0.8")
     api("org.bstats:bstats-bukkit:3.0.2")
     implementation("com.iridium:IridiumColorAPI:1.0.9") // used by BedWars - API
-    implementation("commons-lang:commons-lang:2.6") // Used by UridiumColorAPI
+    implementation("org.apache.commons:commons-lang3:3.14.0") // Used by UridiumColorAPI
 
     api(projects.bedwarsApi)
     api(projects.versionsupportCommon)
