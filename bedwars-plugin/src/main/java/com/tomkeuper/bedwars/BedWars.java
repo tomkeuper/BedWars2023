@@ -67,6 +67,7 @@ import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
 import com.tomkeuper.bedwars.handlers.items.PreGameItem;
 import com.tomkeuper.bedwars.handlers.items.SpectatorItem;
 import com.tomkeuper.bedwars.handlers.main.CommandItemHandler;
+import com.tomkeuper.bedwars.handlers.main.LeaveItemHandler;
 import com.tomkeuper.bedwars.handlers.main.StatsItemHandler;
 import com.tomkeuper.bedwars.language.*;
 import com.tomkeuper.bedwars.levels.internal.InternalLevel;
@@ -561,7 +562,7 @@ public class BedWars extends JavaPlugin {
             }
         }
 
-        registerItemHandlers(new StatsItemHandler("stats", this), new CommandItemHandler("command", this));
+        registerItemHandlers(new StatsItemHandler("stats", this), new CommandItemHandler("command", this), new LeaveItemHandler("leave", this));
 
         /* Load permanent join items */
         loadLobbyItems();

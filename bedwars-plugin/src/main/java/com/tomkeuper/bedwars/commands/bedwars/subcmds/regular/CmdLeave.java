@@ -113,7 +113,7 @@ public class CmdLeave extends SubCommand {
         return true;
     }
 
-    private void openLeaveGUI(Player player) {
+    public static void openLeaveGUI(Player player) {
         LeaveGuiHolder holder = new LeaveGuiHolder();
         Inventory inv = Bukkit.createInventory(holder, 9, Language.getMsg(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_TITLE));
         ItemStack leaveItem = BedWars.nms.greenGlassPane(1);
