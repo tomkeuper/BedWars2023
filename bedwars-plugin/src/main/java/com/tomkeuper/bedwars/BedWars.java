@@ -564,11 +564,6 @@ public class BedWars extends JavaPlugin {
 
         registerItemHandlers(new StatsItemHandler("stats", this), new CommandItemHandler("command", this), new LeaveItemHandler("leave", this));
 
-        /* Load permanent join items */
-        loadLobbyItems();
-        loadSpectatorItems();
-        loadPreGameItems();
-
         /* Initialize instances */
         shopCache = new ShopCache();
         playerQuickBuyCache = new PlayerQuickBuyCache();
@@ -635,6 +630,15 @@ public class BedWars extends JavaPlugin {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
+        });
+
+        // Load items after plugin is initialized, this gives addons a chance to register handlers.
+        Bukkit.getScheduler().runTask(this, () -> {
+            debug("Loading item + handlers");
+            /* Load permanent join items */
+            loadLobbyItems();
+            loadSpectatorItems();
+            loadPreGameItems();
         });
 
 //        registerEvents(new ScoreboardListener()); #Disabled for now
