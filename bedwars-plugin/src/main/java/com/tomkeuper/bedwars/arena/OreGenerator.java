@@ -26,8 +26,10 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
 import com.tomkeuper.bedwars.api.arena.generator.IGenHolo;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
+import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.gameplay.GeneratorUpgradeEvent;
 import com.tomkeuper.bedwars.api.events.gameplay.GeneratorDropEvent;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
@@ -65,6 +67,7 @@ public class OreGenerator implements IGenerator {
     private IArena arena;
     private ItemStack ore;
     private GeneratorType type;
+    private IGeneratorAnimation animation;
     private int rotate = 0, dropID = 0;
     private ITeam bwt;
     boolean up = true, disabled = false;
@@ -74,7 +77,7 @@ public class OreGenerator implements IGenerator {
      */
     public HashMap<Player, IGenHolo> holograms = new HashMap<>();
 
-    private ArmorStand item;
+    private GeneratorHolder item;
     public boolean stack = BedWars.getGeneratorsCfg().getBoolean(ConfigPath.GENERATOR_STACK_ITEMS);
 
     @Getter
@@ -226,6 +229,16 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
+    public IGeneratorAnimation getAnimation() {
+        return animation;
+    }
+
+    @Override
+    public void setAnimation(IGeneratorAnimation animation) {
+        this.animation = animation;
+    }
+
+    @Override
     public HashMap<Player, IGenHolo> getPlayerHolograms() {
         return holograms;
     }
@@ -314,40 +327,7 @@ public class OreGenerator implements IGenerator {
     @Override
     public void rotate() {
         if (item == null) return;
-
-        if (up) {
-            if (rotate >= 540) {
-                up = false;
-            }
-            if (rotate > 500) {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate += 1), 0));
-            } else if (rotate > 470) {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate += 2), 0));
-                /*item.teleport(item.getLocation().add(0, 0.005D, 0));*/
-            } else if (rotate > 450) {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate += 3), 0));
-                /*item.teleport(item.getLocation().add(0, 0.001D, 0));*/
-            } else {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate += 4), 0));
-                /*item.teleport(item.getLocation().add(0, 0.002D, 0));*/
-            }
-        } else {
-            if (rotate <= 0) {
-                up = true;
-            }
-            if (rotate > 120) {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate -= 4), 0));
-                /*item.teleport(item.getLocation().subtract(0, 0.002D, 0));*/
-            } else if (rotate > 90) {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate -= 3), 0));
-                /*item.teleport(item.getLocation().add(0, 0.001D, 0));*/
-            } else if (rotate > 70) {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate -= 2), 0));
-                /*item.teleport(item.getLocation().add(0, 0.005D, 0));*/
-            } else {
-                item.setHeadPose(new EulerAngle(0, Math.toRadians(rotate -= 1), 0));
-            }
-        }
+        animation.run();
     }
 
     @Override
@@ -383,7 +363,8 @@ public class OreGenerator implements IGenerator {
                 a.destroy();
             }
             if (item != null) {
-                item.remove();
+                item.destroy();
+                item = null;
             }
             holograms.clear();
         }
@@ -425,8 +406,8 @@ public class OreGenerator implements IGenerator {
             hg.update();
         }
 
-        item = createArmorStand(location.clone().add(0, 0.5, 0));
-        item.setHelmet(new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
+        this.item = new GeneratorHolder(location.add(0, 0.5, 0), new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
+        this.animation = BedWars.nms.createDefaultGeneratorAnimation(item.getArmorStand());
         //}
     }
 
@@ -489,7 +470,7 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    public ArmorStand getHologramHolder() {
+    public GeneratorHolder getHologramHolder() {
         return item;
     }
 

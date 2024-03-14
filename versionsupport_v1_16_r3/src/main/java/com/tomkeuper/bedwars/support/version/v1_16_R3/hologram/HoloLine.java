@@ -31,9 +31,10 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(teleportPacket);
+        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection;
+        connection.sendPacket(packet);
+        connection.sendPacket(metadataPacket);
+        connection.sendPacket(teleportPacket);
     }
 
     @Override
@@ -74,11 +75,12 @@ public class HoloLine implements IHoloLine {
         entity.setLocation(loc.getX(), loc.getY() + position * hologram.getGap(), loc.getZ(), loc.getYaw(), loc.getPitch());
         if (destroyed) return;
 
-        PacketPlayOutEntityTeleport packet = new PacketPlayOutEntityTeleport(entity);
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
+        PacketPlayOutEntityTeleport packet = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
+        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection;
+        connection.sendPacket(metadataPacket);
+        connection.sendPacket(packet);
     }
 
     @Override

@@ -22,9 +22,9 @@ package com.tomkeuper.bedwars.api.arena.generator;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
@@ -76,7 +76,21 @@ public interface IGenerator {
     IArena getArena();
 
     /**
-     * This method is called every tick to manage the block rotation.
+     * Get the animation of the generator.
+     *
+     * @return the animation of the generator
+     */
+    IGeneratorAnimation getAnimation();
+
+    /**
+     * Set the animation of the generator.
+     *
+     * @param animation the animation of the generator
+     */
+    void setAnimation(IGeneratorAnimation animation);
+
+    /**
+     * This method is called every tick to manage the animation of the generator.
      */
     void rotate();
 
@@ -154,7 +168,7 @@ public interface IGenerator {
      *
      * @return null if there is no rotating item.
      */
-    ArmorStand getHologramHolder();
+    GeneratorHolder getHologramHolder();
 
     /**
      * Get generator type.
