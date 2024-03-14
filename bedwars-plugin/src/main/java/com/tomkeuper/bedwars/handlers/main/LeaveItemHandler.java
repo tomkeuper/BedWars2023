@@ -9,7 +9,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.Misc;
-import com.tomkeuper.bedwars.handlers.PermanentItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.PermanentItemHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -25,8 +25,8 @@ public class LeaveItemHandler extends PermanentItemHandler {
 
     private static final HashMap<UUID, Long> delay = new HashMap<>();
     private static final HashMap<UUID, BukkitTask> leaving = new HashMap<>();
-    public LeaveItemHandler(String id, Plugin plugin) {
-        super(id, plugin);
+    public LeaveItemHandler(String id, Plugin plugin, com.tomkeuper.bedwars.api.BedWars api) {
+        super(id, plugin, api);
     }
 
     @Override

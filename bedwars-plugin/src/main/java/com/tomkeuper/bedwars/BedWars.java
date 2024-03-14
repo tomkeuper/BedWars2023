@@ -562,7 +562,7 @@ public class BedWars extends JavaPlugin {
             }
         }
 
-        registerItemHandlers(new StatsItemHandler("stats", this), new CommandItemHandler("command", this), new LeaveItemHandler("leave", this));
+        registerItemHandlers(new StatsItemHandler("stats", this, api), new CommandItemHandler("command", this, api), new LeaveItemHandler("leave", this, api));
 
         /* Initialize instances */
         shopCache = new ShopCache();

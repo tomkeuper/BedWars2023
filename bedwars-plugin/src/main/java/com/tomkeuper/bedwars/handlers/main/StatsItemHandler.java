@@ -1,16 +1,17 @@
 package com.tomkeuper.bedwars.handlers.main;
 
+import com.tomkeuper.bedwars.api.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.items.handlers.HandlerType;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.arena.Misc;
-import com.tomkeuper.bedwars.handlers.PermanentItemHandler;
+import com.tomkeuper.bedwars.api.items.handlers.PermanentItemHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 public class StatsItemHandler extends PermanentItemHandler {
-    public StatsItemHandler(String id, Plugin plugin) {
-        super(id, plugin);
+    public StatsItemHandler(String id, Plugin plugin, BedWars api) {
+        super(id, plugin, api);
     }
 
     @Override

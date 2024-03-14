@@ -868,6 +868,13 @@ public interface BedWars {
         Collection<IPermanentItem> getPreGameItems();
 
         /**
+         * Retrieves the map of item handler IDs to permanent item handlers.
+         *
+         * @return The map of item handler IDs to permanent item handlers.
+         */
+        Map<String, IPermanentItemHandler> getItemHandlers();
+
+        /**
          * Registers a permanent item handler.
          *
          * @param handler The permanent item handler to register.

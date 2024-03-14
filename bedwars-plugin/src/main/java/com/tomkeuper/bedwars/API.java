@@ -57,15 +57,11 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class API implements com.tomkeuper.bedwars.api.BedWars {
@@ -644,6 +640,11 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         @Override
         public Collection<IPermanentItem> getPreGameItems() {
             return BedWars.getPreGameItems();
+        }
+
+        @Override
+        public Map<String, IPermanentItemHandler> getItemHandlers() {
+            return BedWars.getItemHandlers();
         }
 
         @SuppressWarnings("unused")
