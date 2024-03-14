@@ -395,7 +395,6 @@ public interface BedWars {
          *
          * @param p the player
          */
-        @Deprecated
         void sendLobbyCommandItems(Player p);
     }
 
