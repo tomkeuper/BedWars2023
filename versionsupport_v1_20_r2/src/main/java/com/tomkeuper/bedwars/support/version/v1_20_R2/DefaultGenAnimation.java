@@ -5,6 +5,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketListenerPlayOut;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityVelocity;
 import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3D;
@@ -97,9 +98,10 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     }
 
     private double getArmorStandMotY() {
+        // THE METHOD IS IMPOSSIBLE TO ACCESS DUE TO BEING CALLED A PRIMITIVE TYPE (in this case "do") SO WE HAVE TO USE REFLECTION
         String motVectorMethod = "do";
         try {
-            return ((Vec3D) armorStand.getClass().getMethod(motVectorMethod).invoke(armorStand)).c;
+            return ((Vec3D) armorStand.getClass().getMethod(motVectorMethod).invoke(armorStand)).d;
         } catch (Exception e) {
             e.printStackTrace();
         }
