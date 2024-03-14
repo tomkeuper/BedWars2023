@@ -673,7 +673,7 @@ public class BedWars extends JavaPlugin {
                 arenaString.add(arena.getArenaName());
             }
 
-            this.getLogger().info("Arena" + (api.getArenaUtil().getArenas().size() > 1 ? "s" : "") + " (" + api.getArenaUtil().getArenas().size() + "): " + arenaString);
+            this.getLogger().info("Arena" + (api.getArenaUtil().getArenas().isEmpty() || api.getArenaUtil().getArenas().size() > 1 ? "s" : "") + " (" + api.getArenaUtil().getArenas().size() + "): " + arenaString);
 
             StringJoiner addonString = new StringJoiner(", ");
             addonString.setEmptyValue("None");
@@ -681,7 +681,7 @@ public class BedWars extends JavaPlugin {
                 addonString.add(addon.getName());
             }
 
-            this.getLogger().info("Addon" + (addonManager.getAddons().size() > 1 ? "s" : "") + " (" + addonManager.getAddons().size() + "): " + addonString);
+            this.getLogger().info("Addon" + (addonManager.getAddons().isEmpty() || addonManager.getAddons().size() > 1 ? "s" : "") + " (" + addonManager.getAddons().size() + "): " + addonString);
             this.getLogger().info("");
             this.getLogger().info("PAPI Support: " + papiSupportLoaded);
             this.getLogger().info("Vault Chat Hook: " + vaultChatLoaded);
