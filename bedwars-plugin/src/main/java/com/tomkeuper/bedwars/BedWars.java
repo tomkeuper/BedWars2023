@@ -688,7 +688,11 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Vault Economy Hook: " + vaultEconomyLoaded);
             this.getLogger().info("");
             this.getLogger().info("TAB Version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features: Scoreboard (" + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + "), UnlimitedNameTag (" + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + "), BossBar (" + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true") + "), TablistNameFormatting (" + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true") + ")");
+            this.getLogger().info("TAB Features: ");
+            this.getLogger().info("  - Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true"));
+            this.getLogger().info("  - UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false"));
+            this.getLogger().info("  - BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true"));
+            this.getLogger().info("  - TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
