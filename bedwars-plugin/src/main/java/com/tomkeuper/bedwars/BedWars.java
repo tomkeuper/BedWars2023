@@ -663,8 +663,8 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("");
             this.getLogger().info("ServerType: " + getServerType().toString());
             this.getLogger().info("Auto Scale: " + autoscale);
-            this.getLogger().info("Restore Adapter: " + api.getRestoreAdapter().getDisplayName());
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
+            this.getLogger().info("Restore Adapter: " + api.getRestoreAdapter().getDisplayName());
             this.getLogger().info("");
 
             StringJoiner arenaString = new StringJoiner(", ");
