@@ -661,7 +661,7 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
             this.getLogger().info("");
-            this.getLogger().info("ServerType: " + getServerType().toString());
+            this.getLogger().info("Server Type: " + getServerType().toString());
             this.getLogger().info("Auto Scale: " + autoscale);
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
             this.getLogger().info("Restore Adapter: " + api.getRestoreAdapter().getDisplayName());
