@@ -54,6 +54,8 @@ public class ArenaSelectorListener implements Listener {
         if (!BedWars.nms.isCustomBedWarsItem(item)) return;
 
         String data = BedWars.nms.getCustomData(item);
+
+        //TODO convert to show stats handler
         if (data.startsWith("RUNCOMMAND")) {
             Bukkit.dispatchCommand(player, data.split("_")[1]);
         }
