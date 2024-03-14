@@ -22,13 +22,18 @@ package com.tomkeuper.bedwars.arena.team;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
+import com.tomkeuper.bedwars.api.arena.generator.IGenHolo;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
+import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
+import com.tomkeuper.bedwars.api.arena.team.IBedHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.arena.team.TeamEnchant;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.player.PlayerFirstSpawnEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerReSpawnEvent;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.region.Cuboid;
@@ -38,11 +43,10 @@ import com.tomkeuper.bedwars.arena.OreGenerator;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -65,11 +69,13 @@ public class BedWarsTeam implements ITeam {
 
     private List<Player> members = new ArrayList<>();
     private TeamColor color;
+    @Getter
     private Location spawn, bed, shop, teamUpgrades;
     //private IGenerator ironGenerator = null, goldGenerator = null, emeraldGenerator = null;
     private String name;
     private Arena arena;
     private boolean bedDestroyed = false;
+    private boolean shopSpawned = false;
     private Vector killDropsLoc = null;
 
     // team generators
@@ -84,13 +90,13 @@ public class BedWarsTeam implements ITeam {
     // Enchantments for bows
     private List<TeamEnchant> bowsEnchantments = new ArrayList<>();
     // Enchantments for swords
-    private List<TeamEnchant> swordsEnchantemnts = new ArrayList<>();
+    private List<TeamEnchant> swordsEnchantments = new ArrayList<>();
     // Enchantments for armors
-    private List<TeamEnchant> armorsEnchantemnts = new ArrayList<>();
+    private List<TeamEnchant> armorsEnchantments = new ArrayList<>();
     // Used for show/ hide bed hologram
-    private HashMap<UUID, BedHolo> beds = new HashMap<>();
+    private final HashMap<UUID, BedHolo> beds = new HashMap<>();
     // Queued traps
-    private LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
+    private final LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
     // Amount of dragons for Sudden Death phase
     private int dragonAmount = 1;
     // Player cache, used for losers stats and rejoin
@@ -157,13 +163,14 @@ public class BedWarsTeam implements ITeam {
      * Spawn shopkeepers for target team (if enabled).
      */
     public void spawnNPCs() {
-        if (getMembers().isEmpty() && getArena().getConfig().getBoolean(ConfigPath.ARENA_DISABLE_NPCS_FOR_EMPTY_TEAMS))
-            return;
+        if (getMembers().isEmpty() && getArena().getConfig().getBoolean(ConfigPath.ARENA_DISABLE_NPCS_FOR_EMPTY_TEAMS)) return;
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             nms.colorBed(this);
-            nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES : Messages.NPC_NAME_SOLO_UPGRADES), getArena().getPlayers(), getArena());
-            nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Shop"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP : Messages.NPC_NAME_SOLO_SHOP), getArena().getPlayers(), getArena());
+            nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), getArena().getPlayers(), getArena());
+            nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Shop"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", arena.getGroup())), getArena().getPlayers(), getArena());
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), getArena().getPlayers(), arena, this);
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP).replace("%group%", arena.getGroup()), getArena().getPlayers(), arena, this);
         }, 20L);
 
         Cuboid c1 = new Cuboid(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), getArena().getConfig().getInt(ConfigPath.ARENA_UPGRADES_PROTECTION), true);
@@ -175,6 +182,7 @@ public class BedWarsTeam implements ITeam {
         c2.setMinY(c2.getMinY() - 1);
         c2.setMaxY(c2.getMaxY() + 4);
         getArena().getRegionsList().add(c2);
+        shopSpawned = true;
     }
 
     /**
@@ -441,6 +449,23 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
+        if (ShopHolo.getShopHolograms(p) != null) {
+            List<ITeam> teams = ShopHolo.getShopHolograms(p).stream().map(ShopHolo::getTeam).collect(Collectors.toList());
+            if (teams.contains(this)) {
+                ShopHolo h = ShopHolo.getShopHolograms(p).stream().filter(sh -> sh.getTeam().equals(this)).findFirst().orElse(null);
+                if (h != null) h.update();
+            } else {
+                nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
+                nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
+            }
+        }
+
+        for (IGenerator gen : getArena().getOreGenerators()) {
+            IGenHolo h = gen.getPlayerHolograms().get(p);
+            if (h != null) h.update();
+        }
+        if (getBedHologram(p) != null) getBedHologram(p).show();
+
         Sounds.playSound("player-re-spawn", p);
     }
 
@@ -472,71 +497,66 @@ public class BedWarsTeam implements ITeam {
      * Creates a hologram on the team bed's per player
      */
     @SuppressWarnings("WeakerAccess")
-    public class BedHolo {
-        private ArmorStand a;
-        private UUID p;
+    public class BedHolo implements IBedHolo {
+        private IHologram h;
+        private IHoloLine line;
+        private final UUID p;
+        @Getter
         private Arena arena;
-        private boolean hidden = false, bedDestroyed = false;
+        @Getter
+        private boolean hidden = false;
 
         public BedHolo(@NotNull Player p, Arena arena) {
             this.p = p.getUniqueId();
             this.arena = arena;
-            spawn();
-            beds.put(p.getUniqueId(), this);
+            create();
         }
 
-        public void spawn() {
+        public void create() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
-            a = (ArmorStand) bed.getWorld().spawnEntity(bed.getBlock().getLocation().add(+0.5, 1, +0.5), EntityType.ARMOR_STAND);
-            a.setGravity(false);
-            if (name != null) {
-                if (isBedDestroyed()) {
-                    a.setCustomName(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
-                    bedDestroyed = true;
-                } else {
-                    a.setCustomName(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
-                }
-                a.setCustomNameVisible(true);
+            h = BedWars.hologramManager.createHologram(Bukkit.getPlayer(p), getBed().clone().add(0.5, -0.3, 0.5), "");
+            line = h.getLine(0);
+
+            if (isBedDestroyed()) {
+                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
+                bedDestroyed = true;
+            } else {
+                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
             }
-            a.setRemoveWhenFarAway(false);
-            a.setCanPickupItems(false);
-            a.setArms(false);
-            a.setBasePlate(false);
-            a.setMarker(true);
-            a.setVisible(false);
-            for (Player p2 : arena.getWorld().getPlayers()) {
-                if (p != p2.getUniqueId()) {
-                    nms.hideEntity(a, p2);
-                }
-            }
+            beds.put(p, this);
         }
 
         public void hide() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
-            if (bedDestroyed) return;
             hidden = true;
-            a.remove();
+            line.remove();
         }
 
         public void destroy() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
-            a.remove();
+            h.remove();
             beds.remove(p);
         }
 
         public void show() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             hidden = false;
-            spawn();
+            line.reveal();
+            if (isBedDestroyed()) {
+                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
+            } else {
+                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
+            }
         }
 
-        public Arena getArena() {
-            return arena;
+        public IHologram getHologram() {
+            return h;
         }
 
-        public boolean isHidden() {
-            return hidden;
+        public boolean isBedDestroyed()  {
+            return arena.getTeam(Bukkit.getPlayer(p)).isBedDestroyed();
         }
+
     }
 
     /**
@@ -657,6 +677,11 @@ public class BedWarsTeam implements ITeam {
         return members.contains(u);
     }
 
+    @Override
+    public boolean isShopSpawned() {
+        return shopSpawned;
+    }
+
     /**
      * Getter, setter etc.
      */
@@ -702,16 +727,13 @@ public class BedWarsTeam implements ITeam {
         return members;
     }
 
-    public Location getBed() {
-        return bed;
-    }
-
     @Override
     public ConcurrentHashMap<String, Integer> getTeamUpgradeTiers() {
         return teamUpgradeList;
     }
 
-    public BedHolo getBedHolo(@NotNull Player p) {
+    @Override
+    public BedHolo getBedHologram(@NotNull Player p) {
         return beds.get(p.getUniqueId());
     }
 
@@ -755,11 +777,11 @@ public class BedWarsTeam implements ITeam {
     }
 
     public List<TeamEnchant> getSwordsEnchantments() {
-        return swordsEnchantemnts;
+        return swordsEnchantments;
     }
 
     public List<TeamEnchant> getArmorsEnchantments() {
-        return armorsEnchantemnts;
+        return armorsEnchantments;
     }
 
     public Arena getArena() {
@@ -813,8 +835,8 @@ public class BedWarsTeam implements ITeam {
         teamEffects = null;
         base = null;
         bowsEnchantments = null;
-        swordsEnchantemnts = null;
-        armorsEnchantemnts = null;
+        swordsEnchantments = null;
+        armorsEnchantments = null;
         enemyBaseEnterTraps.clear();
         membersCache = null;
         dragonEntities = null;

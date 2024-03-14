@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -48,7 +49,12 @@ public class TeleporterGUI {
     //Don't remove "_" because it's used as a separator somewhere
     public static final String NBT_SPECTATOR_TELEPORTER_GUI_HEAD = "spectatorTeleporterGUIhead_";
 
-    private static HashMap<Player, Inventory> refresh = new HashMap<>();
+    /**
+     * -- GETTER --
+     *  Get a HashMap of players with Teleporter GUI opened
+     */
+    @Getter
+    private static final HashMap<Player, Inventory> refresh = new HashMap<>();
 
     /**
      * Refresh the Teleporter GUI for a player
@@ -87,13 +93,6 @@ public class TeleporterGUI {
         refreshInv(p, inv);
         refresh.put(p, inv);
         p.openInventory(inv);
-    }
-
-    /**
-     * Get a HashMap of players with Teleporter GUI opened
-     */
-    public static HashMap<Player, Inventory> getRefresh() {
-        return refresh;
     }
 
     /**

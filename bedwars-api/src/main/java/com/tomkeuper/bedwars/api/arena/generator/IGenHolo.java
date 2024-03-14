@@ -40,18 +40,19 @@ public interface IGenHolo {
     String getIso();
 
     /**
-     * Hide hologram for target player if is using a different language.
-     * Add your generator to an arena and it will automatically call this when required.
-     *
-     * @param p    The player who should not see this hologram.
-     * @param lang Player's language.
+     * Get the player associated with this hologram.
      */
-    void updateForPlayer(Player p, String lang);
+    Player getPlayer();
 
     /**
-     * Hide hologram for all players using a different language than this hologram.
+     * Get the generator associated with this hologram.
      */
-    void updateForAll();
+    IGenerator getGenerator();
+
+    /**
+     * Update the hologram.
+     */
+    void update();
 
     /**
      * This must be called when disabling the generator {@link IGenerator#disable()}

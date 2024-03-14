@@ -24,11 +24,8 @@ public class GenSplitFeature implements Listener {
     }
 
     public static void init() {
-        if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_GENERATOR_SPLIT)) {
-            if (instance == null) {
-                instance = new GenSplitFeature();
-            }
-        }
+        if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_GENERATOR_SPLIT))
+            if (instance == null) instance = new GenSplitFeature();
     }
 
 
@@ -37,8 +34,10 @@ public class GenSplitFeature implements Listener {
         if (!e.isCancelled() && (e.getItemStack().getType() == Material.IRON_INGOT || e.getItemStack().getType() == Material.GOLD_INGOT)) {
             Location pl = e.getPlayer().getLocation();
             Player p = e.getPlayer();
+
             int splitRange = Arena.getArenaByPlayer(p).getConfig().getInt(ConfigPath.ARENA_GENERATOR_SPLIT_RANGE);
             List<Entity> nearbyEntities = (List) pl.getWorld().getNearbyEntities(pl, splitRange, splitRange, 2.0);
+
             for (Entity entity : pl.getWorld().getEntities()) {
                 if (nearbyEntities.contains(entity) && entity instanceof Player) {
                     Player pickupPlayer = (Player) entity;
@@ -46,6 +45,7 @@ public class GenSplitFeature implements Listener {
                         if (Arena.getArenaByPlayer(pickupPlayer) == null) BedWars.debug("pickupPlayer: " + pickupPlayer.getName() + " is not in an arena. Event triggered by: " + p.getName());
                         ITeam team = Arena.getArenaByPlayer(pickupPlayer).getTeam(p);
                         ITeam rt = Arena.getArenaByPlayer(pickupPlayer).getTeam(pickupPlayer);
+
                         if (team == rt) {
                             ItemStack item = new ItemStack(e.getItemStack().getType(), e.getAmount());
                             if (!BedWars.getAPI().getAFKUtil().isPlayerAFK(pickupPlayer)) pickupPlayer.getInventory().addItem(item);

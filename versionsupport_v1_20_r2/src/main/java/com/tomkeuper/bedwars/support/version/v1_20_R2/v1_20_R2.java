@@ -6,7 +6,8 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
-import com.tomkeuper.bedwars.api.language.Language;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
@@ -14,6 +15,8 @@ import com.mojang.datafixers.util.Pair;
 import com.tomkeuper.bedwars.support.version.v1_20_R2.despawnable.DespawnableAttributes;
 import com.tomkeuper.bedwars.support.version.v1_20_R2.despawnable.DespawnableFactory;
 import com.tomkeuper.bedwars.support.version.v1_20_R2.despawnable.DespawnableType;
+import com.tomkeuper.bedwars.support.version.v1_20_R2.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_20_R2.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -59,11 +62,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
+
+import static com.tomkeuper.bedwars.api.language.Language.getList;
+import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 @SuppressWarnings("unused")
 public class v1_20_R2 extends VersionSupport {
@@ -241,22 +250,19 @@ public class v1_20_R2 extends VersionSupport {
         vlg.setCollidable(false);
         vlg.setInvulnerable(true);
         vlg.setSilent(true);
+    }
+
+    @Override
+    public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena, ITeam team) {
+        for (Player p : players) {
+            String[] nume = (getList(p, name1) == null || getList(p, name1).isEmpty() ? getList(p, name1.replace(name1.split("\\.")[2], "default")) : getList(p, name1)).toArray(new String[0]);
+            IHologram h = createHologram(p, loc, nume);
+
+            new ShopHolo(h, loc, arena, team);
+        }
 
         for (Player p : players) {
-            String[] name = Language.getMsg(p, name1).split(",");
-            if (name.length == 1) {
-                ArmorStand a = createArmorStand(name[0], l.clone().add(0, 1.85, 0));
-                new ShopHolo(Language.getPlayerLanguage(p).getIso(), a, null, l, arena);
-            } else {
-                ArmorStand a = createArmorStand(name[0], l.clone().add(0, 2.1, 0));
-                ArmorStand b = createArmorStand(name[1], l.clone().add(0, 1.85, 0));
-                new ShopHolo(Language.getPlayerLanguage(p).getIso(), a, b, l, arena);
-            }
-        }
-        for (ShopHolo sh : ShopHolo.getShopHolo()) {
-            if (sh.getA() == arena) {
-                sh.update();
-            }
+            ShopHolo.getShopHolograms(p).forEach(ShopHolo::update);
         }
     }
 
@@ -847,5 +853,26 @@ public class v1_20_R2 extends VersionSupport {
         for (Packet<?> p : packets) {
             connection.a(p);
         }
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, String... lines) {
+        List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
+        return new Hologram(p, location, linesList);
+    }
+
+    @Override
+    public IHologram createHologram(Player p, Location location, IHoloLine... lines) {
+        List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
+        return new Hologram(p, linesList, location);
+    }
+
+    @Override
+    public IHoloLine lineFromText(String text, @Nonnull IHologram hologram) {
+        return new HoloLine(text, hologram);
     }
 }

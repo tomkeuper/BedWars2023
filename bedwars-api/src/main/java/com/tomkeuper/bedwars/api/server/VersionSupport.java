@@ -25,6 +25,8 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.exceptions.InvalidEffectException;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,6 +41,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -149,6 +152,11 @@ public abstract class VersionSupport {
      * Spawn shop NPC
      */
     public abstract void spawnShop(Location loc, String name1, List<Player> players, IArena arena);
+
+    /**
+     * Spawn shop hologram
+     */
+    public abstract void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena, ITeam team);
 
     /**
      * Get item-stack damage amount
@@ -484,4 +492,9 @@ public abstract class VersionSupport {
     public abstract void placeLadder(Block b, int x, int y, int z, IArena a, int ladderdata);
 
     public abstract void playVillagerEffect(Player player, Location location);
+
+    public abstract IHologram createHologram(Player p, Location location, String... lines);
+    public abstract IHologram createHologram(Player p, Location location, IHoloLine... lines);
+
+    public abstract IHoloLine lineFromText(String text, @Nonnull IHologram hologram);
 }
