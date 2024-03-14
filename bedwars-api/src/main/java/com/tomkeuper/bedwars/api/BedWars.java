@@ -841,12 +841,39 @@ public interface BedWars {
      */
     ItemUtil getItemUtil();
 
+    /**
+     * Utility interface for managing lobby items.
+     */
     interface ItemUtil {
 
+        /**
+         * Retrieves the collection of lobby items.
+         *
+         * @return The collection of lobby items.
+         */
         Collection<IPermanentItem> getLobbyItems();
+
+        /**
+         * Retrieves the collection of spectator items.
+         *
+         * @return The collection of spectator items.
+         */
         Collection<IPermanentItem> getSpectatorItems();
+
+        /**
+         * Retrieves the collection of pre-game items.
+         *
+         * @return The collection of pre-game items.
+         */
         Collection<IPermanentItem> getPreGameItems();
 
+        /**
+         * Registers a permanent item handler.
+         *
+         * @param handler The permanent item handler to register.
+         * @return True if the handler was successfully registered; false otherwise.
+         * @throws IllegalArgumentException If the handler ID, plugin, or type is not set.
+         */
         boolean registerItemHandler(IPermanentItemHandler handler) throws IllegalArgumentException;
     }
 }
