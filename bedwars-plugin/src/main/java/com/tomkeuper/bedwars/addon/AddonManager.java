@@ -95,22 +95,16 @@ public class AddonManager implements IAddonManager {
 
     @Override
     public void loadAddons() {
-        String count, message;
-
         if (registeredAddons.isEmpty()) {
             log("No addons were found!");
             return;
         }
-        else if (registeredAddons.size() == 1) {
-            count = "addon";
-            message = "has been found!";
-        } else {
-            count = "addons";
-            message = "were found!";
-        }
 
-        log(registeredAddons.size() + " " + count + " " + message);
-        log("Loading " + registeredAddons.size() + " " + count);
+        int addonCount = registeredAddons.size();
+        String plural = (addonCount == 1) ? "addon" : "addons";
+
+        log(registeredAddons.size() + " " + plural + " " + ((addonCount == 1) ? "was" : "were") + " found.");
+        log("Loading " + registeredAddons.size() + " " + plural);
 
         for (Addon addon : registeredAddons) {
             if (loadedAddons.contains(addon)) continue;
