@@ -487,11 +487,15 @@ public class DamageDeathMove implements Listener {
             if (a.isSpectator(e.getPlayer())) {
                 e.setRespawnLocation(a.getSpectatorLocation());
                 for (IGenerator o : a.getOreGenerators()) {
+                    GeneratorHolder holder = o.getHologramHolder();
                     o.updateHolograms(e.getPlayer());
+                    if (holder != null) holder.update();
                 }
                 for (ITeam t : a.getTeams()) {
                     for (IGenerator o : t.getGenerators()) {
+                        GeneratorHolder holder = o.getHologramHolder();
                         o.updateHolograms(e.getPlayer());
+                        if (holder != null) holder.update();
                     }
                 }
                 for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
