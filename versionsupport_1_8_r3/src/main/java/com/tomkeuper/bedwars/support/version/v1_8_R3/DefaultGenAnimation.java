@@ -13,6 +13,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     private final Entity armorStand;
     private final Location loc;
     private boolean up = false;
+    private int tickCount = 0; // A counter to keep track of the ticks since the animation started.
 
     public DefaultGenAnimation(ArmorStand armorStand) {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
@@ -23,43 +24,19 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
 
     @Override
     public void run() {
-        if (up) {
-            if (getArmorStandYAW() >= 500) {
-                addArmorStandYAW(-1);
-            } else if (getArmorStandYAW() >= 400) {
-                addArmorStandYAW(-2);
-            } else if (getArmorStandYAW() >= 300) {
-                addArmorStandMotY(0.1);
-                addArmorStandYAW(-4);
-            } else if (getArmorStandYAW() >= 200) {
-                addArmorStandMotY(0.2);
-                addArmorStandYAW(-6);
-            } else {
-                addArmorStandYAW(-8);
-            }
+        // Constants for the sinusoidal motion
+        final double frequency = 0.035; // Controls the oscillation speed.
+        final double amplitude = 260; // Controls the range of YAW motion.
+        final double verticalAmplitude = 0.2; // Controls the range of vertical motion.
 
-            if (getArmorStandYAW() >= 540) {
-                up = false;
-            }
-        } else {
-            if (getArmorStandYAW() <= 40) {
-                addArmorStandYAW(1);
-            } else if (getArmorStandYAW() <= 140) {
-                addArmorStandYAW(2);
-            } else if (getArmorStandYAW() <= 240) {
-                addArmorStandMotY(-0.1);
-                addArmorStandYAW(4);
-            } else if (getArmorStandYAW() <= 340) {
-                addArmorStandMotY(-0.2);
-                addArmorStandYAW(6);
-            } else {
-                addArmorStandYAW(8);
-            }
+        // Calculate sinusoidal values for YAW and MotY
+        float sinusoidalYaw = (float) (Math.sin(frequency * tickCount) * amplitude);
+        float sinusoidalMotY = (float) (Math.sin(frequency * tickCount) * verticalAmplitude);
 
-            if (getArmorStandYAW() <= 0) {
-                up = true;
-            }
-        }
+        // Update the armor stand's YAW and MotY based on the sinusoidal functions
+        Bukkit.getLogger().info("yaw: " + sinusoidalYaw + " motY: " + sinusoidalMotY);
+        setArmorStandYAW(sinusoidalYaw);
+        addArmorStandMotY(sinusoidalMotY);
 
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.getId(), MathHelper.floor(loc.getX() * 32), MathHelper.floor(loc.getY() * 32), MathHelper.floor(loc.getZ() * 32), (byte) 0, (byte) 0, false);
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.getId(), (byte) 0, (byte) getArmorStandMotY(), (byte) 0, (byte) getArmorStandYAW(), (byte) 0, false);
@@ -67,6 +44,8 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             sendPackets(p, teleportPacket, moveLookPacket);
         }
+
+        tickCount++;
     }
 
     private void sendPacket(Player p, Packet<PacketListenerPlayOut> packet) {
