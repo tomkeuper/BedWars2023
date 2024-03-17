@@ -661,37 +661,38 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
             this.getLogger().info("");
-            this.getLogger().info("ServerType: " + getServerType().toString());
-            this.getLogger().info("Auto Scale enabled: " + autoscale);
-            this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
-            this.getLogger().info("");
-            this.getLogger().info("Arena's enabled: " + api.getArenaUtil().getArenas().size());
-
-            StringJoiner stringJoiner = new StringJoiner(", ");
-            if (api.getArenaUtil().getArenas().isEmpty()) stringJoiner.add("none");
-            for (IArena arena : api.getArenaUtil().getArenas()){
-                stringJoiner.add(arena.getArenaName());
-            }
-
-            this.getLogger().info("being: " + stringJoiner);
-            this.getLogger().info("");
+            this.getLogger().info("Server Type: " + getServerType().toString());
+            this.getLogger().info("Auto Scale: " + autoscale);
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
-            this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
+            this.getLogger().info("Restore Adapter: " + api.getRestoreAdapter().getDisplayName());
+            this.getLogger().info("");
 
-            StringJoiner stringJoiner2 = new StringJoiner(", ");
-            if (api.getAddonsUtil().getAddons().isEmpty()) stringJoiner2.add("none");
-            for (Addon addon : api.getAddonsUtil().getAddons()){
-                stringJoiner2.add(addon.getName());
+            StringJoiner arenaString = new StringJoiner(", ");
+            arenaString.setEmptyValue("None");
+            for (IArena arena : api.getArenaUtil().getArenas()) {
+                arenaString.add(arena.getArenaName());
             }
 
-            this.getLogger().info("being: " + stringJoiner2);
+            this.getLogger().info("Arena" + (api.getArenaUtil().getArenas().isEmpty() || api.getArenaUtil().getArenas().size() > 1 ? "s" : "") + " (" + api.getArenaUtil().getArenas().size() + "): " + arenaString);
+
+            StringJoiner addonString = new StringJoiner(", ");
+            addonString.setEmptyValue("None");
+            for (Addon addon : api.getAddonsUtil().getAddons()){
+                addonString.add(addon.getName());
+            }
+
+            this.getLogger().info("Addon" + (addonManager.getAddons().isEmpty() || addonManager.getAddons().size() > 1 ? "s" : "") + " (" + addonManager.getAddons().size() + "): " + addonString);
             this.getLogger().info("");
-            this.getLogger().info("PAPI support: " + papiSupportLoaded);
-            this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
-            this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
+            this.getLogger().info("PAPI Support: " + papiSupportLoaded);
+            this.getLogger().info("Vault Chat Hook: " + vaultChatLoaded);
+            this.getLogger().info("Vault Economy Hook: " + vaultEconomyLoaded);
             this.getLogger().info("");
-            this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true") + ", TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
+            this.getLogger().info("TAB Version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
+            this.getLogger().info("TAB Features: ");
+            this.getLogger().info("  - Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true"));
+            this.getLogger().info("  - UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false"));
+            this.getLogger().info("  - BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true"));
+            this.getLogger().info("  - TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
