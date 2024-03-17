@@ -262,12 +262,12 @@ public class OreGenerator implements IGenerator {
                     .replace("%bw_seconds%", String.valueOf(lastSpawn));
             String nameText = Language.getLang(iso).m(getOre().getType() == Material.DIAMOND ? Messages.GENERATOR_HOLOGRAM_TYPE_DIAMOND
                     : Messages.GENERATOR_HOLOGRAM_TYPE_EMERALD);
-            hologram = BedWars.getAPI().getHologramsUtil().createHologram(p, location.clone().add(0, 0.5, 0), nameText, tierText, timerText);
+            hologram = BedWars.getAPI().getHologramsUtil().createHologram(p, location.clone().add(0, 0.5, 0), tierText, nameText, timerText);
             hologram.setGap(0.3);
 
             this.timer = hologram.getLine(0);
-            this.tier = hologram.getLine(1);
-            this.name = hologram.getLine(2);
+            this.name = hologram.getLine(1);
+            this.tier = hologram.getLine(2);
         }
 
         @Override

@@ -12,8 +12,12 @@ import org.bukkit.entity.Player;
 public class DefaultGenAnimation implements IGeneratorAnimation {
     private final Entity armorStand;
     private final Location loc;
-    private boolean up = false;
     private int tickCount = 0; // A counter to keep track of the ticks since the animation started.
+
+    // Constants for the sinusoidal motion
+    final double frequency = 0.035; // Controls the oscillation speed.
+    final double amplitude = 260; // Controls the range of YAW motion.
+    final double verticalAmplitude = 0.2; // Controls the range of vertical motion.
 
     public DefaultGenAnimation(ArmorStand armorStand) {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
@@ -24,19 +28,13 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
 
     @Override
     public void run() {
-        // Constants for the sinusoidal motion
-        final double frequency = 0.035; // Controls the oscillation speed.
-        final double amplitude = 260; // Controls the range of YAW motion.
-        final double verticalAmplitude = 0.2; // Controls the range of vertical motion.
-
         // Calculate sinusoidal values for YAW and MotY
         float sinusoidalYaw = (float) (Math.sin(frequency * tickCount) * amplitude);
         float sinusoidalMotY = (float) (Math.sin(frequency * tickCount) * verticalAmplitude);
 
         // Update the armor stand's YAW and MotY based on the sinusoidal functions
-        Bukkit.getLogger().info("yaw: " + sinusoidalYaw + " motY: " + sinusoidalMotY);
         setArmorStandYAW(sinusoidalYaw);
-        addArmorStandMotY(sinusoidalMotY);
+        addArmorStandMotY(-sinusoidalMotY); // Reversing the motion to inverse the direction of the oscillation (instead of up and down, it's down and up)
 
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.getId(), MathHelper.floor(loc.getX() * 32), MathHelper.floor(loc.getY() * 32), MathHelper.floor(loc.getZ() * 32), (byte) 0, (byte) 0, false);
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.getId(), (byte) 0, (byte) getArmorStandMotY(), (byte) 0, (byte) getArmorStandYAW(), (byte) 0, false);

@@ -19,7 +19,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
         this.loc = armorStand.getLocation();
         setArmorStandYAW(0);
-        System.out.println("Created new animation");
+        setArmorStandMotY(0);
     }
 
     @Override

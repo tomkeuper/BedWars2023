@@ -25,7 +25,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
         this.loc = armorStand.getLocation();
         setArmorStandYAW(0);
-        System.out.println("Created new animation");
+        setArmorStandMotY(0);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         armorStand.p(loc.getX(), loc.getY(), loc.getZ()); // SETTING NEW LOCATION
         armorStand.aJ = false; // SETTING ON GROUND TO FALSE
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand);
-        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ah(), (byte) 0, (byte) 0, (byte) 0, (byte) getArmorStandYAW(), (byte) 0, false);
+        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ah(), (byte) 0, (byte) getArmorStandMotY(), (byte) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             sendPackets(p, teleportPacket, moveLookPacket);
