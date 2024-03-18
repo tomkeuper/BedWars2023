@@ -15,11 +15,17 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class DefaultGenAnimation implements IGeneratorAnimation {
     private final Entity armorStand;
     private final Location loc;
-    private boolean up = false;
+    private int tickCount = 0; // A counter to keep track of the ticks since the animation started.
+
+    // Constants for the sinusoidal motion
+    final double frequency = 0.035; // Controls the oscillation speed.
+    final double amplitude = 260; // Controls the range of YAW motion.
+    final double verticalAmplitude = 10; // Controls the range of vertical motion.
 
     public DefaultGenAnimation(ArmorStand armorStand) {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
@@ -29,32 +35,24 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     }
 
     @Override
+    public String getIdentifier() {
+        return "bw2023:default";
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return Bukkit.getPluginManager().getPlugin("BedWars2023");
+    }
+
+    @Override
     public void run() {
-        if (up) {
-            if (getArmorStandYAW() >= 540) up = false;
+        // Calculate sinusoidal values for YAW and MotY
+        float sinusoidalYaw = (float) (Math.sin(frequency * tickCount) * amplitude);
+        float sinusoidalMotY = (float) (Math.sin(frequency * tickCount) * verticalAmplitude);
 
-            if (getArmorStandYAW() > 500) {
-                addArmorStandYAW(1);
-            } else if (getArmorStandYAW() > 470) {
-                addArmorStandYAW(2);
-            } else if (getArmorStandYAW() > 450) {
-                addArmorStandYAW(3);
-            } else {
-                addArmorStandYAW(4);
-            }
-        } else {
-            if (getArmorStandYAW() <= 0) up = true;
-
-            if (getArmorStandYAW() > 120) {
-                addArmorStandYAW(-4);
-            } else if (getArmorStandYAW() > 90) {
-                addArmorStandYAW(-3);
-            } else if (getArmorStandYAW() > 70) {
-                addArmorStandYAW(-2);
-            } else {
-                addArmorStandYAW(-1);
-            }
-        }
+        // Update the armor stand's YAW and MotY based on the sinusoidal functions
+        setArmorStandYAW(sinusoidalYaw);
+        setArmorStandMotY(sinusoidalMotY);
 
         armorStand.setLocation(loc.getX(), loc.getY(), loc.getZ(), getArmorStandYAW(), 0);
         armorStand.setOnGround(false);
@@ -64,6 +62,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             sendPackets(p, teleportPacket, moveLookPacket);
         }
+        tickCount++;
     }
 
     private void sendPacket(Player p, Packet<PacketListenerPlayOut> packet) {

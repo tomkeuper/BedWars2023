@@ -44,11 +44,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @SuppressWarnings("WeakerAccess")
@@ -67,10 +68,10 @@ public class OreGenerator implements IGenerator {
     private IArena arena;
     private ItemStack ore;
     private GeneratorType type;
-    private IGeneratorAnimation animation;
-    private int rotate = 0, dropID = 0;
+    private List<IGeneratorAnimation> animations;
+    private int dropID = 0;
     private ITeam bwt;
-    boolean up = true, disabled = false;
+    boolean disabled = false;
 
     /**
      * Generator holograms per language <iso, holo></iso,>
@@ -229,13 +230,12 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    public IGeneratorAnimation getAnimation() {
-        return animation;
+    public List<IGeneratorAnimation> getAnimations() {
+        return animations;
     }
 
-    @Override
-    public void setAnimation(IGeneratorAnimation animation) {
-        this.animation = animation;
+    public void addAnimation(IGeneratorAnimation animation) {
+        animations.add(animation);
     }
 
     @Override
@@ -327,7 +327,9 @@ public class OreGenerator implements IGenerator {
     @Override
     public void rotate() {
         if (item == null) return;
-        animation.run();
+        for (IGeneratorAnimation a : animations) {
+            a.run();
+        }
     }
 
     @Override
@@ -407,7 +409,8 @@ public class OreGenerator implements IGenerator {
         }
 
         this.item = new GeneratorHolder(location.add(0, 0.5, 0), new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
-        this.animation = BedWars.nms.createDefaultGeneratorAnimation(item.getArmorStand());
+        this.animations = new ArrayList<>();
+        animations.add(BedWars.nms.createDefaultGeneratorAnimation(item.getArmorStand()));
         //}
     }
 

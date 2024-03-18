@@ -30,6 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface IGenerator {
 
@@ -80,14 +81,14 @@ public interface IGenerator {
      *
      * @return the animation of the generator
      */
-    IGeneratorAnimation getAnimation();
+    List<IGeneratorAnimation> getAnimations();
 
     /**
      * Set the animation of the generator.
      *
-     * @param animation the animation of the generator
+     * @param animations the animation of the generator
      */
-    void setAnimation(IGeneratorAnimation animation);
+    void addAnimation(IGeneratorAnimation animations);
 
     /**
      * This method is called every tick to manage the animation of the generator.

@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class DefaultGenAnimation implements IGeneratorAnimation {
     private final Entity armorStand;
@@ -17,13 +18,23 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     // Constants for the sinusoidal motion
     final double frequency = 0.035; // Controls the oscillation speed.
     final double amplitude = 260; // Controls the range of YAW motion.
-    final double verticalAmplitude = 0.2; // Controls the range of vertical motion.
+    final double verticalAmplitude = 10; // Controls the range of vertical motion.
 
     public DefaultGenAnimation(ArmorStand armorStand) {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
         this.loc = armorStand.getLocation();
         setArmorStandYAW(0);
         setArmorStandMotY(0);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return "bw2023:default";
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return Bukkit.getPluginManager().getPlugin("BedWars2023");
     }
 
     @Override
@@ -34,7 +45,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
 
         // Update the armor stand's YAW and MotY based on the sinusoidal functions
         setArmorStandYAW(sinusoidalYaw);
-        addArmorStandMotY(-sinusoidalMotY); // Reversing the motion to inverse the direction of the oscillation (instead of up and down, it's down and up)
+        setArmorStandMotY(sinusoidalMotY);
 
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.getId(), MathHelper.floor(loc.getX() * 32), MathHelper.floor(loc.getY() * 32), MathHelper.floor(loc.getZ() * 32), (byte) 0, (byte) 0, false);
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.getId(), (byte) 0, (byte) getArmorStandMotY(), (byte) 0, (byte) getArmorStandYAW(), (byte) 0, false);
