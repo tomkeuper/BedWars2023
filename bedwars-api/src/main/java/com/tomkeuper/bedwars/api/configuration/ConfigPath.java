@@ -157,6 +157,7 @@ public class ConfigPath {
     public static final String SB_CONFIG_SIDEBAR_TAB_NAME = "scoreboard-settings.tab-name";
     public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED = "scoreboard-settings.abovehead-name-enable";
     public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME = "scoreboard-settings.abovehead-name";
+    public static final String SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED= "scoreboard-settings.tab-name-formatting-enable";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_IN_TAB = "scoreboard-settings.health.display-in-tab";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME = "scoreboard-settings.health.display-below-name";
     public static final String GENERAL_CONFIGURATION_DISABLED_LANGUAGES = "disabled-languages";
