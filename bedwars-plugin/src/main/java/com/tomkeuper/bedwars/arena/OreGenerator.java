@@ -408,7 +408,7 @@ public class OreGenerator implements IGenerator {
             hg.update();
         }
 
-        this.item = new GeneratorHolder(location.add(0, 0.5, 0), new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
+        this.item = new GeneratorHolder(location.add(0, 0.35, 0), new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
         this.animations = new ArrayList<>();
         animations.add(BedWars.nms.createDefaultGeneratorAnimation(item.getArmorStand()));
         //}
