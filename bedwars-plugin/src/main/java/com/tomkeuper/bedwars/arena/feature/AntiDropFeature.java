@@ -38,17 +38,8 @@ public class AntiDropFeature implements Listener {
         if (!Arena.getArenaByPlayer(player).getStatus().equals(GameState.playing)) {
             return;
         }
-        List<Block> blocks = new ArrayList<>();
-        blocks.add(player.getLocation().clone().subtract(0.0D, 0.1D, 0.0D).getBlock());
-        for (int i = 1; i <= 4; i++) {
-            blocks.add(player.getLocation().clone().subtract(0.0D, i, 0.0D).getBlock());
+        if (player.getVelocity().getY() < -0.5) {
+            e.setCancelled(true); // Cancel the item drop if the player is falling
         }
-        for (Block block : blocks) {
-            if (block.getType().equals(Material.AIR)) {
-                continue;
-            }
-            return;
-        }
-        e.setCancelled(true);
     }
 }
