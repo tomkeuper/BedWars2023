@@ -510,7 +510,7 @@ public class Arena implements IArena {
             players.add(p);
             p.setFlying(false);
             p.setAllowFlight(false);
-            p.setHealth(20);
+            p.setHealth(p.getMaxHealth());
             for (Player on : players) {
                 Language language = Language.getPlayerLanguage(on);
                 if (ev.getMessage().equals("")){
@@ -725,7 +725,7 @@ public class Arena implements IArena {
                 /* Spectator items */
                 sendSpectatorCommandItems(p);
                 // make invisible because it is annoying whene there are many spectators around the map
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
 
                 p.getInventory().setArmorContents(null);
             });
@@ -735,18 +735,15 @@ public class Arena implements IArena {
             p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_SPECTATOR_MSG).replace("%bw_arena%", this.getDisplayName()));
 
             /* update generator holograms for spectators */
-            String iso = Language.getPlayerLanguage(p).getIso();
             for (IGenerator o : getOreGenerators()) {
-                o.updateHolograms(p, iso);
+                o.updateHolograms(p);
             }
             for (ITeam t : getTeams()) {
+                if (!t.isShopSpawned()) continue;
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group)), Collections.singletonList(p), this, t);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group)), Collections.singletonList(p), this, t);
                 for (IGenerator o : t.getGenerators()) {
-                    o.updateHolograms(p, iso);
-                }
-            }
-            for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                if (sh.getA() == this) {
-                    sh.updateForPlayer(p, iso);
+                    o.updateHolograms(p);
                 }
             }
 

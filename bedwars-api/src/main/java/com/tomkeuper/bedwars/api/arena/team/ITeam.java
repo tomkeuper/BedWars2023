@@ -65,6 +65,13 @@ public interface ITeam {
     boolean isMember(Player player);
 
     /**
+     * Check if the shop has been spawned.
+     *
+     * @return true if the shop has been spawned.
+     */
+    boolean isShopSpawned();
+
+    /**
      * Get the team arena.
      */
     IArena getArena();
@@ -86,6 +93,11 @@ public interface ITeam {
      * Get bed location.
      */
     Location getBed();
+
+    /**
+     * Get the bed hologram of a player
+     */
+    IBedHolo getBedHologram(Player player);
 
     /**
      * Get list of team upgrades.

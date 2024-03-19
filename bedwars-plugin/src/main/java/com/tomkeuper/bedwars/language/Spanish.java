@@ -225,10 +225,10 @@ public class Spanish extends Language {
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER2, "II");
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER3, "III");
         yml.addDefault(Messages.GENERATOR_UPGRADE_CHAT_ANNOUNCEMENT, "%bw_lang_prefix%%bw_generator_type% Los generadores &ehan sido mejorados al nivel &c%bw_tier%");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES, "&bMEJORAS TEAM,&e&lCLICK DERECHO");
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES, "&bMEJORAS SOLO,&e&lCLICK DERECHO");
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP, "&bTIENDA,&e&lCLICK DERECHO");
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP, "&bTIENDA,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), "&bMEJORAS TEAM,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), "&bMEJORAS SOLO,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), "&bTIENDA,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), "&bTIENDA,&e&lCLICK DERECHO");
 
         yml.addDefault(Messages.MEANING_FULL, "Lleno");
         yml.addDefault(Messages.MEANING_SHOUT, "global");

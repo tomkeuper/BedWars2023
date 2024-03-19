@@ -307,10 +307,10 @@ public class Turkish extends Language {
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&lYatağını savun!");
         yml.addDefault(Messages.BED_HOLOGRAM_DESTROYED, "&c&lYatağın kırıldı!");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES, "&bTAKIM YÜKSELTMELERİ,&e&lSAĞ TIKLA");
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES, "&bOYUNCU YÜKSELTMELERİ,&e&lSAĞ TIKLA");
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP, "&bTAKIM MARKETİ,&e&lSAĞ TIKLA");
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP, "&bEŞYA MARKETİ,&e&lSAĞ TIKLA");
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), "&bTAKIM YÜKSELTMELERİ,&e&lSAĞ TIKLA");
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), "&bOYUNCU YÜKSELTMELERİ,&e&lSAĞ TIKLA");
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), "&bTAKIM MARKETİ,&e&lSAĞ TIKLA");
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), "&bEŞYA MARKETİ,&e&lSAĞ TIKLA");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lTAKIM ELENDİ > %bw_team_color%%bw_team_name% Takım &celendi!\n");
         yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&fYatak Kırma");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&fElmas II");

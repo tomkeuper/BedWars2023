@@ -23,11 +23,14 @@ package com.tomkeuper.bedwars.listeners;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
+import com.tomkeuper.bedwars.api.arena.generator.IGenHolo;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.entity.Despawnable;
+import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.events.team.TeamEliminatedEvent;
@@ -156,7 +159,6 @@ public class DamageDeathMove implements Listener {
                 }
 
                 Player damager = null;
-                boolean projectile = false;
                 if (e.getDamager() instanceof Player) {
                     damager = (Player) e.getDamager();
                 } else if (e.getDamager() instanceof Projectile) {
@@ -164,7 +166,6 @@ public class DamageDeathMove implements Listener {
                     if (shooter instanceof Player) {
                         damager = (Player) shooter;
                     } else return;
-                    projectile = true;
                 } else if (e.getDamager() instanceof Player) {
                     damager = (Player) e.getDamager();
                     if (a.isReSpawning(damager)) {
@@ -485,20 +486,22 @@ public class DamageDeathMove implements Listener {
         } else {
             if (a.isSpectator(e.getPlayer())) {
                 e.setRespawnLocation(a.getSpectatorLocation());
-                String iso = Language.getPlayerLanguage(e.getPlayer()).getIso();
                 for (IGenerator o : a.getOreGenerators()) {
-                    o.updateHolograms(e.getPlayer(), iso);
+                    GeneratorHolder holder = o.getHologramHolder();
+                    o.updateHolograms(e.getPlayer());
+                    if (holder != null) holder.update();
                 }
                 for (ITeam t : a.getTeams()) {
                     for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer(), iso);
+                        GeneratorHolder holder = o.getHologramHolder();
+                        o.updateHolograms(e.getPlayer());
+                        if (holder != null) holder.update();
                     }
                 }
-                for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                    if (sh.getA() == a) {
-                        sh.updateForPlayer(e.getPlayer(), iso);
-                    }
+                for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
+                    sh.update();
                 }
+
                 a.sendSpectatorCommandItems(e.getPlayer());
                 return;
             }
@@ -543,20 +546,47 @@ public class DamageDeathMove implements Listener {
         if (Arena.isInArena(e.getPlayer())) {
             IArena a = Arena.getArenaByPlayer(e.getPlayer());
             if (e.getFrom().getChunk() != e.getTo().getChunk()) {
-
                 /* update armor-stands hidden by nms */
-                String iso = Language.getPlayerLanguage(e.getPlayer()).getIso();
                 for (IGenerator o : a.getOreGenerators()) {
-                    o.updateHolograms(e.getPlayer(), iso);
-                }
-                for (ITeam t : a.getTeams()) {
-                    for (IGenerator o : t.getGenerators()) {
-                        o.updateHolograms(e.getPlayer(), iso);
+                    if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
+                        IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
+                        if (h != null) {
+                            if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
+                                h.update();
+                            }
+                        }
+
+                        GeneratorHolder holder = o.getHologramHolder();
+                        if (holder != null) {
+                            if (holder.getArmorStand().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
+                                holder.update();
+                            }
+                        }
                     }
                 }
-                for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                    if (sh.getA() == a) {
-                        sh.updateForPlayer(e.getPlayer(), iso);
+
+                for (ITeam t : a.getTeams()) {
+                    for (IGenerator o : t.getGenerators()) {
+                        IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
+                        if (h != null) {
+                            if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
+                                h.update();
+
+                            }
+                        }
+
+                        GeneratorHolder holder = o.getHologramHolder();
+                        if (holder != null) {
+                            if (holder.getArmorStand().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
+                                holder.update();
+                            }
+                        }
+                    }
+                }
+
+                for (ShopHolo sh : ShopHolo.getShopHolograms(e.getPlayer())) {
+                    if (sh.getHologram().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {
+                        sh.update();
                     }
                 }
 
@@ -601,16 +631,16 @@ public class DamageDeathMove implements Listener {
                         if (!e.getPlayer().getLocation().getWorld().equals(t.getBed().getWorld())) continue;
                         if (e.getPlayer().getLocation().distance(t.getBed()) < 4) {
                             if (t.isMember(e.getPlayer()) && t instanceof BedWarsTeam) {
-                                if (((BedWarsTeam) t).getBedHolo(e.getPlayer()) == null) continue;
-                                if (!((BedWarsTeam) t).getBedHolo(e.getPlayer()).isHidden()) {
-                                    ((BedWarsTeam) t).getBedHolo(e.getPlayer()).hide();
+                                if (((BedWarsTeam) t).getBedHologram(e.getPlayer()) == null) continue;
+                                if (!((BedWarsTeam) t).getBedHologram(e.getPlayer()).isHidden()) {
+                                    ((BedWarsTeam) t).getBedHologram(e.getPlayer()).hide();
                                 }
                             }
                         } else {
                             if (t.isMember(e.getPlayer()) && t instanceof BedWarsTeam) {
-                                if (((BedWarsTeam) t).getBedHolo(e.getPlayer()) == null) continue;
-                                if (((BedWarsTeam) t).getBedHolo(e.getPlayer()).isHidden()) {
-                                    ((BedWarsTeam) t).getBedHolo(e.getPlayer()).show();
+                                if (((BedWarsTeam) t).getBedHologram(e.getPlayer()) == null) continue;
+                                if (((BedWarsTeam) t).getBedHologram(e.getPlayer()).isHidden()) {
+                                    ((BedWarsTeam) t).getBedHologram(e.getPlayer()).show();
                                 }
                             }
                         }

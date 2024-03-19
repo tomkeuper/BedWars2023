@@ -335,10 +335,10 @@ public class Messages {
 
 
     /** Upgrades/ Shop*/
-    public static String NPC_NAME_TEAM_UPGRADES = "npc-team-upgrades";
-    public static String NPC_NAME_TEAM_SHOP = "npc-team-shop";
-    public static String NPC_NAME_SOLO_UPGRADES = "npc-solo-upgrades";
-    public static String NPC_NAME_SOLO_SHOP = "npc-solo-shop";
+    public static String NPC_NAME_TEAM_UPGRADES = "npcs.team-upgrades.%group%";
+    public static String NPC_NAME_TEAM_SHOP = "npcs.team-shop.%group%";
+    public static String NPC_NAME_SOLO_UPGRADES = "npcs.solo-upgrades.%group%";
+    public static String NPC_NAME_SOLO_SHOP = "npcs.solo-shop.%group%";
 
     public static String UPGRADES_MENU_GUI_NAME_PATH = "upgrades-menu-gui-name-";
     public static String UPGRADES_CATEGORY_GUI_NAME_PATH = "upgrades-category-gui-name-";
