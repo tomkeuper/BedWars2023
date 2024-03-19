@@ -26,8 +26,7 @@ import com.tomkeuper.bedwars.arena.OreGenerator;
 public class OneTick implements Runnable {
     @Override
     public void run() {
-
-        //OneTick generators
+        // OneTick generators
         for (IGenerator h : OreGenerator.getRotation()) {
             h.rotate();
         }

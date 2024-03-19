@@ -3,6 +3,7 @@ package com.tomkeuper.bedwars.support.version.v1_18_R2.hologram;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import net.minecraft.network.protocol.game.*;
+import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_18_R2.CraftWorld;
@@ -32,9 +33,10 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ae(), entity.ai(), true);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(teleportPacket);
+        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
+        connection.a(packet);
+        connection.a(metadataPacket);
+        connection.a(teleportPacket);
     }
 
     @Override
@@ -77,8 +79,9 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ae(), entity.ai(), true);
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(teleportPacket);
+        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
+        connection.a(metadataPacket);
+        connection.a(teleportPacket);
     }
 
     @Override

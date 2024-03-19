@@ -6,6 +6,7 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
@@ -35,9 +36,10 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(teleportPacket);
+        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
+        connection.a(packet);
+        connection.a(metadataPacket);
+        connection.a(teleportPacket);
     }
 
     @Override
@@ -80,8 +82,9 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(metadataPacket);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(teleportPacket);
+        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
+        connection.a(metadataPacket);
+        connection.a(teleportPacket);
     }
 
     @Override
