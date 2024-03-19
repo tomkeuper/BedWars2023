@@ -45,13 +45,14 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         float sinusoidalMotY = (float) (Math.sin(frequency * tickCount) * verticalAmplitude);
 
         // Update the armor stand's YAW and MotY based on the sinusoidal functions
+        final double lastMotY = getArmorStandMotY();
         setArmorStandYAW(sinusoidalYaw);
-        setArmorStandMotY(sinusoidalMotY);
+        addArmorStandMotY(sinusoidalMotY);
 
-        armorStand.setLocation(loc.getX(), loc.getY(), loc.getZ(), 0, 0);
+        armorStand.setLocation(loc.getX(), loc.getY(), loc.getZ(), getArmorStandYAW(), 0);
         armorStand.onGround = false;
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand);
-        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.getId(), (byte) 0, (byte) getArmorStandMotY(), (byte) 0, (byte) getArmorStandYAW(), (byte) 0, false);
+        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.getId(), 0, (long) ((getArmorStandMotY() - lastMotY)*128), 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             sendPackets(p, teleportPacket, moveLookPacket);
