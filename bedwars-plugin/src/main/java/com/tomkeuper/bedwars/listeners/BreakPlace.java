@@ -43,6 +43,7 @@ import com.tomkeuper.bedwars.popuptower.TowerWest;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
@@ -59,10 +60,12 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -301,6 +304,7 @@ public class BreakPlace implements Listener {
                     break;
             }
 
+
             if (nms.isBed(e.getBlock().getType())) {
                 for (ITeam t : a.getTeams()) {
                     for (int x = e.getBlock().getX() - 2; x < e.getBlock().getX() + 2; x++) {
@@ -377,6 +381,17 @@ public class BreakPlace implements Listener {
                 if (!a.isBlockPlaced(e.getBlock())) {
                     p.sendMessage(getMsg(p, Messages.INTERACT_CANNOT_BREAK_BLOCK));
                     e.setCancelled(true);
+                }
+            }
+
+            if (!e.isCancelled()){
+                Block drop = e.getBlock();
+                e.setCancelled(true);
+                Collection<ItemStack> drops = drop.getDrops();
+                drop.setType(Material.AIR);
+                for (ItemStack item : drops){
+                    ItemStack newItem = nms.addCustomData(item, "");
+                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5,0.5,0.5), newItem);
                 }
             }
         }

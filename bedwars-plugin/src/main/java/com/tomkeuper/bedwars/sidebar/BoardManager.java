@@ -351,8 +351,10 @@ public class BoardManager implements IScoreboardService {
 
             setHeaderFooter(tabPlayer, arena);
 
-            tabListFormatManager.setPrefix(tabPlayer, "%bw_prefix%");
-            tabListFormatManager.setSuffix(tabPlayer, "%bw_suffix%");
+            if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED)){
+                tabListFormatManager.setPrefix(tabPlayer, "%bw_prefix%");
+                tabListFormatManager.setSuffix(tabPlayer, "%bw_suffix%");
+            }
 
             nameTagManager.setPrefix(tabPlayer, "%bw_prefix%");
             nameTagManager.setSuffix(tabPlayer, "%bw_suffix%");
