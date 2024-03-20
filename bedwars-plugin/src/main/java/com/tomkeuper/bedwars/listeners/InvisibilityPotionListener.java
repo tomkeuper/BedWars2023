@@ -39,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
@@ -51,15 +52,17 @@ import static com.tomkeuper.bedwars.BedWars.plugin;
 public class InvisibilityPotionListener implements Listener {
     private final List<Player> invisiblePlayers = new ArrayList<>();
     private final boolean footstepsEnabled = BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_FOOTSTEPS_ON_INVISIBILITY);
-    private int cd = 6;
+    private final HashMap<Player, Integer> steps = new HashMap<>();
 
     @EventHandler
     public void onPotion(PlayerInvisibilityPotionEvent e) {
         if (!footstepsEnabled) return;
         if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
             this.invisiblePlayers.add(e.getPlayer());
+            steps.put(e.getPlayer(), 12);
         } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
             this.invisiblePlayers.remove(e.getPlayer());
+            steps.remove(e.getPlayer());
         }
     }
 
@@ -69,24 +72,23 @@ public class InvisibilityPotionListener implements Listener {
         Player p = e.getPlayer();
         if (!this.invisiblePlayers.contains(p)) return;
 
-        //TODO implement particles on higher version (issue: #112)
+        // TODO implement particles on higher version (issue: #112)
         if (nms.getVersion() > 5) return; // check if higher than 1.12
 
-        if (p.isSneaking())
-            return;
-        if (!p.isOnGround())
-            return;
+        if (p.isSneaking()) return;
+        Material blockBelow = p.getLocation().clone().add(0, -1, 0).getBlock().getType();
+        if (blockBelow == Material.AIR) return;
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getBlock() != to.getBlock()) {
-            if (this.cd == 3) {
+            if (this.steps.get(p) == 6) {
                 p.getWorld().playEffect(p.getLocation().add(0.0D, 0.01D, 0.4D), Effect.FOOTSTEP, 1);
-                this.cd--;
-            } else if (this.cd <= 0) {
+                this.steps.put(p, steps.get(p) - 1);
+            } else if (this.steps.get(p) <= 0) {
                 p.getWorld().playEffect(p.getLocation().add(0.4D, 0.01D, 0.0D), Effect.FOOTSTEP, 1);
-                this.cd = 6;
+                this.steps.put(p, 12);
             } else {
-                this.cd--;
+                this.steps.put(p, steps.get(p) - 1);
             }
         }
     }
