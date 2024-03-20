@@ -32,8 +32,8 @@ public class MoneyPerMinuteTask {
                 PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(p, money, PlayerMoneyGainEvent.MoneySource.PER_MINUTE);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
-                BedWars.getEconomy().giveMoney(p, money);
-                p.sendMessage(Language.getMsg(p, Messages.MONEY_REWARD_PER_MINUTE).replace("%bw_money%", String.valueOf(money)));
+                BedWars.getEconomy().giveMoney(p, event.getAmount());
+                p.sendMessage(Language.getMsg(p, Messages.MONEY_REWARD_PER_MINUTE).replace("%bw_money%", String.valueOf(event.getAmount())));
             }
         }, 60 * 20, 60 * 20);
     }

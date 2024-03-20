@@ -20,17 +20,29 @@
 
 package com.tomkeuper.bedwars.api.events.player;
 
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerXpGainEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private Player player;
+    private final Player player;
+    /**
+     * -- SETTER --
+     *  Set the amount of xp received.
+     */
+    @Setter
     private int amount;
-    private XpSource xpSource;
+    private final XpSource xpSource;
+    /**
+     * -- SETTER --
+     *  Cancel event
+     */
+    @Setter
     private boolean cancelled = false;
 
     /**
@@ -70,6 +82,13 @@ public class PlayerXpGainEvent extends Event {
     }
 
     /**
+     * Check if event was cancelled
+     */
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    /**
      * Lets you know why did the player received new xp.
      */
     public enum XpSource {
@@ -77,6 +96,7 @@ public class PlayerXpGainEvent extends Event {
     }
 
     @Override
+    @NotNull
     public HandlerList getHandlers() {
         return HANDLERS;
     }
@@ -85,17 +105,4 @@ public class PlayerXpGainEvent extends Event {
         return HANDLERS;
     }
 
-    /**
-     * Check if event was cancelled
-     */
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    /**
-     * Cancel event
-     */
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
-    }
 }
