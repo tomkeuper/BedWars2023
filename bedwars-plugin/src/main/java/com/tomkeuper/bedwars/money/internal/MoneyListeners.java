@@ -32,8 +32,8 @@ public class MoneyListeners implements Listener {
                 PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(player, gameWin, PlayerMoneyGainEvent.MoneySource.GAME_WIN);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
-                BedWars.getEconomy().giveMoney(player, gameWin);
-                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_WIN).replace("%bw_money%", String.valueOf(gameWin)));
+                BedWars.getEconomy().giveMoney(player, event.getAmount());
+                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_WIN).replace("%bw_money%", String.valueOf(event.getAmount())));
             }
             ITeam bwt = e.getArena().getExTeam(player.getUniqueId());
             IArena arena = e.getArena();
@@ -44,8 +44,8 @@ public class MoneyListeners implements Listener {
                         PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(player, teamMate, PlayerMoneyGainEvent.MoneySource.PER_TEAMMATE);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
-                        BedWars.getEconomy().giveMoney(player, teamMate);
-                        player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(teamMate)));
+                        BedWars.getEconomy().giveMoney(player, event.getAmount());
+                        player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(event.getAmount())));
                     }
                 }
             }
@@ -62,8 +62,8 @@ public class MoneyListeners implements Listener {
                         PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(player, teamMate, PlayerMoneyGainEvent.MoneySource.PER_TEAMMATE);
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
-                        BedWars.getEconomy().giveMoney(player, teamMate);
-                        player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(teamMate)));
+                        BedWars.getEconomy().giveMoney(player, event.getAmount());
+                        player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(event.getAmount())));
                     }
                 }
             }
@@ -82,8 +82,8 @@ public class MoneyListeners implements Listener {
             PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(player, bedDestroy, PlayerMoneyGainEvent.MoneySource.BED_DESTROYED);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
-            BedWars.getEconomy().giveMoney(player, bedDestroy);
-            player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_BED_DESTROYED).replace("%bw_money%", String.valueOf(bedDestroy)));
+            BedWars.getEconomy().giveMoney(player, event.getAmount());
+            player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_BED_DESTROYED).replace("%bw_money%", String.valueOf(event.getAmount())));
         }
     }
 
@@ -102,16 +102,16 @@ public class MoneyListeners implements Listener {
                 PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(player, finalKill, PlayerMoneyGainEvent.MoneySource.FINAL_KILL);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
-                BedWars.getEconomy().giveMoney(player, finalKill);
-                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_FINAL_KILL).replace("%bw_money%", String.valueOf(finalKill)));
+                BedWars.getEconomy().giveMoney(player, event.getAmount());
+                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_FINAL_KILL).replace("%bw_money%", String.valueOf(event.getAmount())));
             }
         } else {
             if (regularKill > 0) {
                 PlayerMoneyGainEvent event = new PlayerMoneyGainEvent(player, regularKill, PlayerMoneyGainEvent.MoneySource.REGULAR_KILL);
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
-                BedWars.getEconomy().giveMoney(player, regularKill);
-                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_REGULAR_KILL).replace("%bw_money%", String.valueOf(regularKill)));
+                BedWars.getEconomy().giveMoney(player, event.getAmount());
+                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_REGULAR_KILL).replace("%bw_money%", String.valueOf(event.getAmount())));
             }
         }
     }
