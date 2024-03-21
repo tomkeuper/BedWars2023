@@ -6,7 +6,9 @@ plugins {
 dependencies {
     compileOnly("org.jetbrains:annotations:24.0.1")
     compileOnly("org.spigotmc:spigot:1.16.5-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT"){
+        exclude("commons-lang", "commons-lang")
+    }
     compileOnly("com.iridium:IridiumColorAPI:1.0.9")
     compileOnly("org.apache.commons:commons-lang3:3.14.0") // Used by UridiumColorAPI
     compileOnly("me.neznamy:tab-api:3.2.4")

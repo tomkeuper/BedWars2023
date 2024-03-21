@@ -2,6 +2,7 @@ dependencies {
     compileOnly(projects.bedwarsApi)
     implementation(projects.versionsupportCommon)
     compileOnly("org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("org.apache.commons:commons-lang3:3.14.0")
 }
 
 tasks.compileJava {

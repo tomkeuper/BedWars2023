@@ -1,7 +1,9 @@
 dependencies {
     compileOnly(projects.bedwarsApi)
     implementation(projects.versionsupportCommon)
-    compileOnly("org.spigotmc:spigot:1.19.4-R0.1-SNAPSHOT")
+    compileOnly("org.spigotmc:spigot:1.19.4-R0.1-SNAPSHOT"){
+        exclude("commons-lang", "commons-lang")
+    }
 }
 
 tasks.compileJava {
