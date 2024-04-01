@@ -80,7 +80,6 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_LIST_FORMAT_RESTARTING, true);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_LIST_REFRESH, 1200);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME, true);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY, 3);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_REJOIN_TIME, 60 * 5);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY, 4000);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE, true);
@@ -313,6 +312,7 @@ public class MainConfig extends ConfigManager {
     public void savePreGameCommandItem(String name, String cmd, boolean enchanted, String material, int data, int slot) {
         if (isFirstTime()) {
             if (cmd != null) getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", name), cmd);
+            if (name.equalsIgnoreCase("leave")) getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_LEAVE_DELAY.replace("%path%", name), 3);
             getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", name), material);
             getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", name), data);
             getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", name), enchanted);
@@ -330,6 +330,7 @@ public class MainConfig extends ConfigManager {
     public void saveSpectatorCommandItem(String name, String cmd, boolean enchanted, String material, int data, int slot) {
         if (isFirstTime()) {
             if (cmd != null) getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", name), cmd);
+            if (name.equalsIgnoreCase("leave")) getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LEAVE_DELAY.replace("%path%", name), 3);
             getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", name), material);
             getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", name), data);
             getYml().addDefault(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", name), enchanted);

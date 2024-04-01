@@ -100,6 +100,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.slot";
     public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.enchanted";
     public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.command";
+    public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LEAVE_DELAY = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.leave-delay";
 
     public static final String GENERAL_CONFIGURATION_STATS_PATH = "stats-gui";
     public static final String GENERAL_CONFIGURATION_STATS_GUI_SIZE = GENERAL_CONFIGURATION_STATS_PATH + ".inv-size";
@@ -114,6 +115,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.slot";
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.enchanted";
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.command";
+    public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_LEAVE_DELAY = GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH + ".%path%.leave-delay";
 
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR = "countdowns.game-start-regular";
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED = "countdowns.game-start-shortened";
@@ -131,7 +133,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ARENA_GROUPS = "arenaGroups";
     public static final String GENERAL_CONFIGURATION_REJOIN_TIME = "rejoin-time";
     public static final String GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY = "re-spawn-invulnerability";
-    public static final String GENERAL_CONFIGURATION_LEAVE_DELAY = "leave-delay-time";
     public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT = "in-game-announcement";
     public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE = GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT +".enable";
 

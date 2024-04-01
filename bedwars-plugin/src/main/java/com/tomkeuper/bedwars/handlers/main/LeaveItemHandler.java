@@ -48,7 +48,12 @@ public class LeaveItemHandler extends PermanentItemHandler {
             if (BedWars.getPartyManager().isOwner(player)) {
                 openLeaveGUI(player);
             } else {
-                int leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY);
+                int leaveDelay;
+                if (a.isSpectator(player)) {
+                    leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LEAVE_DELAY.replace("%path%", item.getIdentifier()));
+                } else {
+                    leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_LEAVE_DELAY.replace("%path%", item.getIdentifier()));
+                }
                 if (leaveDelay == 0) {
                     Misc.moveToLobbyOrKick(player, arena, arena.isSpectator(player.getUniqueId()));
                 } else {

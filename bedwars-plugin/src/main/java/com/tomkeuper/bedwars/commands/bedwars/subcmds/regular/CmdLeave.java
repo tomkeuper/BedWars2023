@@ -66,16 +66,12 @@ public class CmdLeave extends SubCommand {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
 
-        if (cancel(p.getUniqueId())) return true;
-
         IArena a = Arena.getArenaByPlayer(p);
         if (p.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
-            update(p.getUniqueId());
             Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
             return true;
         } else {
             if (a == null) {
-                update(p.getUniqueId());
                 p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
                 return true;
             }
@@ -83,31 +79,7 @@ public class CmdLeave extends SubCommand {
             if (BedWars.getPartyManager().isOwner(p)){
                 openLeaveGUI(p);
             } else {
-                if (args.length > 0 && args[0].equalsIgnoreCase("delayed")) {
-                    int leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY);
-                    if (leaveDelay == 0) {
-                        Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                    } else {
-                        BukkitTask qt = leaving.get(p.getUniqueId());
-                        if (qt != null) {
-                            update(p.getUniqueId());
-                            qt.cancel();
-                            leaving.remove(p.getUniqueId());
-                            p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_CANCELED));
-                            return true;
-                        }
-                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(leaveDelay)));
-                        BukkitTask bukkitTask = new BukkitRunnable() {
-                            public void run() {
-                                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                                leaving.remove(p.getUniqueId());
-                            }
-                        }.runTaskLater(BedWars.plugin, leaveDelay * 20L);
-                        leaving.put(p.getUniqueId(), bukkitTask);
-                    }
-                } else {
-                    Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                }
+                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
             }
         }
         return true;

@@ -655,8 +655,6 @@ public class Arena implements IArena {
                 reJoin.destroy(true);
             }
 
-            leaving.remove(p);
-
             p.closeInventory();
             spectators.add(p);
             players.remove(p);
@@ -1047,13 +1045,12 @@ public class Arena implements IArena {
      *                       player is the owner.
      */
     public void removeSpectator(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
-        debug("Spectator removed: " + p.getName() + " arena: " + getArenaName());
-
         if(leaving.contains(p)) {
             return;
         } else {
             leaving.add(p);
         }
+        debug("Spectator removed: " + p.getName() + " arena: " + getArenaName());
 
         Bukkit.getPluginManager().callEvent(new PlayerLeaveArenaEvent(p, this, null));
         spectators.remove(p);
@@ -2426,7 +2423,6 @@ public class Arena implements IArena {
         oreGenerators = null;
         perMinuteTask = null;
         moneyperMinuteTask = null;
-        leaving.clear();
         fireballCooldowns.clear();
 
         // Cleanup remote data.
@@ -2668,11 +2664,6 @@ public class Arena implements IArena {
             this.teamAssigner = teamAssigner;
             plugin.getLogger().warning("Using " + teamAssigner.getClass().getSimpleName() + " team assigner on arena: " + this.getArenaName());
         }
-    }
-
-    @Override
-    public List<Player> getLeavingPlayers() {
-        return leaving;
     }
 
     @Override

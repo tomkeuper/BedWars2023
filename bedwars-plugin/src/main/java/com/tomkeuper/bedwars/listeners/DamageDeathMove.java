@@ -549,6 +549,7 @@ public class DamageDeathMove implements Listener {
                 /* update armor-stands hidden by nms */
                 for (IGenerator o : a.getOreGenerators()) {
                     if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
+                        if (!a.getWorld().getPlayers().contains(e.getPlayer())) return; // prevent location check between different worlds
                         IGenHolo h = o.getPlayerHolograms().get(e.getPlayer());
                         if (h != null) {
                             if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) {

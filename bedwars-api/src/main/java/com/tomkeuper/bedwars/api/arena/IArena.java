@@ -706,14 +706,6 @@ public interface IArena {
     void setTeamAssigner(ITeamAssigner teamAssigner);
 
     /**
-     * Get the list of players who have left the arena.
-     *
-     * @return The list of left players.
-     */
-    @SuppressWarnings("unused")
-    List<Player> getLeavingPlayers();
-
-    /**
      * Get the list of dragon boss bars in the arena.
      *
      * @return The list of dragon boss bars.
