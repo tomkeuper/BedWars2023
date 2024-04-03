@@ -594,6 +594,7 @@ public class BoardManager implements IScoreboardService {
     }
 
     private void setHeaderFooter(TabPlayer player, IArena arena) {
+        if (TabAPI.getInstance().getHeaderFooterManager() == null) return;
         if (isTabFormattingDisabled(arena)) {
             return;
         }
