@@ -72,7 +72,7 @@ public class CmdLeave extends SubCommand {
             return true;
         } else {
             if (a == null) {
-                p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_DENIED_NOT_IN_ARENA));
                 return true;
             }
 
