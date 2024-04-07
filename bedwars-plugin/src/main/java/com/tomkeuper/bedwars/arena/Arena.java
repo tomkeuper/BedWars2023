@@ -1166,6 +1166,8 @@ public class Arena implements IArena {
 
         p.closeInventory();
         players.add(p);
+        leaving.remove(p);
+
         for (Player on : players) {
             on.sendMessage(getMsg(on, Messages.COMMAND_REJOIN_PLAYER_RECONNECTED).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()).replace("%bw_on%", String.valueOf(getPlayers().size())).replace("%bw_max%", String.valueOf(getMaxPlayers())));
         }
