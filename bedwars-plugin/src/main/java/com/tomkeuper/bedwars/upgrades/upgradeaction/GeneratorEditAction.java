@@ -58,14 +58,14 @@ public class GeneratorEditAction implements UpgradeAction {
         } else if (type == ApplyType.EMERALD) {
             if (!bwt.getArena().getConfig().getArenaLocations("Team." + bwt.getName() + ".Emerald").isEmpty()) {
                 for (Location l : bwt.getArena().getConfig().getArenaLocations("Team." + bwt.getName() + ".Emerald")) {
-                    IGenerator gen = new OreGenerator(l, bwt.getArena(), GeneratorType.CUSTOM, bwt);
+                    IGenerator gen = new OreGenerator(l, bwt.getArena(), GeneratorType.CUSTOM, bwt, false);
                     gen.setOre(new ItemStack(Material.EMERALD));
                     gen.setType(GeneratorType.EMERALD);
                     bwt.getGenerators().add(gen);
                     generator.add(gen);
                 }
             } else {
-                IGenerator gen = new OreGenerator(bwt.getGenerators().get(0).getLocation().clone(), bwt.getArena(), GeneratorType.CUSTOM, bwt);
+                IGenerator gen = new OreGenerator(bwt.getGenerators().get(0).getLocation().clone(), bwt.getArena(), GeneratorType.CUSTOM, bwt, false);
                 gen.setOre(new ItemStack(Material.EMERALD));
                 gen.setType(GeneratorType.EMERALD);
                 bwt.getGenerators().add(gen);

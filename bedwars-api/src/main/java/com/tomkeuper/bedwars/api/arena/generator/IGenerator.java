@@ -216,6 +216,11 @@ public interface IGenerator {
     boolean isStack();
 
     /**
+     * Check if the generator hologram is enabled.
+     */
+    boolean isHologramEnabled();
+
+    /**
      * Set generator type.
      * This may break things.
      */

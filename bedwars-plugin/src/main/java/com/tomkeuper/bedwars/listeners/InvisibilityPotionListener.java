@@ -24,7 +24,9 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.gameplay.GameEndEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
+import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -63,6 +65,25 @@ public class InvisibilityPotionListener implements Listener {
         } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
             this.invisiblePlayers.remove(e.getPlayer());
             steps.remove(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onGameEnd(GameEndEvent e) {
+        for (Player p : e.getArena().getPlayers()) {
+            if (this.invisiblePlayers.contains(p)) {
+                this.invisiblePlayers.remove(p);
+                steps.remove(p);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerLeaveArenaEvent e) {
+        Player p = e.getPlayer();
+        if (this.invisiblePlayers.contains(p)) {
+            this.invisiblePlayers.remove(p);
+            steps.remove(p);
         }
     }
 
