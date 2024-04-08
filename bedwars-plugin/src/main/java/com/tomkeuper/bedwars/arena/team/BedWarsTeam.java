@@ -338,7 +338,7 @@ public class BedWarsTeam implements ITeam {
                 locs = getArena().getConfig().getArenaLocations("Team." + getName() + "." + type);
             }
             for (Location loc : locs) {
-                IGenerator gen = new OreGenerator(loc, getArena(), gt, this);
+                IGenerator gen = new OreGenerator(loc, getArena(), gt, this, false);
                 //getArena().getOreGenerators().add(gen);
                 generators.add(gen);
             }

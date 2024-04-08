@@ -71,6 +71,7 @@ public class OreGenerator implements IGenerator {
     private List<IGeneratorAnimation> animations;
     private int dropID = 0;
     private ITeam bwt;
+    private boolean hologram = true;
     boolean disabled = false;
 
     /**
@@ -84,6 +85,7 @@ public class OreGenerator implements IGenerator {
     @Getter
     private static final ConcurrentLinkedDeque<OreGenerator> rotation = new ConcurrentLinkedDeque<>();
 
+    @Deprecated(since = "1.0", forRemoval = true)
     public OreGenerator(Location location, IArena arena, GeneratorType type, ITeam bwt) {
         if (type == GeneratorType.EMERALD || type == GeneratorType.DIAMOND) {
             this.location = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY() + 1.3, location.getBlockZ() + 0.5);
@@ -93,6 +95,25 @@ public class OreGenerator implements IGenerator {
         this.arena = arena;
         this.bwt = bwt;
         this.type = type;
+        loadDefaults();
+        BedWars.debug("Initializing new generator at: " + location + " - " + type + " - " + (bwt == null ? "NOTEAM" : bwt.getName()));
+
+        Cuboid c = new Cuboid(location, arena.getConfig().getInt(ConfigPath.ARENA_GENERATOR_PROTECTION), true);
+        c.setMaxY(c.getMaxY() + 5);
+        c.setMinY(c.getMinY() - 2);
+        arena.getRegionsList().add(c);
+    }
+
+    public OreGenerator(Location location, IArena arena, GeneratorType type, ITeam bwt, boolean hologram) {
+        if (type == GeneratorType.EMERALD || type == GeneratorType.DIAMOND) {
+            this.location = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY() + 1.3, location.getBlockZ() + 0.5);
+        } else {
+            this.location = location.add(0, 1.3, 0);
+        }
+        this.arena = arena;
+        this.bwt = bwt;
+        this.type = type;
+        this.hologram = hologram;
         loadDefaults();
         BedWars.debug("Initializing new generator at: " + location + " - " + type + " - " + (bwt == null ? "NOTEAM" : bwt.getName()));
 
@@ -191,7 +212,7 @@ public class OreGenerator implements IGenerator {
         }
         lastSpawn--;
 
-        if (getType() == GeneratorType.EMERALD || getType() == GeneratorType.DIAMOND) {
+        if ((getType() == GeneratorType.EMERALD || getType() == GeneratorType.DIAMOND) && hologram) {
             for (Player p : arena.getWorld().getPlayers()) {
                 IGenHolo e = holograms.get(p);
                 if (e == null) holograms.put(p, new HoloGram(p));
@@ -308,22 +329,6 @@ public class OreGenerator implements IGenerator {
         }
     }
 
-    private static ArmorStand createArmorStand(Location l) {
-        ArmorStand a = (ArmorStand) l.getWorld().spawnEntity(l, EntityType.ARMOR_STAND);
-        a.setGravity(false);
-        if (null != null) {
-            a.setCustomName(null);
-            a.setCustomNameVisible(true);
-        }
-        a.setRemoveWhenFarAway(false);
-        a.setVisible(false);
-        a.setCanPickupItems(false);
-        a.setArms(false);
-        a.setBasePlate(false);
-        a.setMarker(true);
-        return a;
-    }
-
     @Override
     public void rotate() {
         if (item == null) return;
@@ -383,11 +388,12 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void updateHolograms(Player p) {
+        if (!hologram) return;
         if (getType() != GeneratorType.EMERALD && getType() != GeneratorType.DIAMOND) return;
         if (!arena.getWorld().getPlayers().contains(p)) return;
 
         IGenHolo h = holograms.get(p);
-        if (h == null) holograms.put(p, new HoloGram(p));
+        if (h == null && hologram) holograms.put(p, new HoloGram(p));
         h = holograms.get(p);
 
         h.update();
@@ -398,14 +404,16 @@ public class OreGenerator implements IGenerator {
         //loadDefaults(false);
         //if (getType() == GeneratorType.EMERALD || getType() == GeneratorType.DIAMOND) {
         rotation.add(this);
-        for (Player p : arena.getWorld().getPlayers()) {
-            IGenHolo h = holograms.get(p);
-            if (h == null) {
-                holograms.put(p, new HoloGram(p));
+        if (hologram) {
+            for (Player p : arena.getWorld().getPlayers()) {
+                IGenHolo h = holograms.get(p);
+                if (h == null) {
+                    holograms.put(p, new HoloGram(p));
+                }
             }
-        }
-        for (IGenHolo hg : holograms.values()) {
-            hg.update();
+            for (IGenHolo hg : holograms.values()) {
+                hg.update();
+            }
         }
 
         this.item = new GeneratorHolder(location.add(0, 0.35, 0), new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
@@ -421,23 +429,23 @@ public class OreGenerator implements IGenerator {
 
     private void loadDefaults() {
         switch (type) {
-            case GOLD:
-                delay = BedWars.getGeneratorsCfg().getDouble(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY) == null ?
-                        "Default." + ConfigPath.GENERATOR_GOLD_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY) * speedMultiplier;
-                ore = new ItemStack(Material.GOLD_INGOT);
-                amount = BedWars.getGeneratorsCfg().getInt(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_AMOUNT) == null ?
-                        "Default." + ConfigPath.GENERATOR_GOLD_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_AMOUNT);
-                spawnLimit = BedWars.getGeneratorsCfg().getInt(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT) == null ?
-                        "Default." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT);
-                break;
             case IRON:
                 delay = BedWars.getGeneratorsCfg().getDouble(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_DELAY) == null ?
                         "Default." + ConfigPath.GENERATOR_IRON_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_DELAY) * speedMultiplier;
                 amount = BedWars.getGeneratorsCfg().getInt(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_AMOUNT) == null ?
                         "Default." + ConfigPath.GENERATOR_IRON_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_AMOUNT);
-                ore = new ItemStack(Material.IRON_INGOT);
                 spawnLimit = BedWars.getGeneratorsCfg().getInt(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT) == null ?
                         "Default." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_IRON_SPAWN_LIMIT);
+                ore = new ItemStack(Material.IRON_INGOT);
+                break;
+            case GOLD:
+                delay = BedWars.getGeneratorsCfg().getDouble(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY) == null ?
+                        "Default." + ConfigPath.GENERATOR_GOLD_DELAY : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_DELAY) * speedMultiplier;
+                amount = BedWars.getGeneratorsCfg().getInt(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_AMOUNT) == null ?
+                        "Default." + ConfigPath.GENERATOR_GOLD_AMOUNT : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_AMOUNT);
+                spawnLimit = BedWars.getGeneratorsCfg().getInt(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT) == null ?
+                        "Default." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT : arena.getGroup() + "." + ConfigPath.GENERATOR_GOLD_SPAWN_LIMIT);
+                ore = new ItemStack(Material.GOLD_INGOT);
                 break;
             case DIAMOND:
                 delay = BedWars.getGeneratorsCfg().getDouble(BedWars.getGeneratorsCfg().getYml().get(arena.getGroup() + "." + ConfigPath.GENERATOR_DIAMOND_TIER_I_DELAY) == null ?
@@ -467,6 +475,7 @@ public class OreGenerator implements IGenerator {
     public ITeam getBwt() {
         return bwt;
     }
+
     @Override
     public ITeam getBedWarsTeam() {
         return bwt;
@@ -515,6 +524,11 @@ public class OreGenerator implements IGenerator {
     @Override
     public boolean isStack() {
         return stack;
+    }
+
+    @Override
+    public boolean isHologramEnabled() {
+        return hologram;
     }
 
     @Override
