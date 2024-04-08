@@ -388,6 +388,7 @@ public class OreGenerator implements IGenerator {
 
     @Override
     public void updateHolograms(Player p) {
+        if (!hologram) return;
         if (getType() != GeneratorType.EMERALD && getType() != GeneratorType.DIAMOND) return;
         if (!arena.getWorld().getPlayers().contains(p)) return;
 
@@ -403,14 +404,16 @@ public class OreGenerator implements IGenerator {
         //loadDefaults(false);
         //if (getType() == GeneratorType.EMERALD || getType() == GeneratorType.DIAMOND) {
         rotation.add(this);
-        for (Player p : arena.getWorld().getPlayers()) {
-            IGenHolo h = holograms.get(p);
-            if (h == null && hologram) {
-                holograms.put(p, new HoloGram(p));
+        if (hologram) {
+            for (Player p : arena.getWorld().getPlayers()) {
+                IGenHolo h = holograms.get(p);
+                if (h == null) {
+                    holograms.put(p, new HoloGram(p));
+                }
             }
-        }
-        for (IGenHolo hg : holograms.values()) {
-            hg.update();
+            for (IGenHolo hg : holograms.values()) {
+                hg.update();
+            }
         }
 
         this.item = new GeneratorHolder(location.add(0, 0.35, 0), new ItemStack(type == GeneratorType.DIAMOND ? Material.DIAMOND_BLOCK : Material.EMERALD_BLOCK));
