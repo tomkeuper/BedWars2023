@@ -150,11 +150,17 @@ public class InventoryListener implements Listener {
                 // If we don't check this, the shop will be displayed in all arenas
                 // Default category is already checked and thus does not need to be added here
                 if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
-                    if (checkSlot(e, p, shopCache, cache, cc)) return true;
+                    if (checkSlot(e, p, shopCache, cache, cc)) {
+                        sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
+                        return true;
+                    }
                 }
             }
             for (ICategoryContent cc : sc.getCategoryContentList()) {
-                if (checkSlot(e, p, shopCache, cache, cc)) return true;
+                if (checkSlot(e, p, shopCache, cache, cc)){
+                    sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
+                    return true;
+                }
             }
         }
         return false;
