@@ -27,6 +27,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.ArenaGUI;
+import com.tomkeuper.bedwars.arena.ReJoin;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -72,8 +73,17 @@ public class ArenaSelectorListener implements Listener {
             if ((status == GameState.waiting || status == GameState.starting) && arena.addPlayer(player, false)) {
                 Sounds.playSound("join-allowed", player);
             } else {
-                Sounds.playSound("join-denied", player);
-                player.sendMessage(Language.getMsg(player, Messages.ARENA_JOIN_DENIED_SELECTOR));
+                ReJoin reJoin = ReJoin.getPlayer(player);
+                if (reJoin != null) {
+                    if (reJoin.canReJoin()) {
+                        reJoin.reJoin(player);
+                        return;
+                    }
+                    reJoin.destroy(false);
+                } else {
+                    Sounds.playSound("join-denied", player);
+                    player.sendMessage(Language.getMsg(player, Messages.ARENA_JOIN_DENIED_SELECTOR));
+                }
             }
         } else if (event.getClick() == ClickType.RIGHT) {
             if (status == GameState.playing && arena.addSpectator(player, false, null)) {
