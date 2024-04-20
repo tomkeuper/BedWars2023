@@ -662,14 +662,16 @@ public class BedWars extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> addonManager.loadAddons(), 60L);
 
         // Check config settings
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            if (redisConnection.checkSettings("default_rankup_cost", String.valueOf(LevelsConfig.getNextCost(1)))){
-                Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Redis settings match the default values.");
-            } else {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "The network settings do not match the set values! Please check the configuration!");
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Want to set value as default? Use '" + ChatColor.WHITE + "/bw redisUpdate default_rankup_cost" + ChatColor.RED + "' from the console!");
-            }
-        }, 70L);
+        if (redisConnection != null){
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (redisConnection.checkSettings("default_rankup_cost", String.valueOf(LevelsConfig.getNextCost(1)))){
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Redis settings match the default values.");
+                } else {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "The network settings do not match the set values! Please check the configuration!");
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Want to set value as default? Use '" + ChatColor.WHITE + "/bw redisUpdate default_rankup_cost" + ChatColor.RED + "' from the console!");
+                }
+            }, 70L);
+        }
 
         // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
