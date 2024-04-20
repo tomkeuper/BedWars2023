@@ -5,6 +5,8 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -125,6 +127,39 @@ public class RedisConnection implements IRedisClient {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    /**
+     * Check if the server settings are stored and or matching the default settings.
+     *
+     * @return True if correct or matching the default settings, otherwise false.
+     */
+    public boolean checkSettings(String redisSettingIdentifier, String defaultSetting){
+        try (Jedis jedis = dataPool.getResource()) {
+            String key = "settings";;
+            if (jedis.exists(key)) {
+                String retrievedSetting = jedis.hget(key, redisSettingIdentifier);
+                if (!defaultSetting.equals(retrievedSetting)) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Setting '"+ redisSettingIdentifier +"' does not match the stored value of '" + retrievedSetting + "' is '" + defaultSetting + "'.");
+                    return false;
+                }
+            } else {
+                jedis.hset(key, redisSettingIdentifier, defaultSetting);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public void storeSettings(String redisSettingIdentifier, String setting) {
+        try (Jedis jedis = dataPool.getResource()) {
+            String key = "settings";
+            jedis.hset(key, redisSettingIdentifier, setting);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
