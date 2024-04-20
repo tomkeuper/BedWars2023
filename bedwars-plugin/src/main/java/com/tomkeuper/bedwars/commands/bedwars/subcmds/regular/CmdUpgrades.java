@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.commands.bedwars.subcmds.regular;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
@@ -44,6 +45,7 @@ public class CmdUpgrades extends SubCommand {
         if (!(s instanceof Player)) return false;
         IArena a = Arena.getArenaByPlayer((Player) s);
         if (a == null) return false;
+        if (a.getStatus() != GameState.playing) return false;
         if (!a.isPlayer((Player) s)) return false;
         ITeam t = a.getTeam((Player) s);
         if (t.getTeamUpgrades().distance(((Player)s).getLocation()) < 4){
