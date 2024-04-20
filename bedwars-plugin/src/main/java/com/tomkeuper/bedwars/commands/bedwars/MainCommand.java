@@ -86,7 +86,9 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new Level(this, "level");
         new Reload(this, "reload"); //priority 11
         new CmdList(this, "cmds"); //priority 20
-        new RedisUpdate(this, "redisUpdate"); // not listed
+        if (BedWars.getServerType() == ServerType.BUNGEE){
+            new RedisUpdate(this, "redisUpdate"); // not listed
+        }
 
         /* Arena setup commands (in world) */
         new AutoCreateTeams(this, "autoCreateTeams");
