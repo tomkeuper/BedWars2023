@@ -154,6 +154,12 @@ public class RedisConnection implements IRedisClient {
         return true;
     }
 
+    /**
+     * Store the settings in the Redis database.
+     *
+     * @param redisSettingIdentifier the identifier of the setting to be checked.
+     * @param setting the setting to be stored.
+     */
     public void storeSettings(String redisSettingIdentifier, String setting) {
         try (Jedis jedis = dataPool.getResource()) {
             String key = "settings";
@@ -161,6 +167,25 @@ public class RedisConnection implements IRedisClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Retrieve the data associated with a specific identifier from the Redis database.
+     *
+     * @param redisSettingIdentifier the identifier of the setting to be checked.
+     * @return the data as a string associated with the specified identifier
+     */
+    public String retrieveSetting(String redisSettingIdentifier){
+        try (Jedis jedis = dataPool.getResource()) {
+            String key = "settings";;
+            if (jedis.exists(key)) {
+                String retrievedSetting = jedis.hget(key, redisSettingIdentifier);
+                return retrievedSetting;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
