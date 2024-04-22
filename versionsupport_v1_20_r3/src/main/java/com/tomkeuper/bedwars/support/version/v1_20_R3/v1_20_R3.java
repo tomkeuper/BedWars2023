@@ -1,5 +1,6 @@
 package com.tomkeuper.bedwars.support.version.v1_20_R3;
 
+import com.mojang.datafixers.util.Pair;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
@@ -13,7 +14,6 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.mojang.datafixers.util.Pair;
 import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableAttributes;
 import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableFactory;
 import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableType;
@@ -70,21 +70,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
-import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class v1_20_R3 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
-
     public v1_20_R3(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);
     }
-
     @Override
     public void registerVersionListeners() {
         new VersionCommon(this);
@@ -647,7 +643,7 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public int getVersion() {
-        return 10;
+        return 11;
     }
 
     @Override
@@ -867,14 +863,14 @@ public class v1_20_R3 extends VersionSupport {
         }
     }
 
-    private void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().c.a(packet);
+    public static void sendPacket(Player player, Packet<?> packet) {
+        ((CraftPlayer) player).getHandle().c.b(packet);
     }
 
-    private void sendPackets(Player player, Packet<?> @NotNull ... packets) {
+    public static void sendPackets(Player player, Packet<?> @NotNull ... packets) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().c;
         for (Packet<?> p : packets) {
-            connection.a(p);
+            connection.b(p);
         }
     }
 
@@ -915,7 +911,7 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public ArmorStand createPacketArmorStand(Location loc) {
-        EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), 0, 0, 0);
+        EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = new PacketPlayOutSpawnEntity(nmsEntity);
         for (Player p : loc.getWorld().getPlayers()) {

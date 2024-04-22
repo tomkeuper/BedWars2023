@@ -2,15 +2,14 @@ package com.tomkeuper.bedwars.support.version.v1_20_R3.hologram;
 
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
+import com.tomkeuper.bedwars.support.version.v1_20_R3.v1_20_R3;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
-import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_20_R3.util.CraftChatMessage;
 
 public class HoloLine implements IHoloLine {
@@ -35,10 +34,7 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.aj(), entity.an().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().c;
-        connection.a(packet);
-        connection.a(metadataPacket);
-        connection.a(teleportPacket);
+        v1_20_R3.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
     }
 
     @Override
@@ -81,9 +77,7 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.aj(), entity.an().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().c;
-        connection.a(metadataPacket);
-        connection.a(teleportPacket);
+        v1_20_R3.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
     }
 
     @Override
@@ -110,7 +104,7 @@ public class HoloLine implements IHoloLine {
         destroyed = false;
 
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().c.a(packet);
+        v1_20_R3.sendPacket(hologram.getPlayer(), packet);
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
@@ -119,7 +113,7 @@ public class HoloLine implements IHoloLine {
     @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.aj());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().c.a(packet);
+        v1_20_R3.sendPacket(hologram.getPlayer(), packet);
     }
 
     @Override

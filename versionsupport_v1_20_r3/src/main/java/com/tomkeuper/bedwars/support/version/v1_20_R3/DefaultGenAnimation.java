@@ -1,17 +1,13 @@
 package com.tomkeuper.bedwars.support.version.v1_20_R3;
 
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketListenerPlayOut;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
-import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R3.entity.CraftArmorStand;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -60,21 +56,9 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.aj(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            sendPackets(p, teleportPacket, moveLookPacket);
+            v1_20_R3.sendPackets(p, teleportPacket, moveLookPacket);
         }
         tickCount++;
-    }
-
-    private void sendPacket(Player p, Packet<PacketListenerPlayOut> packet) {
-        ((CraftPlayer) p).getHandle().c.a(packet);
-    }
-
-    @SafeVarargs
-    private void sendPackets(Player p, Packet<PacketListenerPlayOut>... packets) {
-        PlayerConnection connection = ((CraftPlayer) p).getHandle().c;
-        for (Packet<PacketListenerPlayOut> packet : packets) {
-            connection.a(packet);
-        }
     }
 
     private void setArmorStandYAW(float yaw) {

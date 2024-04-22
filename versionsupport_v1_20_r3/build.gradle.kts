@@ -1,7 +1,7 @@
 dependencies {
     compileOnly(projects.bedwarsApi)
     implementation(projects.versionsupportCommon)
-    compileOnly("org.spigotmc:spigot:1.20.3-R0.1-SNAPSHOT"){
+    compileOnly("org.spigotmc:spigot:1.20.4-R0.1-SNAPSHOT"){
         exclude("commons-lang", "commons-lang")
     }
 }
