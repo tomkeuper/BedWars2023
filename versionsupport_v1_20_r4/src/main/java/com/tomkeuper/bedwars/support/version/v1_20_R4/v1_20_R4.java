@@ -643,7 +643,7 @@ public class v1_20_R4 extends VersionSupport {
 
     @Override
     public int getVersion() {
-        return 10;
+        return 11;
     }
 
     @Override
@@ -863,14 +863,14 @@ public class v1_20_R4 extends VersionSupport {
         }
     }
 
-    private void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().c.a(packet);
+    public static void sendPacket(Player player, Packet<?> packet) {
+        ((CraftPlayer) player).getHandle().c.b(packet);
     }
 
-    private void sendPackets(Player player, Packet<?> @NotNull ... packets) {
+    public static void sendPackets(Player player, Packet<?> @NotNull ... packets) {
         PlayerConnection connection = ((CraftPlayer) player).getHandle().c;
         for (Packet<?> p : packets) {
-            connection.a(p);
+            connection.b(p);
         }
     }
 

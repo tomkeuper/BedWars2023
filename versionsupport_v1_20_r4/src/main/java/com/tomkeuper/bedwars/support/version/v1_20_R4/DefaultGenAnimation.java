@@ -60,21 +60,13 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.aj(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            sendPackets(p, teleportPacket, moveLookPacket);
+            v1_20_R4.sendPackets(p, teleportPacket, moveLookPacket);
         }
         tickCount++;
     }
 
     private void sendPacket(Player p, Packet<PacketListenerPlayOut> packet) {
         ((CraftPlayer) p).getHandle().c.a(packet);
-    }
-
-    @SafeVarargs
-    private void sendPackets(Player p, Packet<PacketListenerPlayOut>... packets) {
-        PlayerConnection connection = ((CraftPlayer) p).getHandle().c;
-        for (Packet<PacketListenerPlayOut> packet : packets) {
-            connection.a(packet);
-        }
     }
 
     private void setArmorStandYAW(float yaw) {
