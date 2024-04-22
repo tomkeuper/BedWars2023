@@ -65,10 +65,6 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         tickCount++;
     }
 
-    private void sendPacket(Player p, Packet<PacketListenerPlayOut> packet) {
-        ((CraftPlayer) p).getHandle().c.a(packet);
-    }
-
     private void setArmorStandYAW(float yaw) {
         armorStand.r(yaw);
     }
