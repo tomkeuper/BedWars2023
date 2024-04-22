@@ -33,7 +33,6 @@ import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
-import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -44,7 +43,6 @@ import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.ArenaManager;
-import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.arena.VoidChunkGenerator;
 import com.tomkeuper.bedwars.arena.despawnables.TargetListener;
 import com.tomkeuper.bedwars.arena.feature.AntiDropFeature;
@@ -123,14 +121,12 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.Bed;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.persistence.Lob;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -141,10 +137,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static com.tomkeuper.bedwars.api.language.Language.getList;
-import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 @SuppressWarnings("WeakerAccess")
 public class BedWars extends JavaPlugin {
@@ -167,7 +159,8 @@ public class BedWars extends JavaPlugin {
     private static IChat chat = new NoChat();
     protected static Level level;
     private static IEconomy economy;
-    private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static String nmsVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static final String minecraftVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
     private static String lobbyWorld = "";
     private static boolean shuttingDown = false;
 
@@ -227,13 +220,20 @@ public class BedWars extends JavaPlugin {
 
         /* Load version support */
         //noinspection rawtypes
+        switch (minecraftVersion){
+            case "1.20.4":
+                nmsVersion = "v1_20_R3";
+                break;
+            default:
+                break;
+        }
         Class supp;
 
         try {
-            supp = Class.forName("com.tomkeuper.bedwars.support.version." + version + "." + version);
+            supp = Class.forName("com.tomkeuper.bedwars.support.version." + nmsVersion + "." + nmsVersion);
         } catch (ClassNotFoundException e) {
             serverSoftwareSupport = false;
-            this.getLogger().severe("I can't run on your version: " + version);
+            this.getLogger().severe("I can't run on your version: " + minecraftVersion);
             return;
         }
 
@@ -242,16 +242,16 @@ public class BedWars extends JavaPlugin {
 
         try {
             //noinspection unchecked
-            nms = (VersionSupport) supp.getConstructor(Class.forName("org.bukkit.plugin.Plugin"), String.class).newInstance(this, version);
+            nms = (VersionSupport) supp.getConstructor(Class.forName("org.bukkit.plugin.Plugin"), String.class).newInstance(this, nmsVersion);
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
                  ClassNotFoundException e) {
             e.printStackTrace();
             serverSoftwareSupport = false;
-            this.getLogger().severe("Could not load support for server version: " + version);
+            this.getLogger().severe("Could not load support for server version: " + minecraftVersion);
             return;
         }
 
-        this.getLogger().info("Loading support for paper/spigot: " + version);
+        this.getLogger().info("Loading support for paper/spigot: " + minecraftVersion);
 
         // Setup languages
         new English();
@@ -682,6 +682,7 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("Auto Scale: " + autoscale);
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
             this.getLogger().info("Restore Adapter: " + api.getRestoreAdapter().getDisplayName());
+            this.getLogger().info("NMS version: " + nms.getClass().getSimpleName());
             this.getLogger().info("");
 
             StringJoiner arenaString = new StringJoiner(", ");
@@ -873,7 +874,7 @@ public class BedWars extends JavaPlugin {
      * @since v0.6.5beta
      */
     public static String getServerVersion() {
-        return version;
+        return nmsVersion;
     }
 
     public static String getLobbyWorld() {
