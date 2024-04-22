@@ -4,7 +4,6 @@ dependencies {
     compileOnly("org.spigotmc:spigot:1.20.4-R0.1-SNAPSHOT"){
         exclude("commons-lang", "commons-lang")
     }
-    compileOnly(projects.versionsupportV120R3)
 }
 
 tasks.compileJava {
@@ -19,4 +18,4 @@ repositories {
     maven("https://papermc.io/repo/repository/maven-public/") // com.mojang (dep of Spigot)
 }
 
-description = "versionsupport_v1_20_r3"
+description = "versionsupport_v1_20_r4"
