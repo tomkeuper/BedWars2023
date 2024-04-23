@@ -240,7 +240,7 @@ public class StatsListener implements Listener {
                 PlayerStatChangeEvent ev5 = new PlayerStatChangeEvent(player, event.getArena(), PlayerStatChangeEvent.StatType.DEATHS);
                 PlayerStatChangeEvent ev6 = new PlayerStatChangeEvent(damager, event.getArena(), PlayerStatChangeEvent.StatType.KILLS);
 
-                // killer is null if he already received kill point.
+                // Killer is null if he already received kill point.
                 // LastHit damager is set to null at PlayerDeathEvent so this part is not duplicated for sure.
                 // damager is not null if the victim disconnected during pvp only.
                 if (event.getLastDamager() != null && event.getArena().isPlayer(damager) && killerTeam != null) {
