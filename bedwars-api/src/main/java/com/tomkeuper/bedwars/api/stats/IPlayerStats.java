@@ -58,121 +58,200 @@ public interface IPlayerStats {
     void setLastPlay(Instant lastPlay);
 
     /**
-     * Returns the number of wins of the player.
+     * Returns the total number of wins of the player.
      *
      * @return The number of wins.
      */
     int getWins();
 
     /**
-     * Sets the number of wins of the player.
+     * Returns the number of wins of the player for a specified arena group.
      *
-     * @param wins The number of wins.
+     * @param group The arena group
+     * @return The number of wins.
      */
-    void setWins(int wins);
+    int getWins(String group);
 
     /**
-     * Returns the number of kills of the player.
+     * Sets the number of wins of the player for a specified arena group.
+     *
+     * @param group The arena group
+     * @param wins  The number of wins.
+     */
+    void setWins(String group, int wins);
+
+    /**
+     * Returns the total number of kills of the player.
      *
      * @return The number of kills.
      */
     int getKills();
 
     /**
-     * Sets the number of kills of the player.
+     * Returns the number of kills of the player for a specified arena group.
      *
-     * @param kills The number of kills.
+     * @return The number of kills.
      */
-    void setKills(int kills);
+    int getKills(String group);
 
     /**
-     * Returns the number of final kills of the player.
+     * Sets the number of kills of the player for a specified arena group.
+     *
+     * @param group The arena group
+     * @param kills The number of kills.
+     */
+    void setKills(String group, int kills);
+
+    /**
+     * Returns the total number of final kills of the player.
      *
      * @return The number of final kills.
      */
     int getFinalKills();
 
     /**
-     * Sets the number of final kills of the player.
+     * Returns the number of final kills of the player for a specified arena group.
      *
-     * @param finalKills The number of final kills.
+     * @param group The arena group
+     * @return The number of final kills.
      */
-    void setFinalKills(int finalKills);
+    int getFinalKills(String group);
 
     /**
-     * Returns the number of losses of the player.
+     * Sets the number of final kills of the player for a specified arena group.
+     *
+     * @param group      The arena group
+     * @param finalKills The number of final kills.
+     */
+    void setFinalKills(String group, int finalKills);
+
+    /**
+     * Returns the total number of losses of the player.
      *
      * @return The number of losses.
      */
     int getLosses();
 
     /**
-     * Sets the number of losses of the player.
+     * Returns the number of losses of the player for a specified arena group.
      *
-     * @param losses The number of losses.
+     * @param group The arena group
+     * @return The number of losses.
      */
-    void setLosses(int losses);
+    int getLosses(String group);
 
     /**
-     * Returns the number of deaths of the player.
+     * Sets the number of losses of the player for a specified arena group.
+     *
+     * @param group  The arena group
+     * @param losses The number of losses.
+     */
+    void setLosses(String group, int losses);
+
+    /**
+     * Returns the total number of deaths of the player.
      *
      * @return The number of deaths.
      */
     int getDeaths();
 
     /**
-     * Sets the number of deaths of the player.
+     * Returns the number of deaths of the player for a specified arena group.
      *
-     * @param deaths The number of deaths.
+     * @param group The arena group
+     * @return The number of deaths.
      */
-    void setDeaths(int deaths);
+    int getDeaths(String group);
 
     /**
-     * Returns the number of final deaths of the player.
+     * Sets the number of deaths of the player for a specified arena group.
+     *
+     * @param group  The arena group
+     * @param deaths The number of deaths.
+     */
+    void setDeaths(String group, int deaths);
+
+    /**
+     * Returns the total number of final deaths of the player.
      *
      * @return The number of final deaths.
      */
     int getFinalDeaths();
 
     /**
-     * Sets the number of final deaths of the player.
+     * Returns the total number of final deaths of the player for a specified arena group.
      *
-     * @param finalDeaths The number of final deaths.
+     * @param group The arena group
+     * @return The number of final deaths.
      */
-    void setFinalDeaths(int finalDeaths);
+    int getFinalDeaths(String group);
 
     /**
-     * Returns the number of beds destroyed by the player.
+     * Sets the number of final deaths of the player for a specified arena group.
+     *
+     * @param group       The arena group
+     * @param finalDeaths The number of final deaths.
+     */
+    void setFinalDeaths(String group, int finalDeaths);
+
+    /**
+     * Returns the total number of beds destroyed by the player.
      *
      * @return The number of beds destroyed.
      */
     int getBedsDestroyed();
 
     /**
-     * Sets the number of beds destroyed by the player.
+     * Returns the total number of beds destroyed by the player for a specified arena group.
      *
-     * @param bedsDestroyed The number of beds destroyed.
+     * @param group The arena group
+     * @return The number of beds destroyed.
      */
-    void setBedsDestroyed(int bedsDestroyed);
+    int getBedsDestroyed(String group);
 
     /**
-     * Returns the number of games played by the player.
+     * Sets the number of beds destroyed by the player for a specified arena group.
+     *
+     * @param group         The arena group
+     * @param bedsDestroyed The number of beds destroyed.
+     */
+    void setBedsDestroyed(String group, int bedsDestroyed);
+
+    /**
+     * Returns the total number of games played by the player.
      *
      * @return The number of games played.
      */
     int getGamesPlayed();
 
     /**
-     * Sets the number of games played by the player.
+     * Returns the total number of games played by the player for a specified arena group.
      *
-     * @param gamesPlayed The number of games played.
+     * @param group The arena group
+     * @return The number of games played.
      */
-    void setGamesPlayed(int gamesPlayed);
+    int getGamesPlayed(String group);
 
     /**
-     * Returns the total number of kills (including final kills) of the player.
+     * Sets the number of games played by the player for a specified arena group.
+     *
+     * @param group       The arena group
+     * @param gamesPlayed The number of games played.
+     */
+    void setGamesPlayed(String group, int gamesPlayed);
+
+    /**
+     * Returns the total number of kills (including final kills) of the player across all arena groups.
      *
      * @return The total number of kills.
      */
     int getTotalKills();
+
+    /**
+     * Returns the total number of kills (including final kills) of the player across all arena groups for a specified arena group.
+     *
+     * @param group The arena group
+     * @return The total number of kills.
+     */
+    int getTotalKills(String group);
 }
