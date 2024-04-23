@@ -70,8 +70,8 @@ public class StatsListener implements Listener {
         //store beds destroyed
         PlayerStatChangeEvent ev = new PlayerStatChangeEvent(event.getPlayer(), event.getArena(), PlayerStatChangeEvent.StatType.BEDS_DESTROYED);
         Bukkit.getPluginManager().callEvent(ev); //call player stat change event for bed destroyer (bed destroy)
-        if(ev.isCancelled()) return;
-        stats.setBedsDestroyed(stats.getBedsDestroyed() + 1);
+        if (ev.isCancelled()) return;
+        stats.setBedsDestroyed(ev.getArena().getGroup(), stats.getBedsDestroyed() + 1);
     }
 
     @EventHandler
@@ -87,34 +87,35 @@ public class StatsListener implements Listener {
         PlayerStatChangeEvent ev3 = new PlayerStatChangeEvent(event.getVictim(), event.getArena(), PlayerStatChangeEvent.StatType.LOSSES);
         PlayerStatChangeEvent ev4 = new PlayerStatChangeEvent(event.getVictim(), event.getArena(), PlayerStatChangeEvent.StatType.GAMES_PLAYED);
         PlayerStatChangeEvent ev5 = new PlayerStatChangeEvent(event.getVictim(), event.getArena(), PlayerStatChangeEvent.StatType.DEATHS);
+        String arenaGroup = event.getArena().getGroup();
         if (event.getCause().isFinalKill()) {
             Bukkit.getPluginManager().callEvent(ev2); //call player stat change event for victim (final deaths)
-            if(ev2.isCancelled()) return;
+            if (ev2.isCancelled()) return;
             //store final deaths
-            victimStats.setFinalDeaths(victimStats.getFinalDeaths() + 1);
+            victimStats.setFinalDeaths(arenaGroup, victimStats.getFinalDeaths() + 1);
 
             Bukkit.getPluginManager().callEvent(ev3); //call player stat change event for victim (losses)
-            if(ev3.isCancelled()) return;
+            if (ev3.isCancelled()) return;
             //store losses
-            victimStats.setLosses(victimStats.getLosses() + 1);
+            victimStats.setLosses(arenaGroup, victimStats.getLosses() + 1);
 
             Bukkit.getPluginManager().callEvent(ev4); //call player stat change event for victim (games played)
-            if(ev4.isCancelled()) return;
+            if (ev4.isCancelled()) return;
             //store games played
-            victimStats.setGamesPlayed(victimStats.getGamesPlayed() + 1);
+            victimStats.setGamesPlayed(arenaGroup, victimStats.getGamesPlayed() + 1);
             Bukkit.getPluginManager().callEvent(ev1); //call player stat change event for killer
-            if(ev1.isCancelled()) return;
+            if (ev1.isCancelled()) return;
             //store final kills
-            if (killerStats != null) killerStats.setFinalKills(killerStats.getFinalKills() + 1);
+            if (killerStats != null) killerStats.setFinalKills(arenaGroup, killerStats.getFinalKills() + 1);
         } else {
             Bukkit.getPluginManager().callEvent(ev5); //call player stat change event for victim (deaths)
-            if(ev5.isCancelled()) return;
+            if (ev5.isCancelled()) return;
             //store deaths
-            victimStats.setDeaths(victimStats.getDeaths() + 1);
+            victimStats.setDeaths(arenaGroup, victimStats.getDeaths() + 1);
             //store kills
             Bukkit.getPluginManager().callEvent(ev); //call player stat change event for killer (kills)
-            if(ev.isCancelled()) return;
-            if (killerStats != null) killerStats.setKills(killerStats.getKills() + 1);
+            if (ev.isCancelled()) return;
+            if (killerStats != null) killerStats.setKills(arenaGroup, killerStats.getKills() + 1);
         }
     }
 
@@ -126,15 +127,16 @@ public class StatsListener implements Listener {
             if (!player.isOnline()) continue;
 
             IPlayerStats stats = BedWars.getStatsManager().get(uuid);
+            String arenaGroup = event.getArena().getGroup();
 
             PlayerStatChangeEvent ev = new PlayerStatChangeEvent(player, event.getArena(), PlayerStatChangeEvent.StatType.WINS);
             PlayerStatChangeEvent ev1 = new PlayerStatChangeEvent(player, event.getArena(), PlayerStatChangeEvent.StatType.GAMES_PLAYED);
 
             Bukkit.getPluginManager().callEvent(ev); //call player stat change event for winners (wins)
-            if(ev.isCancelled()) return;
+            if (ev.isCancelled()) return;
             // store wins even if is in another game because he assisted this team
             // the ones who abandoned are already removed from the winners list
-            stats.setWins(stats.getWins() + 1);
+            stats.setWins(arenaGroup, stats.getWins() + 1);
 
             // store games played
             // give if he remained in this arena till the end even if was eliminated
@@ -142,8 +144,8 @@ public class StatsListener implements Listener {
             IArena playerArena = Arena.getArenaByPlayer(player);
             if (playerArena != null && playerArena.equals(event.getArena())) {
                 Bukkit.getPluginManager().callEvent(ev1); //call player stat change event for winners (games played)
-                if(ev1.isCancelled()) return;
-                stats.setGamesPlayed(stats.getGamesPlayed() + 1);
+                if (ev1.isCancelled()) return;
+                stats.setGamesPlayed(arenaGroup, stats.getGamesPlayed() + 1);
             }
         }
     }
@@ -173,17 +175,18 @@ public class StatsListener implements Listener {
         // Update last play and first play (if required)
         Instant now = Instant.now();
         Bukkit.getPluginManager().callEvent(ev1); //call player stat change event for player left arena (last play)
-        if(ev1.isCancelled()) return;
+        if (ev1.isCancelled()) return;
         playerStats.setLastPlay(now);
         if (playerStats.getFirstPlay() == null) {
             Bukkit.getPluginManager().callEvent(ev); //call player stat change event for player that left (first play)
-            if(ev.isCancelled()) return;
+            if (ev.isCancelled()) return;
             playerStats.setFirstPlay(now);
         }
 
         // Check quit abuse
         if (event.getArena().getStatus() == GameState.playing) {
             // Only if the player left the arena while the game was running
+            String arenaGroup = event.getArena().getGroup();
             if (team.isBedDestroyed()) {
                 // Only if the team had the bed destroyed
 
@@ -192,11 +195,11 @@ public class StatsListener implements Listener {
                 // the penalty bellow.
                 if (event.getArena().isPlayer(player)) {
                     Bukkit.getPluginManager().callEvent(ev2); //call player stat change event for player that left (final deaths)
-                    if(ev2.isCancelled()) return;
-                    playerStats.setFinalDeaths(playerStats.getFinalDeaths() + 1);
+                    if (ev2.isCancelled()) return;
+                    playerStats.setFinalDeaths(arenaGroup, playerStats.getFinalDeaths() + 1);
                     Bukkit.getPluginManager().callEvent(ev3); //call player stat change event for player that left (losses)
-                    if(ev3.isCancelled()) return;
-                    playerStats.setLosses(playerStats.getLosses() + 1);
+                    if (ev3.isCancelled()) return;
+                    playerStats.setLosses(arenaGroup, playerStats.getLosses() + 1);
                 }
 
                 // Reward attacker
@@ -208,9 +211,9 @@ public class StatsListener implements Listener {
 
                 if (damager != null && event.getArena().isPlayer(damager) && killerTeam != null) {
                     Bukkit.getPluginManager().callEvent(ev4); //call player stat change event for damager
-                    if(ev4.isCancelled()) return;
+                    if (ev4.isCancelled()) return;
                     IPlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
-                    damagerStats.setFinalKills(damagerStats.getFinalKills() + 1);
+                    damagerStats.setFinalKills(arenaGroup, damagerStats.getFinalKills() + 1);
                     event.getArena().addPlayerKill(damager, true, player);
                 }
             } else {
@@ -227,16 +230,16 @@ public class StatsListener implements Listener {
                 if (event.getLastDamager() != null && event.getArena().isPlayer(damager) && killerTeam != null) {
                     // Punish player
                     Bukkit.getPluginManager().callEvent(ev5); //call player stat change event for player that died
-                    if(ev5.isCancelled()) return;
-                    playerStats.setDeaths(playerStats.getDeaths() + 1);
+                    if (ev5.isCancelled()) return;
+                    playerStats.setDeaths(arenaGroup, playerStats.getDeaths() + 1);
                     event.getArena().addPlayerDeath(player);
 
                     // Reward attacker
                     event.getArena().addPlayerKill(damager, false, player);
                     Bukkit.getPluginManager().callEvent(ev6); //call player stat change event for damager
-                    if(ev6.isCancelled()) return;
+                    if (ev6.isCancelled()) return;
                     IPlayerStats damagerStats = BedWars.getStatsManager().get(damager.getUniqueId());
-                    damagerStats.setKills(damagerStats.getKills() + 1);
+                    damagerStats.setKills(arenaGroup, damagerStats.getKills() + 1);
                 }
             }
         }
