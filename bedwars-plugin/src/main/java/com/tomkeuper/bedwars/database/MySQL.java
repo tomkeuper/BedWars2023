@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.database;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -38,7 +39,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.tomkeuper.bedwars.BedWars.config;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "DuplicatedCode", "CallToPrintStackTrace", "SqlSourceToSinkFlow"})
 public class MySQL implements IDatabase {
 
     private HikariDataSource dataSource;
@@ -118,7 +119,7 @@ public class MySQL implements IDatabase {
 
     @Override
     public boolean hasStats(UUID uuid) {
-        String sql = "SELECT uuid FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT uuid FROM stats WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, uuid.toString());
@@ -135,14 +136,18 @@ public class MySQL implements IDatabase {
     @Override
     public void init() {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "CREATE TABLE IF NOT EXISTS global_stats (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
-                    "name VARCHAR(200), uuid VARCHAR(200), first_play TIMESTAMP NULL DEFAULT NULL, " +
-                    "last_play TIMESTAMP NULL DEFAULT NULL, wins INT(200), kills INT(200), " +
-                    "final_kills INT(200), looses INT(200), deaths INT(200), final_deaths INT(200), beds_destroyed INT(200), games_played INT(200));";
+            String sql;
 
-            try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate(sql);
+            if (!tableExists("stats")) {
+                 sql = "CREATE TABLE IF NOT EXISTS stats (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, " +
+                        "name VARCHAR(200), uuid VARCHAR(200), first_play TIMESTAMP NULL DEFAULT NULL, " +
+                        "last_play TIMESTAMP NULL DEFAULT NULL);";
+                try (Statement statement = connection.createStatement()) {
+                    statement.executeUpdate(sql);
+                }
             }
+            // Creates the columns for stats table if the stats table is not populated correctly
+            updateStatsTable();
 
             sql = "CREATE TABLE IF NOT EXISTS quick_buy_2 (uuid VARCHAR(36) PRIMARY KEY, " +
                     "slot_19 VARCHAR(200), slot_20 VARCHAR(200), slot_21 VARCHAR(200), slot_22 VARCHAR(200), slot_23 VARCHAR(200), slot_24 VARCHAR(200), slot_25 VARCHAR(200)," +
@@ -170,39 +175,93 @@ public class MySQL implements IDatabase {
     @Override
     public void saveStats(IPlayerStats stats) {
         String sql;
-        try (Connection connection = dataSource.getConnection()) {
+        try {
             if (hasStats(stats.getUuid())) {
-                sql = "UPDATE global_stats SET first_play=?, last_play=?, wins=?, kills=?, final_kills=?, looses=?, deaths=?, final_deaths=?, beds_destroyed=?, games_played=?, name=? WHERE uuid = ?;";
-                try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                    statement.setTimestamp(1, stats.getFirstPlay() != null ? Timestamp.from(stats.getFirstPlay()) : null);
-                    statement.setTimestamp(2, stats.getLastPlay() != null ? Timestamp.from(stats.getLastPlay()) : null);
-                    statement.setInt(3, stats.getWins());
-                    statement.setInt(4, stats.getKills());
-                    statement.setInt(5, stats.getFinalKills());
-                    statement.setInt(6, stats.getLosses());
-                    statement.setInt(7, stats.getDeaths());
-                    statement.setInt(8, stats.getFinalDeaths());
-                    statement.setInt(9, stats.getBedsDestroyed());
-                    statement.setInt(10, stats.getGamesPlayed());
-                    statement.setString(11, stats.getName());
-                    statement.setString(12, stats.getUuid().toString());
+                StringBuilder sqlBuilder = new StringBuilder();
+                for (String arenaGroup : getArenaGroups()) {
+                    sqlBuilder.append("wins.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("kills.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("final_kills.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("looses.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("deaths.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("final_deaths.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("beds_destroyed.").append(arenaGroup).append("=?, ");
+                    sqlBuilder.append("games_played.").append(arenaGroup).append("=?, ");
+                }
+                // Deletes the last ", "
+                sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
+                sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
+                sql = "UPDATE stats SET name=?, last_play=?, " + sqlBuilder + " WHERE uuid = ?;";
+                try (PreparedStatement statement = dataSource.getConnection().prepareStatement(sql)) {
+                    statement.setString(1, stats.getName());
+                    statement.setTimestamp(2, Timestamp.from(stats.getLastPlay()));
+                    int currentParameterIndex = 3;
+                    // This loop will follow the same order as the above loop to generate the sql statement
+                    for (String arenaGroup : getArenaGroups()) {
+                        statement.setInt(currentParameterIndex, stats.getWins(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getKills(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getFinalKills(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getLosses(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getDeaths(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getFinalDeaths(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getBedsDestroyed(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getGamesPlayed(arenaGroup));
+                        currentParameterIndex++;
+                    }
+                    statement.setString(currentParameterIndex, stats.getUuid().toString());
                     statement.executeUpdate();
                 }
             } else {
-                sql = "INSERT INTO global_stats (name, uuid, first_play, last_play, wins, kills, final_kills, looses, deaths, final_deaths, beds_destroyed, games_played) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                StringBuilder sqlBuilder = new StringBuilder();
+                StringBuilder values = new StringBuilder();
+                for (String arenaGroup : getArenaGroups()) {
+                    sqlBuilder.append("wins.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("kills.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("final_kills.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("looses.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("deaths.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("final_deaths.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("beds_destroyed.").append(arenaGroup).append(", ");
+                    sqlBuilder.append("games_played.").append(arenaGroup).append(", ");
+                }
+                int valueCount = 8 * getArenaGroups().size() + 2;
+                values.append("?, ".repeat(Math.max(0, valueCount - 1))).append("?");
+                // Deletes the last ", "
+                sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
+                sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
+                sql = "INSERT INTO stats (name, uuid, first_play, last_play, " + sqlBuilder + ") VALUES (" + values + ");";
+                try (PreparedStatement statement = dataSource.getConnection().prepareStatement(sql)) {
                     statement.setString(1, stats.getName());
                     statement.setString(2, stats.getUuid().toString());
                     statement.setTimestamp(3, Timestamp.from(stats.getFirstPlay()));
                     statement.setTimestamp(4, Timestamp.from(stats.getLastPlay()));
-                    statement.setInt(5, stats.getWins());
-                    statement.setInt(6, stats.getKills());
-                    statement.setInt(7, stats.getFinalKills());
-                    statement.setInt(8, stats.getLosses());
-                    statement.setInt(9, stats.getDeaths());
-                    statement.setInt(10, stats.getFinalDeaths());
-                    statement.setInt(11, stats.getBedsDestroyed());
-                    statement.setInt(12, stats.getGamesPlayed());
+                    int currentParameterIndex = 5;
+                    // This loop will follow the same order as the above loop to generate the sql statement
+                    for (String arenaGroup : getArenaGroups()) {
+                        statement.setInt(currentParameterIndex, stats.getWins(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getKills(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getFinalKills(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getLosses(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getDeaths(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getFinalDeaths(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getBedsDestroyed(arenaGroup));
+                        currentParameterIndex++;
+                        statement.setInt(currentParameterIndex, stats.getGamesPlayed(arenaGroup));
+                        currentParameterIndex++;
+                    }
                     statement.executeUpdate();
                 }
             }
@@ -210,29 +269,27 @@ public class MySQL implements IDatabase {
             e.printStackTrace();
         }
     }
-
     @Override
     public IPlayerStats fetchStats(UUID uuid) {
         IPlayerStats stats = new PlayerStats(uuid);
-        String sql = "SELECT first_play, last_play, wins, kills, final_kills, looses, deaths, final_deaths," +
-                "beds_destroyed, games_played FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT * FROM stats WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, uuid.toString());
                 try (ResultSet result = statement.executeQuery()) {
                     if (result.next()) {
-                        Timestamp firstPlay = result.getTimestamp(1);
-                        Timestamp lastPlay = result.getTimestamp(2);
-                        stats.setFirstPlay(firstPlay != null ? firstPlay.toInstant() : null);
-                        stats.setLastPlay(lastPlay != null ? lastPlay.toInstant() : null);
-                        stats.setWins(result.getInt(3));
-                        stats.setKills(result.getInt(4));
-                        stats.setFinalKills(result.getInt(5));
-                        stats.setLosses(result.getInt(6));
-                        stats.setDeaths(result.getInt(7));
-                        stats.setFinalDeaths(result.getInt(8));
-                        stats.setBedsDestroyed(result.getInt(9));
-                        stats.setGamesPlayed(result.getInt(10));
+                        stats.setFirstPlay(result.getTimestamp("first_play").toInstant());
+                        stats.setLastPlay(result.getTimestamp("last_play").toInstant());
+                        for (String arenaGroup : getArenaGroups()) {
+                            stats.setWins(arenaGroup, result.getInt("wins." + arenaGroup));
+                            stats.setKills(arenaGroup, result.getInt("kills." + arenaGroup));
+                            stats.setFinalKills(arenaGroup, result.getInt("final_kills." + arenaGroup));
+                            stats.setLosses(arenaGroup, result.getInt("looses." + arenaGroup));
+                            stats.setDeaths(arenaGroup, result.getInt("deaths." + arenaGroup));
+                            stats.setFinalDeaths(arenaGroup, result.getInt("final_deaths." + arenaGroup));
+                            stats.setBedsDestroyed(arenaGroup, result.getInt("beds_destroyed." + arenaGroup));
+                            stats.setGamesPlayed(arenaGroup, result.getInt("games_played." + arenaGroup));
+                        }
                     }
                 }
             }
@@ -243,19 +300,19 @@ public class MySQL implements IDatabase {
     }
 
     @Override
-    public void saveCustomStat(String columnName, UUID player, Object value, String dataType){
+    public void saveCustomStat(String columnName, UUID player, Object value, String dataType) {
         String sql;
         checkCustomColumnExists(columnName, dataType);
         try (Connection connection = dataSource.getConnection()) {
             if (hasStats(player)) {
-                sql = "UPDATE global_stats SET "+columnName+"=? WHERE uuid = ?;";
+                sql = "UPDATE stats SET " + columnName + "=? WHERE uuid = ?;";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setObject(1, value);
                     statement.setString(2, player.toString());
                     statement.executeUpdate();
                 }
             } else {
-                sql = "INSERT INTO global_stats (uuid, "+columnName+") VALUES (?, ?);";
+                sql = "INSERT INTO stats (uuid, " + columnName + ") VALUES (?, ?);";
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
                     statement.setString(1, player.toString());
                     statement.setObject(2, value);
@@ -268,8 +325,8 @@ public class MySQL implements IDatabase {
     }
 
     @Override
-    public Object getCustomStat(String columnName, UUID player){
-        String sql = "SELECT "+columnName+" FROM global_stats WHERE uuid = ?;";
+    public Object getCustomStat(String columnName, UUID player) {
+        String sql = "SELECT " + columnName + " FROM stats WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, player.toString());
@@ -285,21 +342,21 @@ public class MySQL implements IDatabase {
         return null;
     }
 
-    public void checkCustomColumnExists(String columnName, String dataType){
-        String sql = "SHOW COLUMNS FROM global_stats LIKE ?";
-        try (Connection connection = dataSource.getConnection()){
+    public void checkCustomColumnExists(String columnName, String dataType) {
+        String sql = "SHOW COLUMNS FROM stats LIKE ?";
+        try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, columnName);
-                try (ResultSet result = statement.executeQuery()){
-                    if (!result.next()){
-                        sql = "ALTER TABLE global_stats ADD COLUMN " +columnName+ " " + dataType;
-                        try (PreparedStatement statement1 = connection.prepareStatement(sql)){
+                try (ResultSet result = statement.executeQuery()) {
+                    if (!result.next()) {
+                        sql = "ALTER TABLE stats ADD COLUMN " + columnName + " " + dataType;
+                        try (PreparedStatement statement1 = connection.prepareStatement(sql)) {
                             statement1.executeUpdate();
                         }
                     }
                 }
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -366,7 +423,7 @@ public class MySQL implements IDatabase {
 
     @Override
     public int getColumn(UUID player, String column) {
-        String sql = "SELECT ? FROM global_stats WHERE uuid = ?;";
+        String sql = "SELECT ? FROM stats WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, column);
@@ -393,10 +450,10 @@ public class MySQL implements IDatabase {
                 try (ResultSet result = statement.executeQuery()) {
                     if (result.next()) {
                         return new Object[]{
-                            result.getInt(1),
-                            result.getInt(2),
-                            result.getString(3),
-                            result.getInt(4)
+                                result.getInt(1),
+                                result.getInt(2),
+                                result.getString(3),
+                                result.getInt(4)
                         };
                     }
                 }
@@ -540,7 +597,7 @@ public class MySQL implements IDatabase {
                     String identifier = updateSlots.get(key);
                     ps.setString(index, identifier.trim().isEmpty() ? null : identifier);
                 }
-                ps.setString(hasQuick ? updateSlots.size()+1 : 1, uuid.toString());
+                ps.setString(hasQuick ? updateSlots.size() + 1 : 1, uuid.toString());
                 ps.execute();
             }
         } catch (SQLException e) {
@@ -548,4 +605,37 @@ public class MySQL implements IDatabase {
         }
     }
 
+    private List<String> getArenaGroups() {
+        return BedWars.config.getYml().getStringList(ConfigPath.GENERAL_CONFIGURATION_ARENA_GROUPS);
+    }
+
+    public boolean tableExists(String tableName) {
+        try {
+            boolean found = false;
+            DatabaseMetaData databaseMetaData = dataSource.getConnection().getMetaData();
+            ResultSet rs = databaseMetaData.getTables(null, null, tableName, null);
+            while (rs.next()) {
+                String name = rs.getString("TABLE_NAME");
+                if (tableName.equals(name)) {
+                    found = true;
+                    break;
+                }
+            }
+            return found;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateStatsTable() {
+        for (String arenaGroup : getArenaGroups()) {
+            checkCustomColumnExists("wins." + arenaGroup, "INT(200)");
+            checkCustomColumnExists("kills." + arenaGroup, "INT(200)");
+            checkCustomColumnExists("final_kills." + arenaGroup, "INT(200)");
+            checkCustomColumnExists("looses." + arenaGroup, "INT(200)");
+            checkCustomColumnExists("final_deaths." + arenaGroup, "INT(200)");
+            checkCustomColumnExists("beds_destroyed." + arenaGroup, "INT(200)");
+            checkCustomColumnExists("games_played." + arenaGroup, "INT(200)");
+        }
+    }
 }
