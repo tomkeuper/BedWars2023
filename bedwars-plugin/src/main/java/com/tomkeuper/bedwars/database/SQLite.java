@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings({"DuplicatedCode", "CallToPrintStackTrace", "SqlSourceToSinkFlow", "ResultOfMethodCallIgnored"})
 public class SQLite implements IDatabase {
 
   private String url;
