@@ -202,7 +202,7 @@ public class SQLite implements IDatabase {
         // Deletes the last ", "
         sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
         sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
-        sql = "INSERT INTO stats (name, uuid, first_play, last_play, " + sqlBuilder + ") VALUES (" + values + ");";
+        sql = "INSERT INTO stats (name, uuid, first_play, last_play, " + sqlBuilder + ") VALUES(" + values + ");";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
           statement.setString(1, stats.getName());
           statement.setString(2, stats.getUuid().toString());
