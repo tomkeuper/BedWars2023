@@ -174,6 +174,7 @@ public class MySQL implements IDatabase {
 
     @Override
     public void saveStats(IPlayerStats stats) {
+        updateStatsTable();
         String sql;
         try {
             if (hasStats(stats.getUuid())) {

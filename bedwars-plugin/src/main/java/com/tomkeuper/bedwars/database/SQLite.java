@@ -141,6 +141,7 @@ public class SQLite implements IDatabase {
     String sql;
     try {
       checkConnection();
+      updateStatsTable();
 
       if (hasStats(stats.getUuid())) {
         StringBuilder sqlBuilder = new StringBuilder();
