@@ -119,7 +119,6 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
             new NPC(this, "npc");
         }
         new CmdTpStaff(this, "tp");
-        new CmdUpgrades(this, "upgradesmenu");
         new SetKillDropsLoc(this, "setKillDrops");
     }
 
