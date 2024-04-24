@@ -148,6 +148,7 @@ public class BedWars extends JavaPlugin {
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
+    public static PAGConfig pagConfig;
     private static UpgradesManager upgradesManager;
     public static PlayerQuickBuyCache playerQuickBuyCache;
     public static ShopCache shopCache;
@@ -272,6 +273,7 @@ public class BedWars extends JavaPlugin {
         hologramUpdateDistance = config.getInt(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE);
 
         generators = new GeneratorsConfig(this, "generators", this.getDataFolder().getPath());
+        pagConfig = new PAGConfig(this, "per-arena-gen", this.getDataFolder().getPath());
         // Initialize signs config after the main config
         if (getServerType() != ServerType.BUNGEE) {
             signs = new SignsConfig(this, "signs", this.getDataFolder().getPath());
@@ -393,6 +395,8 @@ public class BedWars extends JavaPlugin {
         registerEvents(new ChunkLoad());
 
         registerEvents(new InvisibilityPotionListener());
+
+        registerEvents(new PAGListener());
 
         statsManager = new StatsManager();
 
