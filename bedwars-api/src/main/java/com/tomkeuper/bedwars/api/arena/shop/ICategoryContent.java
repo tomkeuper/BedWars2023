@@ -96,7 +96,7 @@ public interface ICategoryContent {
      * @param shopCache  The shop cache containing the player's data.
      * @param slot       The slot number of the content.
      */
-    void execute(Player player, IShopCache shopCache, int slot);
+    boolean execute(Player player, IShopCache shopCache, int slot);
 
     /**
      * Give the items associated with the category content to the player.

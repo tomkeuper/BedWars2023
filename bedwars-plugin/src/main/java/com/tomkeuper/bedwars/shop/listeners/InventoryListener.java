@@ -99,7 +99,9 @@ public class InventoryListener implements Listener {
                         p.closeInventory();
                         return;
                     }
-                    element.getCategoryContent().execute(p, shopCache, element.getSlot());
+                    if (element.getCategoryContent().execute(p, shopCache, element.getSlot())) {
+                        ShopManager.shop.open(p, cache, false); // Reload the shop page. Needed to recalculate item purchasable
+                    }
                     return;
                 }
             }
@@ -150,30 +152,26 @@ public class InventoryListener implements Listener {
                 // If we don't check this, the shop will be displayed in all arenas
                 // Default category is already checked and thus does not need to be added here
                 if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
-                    if (checkSlot(e, p, shopCache, cache, cc)) {
-                        sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
-                        return true;
-                    }
+                    if (checkSlot(e, p, shopCache, cache, cc, sc)) return true;
                 }
             }
             for (ICategoryContent cc : sc.getCategoryContentList()) {
-                if (checkSlot(e, p, shopCache, cache, cc)){
-                    sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
-                    return true;
-                }
+                if (checkSlot(e, p, shopCache, cache, cc, sc)) return true;
             }
         }
         return false;
     }
 
-    private boolean checkSlot(InventoryClickEvent e, Player p, ShopCache shopCache, IPlayerQuickBuyCache cache, ICategoryContent cc) {
+    private boolean checkSlot(InventoryClickEvent e, Player p, ShopCache shopCache, IPlayerQuickBuyCache cache, ICategoryContent cc, IShopCategory sc) {
         if (cc.getSlot() == e.getSlot()) {
             if (e.isShiftClick()) {
                 if (cache.hasCategoryContent(cc)) return true;
                 new QuickBuyAdd(p, cc);
                 return true;
             }
-            cc.execute(p, shopCache, cc.getSlot());
+            if (cc.execute(p, shopCache, cc.getSlot())){
+                sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
+            }
             return true;
         }
         return false;
