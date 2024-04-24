@@ -33,6 +33,7 @@ import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
+import com.tomkeuper.bedwars.commands.mapcmd.MapCommand;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -725,6 +726,12 @@ public class BedWars extends JavaPlugin {
         if (!nms.isBukkitCommandRegistered("shout")) {
             nms.registerCommand("shout", new ShoutCommand("shout"));
         }
+        if (!nms.isBukkitCommandRegistered("map")) {
+            nms.registerCommand("map", new MapCommand("map"));
+        }
+        if (!nms.isBukkitCommandRegistered("wtfmap")) {
+            nms.registerCommand("wtfmap", new MapCommand("wtfmap"));
+        } // /wtfmap is my favorite command :D
         nms.registerCommand("rejoin", new RejoinCommand("rejoin"));
         if (!(nms.isBukkitCommandRegistered("leave") && getServerType() == ServerType.BUNGEE)) {
             nms.registerCommand("leave", new LeaveCommand("leave"));
