@@ -41,6 +41,7 @@ import com.tomkeuper.bedwars.popuptower.TowerNorth;
 import com.tomkeuper.bedwars.popuptower.TowerSouth;
 import com.tomkeuper.bedwars.popuptower.TowerWest;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -384,7 +385,7 @@ public class BreakPlace implements Listener {
                 }
             }
 
-            if (!e.isCancelled()){
+            if (!e.isCancelled() && p.getGameMode() != GameMode.CREATIVE){
                 Block drop = e.getBlock();
                 e.setCancelled(true);
                 Collection<ItemStack> drops = drop.getDrops();
