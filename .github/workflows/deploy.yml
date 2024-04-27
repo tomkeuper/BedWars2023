@@ -29,7 +29,6 @@ jobs:
       - name: Display version
         run: |
           TAG=$(./gradlew printTag | awk '/Generated Tag:/ {print $3}')
-          echo "::set-env name=VERSION::$VERSION"
           git tag
           echo $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
