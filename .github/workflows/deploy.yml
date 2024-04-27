@@ -31,6 +31,10 @@ jobs:
           name: bedwars-plugin
           path: bedwars-plugin/build/libs/**.jar
           if-no-files-found: error
+      - name: Print generated tags
+        run: |
+         echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
+         git tag
   release:
     runs-on: ubuntu-latest
     needs: [ create-jar ]
@@ -46,6 +50,10 @@ jobs:
         with:
           name: bedwars-plugin
           path: target
+
+      - name: Print generated tags
+        run:
+          echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
       - name: Create release
         id: release
         uses: softprops/action-gh-release@v1
