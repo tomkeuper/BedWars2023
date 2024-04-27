@@ -26,10 +26,13 @@ jobs:
       - name: Package with Gradle
         run: |
           gradle clean tag jar -Prelease
-      - name: Test
+      - id: get_version
+        name: Get version
+        uses: jannemattila/get-version-from-tag@v3
+      - name: Display version
         run: |
-          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
-          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
+          VERSION=$(echo "${{ steps.get_version.outputs.version }}")
+          echo $VERSION
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
