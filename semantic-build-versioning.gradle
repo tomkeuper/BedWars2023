@@ -1,0 +1,9 @@
+startingVersion = '1.0.0'
+
+preRelease {
+    startingVersion = 'BETA.1'
+    pattern = /BETA/
+    bump = {
+        "BETA.${((it - ~/^BETA\./) as int) + 1}"
+    }
+}

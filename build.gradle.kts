@@ -1,6 +1,6 @@
 allprojects {
     group = "com.tomkeuper.bedwars"
-    version = "1.0-SNAPSHOT"
+    version = rootProject.version
     description = "BedWars minigame by Tom Keuper forked from BedWars1058"
 
     ext.set("id", "bedwars")

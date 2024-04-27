@@ -21,3 +21,7 @@ include(":versionsupport_v1_20_r3")
 include(":versionsupport_common")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+plugins {
+    id("io.alcide.gradle-semantic-build-versioning") version "4.2.2" // Used for automatic versioning
+}
