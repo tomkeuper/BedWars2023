@@ -52,7 +52,7 @@ jobs:
           path: target
 
       - name: Print generated tags
-        run:
+        run: |
           echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
       - name: Create release
         id: release
