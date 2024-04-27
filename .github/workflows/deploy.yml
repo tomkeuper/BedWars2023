@@ -26,12 +26,11 @@ jobs:
       - name: Package with Gradle
         run: |
           gradle clean tag jar -Prelease
-      - id: get_version
-        name: Get version
-        uses: jannemattila/get-version-from-tag@v3
       - name: Display version
         run: |
-          VERSION=$(echo "${{ steps.get_version.outputs.version }}")
+          TAG=$(./gradlew printTag | awk '/Generated Tag:/ {print $3}')
+          echo "::set-env name=VERSION::$VERSION"
+          git tag
           echo $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Publish Artifact
