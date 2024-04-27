@@ -24,7 +24,7 @@ jobs:
         with:
           gradle-version: release-candidate
       - name: Package with Gradle
-        run: gradle clean jar tag
+        run: gradle clean jar tag -Prelease
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
