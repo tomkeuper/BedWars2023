@@ -33,6 +33,7 @@ jobs:
         run: |
           VERSION=$(echo "${{ steps.get_version.outputs.version }}")
           echo $VERSION
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
