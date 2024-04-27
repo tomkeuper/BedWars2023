@@ -27,6 +27,7 @@ jobs:
         run: |
           gradle clean jar tag -Prelease
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}"
           echo "::set-output name=version::${VERSION}"
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
