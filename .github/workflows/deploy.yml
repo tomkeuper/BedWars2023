@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: 'production'
+          ref: 'workflow-test'
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v2
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          ref: 'production'
+          ref: 'workflow-test'
       - name: Download the artifact
         uses: actions/download-artifact@v3
         with:
@@ -63,7 +63,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: 'production'
+          ref: 'workflow-test'
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v2
         with:
@@ -97,7 +97,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
         with:
-          ref: 'production'
+          ref: 'workflow-test'
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v2
         with:
