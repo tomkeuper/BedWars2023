@@ -8,14 +8,14 @@ jobs:
   create-jar:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.bump.outputs.version }}
+      version: ${{ steps.set-version.outputs.version }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: 'workflow-test'
       - name: Set up JDK 17.0.7
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17.0.7'
           distribution: 'temurin'
@@ -24,9 +24,17 @@ jobs:
         with:
           gradle-version: release-candidate
       - name: Package with Gradle
-        run: gradle clean jar tag -Prelease
+        run: |
+          gradle clean tag shadowJar -Prelease
+      - name: Set version
+        id: set-version
+        run: |
+          VERSION=$(gradle printTag | awk '/Generated Tag:/ {print $3}')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          cd bedwars-plugin/build/libs/
+          ls
       - name: Publish Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: bedwars-plugin
           path: bedwars-plugin/build/libs/**.jar
@@ -37,15 +45,17 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: 'workflow-test'
       - name: Download the artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bedwars-plugin
           path: target
+      - name: Print generated tags
+        run: |
+          echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
+          ls
+          cd target/
+          ls
       - name: Create release
         id: release
         uses: softprops/action-gh-release@v1
@@ -53,7 +63,7 @@ jobs:
           target_commitish: workflow-test
           tag_name: ${{ needs.create-jar.outputs.version }}
           generate_release_notes: true
-          files: "build/libs/bedwars-*"
+          files: "target/BedWars-*"
   deploy-package:
     timeout-minutes: 2
     runs-on: ubuntu-latest
@@ -62,11 +72,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: 'workflow-test'
       - name: Set up JDK 17.0.7
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17.0.7'
           distribution: 'temurin'
@@ -96,11 +106,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: 'workflow-test'
       - name: Set up JDK 17.0.7
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17.0.7'
           distribution: 'temurin'
