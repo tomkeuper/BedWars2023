@@ -26,24 +26,18 @@ jobs:
       - name: Package with Gradle
         run: |
           gradle clean jar tag -Prelease
-          echo "version=${VERSION}" >> $GITHUB_OUTPUT
-          echo "version=${VERSION}"
-          echo "::set-output name=version::${VERSION}"
+      - name: Set env
+        run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Test
+        run: |
+          echo $VERSION
+          echo ${{ env.VERSION }}
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
           name: bedwars-plugin
           path: bedwars-plugin/build/libs/**.jar
           if-no-files-found: error
-      - name: Print version
-        id: set-version
-        run: |
-          VERSION=$(gradle printVersion | grep -oP '\d+\.\d+\.\d+-\S+')
-          echo "::set-output name=version::${VERSION}"
-      - name: Print generated tags
-        run: |
-         echo "Version Output: ${{ steps.bump.outputs.version }}"
-         git tag
   release:
     runs-on: ubuntu-latest
     needs: [ create-jar ]
