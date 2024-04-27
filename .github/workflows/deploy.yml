@@ -47,10 +47,11 @@ jobs:
           name: bedwars-plugin
           path: target
       - name: Create release
+        id: release
         uses: softprops/action-gh-release@v1
         with:
           target_commitish: workflow-test
-          tag_name: ${{ needs.package.outputs.version }}
+          tag_name: ${{ needs.create-jar.outputs.version }}
           generate_release_notes: true
           files: "build/libs/bedwars-*"
   deploy-package:
