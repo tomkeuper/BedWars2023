@@ -31,6 +31,11 @@ jobs:
           name: bedwars-plugin
           path: bedwars-plugin/build/libs/**.jar
           if-no-files-found: error
+      - name: Print version
+        id: set-version
+        run: |
+          VERSION=$(gradle printVersion | grep -oP '\d+\.\d+\.\d+-\S+')
+          echo "::set-output name=version::${VERSION}"
       - name: Print generated tags
         run: |
          echo "Version Output: ${{ steps.bump.outputs.version }}"
