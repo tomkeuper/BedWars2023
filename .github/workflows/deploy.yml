@@ -26,7 +26,6 @@ jobs:
       - name: Package with Gradle
         run: |
           gradle clean jar tag -Prelease
-#            VERSION=$(gradle printVersion | grep -oP '\d+\.\d+\.\d+-\S+')
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "::set-output name=version::${VERSION}"
       - name: Publish Artifact
