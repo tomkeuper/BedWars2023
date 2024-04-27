@@ -2,7 +2,7 @@ name: Create a release + deploy to repo
 
 on:
   push:
-    branches: [production]
+    branches: [production, workflow-test]
 
 jobs:
   create-jar:
