@@ -33,7 +33,7 @@ jobs:
           if-no-files-found: error
       - name: Print generated tags
         run: |
-         echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
+         echo "Version Output: ${{ steps.bump.outputs.version }}"
          git tag
   release:
     runs-on: ubuntu-latest
