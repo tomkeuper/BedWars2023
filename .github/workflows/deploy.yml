@@ -25,13 +25,11 @@ jobs:
           gradle-version: release-candidate
       - name: Package with Gradle
         run: |
-          gradle clean jar tag -Prelease
-      - name: Set env
-        run: echo "VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          gradle clean tag jar -Prelease
       - name: Test
         run: |
-          echo $VERSION
-          echo ${{ env.VERSION }}
+          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name: ${{  github.ref_name }}"
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
