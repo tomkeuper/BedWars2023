@@ -8,7 +8,7 @@ jobs:
   create-jar:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.bump.outputs.version }}
+      version: ${{ steps.set-version.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,10 +26,10 @@ jobs:
       - name: Package with Gradle
         run: |
           gradle clean tag jar -Prelease
-      - name: Display version
+      - name: Set version
+        id: set-version
         run: |
           TAG=$(./gradlew printTag | awk '/Generated Tag:/ {print $3}')
-          git tag
           echo $VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Publish Artifact
@@ -53,7 +53,6 @@ jobs:
         with:
           name: bedwars-plugin
           path: target
-
       - name: Print generated tags
         run: |
           echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
