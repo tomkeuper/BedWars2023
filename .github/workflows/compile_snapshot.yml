@@ -18,9 +18,9 @@ jobs:
       name: development
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set up JDK 17.0.7
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17.0.7'
           distribution: 'temurin'
