@@ -55,13 +55,13 @@ jobs:
           path: target
       - name: Print generated tags
         run: |
-          echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
+          echo "Generated Tag: ${{ env.VERSION }}"
       - name: Create release
         id: release
         uses: softprops/action-gh-release@v1
         with:
           target_commitish: workflow-test
-          tag_name: ${{ needs.create-jar.outputs.version }}
+          tag_name: ${{ env.VERSION }}
           generate_release_notes: true
           files: "build/libs/bedwars-*"
   deploy-package:
