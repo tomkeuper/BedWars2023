@@ -48,7 +48,7 @@ jobs:
         with:
           ref: 'workflow-test'
       - name: Download the artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: bedwars-plugin
           path: target
@@ -62,7 +62,7 @@ jobs:
           target_commitish: workflow-test
           tag_name: ${{ needs.create-jar.outputs.version }}
           generate_release_notes: true
-          files: "build/libs/bedwars-*"
+          files: "build/libs/BedWars-*"
   deploy-package:
     timeout-minutes: 2
     runs-on: ubuntu-latest
