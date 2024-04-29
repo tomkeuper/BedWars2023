@@ -30,7 +30,7 @@ jobs:
         id: set-version
         run: |
           TAG=$(gradle printTag | awk '/Generated Tag:/ {print $3}')
-          echo $VERSION
+          echo versie=$VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
