@@ -30,8 +30,8 @@ jobs:
         id: set-version
         run: |
           VERSION=$(gradle printTag | awk '/Generated Tag:/ {print $3}')
-          echo versie=$VERSION
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "::set-output name=version::$VERSION"
       - name: Publish Artifact
         uses: actions/upload-artifact@v3
         with:
@@ -55,13 +55,13 @@ jobs:
           path: target
       - name: Print generated tags
         run: |
-          echo "Generated Tag: ${{ env.VERSION }}"
+          echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
       - name: Create release
         id: release
         uses: softprops/action-gh-release@v1
         with:
           target_commitish: workflow-test
-          tag_name: ${{ env.VERSION }}
+          tag_name: ${{ needs.create-jar.outputs.version }}
           generate_release_notes: true
           files: "build/libs/bedwars-*"
   deploy-package:
