@@ -25,7 +25,7 @@ jobs:
           gradle-version: release-candidate
       - name: Package with Gradle
         run: |
-          gradle clean tag jar -Prelease
+          gradle clean tag shadowJar -Prelease
       - name: Set version
         id: set-version
         run: |
