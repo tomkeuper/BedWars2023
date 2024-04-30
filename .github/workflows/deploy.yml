@@ -58,7 +58,7 @@ jobs:
           ls
       - name: Create release
         id: release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           target_commitish: workflow-test
           tag_name: ${{ needs.create-jar.outputs.version }}
@@ -81,7 +81,7 @@ jobs:
           java-version: '17.0.7'
           distribution: 'temurin'
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -115,7 +115,7 @@ jobs:
           java-version: '17.0.7'
           distribution: 'temurin'
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches

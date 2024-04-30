@@ -25,7 +25,7 @@ jobs:
           java-version: '17.0.7'
           distribution: 'temurin'
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
@@ -73,7 +73,7 @@ jobs:
           java-version: '17.0.7'
           distribution: 'temurin'
       - name: Cache Gradle packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
