@@ -55,6 +55,11 @@ jobs:
       - name: Print generated tags
         run: |
           echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
+          cd bedwars-plugin/
+          ls
+          cd build/
+          ls  
+          cd libs/
           ls
       - name: Create release
         id: release
