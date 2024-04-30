@@ -36,3 +36,9 @@ subprojects {
         else -> plugins.apply("bedwars.base-conventions")
     }
 }
+
+tasks.register("printTag") {
+    doLast {
+        println("Generated Tag: ${rootProject.version}")
+    }
+}
