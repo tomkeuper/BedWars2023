@@ -54,11 +54,7 @@ jobs:
         run: |
           echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
           ls
-          cd bedwars-plugin/
-          ls
-          cd build/
-          ls  
-          cd libs/
+          cd target/
           ls
       - name: Create release
         id: release
@@ -67,7 +63,7 @@ jobs:
           target_commitish: workflow-test
           tag_name: ${{ needs.create-jar.outputs.version }}
           generate_release_notes: true
-          files: "BedWars-*"
+          files: "target/BedWars-*"
   deploy-package:
     timeout-minutes: 2
     runs-on: ubuntu-latest
