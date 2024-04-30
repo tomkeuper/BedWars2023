@@ -1,6 +1,6 @@
 ![Bedwars2023_Logo](https://github.com/tomkeuper/BedWars2023/assets/29728836/5979c0e8-1333-40a5-b43c-49ceabd06a57)
 
-[![Discord](https://discordapp.com/api/guilds/760851292826107926/widget.png?style=shield)](https://discord.gg/kPaBGwhmjf) [![bStats](https://img.shields.io/bstats/servers/18317)](#)
+[![Discord](https://discordapp.com/api/guilds/760851292826107926/widget.png?style=shield)](https://discord.gg/kPaBGwhmjf) [![bStats](https://img.shields.io/bstats/servers/18317)]()
 
 As of March 2023 development has started on BedWars2023, a fork of the [BedWars1058](https://www.spigotmc.org/resources/bedwars1058-opensource.97320/) plugin. The goal of this fork is to implement new features and to modernize the codebase.
 
