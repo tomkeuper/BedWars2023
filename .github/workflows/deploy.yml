@@ -31,12 +31,7 @@ jobs:
         run: |
           VERSION=$(gradle printTag | awk '/Generated Tag:/ {print $3}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          ls
-          cd bedwars-plugin/
-          ls
-          cd build/
-          ls  
-          cd libs/
+          cd bedwars-plugin/build/libs/
           ls
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
@@ -50,10 +45,6 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: 'workflow-test'
       - name: Download the artifact
         uses: actions/download-artifact@v4
         with:
