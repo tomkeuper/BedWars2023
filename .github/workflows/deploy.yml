@@ -31,6 +31,13 @@ jobs:
         run: |
           VERSION=$(gradle printTag | awk '/Generated Tag:/ {print $3}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          ls
+          cd bedwars-plugin/
+          ls
+          cd build/
+          ls  
+          cd libs/
+          ls
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -55,6 +62,7 @@ jobs:
       - name: Print generated tags
         run: |
           echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
+          ls
           cd bedwars-plugin/
           ls
           cd build/
