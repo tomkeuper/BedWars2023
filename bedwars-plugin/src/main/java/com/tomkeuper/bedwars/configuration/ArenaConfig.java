@@ -1,0 +1,69 @@
+/*
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Contact e-mail: contact@fyreblox.com
+ */
+
+package com.tomkeuper.bedwars.configuration;
+
+import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+
+public class ArenaConfig extends ConfigManager {
+
+    public ArenaConfig(Plugin plugin, String name, String dir) {
+        super(plugin, name, dir);
+
+        YamlConfiguration yml = getYml();
+        yml.options().header(plugin.getDescription().getName() + " arena configuration file.\n" +
+                "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023/configuration/Arena-Configuration\n");
+        yml.addDefault("group", "Default");
+        yml.addDefault(ConfigPath.ARENA_DISPLAY_NAME, "");
+        yml.addDefault("minPlayers", 2);
+        yml.addDefault("maxInTeam", 1);
+        yml.addDefault("allowSpectate", true);
+        yml.addDefault(ConfigPath.ARENA_SPAWN_PROTECTION, 5);
+        yml.addDefault(ConfigPath.ARENA_SHOP_PROTECTION, 1);
+        yml.addDefault(ConfigPath.ARENA_UPGRADES_PROTECTION, 1);
+        yml.addDefault(ConfigPath.ARENA_GENERATOR_PROTECTION, 1);
+        yml.addDefault(ConfigPath.ARENA_GENERATOR_SPLIT_RANGE, 2.0);
+        yml.addDefault(ConfigPath.ARENA_ISLAND_RADIUS, 17);
+        yml.addDefault("worldBorder", 300);
+        yml.addDefault(ConfigPath.ARENA_Y_LEVEL_KILL, -1);
+        yml.addDefault(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y, 180);
+        yml.addDefault(ConfigPath.ARENA_CONFIGURATION_MIN_BUILD_Y, 0);
+        yml.addDefault(ConfigPath.ARENA_DISABLE_GENERATOR_FOR_EMPTY_TEAMS, false);
+        yml.addDefault(ConfigPath.ARENA_DISABLE_NPCS_FOR_EMPTY_TEAMS, true);
+        yml.addDefault(ConfigPath.ARENA_NORMAL_DEATH_DROPS, false);
+        yml.addDefault(ConfigPath.ARENA_USE_BED_HOLO, true);
+        yml.addDefault(ConfigPath.ARENA_ALLOW_MAP_BREAK, false);
+        ArrayList<String> rules = new ArrayList<>();
+        rules.add("doDaylightCycle:false");
+        rules.add("announceAdvancements:false");
+        rules.add("doInsomnia:false");
+        rules.add("doImmediateRespawn:true");
+        rules.add("doWeatherCycle:false");
+        rules.add("doFireTick:false");
+        yml.addDefault(ConfigPath.ARENA_GAME_RULES, rules);
+        yml.options().copyDefaults(true);
+        save();
+    }
+}

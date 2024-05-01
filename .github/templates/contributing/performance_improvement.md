@@ -1,7 +1,7 @@
 ### Requirements for Contributing a Performance Improvement
 
 * Fill out the template below. Any pull request that does not include enough information to be reviewed in a timely manner may be closed at the maintainers' discretion.
-* The pull request must only affect performance of existing functionality. To contribute other changes, you must use a different template. You can see all templates at <https://github.com/andrei1058/BedWars1058/blob/master/CONTRIBUTING.md>.
+* The pull request must only affect performance of existing functionality. To contribute other changes, you must use a different template. You can see all templates at <https://github.com/tomkeuper/BedWars2023/blob/master/CONTRIBUTING.md>.
 
 ### Description of the Change
 
@@ -40,7 +40,7 @@ What process did you follow to verify that the change has not introduced any reg
 <!--
 
 Please describe the changes in a single line that explains this improvement in
-terms that a user can understand.  This text will be used in BedWars1058's release notes.
+terms that a user can understand.  This text will be used in BedWars2023's release notes.
 
 If this change is not user-facing or notable enough to be included in release notes
 you may use the strings "Not applicable" or "N/A" here.

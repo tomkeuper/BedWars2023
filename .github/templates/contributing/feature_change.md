@@ -12,7 +12,7 @@ Link to the issue that your change relates to. This must be one of the following
 * An open issue with the `beginner` label
 * An open issue with the `help-wanted` label
 
-To contribute other changes, you must use a different template. You can see all templates at https://github.com/andrei1058/BedWars1058/blob/master/CONTRIBUTING.md.
+To contribute other changes, you must use a different template. You can see all templates at https://github.com/tomkeuper/BedWars2023/blob/master/CONTRIBUTING.md.
 
 -->
 
@@ -51,7 +51,7 @@ Describe the actions you performed (including buttons you clicked, text you type
 <!--
 
 Please describe the changes in a single line that explains this improvement in
-terms that a user can understand. This text will be used in BedWars1058's release notes.
+terms that a user can understand. This text will be used in BedWars2023's release notes.
 
 If this change is not user-facing or notable enough to be included in release notes
 you may use the strings "Not applicable" or "N/A" here.
