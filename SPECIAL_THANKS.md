@@ -3,6 +3,7 @@ There is no specific order and if I forgot to add you on this list please let me
 
 - [Andrei1058](https://github.com/andrei1058) - For initial setup of the BedWars1058 plugin!
 - [AgentNoobff](https://github.com/AgentNoobff)
+- [AIGLE25](https://github.com/AIGLE25)
 - Chromaah
 - Diamondy01
 - [ImYenil](https://github.com/ImYenil)
