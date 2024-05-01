@@ -9,6 +9,7 @@ The plugin is published under the open-source GNU GPL 3.0 license. You can read 
 # Description
 BedWars is a mini-game where you have to defend your bed and destroy the others.  
 Once your bed is destroyed, you cannot respawn.
+awdawd
 
 # System requirements
 This software runs on [Spigot](https://www.spigotmc.org/) and NMS.
