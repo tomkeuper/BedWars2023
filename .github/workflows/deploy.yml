@@ -13,7 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: 'workflow-test'
+          ref: 'production'
           fetch-depth: 0 # Fetch all history and tags
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v4
@@ -52,13 +52,11 @@ jobs:
       - name: Print generated tags
         run: |
           echo "Generated Tag: ${{ needs.create-jar.outputs.version }}"
-          cd target/
-          ls
       - name: Create release
         id: release
         uses: softprops/action-gh-release@v2
         with:
-          target_commitish: workflow-test
+          target_commitish: production
           tag_name: ${{ needs.create-jar.outputs.version }}
           generate_release_notes: true
           files: "target/BedWars-*"
@@ -72,7 +70,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: 'workflow-test'
+          ref: 'production'
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v4
         with:
@@ -106,7 +104,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: 'workflow-test'
+          ref: 'production'
       - name: Set up JDK 17.0.7
         uses: actions/setup-java@v4
         with:
