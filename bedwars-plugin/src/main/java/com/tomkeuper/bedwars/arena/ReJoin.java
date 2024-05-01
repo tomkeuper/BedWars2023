@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.arena;
@@ -158,11 +158,13 @@ public class ReJoin {
     public void destroy(boolean destroyTeam) {
         BedWars.debug("ReJoin destroy for " + player.toString());
         reJoinList.remove(this);
-        JsonObject json = new JsonObject();
-        json.addProperty("type", "RD");
-        json.addProperty("uuid", player.toString());
-        json.addProperty("server", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
-        BedWars.getRedisConnection().sendMessage(json.toString());
+        if (BedWars.getRedisConnection() != null){
+            JsonObject json = new JsonObject();
+            json.addProperty("type", "RD");
+            json.addProperty("uuid", player.toString());
+            json.addProperty("server", BedWars.config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID));
+            BedWars.getRedisConnection().sendMessage(json.toString());
+        }
 
         if (bwt != null && destroyTeam && bwt.getMembers().isEmpty()) {
             bwt.setBedDestroyed(true);

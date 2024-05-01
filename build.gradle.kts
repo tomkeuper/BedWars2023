@@ -1,6 +1,6 @@
 allprojects {
     group = "com.tomkeuper.bedwars"
-    version = "1.0-SNAPSHOT"
+    version = rootProject.version
     description = "BedWars minigame by Tom Keuper forked from BedWars1058"
 
     ext.set("id", "bedwars")
@@ -17,6 +17,8 @@ val versions = setOf(
     projects.versionsupportV118R2,
     projects.versionsupportV119R3,
     projects.versionsupportV120R1,
+    projects.versionsupportV120R2,
+    projects.versionsupportV120R3,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.bedwarsApi,
@@ -32,5 +34,11 @@ subprojects {
         in versions -> plugins.apply("bedwars.version-conventions")
         in special -> plugins.apply("bedwars.standard-conventions")
         else -> plugins.apply("bedwars.base-conventions")
+    }
+}
+
+tasks.register("printTag") {
+    doLast {
+        println("Generated Tag: ${rootProject.version}")
     }
 }

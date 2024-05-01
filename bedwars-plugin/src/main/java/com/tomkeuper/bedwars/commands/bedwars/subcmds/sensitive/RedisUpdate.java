@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,46 +15,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.commands.bedwars.subcmds.regular;
+package com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive;
 
 import com.tomkeuper.bedwars.BedWars;
-import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.command.SubCommand;
-import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.configuration.LevelsConfig;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.command.ConsoleCommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class CmdUpgrades extends SubCommand {
+public class RedisUpdate extends SubCommand {
 
-    public CmdUpgrades(ParentCommand parent, String name) {
+    public RedisUpdate(ParentCommand parent, String name) {
         super(parent, name);
         showInList(false);
     }
 
     @Override
     public boolean execute(String[] args, CommandSender s) {
-        if (!(s instanceof Player)) return false;
-        IArena a = Arena.getArenaByPlayer((Player) s);
-        if (a == null) return false;
-        if (!a.isPlayer((Player) s)) return false;
-        ITeam t = a.getTeam((Player) s);
-        if (t.getTeamUpgrades().distance(((Player)s).getLocation()) < 4){
-            BedWars.getUpgradeManager().getMenuForArena(a).open((Player) s);
+        if (!(s instanceof ConsoleCommandSender)) return false;
+
+        if (args.length < 1) {
+            s.sendMessage("§cUsage: §o/bedwars redisUpdate <key>");
             return true;
         }
-        return false;
+
+        String key = args[0];
+        if (key.equals("default_rankup_cost")){
+            BedWars.getRedisConnection().storeSettings(key, String.valueOf(LevelsConfig.getNextCost(1)));
+            s.sendMessage("§aUpdated default rankup cost to " + LevelsConfig.getNextCost(1));
+        } else {
+            s.sendMessage("§cUnknown key: §o" + key);
+        }
+
+
+        return true;
     }
 
     @Override
     public List<String> getTabComplete() {
-        return new ArrayList<>();
+        return null;
     }
 }

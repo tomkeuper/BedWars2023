@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.api;
@@ -29,6 +29,9 @@ import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.levels.Level;
@@ -48,13 +51,12 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.sql.Timestamp;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public interface BedWars {
@@ -68,6 +70,11 @@ public interface BedWars {
      * Get addon util
      */
     IAddonManager getAddonsUtil();
+
+    /**
+     * Get holograms util.
+     */
+    IHologramManager getHologramsUtil();
 
     interface IStats {
         /**
@@ -433,6 +440,7 @@ public interface BedWars {
      * Get shop util.
      */
     ShopUtil getShopUtil();
+
     /**
      * The ShopUtil interface provides utility methods for managing player's money, currency, and purchases in the shop.
      */
@@ -441,8 +449,8 @@ public interface BedWars {
         /**
          * Retrieves the amount of money a player has in the specified currency.
          *
-         * @param player    the player
-         * @param currency  the currency material
+         * @param player   the player
+         * @param currency the currency material
          * @return the amount of money the player has
          */
         int calculateMoney(Player player, Material currency);
@@ -450,7 +458,7 @@ public interface BedWars {
         /**
          * Retrieves the currency material based on its name.
          *
-         * @param currency  the currency name
+         * @param currency the currency name
          * @return the currency material, or {@link Material#AIR} if it is a vault currency
          */
         Material getCurrency(String currency);
@@ -458,7 +466,7 @@ public interface BedWars {
         /**
          * Retrieves the color associated with the specified currency material.
          *
-         * @param currency  the currency material
+         * @param currency the currency material
          * @return the color associated with the currency
          */
         ChatColor getCurrencyColor(Material currency);
@@ -466,7 +474,7 @@ public interface BedWars {
         /**
          * Retrieves the currency message path for the specified content tier.
          *
-         * @param contentTier  the content tier
+         * @param contentTier the content tier
          * @return the currency message path
          */
         String getCurrencyMsgPath(IContentTier contentTier);
@@ -474,7 +482,7 @@ public interface BedWars {
         /**
          * Retrieves the Roman numeral representation of the specified integer.
          *
-         * @param n  the integer value (1-10)
+         * @param n the integer value (1-10)
          * @return the Roman numeral representation
          */
         String getRomanNumber(int n);
@@ -482,9 +490,9 @@ public interface BedWars {
         /**
          * Takes the specified amount of money from the player in the specified currency.
          *
-         * @param player    the player
-         * @param currency  the currency material
-         * @param amount    the amount of money to take
+         * @param player   the player
+         * @param currency the currency material
+         * @param amount   the amount of money to take
          */
         void takeMoney(Player player, Material currency, int amount);
 
@@ -832,4 +840,53 @@ public interface BedWars {
      */
     IRedisClient getRedisClient();
 
+    /**
+     * Retrieves the ItemUtil interface for in game lobby items
+     *
+     * @return the ItemUtil interface
+     */
+    ItemUtil getItemUtil();
+
+    /**
+     * Utility interface for managing lobby items.
+     */
+    interface ItemUtil {
+
+        /**
+         * Retrieves the collection of lobby items.
+         *
+         * @return The collection of lobby items.
+         */
+        Collection<IPermanentItem> getLobbyItems();
+
+        /**
+         * Retrieves the collection of spectator items.
+         *
+         * @return The collection of spectator items.
+         */
+        Collection<IPermanentItem> getSpectatorItems();
+
+        /**
+         * Retrieves the collection of pre-game items.
+         *
+         * @return The collection of pre-game items.
+         */
+        Collection<IPermanentItem> getPreGameItems();
+
+        /**
+         * Retrieves the map of item handler IDs to permanent item handlers.
+         *
+         * @return The map of item handler IDs to permanent item handlers.
+         */
+        Map<String, IPermanentItemHandler> getItemHandlers();
+
+        /**
+         * Registers a permanent item handler.
+         *
+         * @param handler The permanent item handler to register.
+         * @return True if the handler was successfully registered; false otherwise.
+         * @throws IllegalArgumentException If the handler ID, plugin, or type is not set.
+         */
+        boolean registerItemHandler(IPermanentItemHandler handler) throws IllegalArgumentException;
+    }
 }

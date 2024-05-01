@@ -84,8 +84,8 @@ body:
   attributes:
     label: "Additional Info"
     description: |-
-      Add any extra info you think is nessesary for this Bug report.
+      Add any extra info you think is necessary for this Bug report.
       - If you selected `API Bug` will you need to include code-examples here to reproduce the issue.
-      - If you selected `Plugin/Server Incompatability` should you include extra Server info such as a Plugin List or Timings Report or info about the plugin.
+      - If you selected `Plugin/Server Incompatibility` should you include extra Server info such as a Plugin List or Timings Report or info about the plugin.
       - Server info like Version, software used (spigot, paper, carbon...) is also welcome.
     placeholder: "Put any extra info you like to add into this field..."

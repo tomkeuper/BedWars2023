@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.support.party;
@@ -106,10 +106,12 @@ public class Internal implements Party {
                 }
                 p.members.remove(member);
 
-                JsonObject json = new JsonObject();
-                json.addProperty("type", "PR"); // PR = Party Remove
-                json.addProperty("owner", member.getUniqueId().toString());
-                BedWars.getRedisConnection().sendMessage(json.toString());
+                if (BedWars.getRedisConnection() != null) {
+                    JsonObject json = new JsonObject();
+                    json.addProperty("type", "PR"); // PR = Party Remove
+                    json.addProperty("owner", member.getUniqueId().toString());
+                    BedWars.getRedisConnection().sendMessage(json.toString());
+                }
 
                 if (p.members.isEmpty() || p.members.size() == 1) {
                     disband(p.owner);
@@ -130,10 +132,12 @@ public class Internal implements Party {
         pa.members.clear();
         Internal.parties.remove(pa);
 
-        JsonObject json = new JsonObject();
-        json.addProperty("type", "PD"); // PD = Party Disband
-        json.addProperty("owner", owner.getUniqueId().toString());
-        BedWars.getRedisConnection().sendMessage(json.toString());
+        if (BedWars.getRedisConnection() != null) {
+            JsonObject json = new JsonObject();
+            json.addProperty("type", "PD"); // PD = Party Disband
+            json.addProperty("owner", owner.getUniqueId().toString());
+            BedWars.getRedisConnection().sendMessage(json.toString());
+        }
     }
 
     @Override
@@ -153,7 +157,7 @@ public class Internal implements Party {
             if (p.members.contains(target)) {
                 for (Player mem : p.members) {
                     Language language = Language.getPlayerLanguage(mem);
-                    mem.sendMessage(getMsg(language, mem, Messages.COMMAND_PARTY_REMOVE_SUCCESS).replace("{player}", target.getName()));
+                    mem.sendMessage(getMsg(language, mem, Messages.COMMAND_PARTY_REMOVE_SUCCESS).replace("%bw_playername%", mem.getName()).replace("%bw_player%", mem.getDisplayName()));
                 }
                 p.members.remove(owner);
                 if (p.members.isEmpty() || p.members.size() == 1) {

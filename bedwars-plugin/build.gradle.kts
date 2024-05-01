@@ -29,8 +29,8 @@ repositories {
 dependencies {
     api("io.papermc:paperlib:1.0.8")
     api("org.bstats:bstats-bukkit:3.0.2")
-    implementation("com.iridium:IridiumColorAPI:1.0.6") // used by BedWars - API
-    implementation("commons-lang:commons-lang:2.6") // Used by UridiumColorAPI
+    implementation("com.iridium:IridiumColorAPI:1.0.9") // used by BedWars - API
+    implementation("org.apache.commons:commons-lang3:3.14.0") // Used by IridiumColorAPI
 
     api(projects.bedwarsApi)
     api(projects.versionsupportCommon)
@@ -41,6 +41,8 @@ dependencies {
     api(projects.versionsupportV118R2)
     api(projects.versionsupportV119R3)
     api(projects.versionsupportV120R1)
+    api(projects.versionsupportV120R2)
+    api(projects.versionsupportV120R3)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1") {
@@ -112,6 +114,8 @@ val versions = setOf(
     projects.versionsupportV118R2,
     projects.versionsupportV119R3,
     projects.versionsupportV120R1,
+    projects.versionsupportV120R2,
+    projects.versionsupportV120R3,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.resetadapterAswm

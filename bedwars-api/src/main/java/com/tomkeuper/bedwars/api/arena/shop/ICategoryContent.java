@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.api.arena.shop;
@@ -96,7 +96,7 @@ public interface ICategoryContent {
      * @param shopCache  The shop cache containing the player's data.
      * @param slot       The slot number of the content.
      */
-    void execute(Player player, IShopCache shopCache, int slot);
+    boolean execute(Player player, IShopCache shopCache, int slot);
 
     /**
      * Give the items associated with the category content to the player.

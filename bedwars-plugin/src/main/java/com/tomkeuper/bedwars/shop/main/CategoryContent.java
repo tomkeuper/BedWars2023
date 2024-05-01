@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.shop.main;
@@ -140,7 +140,7 @@ public class CategoryContent implements ICategoryContent {
     }
 
     @Override
-    public void execute(Player player, IShopCache shopCache, int slot) {
+    public boolean execute(Player player, IShopCache shopCache, int slot) {
 
         IContentTier ct;
 
@@ -148,12 +148,12 @@ public class CategoryContent implements ICategoryContent {
         if (shopCache.getCategoryWeight(father) > weight) {
             player.sendMessage(getMsg(player, Messages.SHOP_ALREADY_HIGHER_TIER));
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            return;
+            return false;
         }
 
         if (shopCache.getContentTier(getIdentifier()) > contentTiers.size()) {
             Bukkit.getLogger().severe("Wrong tier order at: " + getIdentifier());
-            return;
+            return false;
         }
 
         //check if can re-buy
@@ -161,7 +161,7 @@ public class CategoryContent implements ICategoryContent {
             if (isPermanent() && shopCache.hasCachedItem(this)) {
                 player.sendMessage(getMsg(player, Messages.SHOP_ALREADY_BOUGHT));
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                return;
+                return false;
             }
             //current tier
             ct = contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1);
@@ -179,7 +179,7 @@ public class CategoryContent implements ICategoryContent {
             player.sendMessage(getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY).replace("%bw_currency%", getMsg(player, getCurrencyMsgPath(ct))).
                     replace("%bw_amount%", String.valueOf(ct.getPrice() - money)));
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            return;
+            return false;
         }
 
         ShopBuyEvent event;
@@ -187,14 +187,14 @@ public class CategoryContent implements ICategoryContent {
         Bukkit.getPluginManager().callEvent(event = new ShopBuyEvent(player, Arena.getArenaByPlayer(player), this, shopCache));
 
         if (event.isCancelled()){
-            return;
+            return false;
         }
 
         //check inventory has space
         if (player.getInventory().firstEmpty() == -1){
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
             player.sendMessage(getMsg(player, Messages.UPGRADES_LORE_REPLACEMENT_INSUFFICIENT_SPACE));
-            return;
+            return false;
         }
 
         //take money
@@ -227,6 +227,7 @@ public class CategoryContent implements ICategoryContent {
             }
         }
         shopCache.setCategoryWeight(father, weight);
+        return true;
     }
 
     /**

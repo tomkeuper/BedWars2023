@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.listeners.arenaselector;
@@ -27,6 +27,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.ArenaGUI;
+import com.tomkeuper.bedwars.arena.ReJoin;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -54,6 +55,8 @@ public class ArenaSelectorListener implements Listener {
         if (!BedWars.nms.isCustomBedWarsItem(item)) return;
 
         String data = BedWars.nms.getCustomData(item);
+
+        //TODO convert to show stats handler
         if (data.startsWith("RUNCOMMAND")) {
             Bukkit.dispatchCommand(player, data.split("_")[1]);
         }
@@ -70,8 +73,17 @@ public class ArenaSelectorListener implements Listener {
             if ((status == GameState.waiting || status == GameState.starting) && arena.addPlayer(player, false)) {
                 Sounds.playSound("join-allowed", player);
             } else {
-                Sounds.playSound("join-denied", player);
-                player.sendMessage(Language.getMsg(player, Messages.ARENA_JOIN_DENIED_SELECTOR));
+                ReJoin reJoin = ReJoin.getPlayer(player);
+                if (reJoin != null) {
+                    if (reJoin.canReJoin()) {
+                        reJoin.reJoin(player);
+                        return;
+                    }
+                    reJoin.destroy(false);
+                } else {
+                    Sounds.playSound("join-denied", player);
+                    player.sendMessage(Language.getMsg(player, Messages.ARENA_JOIN_DENIED_SELECTOR));
+                }
             }
         } else if (event.getClick() == ClickType.RIGHT) {
             if (status == GameState.playing && arena.addSpectator(player, false, null)) {

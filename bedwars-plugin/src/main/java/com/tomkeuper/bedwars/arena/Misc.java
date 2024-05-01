@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.arena;
@@ -80,9 +80,25 @@ public class Misc {
                 }
                 if (arena != null) {
                     if (arena.isSpectator(p)) {
-                        arena.removeSpectator(p, false);
+                        arena.removeSpectator(p, false, true);
                     } else {
-                        arena.removePlayer(p, false);
+                        arena.removePlayer(p, false, true);
+
+                        // Manage internal parties
+                        if (getPartyManager().isInternal()) {
+                            if (getPartyManager().hasParty(p)) {
+                                if (getPartyManager().isOwner(p)) {
+                                    for (Player partyMember: getPartyManager().getMembers(p)) {
+                                        if (arena.isPlayer(partyMember)) arena.removePlayer(partyMember, false, true);
+                                        else if (arena.isSpectator(partyMember)) arena.removeSpectator(partyMember, false, true);
+                                        else {
+                                            BedWars.debug("Cannot remove " + partyMember.getName() + " from " + arena.getDisplayName() + " because member is not a player nor a spectator.");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         if (!notAbandon && arena.getStatus() == GameState.playing) {
                             if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_MARK_LEAVE_AS_ABANDON)) {
                                 arena.abandonGame(p);
@@ -172,7 +188,7 @@ public class Misc {
      * @param lore     item lore
      * @param owner    in case of skull, can be null, don't worry
      */
-    static ItemStack createItem(Material material, byte data, boolean enchanted, String name, List<String> lore, Player owner, @SuppressWarnings("SameParameterValue") String metaKey, String metaData) {
+    public static ItemStack createItem(Material material, byte data, boolean enchanted, String name, List<String> lore, Player owner, @SuppressWarnings("SameParameterValue") String metaKey, String metaData) {
         ItemStack i = new ItemStack(material, 1, data);
         ItemMeta im = i.getItemMeta();
         im.setDisplayName(name);

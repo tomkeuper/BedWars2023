@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.api.configuration;
@@ -78,6 +78,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH = "allow-fire-extinguish";
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
     public static final String GENERAL_CONFIGURATION_ENABLE_ANTI_DROP = "enable-anti-drop-feature";
+    public static final String GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE = "hologram-update-distance";
     public static final String GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN = "enable-generator-replace-air-sudden-death";
     public static final String GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR = "enable-teammate-tracking-action-bar";
 
@@ -99,6 +100,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.slot";
     public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.enchanted";
     public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.command";
+    public static final String GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LEAVE_DELAY = GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH + ".%path%.leave-delay";
 
     public static final String GENERAL_CONFIGURATION_STATS_PATH = "stats-gui";
     public static final String GENERAL_CONFIGURATION_STATS_GUI_SIZE = GENERAL_CONFIGURATION_STATS_PATH + ".inv-size";
@@ -113,6 +115,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.slot";
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.enchanted";
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.command";
+    public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_LEAVE_DELAY = GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH + ".%path%.leave-delay";
 
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR = "countdowns.game-start-regular";
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED = "countdowns.game-start-shortened";
@@ -130,7 +133,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ARENA_GROUPS = "arenaGroups";
     public static final String GENERAL_CONFIGURATION_REJOIN_TIME = "rejoin-time";
     public static final String GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY = "re-spawn-invulnerability";
-    public static final String GENERAL_CONFIGURATION_LEAVE_DELAY = "leave-delay-time";
     public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT = "in-game-announcement";
     public static final String GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE = GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT +".enable";
 
@@ -157,6 +159,7 @@ public class ConfigPath {
     public static final String SB_CONFIG_SIDEBAR_TAB_NAME = "scoreboard-settings.tab-name";
     public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED = "scoreboard-settings.abovehead-name-enable";
     public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME = "scoreboard-settings.abovehead-name";
+    public static final String SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED= "scoreboard-settings.tab-name-formatting-enable";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_IN_TAB = "scoreboard-settings.health.display-in-tab";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME = "scoreboard-settings.health.display-below-name";
     public static final String GENERAL_CONFIGURATION_DISABLED_LANGUAGES = "disabled-languages";

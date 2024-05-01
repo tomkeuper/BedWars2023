@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.language;
@@ -306,10 +306,10 @@ public class SimplifiedChinese extends Language {
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&l保护你的床！");
         yml.addDefault(Messages.BED_HOLOGRAM_DESTROYED, "&c&l你的床被破坏了！");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES, "&b队伍升级,&e&l右键点击");
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES, "&b单挑升级,&e&l右键点击");
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP, "&b队伍商店,&e&l右键点击");
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP, "&b单挑商店,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), "&b队伍升级,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), "&b单挑升级,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), "&b队伍商店,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), "&b单挑商店,&e&l右键点击");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&l队伍团灭 > %bw_team_color%%bw_team_name%&c已被团灭！\n");
         yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&f床被破坏");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&f钻石II级");

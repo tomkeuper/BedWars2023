@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.listeners;
@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -58,17 +59,47 @@ public class Interact implements Listener {
     /* Handle custom items with commands on them */
     public void onItemCommand(PlayerInteractEvent e) {
         if (e == null) return;
-        Player p = e.getPlayer();
+        Player player = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
-            ItemStack i = BedWars.nms.getItemInHand(p);
-            if (!nms.isCustomBedWarsItem(i)) return;
-            final String[] customData = nms.getCustomData(i).split("_");
-            if (customData.length >= 2) {
-                if (customData[0].equals("RUNCOMMAND")) {
-                    e.setCancelled(true);
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.dispatchCommand(p, customData[1]));
+            ItemStack item = BedWars.nms.getItemInHand(player);
+            if (!nms.isCustomBedWarsItem(item)) return;
+
+            String action = BedWars.nms.getTag(item, "ACTION");
+            if (action == null) return;
+
+            BedWars.debug("Item action: " + action);
+            if (Arena.getArenaByPlayer(player) != null) {
+                if (Arena.getArenaByPlayer(player).isSpectator(player)) {
+                    for (IPermanentItem permanentItem : BedWars.getSpectatorItems()) {
+                        if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                            permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                } else {
+                    for (IPermanentItem permanentItem : BedWars.getPreGameItems()) {
+                        if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                            permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
                 }
             }
+
+            //* Get the item handler for the correct item
+            if (BedWars.config.getLobbyWorldName().equalsIgnoreCase(player.getWorld().getName())) {
+                for (IPermanentItem permanentItem : BedWars.getLobbyItems()) {
+                    if (permanentItem.getIdentifier().equalsIgnoreCase(action)) {
+                        permanentItem.getHandler().handleUse(player, Arena.getArenaByPlayer(player), permanentItem);
+                        e.setCancelled(true);
+                        return;
+                    }
+                }
+            };
+
+            Bukkit.getLogger().warning("Could not find a handler for item: " + action);
         }
     }
 

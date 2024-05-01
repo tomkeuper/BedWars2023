@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.arena.feature;
@@ -51,11 +51,8 @@ public class SpoilPlayerTNTFeature {
     }
 
     public static void init() {
-        if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS)) {
-            if (instance == null) {
-                instance = new SpoilPlayerTNTFeature();
-            }
-        }
+        if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS))
+            if (instance == null) instance = new SpoilPlayerTNTFeature();
     }
 
     private static class ParticleTask implements Runnable {
@@ -107,14 +104,15 @@ public class SpoilPlayerTNTFeature {
             ItemStack inHand = event.getItemInHand();
             IArena arena = Arena.getArenaByPlayer(event.getPlayer());
             if (arena == null || !arena.isPlayer(event.getPlayer()) || arena.isSpectator(event.getPlayer())) return;
+
             if (inHand.getType() == Material.TNT) {
                 if (!instance.playersWithTnt.contains(event.getPlayer())) return;
-                Bukkit.getScheduler().runTaskLater(BedWars.plugin,
-                        () -> {
-                            if (!event.getPlayer().getInventory().contains(Material.TNT)) {
-                                instance.playersWithTnt.remove(event.getPlayer());
-                            }
-                        }, 1L);
+
+                Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+                    if (!event.getPlayer().getInventory().contains(Material.TNT)) {
+                        instance.playersWithTnt.remove(event.getPlayer());
+                    }
+                }, 1L);
             }
         }
 
@@ -123,10 +121,11 @@ public class SpoilPlayerTNTFeature {
             Player player = (Player) event.getPlayer();
             IArena arena = Arena.getArenaByPlayer(player);
             if (arena == null || !arena.isPlayer(player) || arena.isSpectator(player)) return;
+
             if (instance.playersWithTnt.contains(player)) {
                 if (player.getInventory().contains(Material.TNT)) return;
                 instance.playersWithTnt.remove(player);
-            } else if (!instance.playersWithTnt.contains(player)) {
+            } else {
                 if (!player.getInventory().contains(Material.TNT)) return;
                 instance.playersWithTnt.add(player);
             }

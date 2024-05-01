@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars;
@@ -30,6 +30,9 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.SupportPAPI;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -59,9 +62,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class API implements com.tomkeuper.bedwars.api.BedWars {
@@ -332,6 +333,11 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     @Override
     public IAddonManager getAddonsUtil() {
         return BedWars.addonManager;
+    }
+
+    @Override
+    public IHologramManager getHologramsUtil() {
+        return BedWars.hologramManager;
     }
 
     @SuppressWarnings("unused")
@@ -619,4 +625,43 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
     public IRedisClient getRedisClient() {
         return BedWars.getRedisConnection();
     }
+
+    @Override
+    public ItemUtil getItemUtil() {
+        return itemUtil;
+    }
+
+    private final ItemUtil itemUtil = new ItemUtil() {
+        @SuppressWarnings("unused")
+        @Override
+        public Collection<IPermanentItem> getLobbyItems() {
+            return BedWars.getLobbyItems();
+        }
+
+        @Override
+        public Collection<IPermanentItem> getSpectatorItems() {
+            return BedWars.getSpectatorItems();
+        }
+
+        @Override
+        public Collection<IPermanentItem> getPreGameItems() {
+            return BedWars.getPreGameItems();
+        }
+
+        @Override
+        public Map<String, IPermanentItemHandler> getItemHandlers() {
+            return BedWars.getItemHandlers();
+        }
+
+        @SuppressWarnings("unused")
+        @Override
+        public boolean registerItemHandler(IPermanentItemHandler handler) throws IllegalArgumentException {
+            if (handler.getId() == null) throw new IllegalArgumentException("Handler ID is not set!");
+            if (handler.getPlugin() == null) throw new IllegalArgumentException("Handler plugin is not set!");
+            if (handler.getType() == null)  throw new IllegalArgumentException("Handler type is not set!");
+            return BedWars.registerItemHandler(handler);
+        }
+
+    };
+
 }

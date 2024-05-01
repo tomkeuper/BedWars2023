@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.commands.bedwars.subcmds.regular;
@@ -66,54 +66,26 @@ public class CmdLeave extends SubCommand {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
 
-        if (cancel(p.getUniqueId())) return true;
-
         IArena a = Arena.getArenaByPlayer(p);
         if (p.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
-            update(p.getUniqueId());
             Misc.moveToLobbyOrKick(p, a, a != null && a.isSpectator(p.getUniqueId()));
             return true;
         } else {
             if (a == null) {
-                update(p.getUniqueId());
-                p.sendMessage(Language.getMsg(p, Messages.COMMAND_FORCESTART_NOT_IN_GAME));
+                p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_DENIED_NOT_IN_ARENA));
                 return true;
             }
 
             if (BedWars.getPartyManager().isOwner(p)){
                 openLeaveGUI(p);
             } else {
-                if (args.length > 0 && args[0].equalsIgnoreCase("delayed")) {
-                    int leaveDelay = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LEAVE_DELAY);
-                    if (leaveDelay == 0) {
-                        Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                    } else {
-                        BukkitTask qt = leaving.get(p.getUniqueId());
-                        if (qt != null) {
-                            update(p.getUniqueId());
-                            qt.cancel();
-                            leaving.remove(p.getUniqueId());
-                            p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_CANCELED));
-                            return true;
-                        }
-                        p.sendMessage(Language.getMsg(p, Messages.COMMAND_LEAVE_STARTED).replace("%bw_leave_delay%", String.valueOf(leaveDelay)));
-                        BukkitTask bukkitTask = new BukkitRunnable() {
-                            public void run() {
-                                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                                leaving.remove(p.getUniqueId());
-                            }
-                        }.runTaskLater(BedWars.plugin, leaveDelay * 20L);
-                        leaving.put(p.getUniqueId(), bukkitTask);
-                    }
-                } else {
-                    Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
-                }
+                Misc.moveToLobbyOrKick(p, a, a.isSpectator(p.getUniqueId()));
             }
         }
         return true;
     }
 
-    private void openLeaveGUI(Player player) {
+    public static void openLeaveGUI(Player player) {
         LeaveGuiHolder holder = new LeaveGuiHolder();
         Inventory inv = Bukkit.createInventory(holder, 9, Language.getMsg(player, Messages.COMMAND_LEAVE_HAS_PARTY_POPUP_TITLE));
         ItemStack leaveItem = BedWars.nms.greenGlassPane(1);

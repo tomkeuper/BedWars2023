@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,95 +15,90 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.api.arena.shop;
 
-import com.tomkeuper.bedwars.api.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.language.Language;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ShopHolo {
     /**
      * Shop holograms per language <iso, holo></iso,>
      */
-    private static List<ShopHolo> shopHolo = new ArrayList<>();
-    private static BedWars api = null;
+    @Getter
+    private static HashMap<Player, List<ShopHolo>> shopHolo = new HashMap<>();
 
-    private String iso;
-    private ArmorStand a1, a2;
-    private Location l;
-    private IArena a;
+    @Getter
+    private final IHologram hologram;
+    private final Location l;
+    private final IArena a;
+    private final ITeam t;
 
-    public ShopHolo(String iso, ArmorStand a1, ArmorStand a2, Location l, IArena a) {
+    public ShopHolo(@Nonnull IHologram hologram, Location l, IArena a, ITeam t) {
         this.l = l;
-        for (ShopHolo sh : getShopHolo()) {
-            if (sh.l == l && sh.iso.equalsIgnoreCase(iso)) {
-                if (a1 != null) a1.remove();
-                if (a2 != null) a2.remove();
-                return;
-            }
-        }
-        this.a1 = a1;
-        this.a2 = a2;
-        this.iso = iso;
+        this.hologram = hologram;
         this.a = a;
-        if (a1 != null) a1.setMarker(true);
-        if (a2 != null) a2.setMarker(true);
-        shopHolo.add(this);
-        if (api == null) api = Bukkit.getServer().getServicesManager().getRegistration(BedWars.class).getProvider();
+        this.t = t;
+        shopHolo.putIfAbsent(hologram.getPlayer(), new ArrayList<>());
+        shopHolo.get(hologram.getPlayer()).add(this);
     }
 
     public void update() {
-        if (l == null) {
-            Bukkit.broadcastMessage("LOCATION IS NULL");
-        }
-        for (Player p2 : l.getWorld().getPlayers()) {
-            if (Language.getPlayerLanguage(p2).getIso().equalsIgnoreCase(iso)) continue;
-            if (a1 != null) {
-                api.getVersionSupport().hideEntity(a1, p2);
-            }
-            if (a2 != null) {
-                api.getVersionSupport().hideEntity(a2, p2);
-            }
-        }
+        if (l == null) Bukkit.broadcastMessage("LOCATION IS NULL");
+        hologram.getLines().forEach(IHoloLine::reveal);
     }
 
-    public void updateForPlayer(Player p, String lang) {
-        if (lang.equalsIgnoreCase(iso)) return;
-        if (a1 != null) {
-            api.getVersionSupport().hideEntity(a1, p);
-        }
-        if (a2 != null) {
-            api.getVersionSupport().hideEntity(a2, p);
-        }
+    public static void clearForArena(IArena arena) {
+        shopHolo.forEach((p, h) -> h.stream()
+                .filter(holo -> holo.getArena() == arena)
+                .collect(Collectors.toList())
+                .forEach(holo -> holo.getHologram().remove()));
+        shopHolo.entrySet().removeIf(entry -> entry.getValue().stream().anyMatch(holo -> holo.getArena() == arena));
     }
 
-    public static void clearForArena(IArena a) {
-        for (ShopHolo sh : new ArrayList<>(getShopHolo())) {
-            if (sh.a == a) {
-                shopHolo.remove(sh);
-            }
-        }
-    }
-
-    public IArena getA() {
+    public IArena getArena() {
         return a;
     }
 
-    public String getIso() {
-        return iso;
+    public ITeam getTeam() {
+        return t;
     }
 
-    public static List<ShopHolo> getShopHolo() {
-        return shopHolo;
+    public static void clearForPlayer(Player p) {
+        shopHolo.get(p).forEach(h -> h.getHologram().remove());
+        shopHolo.remove(p);
+    }
+
+    public static void clear() {
+        shopHolo.forEach((p, h) -> h.forEach(holo -> holo.getHologram().remove()));
+        shopHolo.clear();
+    }
+
+    public static void add(Player p, ShopHolo holo) {
+        if (shopHolo.containsKey(p)) {
+            shopHolo.get(p).add(holo);
+        } else {
+            shopHolo.put(p, new ArrayList<>());
+            shopHolo.get(p).add(holo);
+        }
+    }
+
+    public static List<ShopHolo> getShopHolograms(Player p) {
+        if (!shopHolo.containsKey(p)) shopHolo.put(p, new ArrayList<>());
+        return shopHolo.get(p);
     }
 }

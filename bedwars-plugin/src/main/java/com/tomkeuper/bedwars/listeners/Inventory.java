@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.listeners;
@@ -32,6 +32,8 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.CmdLeave;
+import com.tomkeuper.bedwars.shop.main.ShopCategory;
+import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -203,6 +205,16 @@ public class Inventory implements Listener {
 
         // Check if player is in an arena or if they are watching a GUI
         if (arena == null || BedWars.getAPI().getTeamUpgradesUtil().isWatchingGUI(player)) {
+            return;
+        }
+
+        // Check if player is watching a shop GUI
+        if (ShopCategory.categoryViewers.contains(player.getUniqueId())) {
+            return;
+        }
+
+        // Check if player is watching quick buy menu
+        if (ShopIndex.indexViewers.contains(player.getUniqueId())) {
             return;
         }
 

@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.upgrades.upgradeaction;
@@ -58,14 +58,14 @@ public class GeneratorEditAction implements UpgradeAction {
         } else if (type == ApplyType.EMERALD) {
             if (!bwt.getArena().getConfig().getArenaLocations("Team." + bwt.getName() + ".Emerald").isEmpty()) {
                 for (Location l : bwt.getArena().getConfig().getArenaLocations("Team." + bwt.getName() + ".Emerald")) {
-                    IGenerator gen = new OreGenerator(l, bwt.getArena(), GeneratorType.CUSTOM, bwt);
+                    IGenerator gen = new OreGenerator(l, bwt.getArena(), GeneratorType.CUSTOM, bwt, false);
                     gen.setOre(new ItemStack(Material.EMERALD));
                     gen.setType(GeneratorType.EMERALD);
                     bwt.getGenerators().add(gen);
                     generator.add(gen);
                 }
             } else {
-                IGenerator gen = new OreGenerator(bwt.getGenerators().get(0).getLocation().clone(), bwt.getArena(), GeneratorType.CUSTOM, bwt);
+                IGenerator gen = new OreGenerator(bwt.getGenerators().get(0).getLocation().clone(), bwt.getArena(), GeneratorType.CUSTOM, bwt, false);
                 gen.setOre(new ItemStack(Material.EMERALD));
                 gen.setType(GeneratorType.EMERALD);
                 bwt.getGenerators().add(gen);

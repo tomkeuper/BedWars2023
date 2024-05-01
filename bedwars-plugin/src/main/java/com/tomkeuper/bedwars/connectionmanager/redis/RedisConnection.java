@@ -1,3 +1,23 @@
+/*
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Contact e-mail: contact@fyreblox.com
+ */
+
 package com.tomkeuper.bedwars.connectionmanager.redis;
 
 import com.google.gson.JsonObject;
@@ -5,6 +25,8 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.communication.IRedisClient;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -126,6 +148,64 @@ public class RedisConnection implements IRedisClient {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Check if the server settings are stored and or matching the default settings.
+     *
+     * @return True if correct or matching the default settings, otherwise false.
+     */
+    public boolean checkSettings(String redisSettingIdentifier, String defaultSetting){
+        try (Jedis jedis = dataPool.getResource()) {
+            String key = "settings";;
+            if (jedis.exists(key)) {
+                String retrievedSetting = jedis.hget(key, redisSettingIdentifier);
+                if (!defaultSetting.equals(retrievedSetting)) {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Setting '"+ redisSettingIdentifier +"' does not match the stored value of '" + retrievedSetting + "' is '" + defaultSetting + "'.");
+                    return false;
+                }
+            } else {
+                jedis.hset(key, redisSettingIdentifier, defaultSetting);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Store the settings in the Redis database.
+     *
+     * @param redisSettingIdentifier the identifier of the setting to be checked.
+     * @param setting the setting to be stored.
+     */
+    public void storeSettings(String redisSettingIdentifier, String setting) {
+        try (Jedis jedis = dataPool.getResource()) {
+            String key = "settings";
+            jedis.hset(key, redisSettingIdentifier, setting);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Retrieve the data associated with a specific identifier from the Redis database.
+     *
+     * @param redisSettingIdentifier the identifier of the setting to be checked.
+     * @return the data as a string associated with the specified identifier
+     */
+    public String retrieveSetting(String redisSettingIdentifier){
+        try (Jedis jedis = dataPool.getResource()) {
+            String key = "settings";;
+            if (jedis.exists(key)) {
+                String retrievedSetting = jedis.hget(key, redisSettingIdentifier);
+                return retrievedSetting;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.arena;
@@ -43,6 +43,7 @@ import com.tomkeuper.bedwars.api.events.server.ArenaDisableEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaEnableEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaRestartEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaSpectateEvent;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.region.Region;
@@ -62,8 +63,6 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.money.internal.MoneyPerMinuteTask;
 import com.tomkeuper.bedwars.shop.ShopCache;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
-import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -84,6 +83,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -342,7 +342,7 @@ public class Arena implements IArena {
                         plugin.getLogger().severe("Invalid location for " + type + " generator: " + s);
                         continue;
                     }
-                    oreGenerators.add(new OreGenerator(location, this, GeneratorType.valueOf(type.toUpperCase()), null));
+                    oreGenerators.add(new OreGenerator(location, this, GeneratorType.valueOf(type.toUpperCase()), null, true));
                 }
             }
         }
@@ -510,7 +510,7 @@ public class Arena implements IArena {
             players.add(p);
             p.setFlying(false);
             p.setAllowFlight(false);
-            p.setHealth(20);
+            p.setHealth(p.getMaxHealth());
             for (Player on : players) {
                 Language language = Language.getPlayerLanguage(on);
                 if (ev.getMessage().equals("")){
@@ -655,8 +655,6 @@ public class Arena implements IArena {
                 reJoin.destroy(true);
             }
 
-            leaving.remove(p);
-
             p.closeInventory();
             spectators.add(p);
             players.remove(p);
@@ -725,7 +723,7 @@ public class Arena implements IArena {
                 /* Spectator items */
                 sendSpectatorCommandItems(p);
                 // make invisible because it is annoying whene there are many spectators around the map
-                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false));
+                p.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1, false, false));
 
                 p.getInventory().setArmorContents(null);
             });
@@ -735,18 +733,15 @@ public class Arena implements IArena {
             p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_SPECTATOR_MSG).replace("%bw_arena%", this.getDisplayName()));
 
             /* update generator holograms for spectators */
-            String iso = Language.getPlayerLanguage(p).getIso();
             for (IGenerator o : getOreGenerators()) {
-                o.updateHolograms(p, iso);
+                o.updateHolograms(p);
             }
             for (ITeam t : getTeams()) {
+                if (!t.isShopSpawned()) continue;
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group)), Collections.singletonList(p), this, t);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group)), Collections.singletonList(p), this, t);
                 for (IGenerator o : t.getGenerators()) {
-                    o.updateHolograms(p, iso);
-                }
-            }
-            for (ShopHolo sh : ShopHolo.getShopHolo()) {
-                if (sh.getA() == this) {
-                    sh.updateForPlayer(p, iso);
+                    o.updateHolograms(p);
                 }
             }
 
@@ -1050,13 +1045,12 @@ public class Arena implements IArena {
      *                       player is the owner.
      */
     public void removeSpectator(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
-        debug("Spectator removed: " + p.getName() + " arena: " + getArenaName());
-
         if(leaving.contains(p)) {
             return;
         } else {
             leaving.add(p);
         }
+        debug("Spectator removed: " + p.getName() + " arena: " + getArenaName());
 
         Bukkit.getPluginManager().callEvent(new PlayerLeaveArenaEvent(p, this, null));
         spectators.remove(p);
@@ -1172,6 +1166,8 @@ public class Arena implements IArena {
 
         p.closeInventory();
         players.add(p);
+        leaving.remove(p);
+
         for (Player on : players) {
             on.sendMessage(getMsg(on, Messages.COMMAND_REJOIN_PLAYER_RECONNECTED).replace("%bw_playername%", p.getName()).replace("%bw_player%", p.getDisplayName()).replace("%bw_on%", String.valueOf(getPlayers().size())).replace("%bw_max%", String.valueOf(getMaxPlayers())));
         }
@@ -1710,44 +1706,27 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public static void sendLobbyCommandItems(Player p) {
-        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH) == null) return;
         if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
         p.getInventory().clear();
 
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
-            for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH).getKeys(false)) {
+        for (IPermanentItem lobbyItem: BedWars.getAPI().getItemUtil().getLobbyItems()) {
+            ItemStack item = lobbyItem.getItem();
+            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
+            if (itemMeta != null){
+                String name;
+                List<String> lore;
 
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) == null) {
-                    BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item) + " is not set!");
-                    continue;
-                }
-                ItemStack i = Misc.createItem(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item))),
-                        (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)),
-                        config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item)),
-                        SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", item))),
-                        SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", item))),
-                        p, "RUNCOMMAND", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)));
+                // Add correct name and lore for the player language
+                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
+                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
 
-                p.getInventory().setItem(config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)), i);
+                itemMeta.setDisplayName(name);
+                itemMeta.setLore(lore);
+
+                item.setItemMeta(itemMeta);
             }
-        }, 15L);
+            if (lobbyItem.getHandler().isVisible(p, null)) p.getInventory().setItem(lobbyItem.getSlot(), item);
+        }
     }
 
     /**
@@ -1755,38 +1734,26 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public void sendPreGameCommandItems(Player p) {
-        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) == null) return;
         p.getInventory().clear();
 
-        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH).getKeys(false)) {
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            ItemStack i = Misc.createItem(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item))),
-                    (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item)),
-                    config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item)),
-                    SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", item))),
-                    SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", item))),
-                    p, "RUNCOMMAND", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)));
+        for (IPermanentItem preGameItem: BedWars.getAPI().getItemUtil().getPreGameItems()) {
+            ItemStack item = preGameItem.getItem();
+            ItemMeta itemMeta = preGameItem.getItem().getItemMeta();
+            if (itemMeta != null){
+                String name;
+                List<String> lore;
 
-            p.getInventory().setItem(config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)), i);
+                // Add correct name and lore for the player language
+                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
+                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
+
+                itemMeta.setDisplayName(name);
+                itemMeta.setLore(lore);
+
+                item.setItemMeta(itemMeta);
+            }
+            if (preGameItem.getHandler().isVisible(p, this))
+            p.getInventory().setItem(preGameItem.getSlot(), item);
         }
     }
 
@@ -1795,38 +1762,26 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public void sendSpectatorCommandItems(Player p) {
-        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH) == null) return;
         p.getInventory().clear();
 
-        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH).getKeys(false)) {
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) == null) {
-                BedWars.plugin.getLogger().severe(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item) + " is not set!");
-                continue;
-            }
-            ItemStack i = Misc.createItem(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item))),
-                    (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item)),
-                    config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item)),
-                    SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", item))),
-                    SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", item))),
-                    p, "RUNCOMMAND", config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)));
+        for (IPermanentItem lobbyItem: BedWars.getAPI().getItemUtil().getSpectatorItems()) {
+            ItemStack item = lobbyItem.getItem();
+            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
+            if (itemMeta != null){
+                String name;
+                List<String> lore;
 
-            p.getInventory().setItem(config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)), i);
+                // Add correct name and lore for the player language
+                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
+                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+
+                itemMeta.setDisplayName(name);
+                itemMeta.setLore(lore);
+
+                item.setItemMeta(itemMeta);
+            }
+            if (lobbyItem.getHandler().isVisible(p, this))
+                p.getInventory().setItem(lobbyItem.getSlot(), item);
         }
     }
 
@@ -2470,7 +2425,6 @@ public class Arena implements IArena {
         oreGenerators = null;
         perMinuteTask = null;
         moneyperMinuteTask = null;
-        leaving.clear();
         fireballCooldowns.clear();
 
         // Cleanup remote data.
@@ -2712,11 +2666,6 @@ public class Arena implements IArena {
             this.teamAssigner = teamAssigner;
             plugin.getLogger().warning("Using " + teamAssigner.getClass().getSimpleName() + " team assigner on arena: " + this.getArenaName());
         }
-    }
-
-    @Override
-    public List<Player> getLeavingPlayers() {
-        return leaving;
     }
 
     @Override

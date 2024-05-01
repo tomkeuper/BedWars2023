@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.language;
@@ -304,10 +304,10 @@ public class Indonesia extends Language {
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&lPertahankan Kasur Anda!");
         yml.addDefault(Messages.BED_HOLOGRAM_DESTROYED, "&c&lKasur anda telah dihancurkan!");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES, "&bPENINGKATAN TIM,&e&LKLIK KANAN");
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES, "&bPENINGKATAN INDIVIDU,&e&lKLIK KANAN");
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP, "&bTOKO TIM,&e&lKLIK KANAN");
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP, "&bTOKO BARANG,&e&lKLIK KANAN");
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), Arrays.asList("&bPENINGKATAN TIM", "&e&LKLIK KANAN"));
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), Arrays.asList("&bPENINGKATAN INDIVIDU", "&e&lKLIK KANAN"));
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), Arrays.asList("&bTOKO TIM", "&e&lKLIK KANAN"));
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), Arrays.asList("&bTOKO BARANG", "&e&lKLIK KANAN"));
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lTIM ELIMINASI > %bw_team_color%Tim %bw_team_name% &ctelah dieliminasi!\n");
         yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&fIstirahat Tidur");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&fBerlian II");

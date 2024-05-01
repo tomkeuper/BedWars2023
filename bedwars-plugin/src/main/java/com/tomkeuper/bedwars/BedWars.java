@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars;
@@ -31,6 +31,10 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
+import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
+import com.tomkeuper.bedwars.handlers.items.LobbyItem;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -59,6 +63,12 @@ import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
+import com.tomkeuper.bedwars.hologram.HologramManager;
+import com.tomkeuper.bedwars.handlers.items.PreGameItem;
+import com.tomkeuper.bedwars.handlers.items.SpectatorItem;
+import com.tomkeuper.bedwars.handlers.main.CommandItemHandler;
+import com.tomkeuper.bedwars.handlers.main.LeaveItemHandler;
+import com.tomkeuper.bedwars.handlers.main.StatsItemHandler;
 import com.tomkeuper.bedwars.language.*;
 import com.tomkeuper.bedwars.levels.internal.InternalLevel;
 import com.tomkeuper.bedwars.levels.internal.LevelListeners;
@@ -99,10 +109,8 @@ import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
+import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -110,6 +118,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -132,6 +143,7 @@ public class BedWars extends JavaPlugin {
 
     private static ServerType serverType = ServerType.MULTIARENA;
     public static boolean debug = true, autoscale = false, isPaper = false;
+    public static int hologramUpdateDistance = 50; // DEFAULT DISTANCE (update distance measured in blocks)
     public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
     public static ConfigManager signs, generators;
     public static MainConfig config;
@@ -147,12 +159,20 @@ public class BedWars extends JavaPlugin {
     private static IChat chat = new NoChat();
     protected static Level level;
     private static IEconomy economy;
-    private static final String version = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static String nmsVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
+    private static final String minecraftVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
     private static String lobbyWorld = "";
     private static boolean shuttingDown = false;
 
     public static ArenaManager arenaManager = new ArenaManager();
     public static IAddonManager addonManager = new AddonManager();
+    public static IHologramManager hologramManager = new HologramManager();
+
+    // BedWars Items;
+    private static Collection<IPermanentItem> lobbyItems = new ArrayList<>();
+    private static Collection<IPermanentItem> spectatorItems = new ArrayList<>();
+    private static Collection<IPermanentItem> preGameItems = new ArrayList<>();
+    private static Map<String, IPermanentItemHandler> itemHandlers = new HashMap<>();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -200,13 +220,20 @@ public class BedWars extends JavaPlugin {
 
         /* Load version support */
         //noinspection rawtypes
+        switch (minecraftVersion){
+            case "1.20.4":
+                nmsVersion = "v1_20_R3";
+                break;
+            default:
+                break;
+        }
         Class supp;
 
         try {
-            supp = Class.forName("com.tomkeuper.bedwars.support.version." + version + "." + version);
+            supp = Class.forName("com.tomkeuper.bedwars.support.version." + nmsVersion + "." + nmsVersion);
         } catch (ClassNotFoundException e) {
             serverSoftwareSupport = false;
-            this.getLogger().severe("I can't run on your version: " + version);
+            this.getLogger().severe("I can't run on your version: " + minecraftVersion);
             return;
         }
 
@@ -215,16 +242,16 @@ public class BedWars extends JavaPlugin {
 
         try {
             //noinspection unchecked
-            nms = (VersionSupport) supp.getConstructor(Class.forName("org.bukkit.plugin.Plugin"), String.class).newInstance(this, version);
+            nms = (VersionSupport) supp.getConstructor(Class.forName("org.bukkit.plugin.Plugin"), String.class).newInstance(this, nmsVersion);
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException | IllegalAccessException |
                  ClassNotFoundException e) {
             e.printStackTrace();
             serverSoftwareSupport = false;
-            this.getLogger().severe("Could not load support for server version: " + version);
+            this.getLogger().severe("Could not load support for server version: " + minecraftVersion);
             return;
         }
 
-        this.getLogger().info("Loading support for paper/spigot: " + version);
+        this.getLogger().info("Loading support for paper/spigot: " + minecraftVersion);
 
         // Setup languages
         new English();
@@ -242,6 +269,7 @@ public class BedWars extends JavaPlugin {
         new Turkish();
 
         config = new MainConfig(this, "config");
+        hologramUpdateDistance = config.getInt(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE);
 
         generators = new GeneratorsConfig(this, "generators", this.getDataFolder().getPath());
         // Initialize signs config after the main config
@@ -539,6 +567,8 @@ public class BedWars extends JavaPlugin {
             }
         }
 
+        registerItemHandlers(new StatsItemHandler("stats", this, api), new CommandItemHandler("command", this, api), new LeaveItemHandler("leave", this, api));
+
         /* Initialize instances */
         shopCache = new ShopCache();
         playerQuickBuyCache = new PlayerQuickBuyCache();
@@ -599,11 +629,21 @@ public class BedWars extends JavaPlugin {
 
                 } else {
                     this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
+                    Bukkit.getPluginManager().disablePlugin(this);
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
                 Bukkit.getPluginManager().disablePlugin(this);
             }
+        });
+
+        // Load items after plugin is initialized, this gives addons a chance to register handlers.
+        Bukkit.getScheduler().runTask(this, () -> {
+            debug("Loading item + handlers");
+            /* Load permanent join items */
+            loadLobbyItems();
+            loadSpectatorItems();
+            loadPreGameItems();
         });
 
 //        registerEvents(new ScoreboardListener()); #Disabled for now
@@ -621,45 +661,57 @@ public class BedWars extends JavaPlugin {
         // Initialize the addons
         Bukkit.getScheduler().runTaskLater(this, () -> addonManager.loadAddons(), 60L);
 
+        // Check config settings
+        if (redisConnection != null){
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (redisConnection.checkSettings("default_rankup_cost", String.valueOf(LevelsConfig.getNextCost(1)))){
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Redis settings match the default values.");
+                } else {
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "The network settings do not match the set values! Please check the configuration!");
+                    Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "Want to set value as default? Use '" + ChatColor.WHITE + "/bw redisUpdate default_rankup_cost" + ChatColor.RED + "' from the console!");
+                }
+            }, 70L);
+        }
+
         // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
             this.getLogger().info("");
-            this.getLogger().info("ServerType: " + getServerType().toString());
-            this.getLogger().info("Auto Scale enabled: " + autoscale);
-            this.getLogger().info("Restore adapter: " + api.getRestoreAdapter().getDisplayName());
-            if (getServerType() == ServerType.BUNGEE) {
-                this.getLogger().info("Messaging protocol: " + config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL));
-            }
-            this.getLogger().info("");
-            this.getLogger().info("Arena's enabled: " + api.getArenaUtil().getArenas().size());
-
-            StringJoiner stringJoiner = new StringJoiner(", ");
-            if (api.getArenaUtil().getArenas().isEmpty()) stringJoiner.add("none");
-            for (IArena arena : api.getArenaUtil().getArenas()){
-                stringJoiner.add(arena.getArenaName());
-            }
-
-            this.getLogger().info("being: " + stringJoiner);
-            this.getLogger().info("");
+            this.getLogger().info("Server Type: " + getServerType().toString());
+            this.getLogger().info("Auto Scale: " + autoscale);
             this.getLogger().info("Datasource: " + remoteDatabase.getClass().getSimpleName());
-            this.getLogger().info("Addons loaded: " + addonManager.getAddons().size());
+            this.getLogger().info("Restore Adapter: " + api.getRestoreAdapter().getDisplayName());
+            this.getLogger().info("NMS version: " + nms.getClass().getSimpleName());
+            this.getLogger().info("");
 
-            StringJoiner stringJoiner2 = new StringJoiner(", ");
-            if (api.getAddonsUtil().getAddons().isEmpty()) stringJoiner2.add("none");
-            for (Addon addon : api.getAddonsUtil().getAddons()){
-                stringJoiner2.add(addon.getName());
+            StringJoiner arenaString = new StringJoiner(", ");
+            arenaString.setEmptyValue("None");
+            for (IArena arena : api.getArenaUtil().getArenas()) {
+                arenaString.add(arena.getArenaName());
             }
 
-            this.getLogger().info("being: " + stringJoiner2);
+            this.getLogger().info("Arena" + (api.getArenaUtil().getArenas().isEmpty() || api.getArenaUtil().getArenas().size() > 1 ? "s" : "") + " (" + api.getArenaUtil().getArenas().size() + "): " + arenaString);
+
+            StringJoiner addonString = new StringJoiner(", ");
+            addonString.setEmptyValue("None");
+            for (Addon addon : api.getAddonsUtil().getAddons()){
+                addonString.add(addon.getName());
+            }
+
+            this.getLogger().info("Addon" + (addonManager.getAddons().isEmpty() || addonManager.getAddons().size() > 1 ? "s" : "") + " (" + addonManager.getAddons().size() + "): " + addonString);
             this.getLogger().info("");
-            this.getLogger().info("PAPI support: " + papiSupportLoaded);
-            this.getLogger().info("Vault Chat hook enabled: " + vaultChatLoaded);
-            this.getLogger().info("Vault Economy hook enabled: " + vaultEconomyLoaded);
+            this.getLogger().info("PAPI Support: " + papiSupportLoaded);
+            this.getLogger().info("Vault Chat Hook: " + vaultChatLoaded);
+            this.getLogger().info("Vault Economy Hook: " + vaultEconomyLoaded);
             this.getLogger().info("");
-            this.getLogger().info("TAB version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
-            this.getLogger().info("TAB Features enabled; Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true") + ", UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false") + ", BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true") + ", TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
+            this.getLogger().info("TAB Version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
+            this.getLogger().info("TAB Features: ");
+            this.getLogger().info("  - Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true"));
+            this.getLogger().info("  - UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false"));
+            this.getLogger().info("  - BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true"));
+            this.getLogger().info("  - TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
+            this.getLogger().info("  - HeaderFooterFormatting: " + ((TabAPI.getInstance().getHeaderFooterManager() == null)  ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
@@ -822,7 +874,7 @@ public class BedWars extends JavaPlugin {
      * @since v0.6.5beta
      */
     public static String getServerVersion() {
-        return version;
+        return nmsVersion;
     }
 
     public static String getLobbyWorld() {
@@ -955,5 +1007,194 @@ public class BedWars extends JavaPlugin {
         int targetPatch = Integer.parseInt(targetParts[2]);
 
         return currentPatch >= targetPatch;
+    }
+
+    public static Collection<IPermanentItem> getLobbyItems() {
+        return lobbyItems;
+    }
+
+    public static Collection<IPermanentItem> getSpectatorItems() {
+        return spectatorItems;
+    }
+
+    public static Collection<IPermanentItem> getPreGameItems() {
+        return preGameItems;
+    }
+
+    private void loadPreGameItems() {
+
+        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) == null) return;
+
+        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH).getKeys(false)) {
+            if (!checkConfigEntries(item,
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL,
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA,
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT,
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED)) {
+                continue;
+            }
+
+            ItemStack i = new ItemStack(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item))), 1, (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item)));
+            ItemMeta im = i.getItemMeta();
+            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item))) {
+                im.addEnchant(Enchantment.LUCK, 1, true);
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+            i.setItemMeta(im);
+
+            PreGameItem preGameItem;
+            IPermanentItemHandler handler = itemHandlers.get(item);
+            if (handler != null) {
+                preGameItem = new PreGameItem(
+                        handler,
+                        nms.addCustomData(i, "preGameItem"),
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            } else {
+                // Check if item has a command listed instead
+                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
+                    preGameItem = new PreGameItem(
+                            itemHandlers.get("command"),
+                            nms.addCustomData(i, "preGameItem"),
+                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                            item);
+                } else {
+                    this.getLogger().severe("No handler or command found for pre-game item: " + item);
+                    continue;
+                }
+            }
+
+            debug("Loaded pre-game item: " + preGameItem.getIdentifier());
+            preGameItems.add(preGameItem);
+        }
+    }
+
+    void loadSpectatorItems(){
+        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH) == null) return;
+
+        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH).getKeys(false)) {
+            if (!checkConfigEntries(item,
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL,
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA,
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT,
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED)) {
+                continue;
+            }
+
+            ItemStack i = new ItemStack(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item))), 1, (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item)));
+            ItemMeta im = i.getItemMeta();
+            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item))) {
+                im.addEnchant(Enchantment.LUCK, 1, true);
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+            i.setItemMeta(im);
+
+            SpectatorItem spectatorItem;
+            IPermanentItemHandler handler = itemHandlers.get(item);
+            if (handler != null) {
+                spectatorItem = new SpectatorItem(
+                        handler,
+                        nms.addCustomData(i, "spectatorItem"),
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            } else {
+                // Check if item has a command listed instead
+                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
+                    spectatorItem = new SpectatorItem(
+                            itemHandlers.get("command"),
+                            nms.addCustomData(i, "spectatorItem"),
+                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                            item);
+                } else {
+                    this.getLogger().severe("No handler or command found for spectator item: " + item);
+                    continue;
+                }
+            }
+
+            debug("Loaded spectator item: " + spectatorItem.getIdentifier());
+            spectatorItems.add(spectatorItem);
+        }
+    }
+
+    void loadLobbyItems(){
+        if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH) == null) return;
+
+        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH).getKeys(false)) {
+
+            if (!checkConfigEntries(item,
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL,
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA,
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT,
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED)) {
+                continue;
+            }
+
+            ItemStack i = new ItemStack(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item))), 1, (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)));
+            ItemMeta im = i.getItemMeta();
+            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item))) {
+                im.addEnchant(Enchantment.LUCK, 1, true);
+                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
+            i.setItemMeta(im);
+
+            LobbyItem lobbyItem;
+
+            IPermanentItemHandler handler = itemHandlers.get(item);
+            if (handler != null) {
+                lobbyItem = new LobbyItem(
+                        handler,
+                        nms.addCustomData(i, "lobbyItem"),
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
+                        item);
+            } else {
+                // Check if item has a command listed instead
+                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) != null){
+                    lobbyItem = new LobbyItem(
+                            itemHandlers.get("command"),
+                            nms.addCustomData(i, "lobbyItem"),
+                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
+                            item);
+                } else {
+                    this.getLogger().severe("No handler or command found for lobby item: " + item);
+                    continue;
+                }
+            }
+
+            debug("Loaded lobby item: " + lobbyItem.getIdentifier());
+            lobbyItems.add(lobbyItem);
+        }
+    }
+
+    private boolean checkConfigEntries(String item, String... paths) {
+        boolean valid = true;
+        for (String path : paths) {
+            if (config.getYml().get(path.replace("%path%", item)) == null) {
+                BedWars.plugin.getLogger().severe(path.replace("%path%", item) + " is not set!");
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    public static boolean registerItemHandler(IPermanentItemHandler handler){
+        if (itemHandlers.containsKey(handler.getId())){
+            return false;
+        }
+        itemHandlers.put(handler.getId(), handler);
+        return true;
+    }
+
+    private void registerItemHandlers(IPermanentItemHandler... handlers){
+        for (IPermanentItemHandler handler : handlers){
+            if (registerItemHandler(handler)) {
+                getLogger().info("Registered item handler: " + handler.getId());
+            } else {
+                getLogger().warning("Could not register item handler: " + handler.getId());
+            }
+        }
+    }
+
+    public static Map<String, IPermanentItemHandler> getItemHandlers(){
+        return itemHandlers;
     }
 }

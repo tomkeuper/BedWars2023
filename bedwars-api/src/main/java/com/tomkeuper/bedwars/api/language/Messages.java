@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.api.language;
@@ -335,10 +335,10 @@ public class Messages {
 
 
     /** Upgrades/ Shop*/
-    public static String NPC_NAME_TEAM_UPGRADES = "npc-team-upgrades";
-    public static String NPC_NAME_TEAM_SHOP = "npc-team-shop";
-    public static String NPC_NAME_SOLO_UPGRADES = "npc-solo-upgrades";
-    public static String NPC_NAME_SOLO_SHOP = "npc-solo-shop";
+    public static String NPC_NAME_TEAM_UPGRADES = "npcs.team-upgrades.%group%";
+    public static String NPC_NAME_TEAM_SHOP = "npcs.team-shop.%group%";
+    public static String NPC_NAME_SOLO_UPGRADES = "npcs.solo-upgrades.%group%";
+    public static String NPC_NAME_SOLO_SHOP = "npcs.solo-shop.%group%";
 
     public static String UPGRADES_MENU_GUI_NAME_PATH = "upgrades-menu-gui-name-";
     public static String UPGRADES_CATEGORY_GUI_NAME_PATH = "upgrades-category-gui-name-";

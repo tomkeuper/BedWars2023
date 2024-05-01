@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.arena.spectator;
@@ -78,6 +78,18 @@ public class SpectatorListeners implements Listener {
 
         // Disable spectator interact with any entity
         e.setCancelled(true);
+    }
+
+    @EventHandler
+    // Disable spectator interact with item frames
+    public void onItemFrame(PlayerInteractEntityEvent e) {
+        IArena a = Arena.getArenaByPlayer(e.getPlayer());
+        if (a == null) return;
+        if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
+            if (a.isSpectator(e.getPlayer()) || a.getRespawnSessions().containsKey(e.getPlayer())) {
+                e.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler

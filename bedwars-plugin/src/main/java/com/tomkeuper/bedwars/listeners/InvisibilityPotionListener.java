@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.listeners;
@@ -24,7 +24,9 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.gameplay.GameEndEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
+import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -39,6 +41,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
@@ -51,15 +54,36 @@ import static com.tomkeuper.bedwars.BedWars.plugin;
 public class InvisibilityPotionListener implements Listener {
     private final List<Player> invisiblePlayers = new ArrayList<>();
     private final boolean footstepsEnabled = BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_FOOTSTEPS_ON_INVISIBILITY);
-    private int cd = 6;
+    private final HashMap<Player, Integer> steps = new HashMap<>();
 
     @EventHandler
     public void onPotion(PlayerInvisibilityPotionEvent e) {
         if (!footstepsEnabled) return;
         if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
             this.invisiblePlayers.add(e.getPlayer());
+            steps.put(e.getPlayer(), 12);
         } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
             this.invisiblePlayers.remove(e.getPlayer());
+            steps.remove(e.getPlayer());
+        }
+    }
+
+    @EventHandler
+    public void onGameEnd(GameEndEvent e) {
+        for (Player p : e.getArena().getPlayers()) {
+            if (this.invisiblePlayers.contains(p)) {
+                this.invisiblePlayers.remove(p);
+                steps.remove(p);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerLeaveArenaEvent e) {
+        Player p = e.getPlayer();
+        if (this.invisiblePlayers.contains(p)) {
+            this.invisiblePlayers.remove(p);
+            steps.remove(p);
         }
     }
 
@@ -69,24 +93,23 @@ public class InvisibilityPotionListener implements Listener {
         Player p = e.getPlayer();
         if (!this.invisiblePlayers.contains(p)) return;
 
-        //TODO implement particles on higher version (issue: #112)
+        // TODO implement particles on higher version (issue: #112)
         if (nms.getVersion() > 5) return; // check if higher than 1.12
 
-        if (p.isSneaking())
-            return;
-        if (!p.isOnGround())
-            return;
+        if (p.isSneaking()) return;
+        Material blockBelow = p.getLocation().clone().add(0, -1, 0).getBlock().getType();
+        if (blockBelow == Material.AIR) return;
         Location from = e.getFrom();
         Location to = e.getTo();
         if (from.getBlock() != to.getBlock()) {
-            if (this.cd == 3) {
+            if (this.steps.get(p) == 6) {
                 p.getWorld().playEffect(p.getLocation().add(0.0D, 0.01D, 0.4D), Effect.FOOTSTEP, 1);
-                this.cd--;
-            } else if (this.cd <= 0) {
+                this.steps.put(p, steps.get(p) - 1);
+            } else if (this.steps.get(p) <= 0) {
                 p.getWorld().playEffect(p.getLocation().add(0.4D, 0.01D, 0.0D), Effect.FOOTSTEP, 1);
-                this.cd = 6;
+                this.steps.put(p, 12);
             } else {
-                this.cd--;
+                this.steps.put(p, steps.get(p) - 1);
             }
         }
     }

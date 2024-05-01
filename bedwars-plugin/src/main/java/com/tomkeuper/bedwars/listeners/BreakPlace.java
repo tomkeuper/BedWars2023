@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.listeners;
@@ -41,8 +41,10 @@ import com.tomkeuper.bedwars.popuptower.TowerNorth;
 import com.tomkeuper.bedwars.popuptower.TowerSouth;
 import com.tomkeuper.bedwars.popuptower.TowerWest;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
@@ -59,10 +61,12 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -301,6 +305,7 @@ public class BreakPlace implements Listener {
                     break;
             }
 
+
             if (nms.isBed(e.getBlock().getType())) {
                 for (ITeam t : a.getTeams()) {
                     for (int x = e.getBlock().getX() - 2; x < e.getBlock().getX() + 2; x++) {
@@ -377,6 +382,17 @@ public class BreakPlace implements Listener {
                 if (!a.isBlockPlaced(e.getBlock())) {
                     p.sendMessage(getMsg(p, Messages.INTERACT_CANNOT_BREAK_BLOCK));
                     e.setCancelled(true);
+                }
+            }
+
+            if (!e.isCancelled() && p.getGameMode() != GameMode.CREATIVE){
+                Block drop = e.getBlock();
+                e.setCancelled(true);
+                Collection<ItemStack> drops = drop.getDrops();
+                drop.setType(Material.AIR);
+                for (ItemStack item : drops){
+                    ItemStack newItem = nms.addCustomData(item, "");
+                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5,0.5,0.5), newItem);
                 }
             }
         }

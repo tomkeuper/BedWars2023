@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +15,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.api.arena.generator;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
+import java.util.List;
 
 public interface IGenerator {
 
     /**
-     * Get holograms associated to this generator.
-     * Language iso, Hologram instance.
+     * Get holograms associated to players and generators
      */
-    HashMap<String, IGenHolo> getLanguageHolograms();
+    HashMap<Player, IGenHolo> getPlayerHolograms();
 
     /**
      * Disable a generator and remove the holograms.
@@ -77,7 +77,21 @@ public interface IGenerator {
     IArena getArena();
 
     /**
-     * This method is called every tick to manage the block rotation.
+     * Get the animation of the generator.
+     *
+     * @return the animation of the generator
+     */
+    List<IGeneratorAnimation> getAnimations();
+
+    /**
+     * Set the animation of the generator.
+     *
+     * @param animations the animation of the generator
+     */
+    void addAnimation(IGeneratorAnimation animations);
+
+    /**
+     * This method is called every tick to manage the animation of the generator.
      */
     void rotate();
 
@@ -109,11 +123,15 @@ public interface IGenerator {
     ItemStack getOre();
 
     /**
-     * This will hide generator holograms with a different iso.
-     *
-     * @param iso player language iso.
+     * This will update the holograms for one player.
+     * Holograms are only visible to players in the same world.
+     * <p>
+     * @param p player to update holograms for.
+     * <p>
+     * This method only works for generators that are not team generators,
+     * executing it on a team generator will do nothing.
      */
-    void updateHolograms(Player p, String iso);
+    void updateHolograms(Player p);
 
     /**
      * Enable generator rotation.
@@ -151,7 +169,7 @@ public interface IGenerator {
      *
      * @return null if there is no rotating item.
      */
-    ArmorStand getHologramHolder();
+    GeneratorHolder getHologramHolder();
 
     /**
      * Get generator type.
@@ -196,6 +214,11 @@ public interface IGenerator {
      * Check if the dropped items can be stacked.
      */
     boolean isStack();
+
+    /**
+     * Check if the generator hologram is enabled.
+     */
+    boolean isHologramEnabled();
 
     /**
      * Set generator type.

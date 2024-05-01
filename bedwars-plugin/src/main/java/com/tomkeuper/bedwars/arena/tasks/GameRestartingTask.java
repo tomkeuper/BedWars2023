@@ -1,6 +1,6 @@
 /*
- * BedWars1058 - A bed wars mini-game.
- * Copyright (C) 2021 Andrei Dascălu
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: andrew.dascalu@gmail.com
+ * Contact e-mail: contact@fyreblox.com
  */
 
 package com.tomkeuper.bedwars.arena.tasks;
@@ -81,10 +81,10 @@ public class GameRestartingTask implements Runnable, RestartingTask {
         if (getArena().getPlayers().isEmpty() && restarting > 9) restarting = 9;
         if (restarting == 7) {
             for (Player on : new ArrayList<>(getArena().getPlayers())) {
-                getArena().removePlayer(on, BedWars.getServerType() == ServerType.BUNGEE);
+                getArena().removePlayer(on, BedWars.getServerType() == ServerType.BUNGEE, true);
             }
             for (Player on : new ArrayList<>(getArena().getSpectators())) {
-                getArena().removeSpectator(on, BedWars.getServerType() == ServerType.BUNGEE);
+                getArena().removeSpectator(on, BedWars.getServerType() == ServerType.BUNGEE, true);
             }
         } else if (restarting == 4) {
             ShopHolo.clearForArena(getArena());
