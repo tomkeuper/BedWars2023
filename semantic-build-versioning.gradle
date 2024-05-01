@@ -9,7 +9,7 @@ preRelease {
 }
 
 autobump {
-    majorPattern = ~/(?m)^\[bump-major\]$/
-    minorPattern = ~/(?m)^\[bump-minor\]$/
-    patchPattern = ~/(?m)^\[bump-patch\]$/
+    majorPattern = ~/\[major\]/
+    minorPattern = ~/\[minor\]/
+    patchPattern = ~/\[patch\]/
 }
