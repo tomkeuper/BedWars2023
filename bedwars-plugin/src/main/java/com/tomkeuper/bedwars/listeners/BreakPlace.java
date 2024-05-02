@@ -23,7 +23,6 @@ package com.tomkeuper.bedwars.listeners;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.arena.NextEvent;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
@@ -32,7 +31,6 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.region.Region;
 import com.tomkeuper.bedwars.api.server.ServerType;
-import com.tomkeuper.bedwars.api.util.BlastProtectionUtil;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -65,10 +63,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.tomkeuper.bedwars.BedWars.*;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -77,11 +72,9 @@ public class BreakPlace implements Listener {
 
     private static final List<Player> buildSession = new ArrayList<>();
     private final boolean allowFireBreak;
-    private final BlastProtectionUtil blastProtection;
 
     public BreakPlace() {
         allowFireBreak = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH);
-        blastProtection = new BlastProtectionUtil(nms, BedWars.getAPI());
     }
 
     @EventHandler
@@ -529,11 +522,10 @@ public class BreakPlace implements Listener {
         IArena a = Arena.getArenaByIdentifier(e.getLocation().getWorld().getName());
         if (a != null) {
             if (a.getStatus() == GameState.playing) {
-                e.blockList().removeIf((b) -> blastProtection.isProtected(a, e.getLocation(), e.getEntity(), b, 0.3));
+                e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
                 return;
             }
         }
-        e.blockList().clear();
     }
 
     @EventHandler
@@ -543,8 +535,8 @@ public class BreakPlace implements Listener {
 
         IArena a = Arena.getArenaByIdentifier(e.blockList().get(0).getWorld().getName());
         if (a != null) {
-            if (a.getNextEvent() != NextEvent.GAME_END) {
-                e.blockList().removeIf((b) -> blastProtection.isProtected(a, e.getBlock().getLocation(), null, b, 0.3));
+            if (a.getStatus() == GameState.playing) {
+                e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
             }
         }
     }

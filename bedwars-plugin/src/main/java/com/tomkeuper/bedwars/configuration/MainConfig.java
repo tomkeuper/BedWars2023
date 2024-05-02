@@ -127,7 +127,6 @@ public class MainConfig extends ConfigManager {
         // tnd block blast resistance
         yml.addDefault(ConfigPath.GENERAL_TNT_PROTECTION_END_STONE_BLAST, 12f);
         yml.addDefault(ConfigPath.GENERAL_TNT_PROTECTION_GLASS_BLAST, 300f);
-        yml.addDefault(ConfigPath.GENERAL_TNT_RAY_BLOCKED_BY_GLASS, true);
 
         // tnt prime settings
         yml.addDefault(ConfigPath.GENERAL_TNT_AUTO_IGNITE, true);
