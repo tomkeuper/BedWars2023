@@ -90,10 +90,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
-import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 @SuppressWarnings("unused")
 public class v1_20_R1 extends VersionSupport {
