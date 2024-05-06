@@ -73,7 +73,7 @@ public class PlayerKillEvent extends Event {
         PLAYER_DISCONNECT(false, false, true),
         PLAYER_DISCONNECT_FINAL(true, false, true);
 
-        private final boolean finalKill;
+        private boolean finalKill;
         private final boolean despawnable;
         private final boolean pvpLogOut;
 
@@ -85,6 +85,10 @@ public class PlayerKillEvent extends Event {
 
         public boolean isFinalKill() {
             return finalKill;
+        }
+
+        public void setFinalKill(boolean finalKill) {
+            this.finalKill = finalKill;
         }
 
         /**
