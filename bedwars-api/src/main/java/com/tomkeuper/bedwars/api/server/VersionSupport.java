@@ -265,12 +265,12 @@ public abstract class VersionSupport {
     public abstract String getTag(ItemStack itemStack, String key);
 
     /**
-     * Check if an item has a BedWars1058 NBTTag
+     * Check if an item has a BedWars2023 NBTTag
      */
     public abstract boolean isCustomBedWarsItem(ItemStack i);
 
     /**
-     * Get the NBTTag from a BedWars1058 item
+     * Get the NBTTag from a BedWars2023 item
      */
     public abstract String getCustomData(ItemStack i);
 

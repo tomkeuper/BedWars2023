@@ -1,12 +1,15 @@
-I want to thank you all that helped the development of this plugin.
-Casual order. If I forgot to add you on this list please contact me.
+I want to thank everyone that helped the development of this plugin.
+There is no specific order and if I forgot to add you on this list please let me know!
 
-- FoviOX
-- Mr. Ceasar
-- Fabian03
-- MrDarkness462
-- 𝐌𝐚𝐫𝐜𝐞𝐥𝐞𝐤𝐭𝐫𝐨
-- Barnaby
-- Ryan DeTree
-- Dragoș (gamster.org)
-- J.T. McQuigg (JT122406)
+- [Andrei1058](https://github.com/andrei1058) - For initial setup of the BedWars1058 plugin!
+- [AgentNoobff](https://github.com/AgentNoobff)
+- [AIGLE25](https://github.com/AIGLE25)
+- Chromaah
+- Diamondy01
+- [ImYenil](https://github.com/ImYenil)
+- [Kiiya](https://github.com/KKiiya)
+- [Lagggpixel](https://github.com/Lagggpixel)
+- [MherZaqaryan](https://github.com/MherZaqaryan)
+- [porudev](https://github.com/porudev)
+- [SebastiaanDenHertog](https://github.com/SebastiaanDenHertog)
+- [Xxyuri2005xX](https://github.com/Xxyuri2005xX)

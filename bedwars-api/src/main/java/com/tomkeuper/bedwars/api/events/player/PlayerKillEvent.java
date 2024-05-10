@@ -50,6 +50,9 @@ public class PlayerKillEvent extends Event {
         this.cause = cause;
     }
 
+    /**
+     * Enumeration representing various causes of death events.
+     */
     public enum PlayerKillCause {
         UNKNOWN(false, false, false),
         UNKNOWN_FINAL_KILL(true, false, false),
@@ -66,14 +69,11 @@ public class PlayerKillEvent extends Event {
         IRON_GOLEM(false, true, false),
         IRON_GOLEM_FINAL_KILL(true, true, false),
         PLAYER_PUSH(false, false, false),
-        /**
-         * Corresponds to FALL on ground.
-         */
         PLAYER_PUSH_FINAL(true, false, false),
         PLAYER_DISCONNECT(false, false, true),
         PLAYER_DISCONNECT_FINAL(true, false, true);
 
-        private final boolean finalKill;
+        private boolean finalKill;
         private final boolean despawnable;
         private final boolean pvpLogOut;
 
@@ -83,70 +83,110 @@ public class PlayerKillEvent extends Event {
             this.pvpLogOut = pvpLogOut;
         }
 
+        /**
+         * Checks if the kill is a final kill.
+         *
+         * @return true if the kill is a final kill, false otherwise.
+         */
         public boolean isFinalKill() {
             return finalKill;
         }
 
         /**
-         * @return true if killed by a player's ironGolem, silverfish etc.
+         * Sets whether the kill is a final kill.
+         *
+         * @param finalKill true if the kill is a final kill, false otherwise.
+         */
+        public void setFinalKill(boolean finalKill) {
+            this.finalKill = finalKill;
+        }
+
+        /**
+         * Checks if the victim is killed by a player's ironGolem, silverfish etc.
+         *
+         * @return true if the killer is killed by a player's ironGolem, silverfish etc, false otherwise.
          */
         public boolean isDespawnable() {
             return despawnable;
         }
 
+        /**
+         * Checks if the kill is due to a PvP log out.
+         *
+         * @return true if the kill is due to a PvP log out, false otherwise.
+         */
         public boolean isPvpLogOut() {
             return pvpLogOut;
         }
     }
 
     /**
-     * Killer can be NULL (void etc.)
+     * Get the killer player. Can be NULL (e.g., in cases of falling into void).
+     *
+     * @return The player who performed the kill.
      */
     public Player getKiller() {
         return killer;
     }
 
     /**
-     * Get kill chat message.
+     * Get the function that generates the kill chat message.
+     *
+     * @return The function generating the kill chat message.
      */
     public Function<Player, String> getMessage() {
         return message;
     }
 
     /**
-     * Set chat message.
+     * Set the function that generates the kill chat message.
+     *
+     * @param message The function to set.
      */
     public void setMessage(Function<Player, String> message) {
         this.message = message;
     }
 
     /**
-     * Get kill cause
+     * Get the cause of the player's death.
+     *
+     * @return The cause of the player's death.
      */
     public PlayerKillCause getCause() {
         return cause;
     }
 
+    /**
+     * Get the arena where the kill occurred.
+     *
+     * @return The arena where the kill occurred.
+     */
     public IArena getArena() {
         return arena;
     }
 
     /**
-     * Get the Player who died.
+     * Get the player who died.
+     *
+     * @return The player who died.
      */
     public Player getVictim() {
         return victim;
     }
 
     /**
-     * Checks if the killer gets the kill sound
+     * Checks if the kill sound should be played for the killer.
+     *
+     * @return true if the kill sound should be played for the killer, false otherwise.
      */
     public boolean playSound() {
         return playSound;
     }
 
     /**
-     * Set if the killer should get the kill sound
+     * Set whether the kill sound should be played for the killer.
+     *
+     * @param playSound true to play the kill sound for the killer, false otherwise.
      */
     public void setPlaySound(boolean playSound) {
         this.playSound = playSound;

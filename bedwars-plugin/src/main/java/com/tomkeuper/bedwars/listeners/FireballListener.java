@@ -227,7 +227,7 @@ public class FireballListener implements Listener {
         Fireball fireball = (Fireball) e.getEntity();
         ProjectileSource shooter = fireball.getShooter();
 
-        if (!(shooter instanceof Player) || Arena.isInArena((Player) shooter)) {
+        if (!(shooter instanceof Player) || !Arena.isInArena((Player) shooter)) {
             return;
         }
         e.setFire(fireballMakeFire);
