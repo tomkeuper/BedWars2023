@@ -75,7 +75,7 @@ public abstract class VersionSupport {
     /**
      * Register a new command as bukkit command
      */
-    public abstract void registerCommand(String name, Command clasa);
+    public abstract void registerCommand(String name, Command cmd);
 
     /**
      * Send title, subtitle. null for empty
@@ -509,5 +509,5 @@ public abstract class VersionSupport {
 
     public abstract void destroyPacketArmorStand(GeneratorHolder generatorHolder);
 
-    public abstract ArmorStand createPacketArmorStand(Location loc);
+    public abstract ArmorStand createPacketArmorStand(@Nonnull Location loc);
 }
