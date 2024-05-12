@@ -57,6 +57,7 @@ import net.minecraft.world.entity.projectile.EntityFireball;
 import net.minecraft.world.entity.projectile.IProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBase;
 import org.bukkit.*;
@@ -270,6 +271,7 @@ public final class v1_20_R5 extends VersionSupport {
             return;
         }
         i.setAmount(i.getAmount() - amount);
+        //noinspection UnstableApiUsage
         p.updateInventory(); //TODO might be deprecated. Currently marked as unstable. Find a replacement later on.
     }
 
@@ -282,14 +284,17 @@ public final class v1_20_R5 extends VersionSupport {
             sourceField.setAccessible(true);
             sourceField.set(nmsTNT, nmsEntityLiving);
         } catch (Exception ex) {
+            //noinspection CallToPrintStackTrace
             ex.printStackTrace();
         }
     }
 
     @Override
     public void voidKill(Player p) {
+        @SuppressWarnings("UnstableApiUsage")
         EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, DamageSource.builder(DamageType.GENERIC).build(), 1000.0);
-        p.setLastDamageCause(event);
+        //noinspection removal
+        p.setLastDamageCause(event); // TODO is deprecated and marked for removal. Find a replacement as soon as possible
         p.setHealth(0);
     }
 
@@ -371,6 +376,7 @@ public final class v1_20_R5 extends VersionSupport {
                     }
             );
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
     }
@@ -393,32 +399,32 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public ItemStack addCustomData(ItemStack i, String data) {
-        // todo implement feature
-        return null;
+        var tag = getCreateTag(i);
+        tag.a(VersionSupport.PLUGIN_TAG_GENERIC_KEY, data);
+        return applyTag(i, tag);
     }
 
     @Override
     public ItemStack setTag(ItemStack itemStack, String key, String value) {
-        // todo implement feature
-        return null;
+        var tag = getCreateTag(itemStack);
+        tag.a(key, value);
+        return applyTag(itemStack, tag);
     }
 
     @Override
     public String getTag(ItemStack itemStack, String key) {
-        // todo implement feature
-        return "";
+        var tag = getTag(itemStack);
+        return tag == null ? null : tag.e(key) ? tag.l(key) : null;
     }
 
     @Override
     public boolean isCustomBedWarsItem(ItemStack i) {
-        // todo implement feature
-        return false;
+        return getCreateTag(i).e(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
     public String getCustomData(ItemStack i) {
-        // todo implement feature
-        return "";
+        return getCreateTag(i).l(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
@@ -545,14 +551,15 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public String getShopUpgradeIdentifier(ItemStack itemStack) {
-        // todo implement methods
-        return "";
+        var tag = getCreateTag(itemStack);
+        return tag.e(VersionSupport.PLUGIN_TAG_TIER_KEY) ? tag.l(VersionSupport.PLUGIN_TAG_TIER_KEY) : "null";
     }
 
     @Override
     public ItemStack setShopUpgradeIdentifier(ItemStack itemStack, String identifier) {
-        // todo implement methods
-        return null;
+        var tag = getCreateTag(itemStack);
+        tag.a(VersionSupport.PLUGIN_TAG_TIER_KEY, identifier);
+        return applyTag(itemStack, tag);
     }
 
     @Override
@@ -865,6 +872,7 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     public net.minecraft.world.item.ItemStack applyTag(@NotNull net.minecraft.world.item.ItemStack itemStack, NBTTagCompound tag) {
+        CustomData customData = CustomData.a(tag);
         // todo - fix this
         // itemStack.c(tag);
         return itemStack;
