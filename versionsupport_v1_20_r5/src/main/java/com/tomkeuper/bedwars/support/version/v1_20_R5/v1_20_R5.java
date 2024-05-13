@@ -660,8 +660,7 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public int getVersion() {
-        // todo find out what this does
-        return 0;
+        return 12;
     }
 
     @Override
