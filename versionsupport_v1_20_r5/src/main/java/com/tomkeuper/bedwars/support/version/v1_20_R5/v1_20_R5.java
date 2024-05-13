@@ -77,7 +77,6 @@ import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
@@ -131,7 +130,7 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public ItemStack getItemInHand(Player p) {
+    public org.bukkit.inventory.ItemStack getItemInHand(@NotNull Player p) {
         return p.getInventory().getItemInMainHand();
     }
 
@@ -142,56 +141,56 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public boolean isArmor(ItemStack itemStack) {
+    public boolean isArmor(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
         return i instanceof ItemArmor || i instanceof ItemElytra;
     }
 
     @Override
-    public boolean isTool(ItemStack itemStack) {
+    public boolean isTool(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
         return i instanceof ItemTool;
     }
 
     @Override
-    public boolean isSword(ItemStack itemStack) {
+    public boolean isSword(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
         return i instanceof ItemSword;
     }
 
     @Override
-    public boolean isAxe(ItemStack itemStack) {
+    public boolean isAxe(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
         return i instanceof ItemAxe;
     }
 
     @Override
-    public boolean isBow(ItemStack itemStack) {
+    public boolean isBow(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
         return i instanceof ItemBow;
     }
 
+
     @Override
-    public boolean isProjectile(ItemStack itemStack) {
+    public boolean isProjectile(org.bukkit.inventory.ItemStack itemStack) {
         var entity = getEntity(itemStack);
         if (null == entity) return false;
         return entity instanceof IProjectile;
     }
 
     @Override
-    public boolean isInvisibilityPotion(ItemStack itemStack) {
+    public boolean isInvisibilityPotion(org.bukkit.inventory.@NotNull ItemStack itemStack) {
         if (!itemStack.getType().equals(org.bukkit.Material.POTION)) return false;
 
         org.bukkit.inventory.meta.PotionMeta pm = (org.bukkit.inventory.meta.PotionMeta) itemStack.getItemMeta();
 
         return pm != null && pm.hasCustomEffects() && pm.hasCustomEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY);
     }
-
     @Override
     public void registerEntities() {
 
@@ -225,7 +224,7 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public double getDamage(ItemStack i) {
+    public double getDamage(org.bukkit.inventory.ItemStack i) {
         var tag = getTag(i);
         if (null == tag) {
             throw new RuntimeException("Provided item has no Tag");
@@ -261,7 +260,7 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public void minusAmount(Player p, ItemStack i, int amount) {
+    public void minusAmount(Player p, org.bukkit.inventory.@NotNull ItemStack i, int amount) {
         if (i.getAmount() - amount <= 0) {
             if (p.getInventory().getItemInOffHand().equals(i)) {
                 p.getInventory().setItemInOffHand(null);
@@ -299,19 +298,19 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public void hideArmor(Player victim, Player receiver) {
-        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EnumItemSlot.f, new net.minecraft.world.item.ItemStack(Item.b(0))));
-        items.add(new Pair<>(EnumItemSlot.e, new net.minecraft.world.item.ItemStack(Item.b(0))));
-        items.add(new Pair<>(EnumItemSlot.d, new net.minecraft.world.item.ItemStack(Item.b(0))));
-        items.add(new Pair<>(EnumItemSlot.c, new net.minecraft.world.item.ItemStack(Item.b(0))));
+    public void hideArmor(@NotNull Player victim, Player receiver) {
+        List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
+        items.add(new Pair<>(EnumItemSlot.f, new ItemStack(Item.b(0))));
+        items.add(new Pair<>(EnumItemSlot.e, new ItemStack(Item.b(0))));
+        items.add(new Pair<>(EnumItemSlot.d, new ItemStack(Item.b(0))));
+        items.add(new Pair<>(EnumItemSlot.c, new ItemStack(Item.b(0))));
         PacketPlayOutEntityEquipment packet = new PacketPlayOutEntityEquipment(victim.getEntityId(), items);
         sendPacket(receiver, packet);
     }
 
     @Override
     public void showArmor(Player victim, Player receiver) {
-        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> items = new ArrayList<>();
+        List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
         items.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(victim.getInventory().getHelmet())));
         items.add(new Pair<>(EnumItemSlot.e, CraftItemStack.asNMSCopy(victim.getInventory().getChestplate())));
         items.add(new Pair<>(EnumItemSlot.d, CraftItemStack.asNMSCopy(victim.getInventory().getLeggings())));
@@ -398,37 +397,37 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public ItemStack addCustomData(ItemStack i, String data) {
+    public org.bukkit.inventory.ItemStack addCustomData(org.bukkit.inventory.ItemStack i, String data) {
         var tag = getCreateTag(i);
         tag.a(VersionSupport.PLUGIN_TAG_GENERIC_KEY, data);
         return applyTag(i, tag);
     }
 
     @Override
-    public ItemStack setTag(ItemStack itemStack, String key, String value) {
+    public org.bukkit.inventory.ItemStack setTag(org.bukkit.inventory.ItemStack itemStack, String key, String value) {
         var tag = getCreateTag(itemStack);
         tag.a(key, value);
         return applyTag(itemStack, tag);
     }
 
     @Override
-    public String getTag(ItemStack itemStack, String key) {
+    public String getTag(org.bukkit.inventory.ItemStack itemStack, String key) {
         var tag = getTag(itemStack);
         return tag == null ? null : tag.e(key) ? tag.l(key) : null;
     }
 
     @Override
-    public boolean isCustomBedWarsItem(ItemStack i) {
+    public boolean isCustomBedWarsItem(org.bukkit.inventory.ItemStack i) {
         return getCreateTag(i).e(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
-    public String getCustomData(ItemStack i) {
+    public String getCustomData(org.bukkit.inventory.ItemStack i) {
         return getCreateTag(i).l(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
-    public ItemStack colourItem(ItemStack itemStack, ITeam bedWarsTeam) {
+    public org.bukkit.inventory.ItemStack colourItem(org.bukkit.inventory.ItemStack itemStack, ITeam bedWarsTeam) {
         if (itemStack == null) return null;
         String type = itemStack.getType().toString();
         if (isBed(itemStack.getType())) {
@@ -446,7 +445,7 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public ItemStack createItemStack(String material, int amount, short data) {
+    public org.bukkit.inventory.ItemStack createItemStack(String material, int amount, short data) {
         org.bukkit.inventory.ItemStack i;
         try {
             i = new org.bukkit.inventory.ItemStack(org.bukkit.Material.valueOf(material), amount);
@@ -550,13 +549,13 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public String getShopUpgradeIdentifier(ItemStack itemStack) {
+    public String getShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack) {
         var tag = getCreateTag(itemStack);
         return tag.e(VersionSupport.PLUGIN_TAG_TIER_KEY) ? tag.l(VersionSupport.PLUGIN_TAG_TIER_KEY) : "null";
     }
 
     @Override
-    public ItemStack setShopUpgradeIdentifier(ItemStack itemStack, String identifier) {
+    public org.bukkit.inventory.ItemStack setShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack, String identifier) {
         var tag = getCreateTag(itemStack);
         tag.a(VersionSupport.PLUGIN_TAG_TIER_KEY, identifier);
         return applyTag(itemStack, tag);
@@ -760,10 +759,10 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, ItemStack helmet) {
+    public void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, org.bukkit.inventory.ItemStack helmet) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         generatorHolder.setHelmet(helmet, false);
-        Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(helmet));
+        Pair<EnumItemSlot, ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(helmet));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
         for (Player p : armorStand.getWorld().getPlayers()) {
             sendPacket(p, equipment);
@@ -870,7 +869,7 @@ public final class v1_20_R5 extends VersionSupport {
         return null == tag ? initializeTag(itemStack) : tag;
     }
 
-    public net.minecraft.world.item.ItemStack applyTag(@NotNull net.minecraft.world.item.ItemStack itemStack, NBTTagCompound tag) {
+    public ItemStack applyTag(@NotNull net.minecraft.world.item.ItemStack itemStack, NBTTagCompound tag) {
         CustomData customData = CustomData.a(tag);
         // todo - fix this
         // itemStack.c(tag);
@@ -889,8 +888,8 @@ public final class v1_20_R5 extends VersionSupport {
         return CraftItemStack.asBukkitCopy(applyTag(getNmsItemCopy(itemStack), tag));
     }
 
-    public net.minecraft.world.item.ItemStack getNmsItemCopy(org.bukkit.inventory.ItemStack itemStack) {
-        net.minecraft.world.item.ItemStack i = CraftItemStack.asNMSCopy(itemStack);
+    public ItemStack getNmsItemCopy(org.bukkit.inventory.ItemStack itemStack) {
+        ItemStack i = CraftItemStack.asNMSCopy(itemStack);
         if (null == i) {
             throw new RuntimeException("Cannot convert given item to a NMS item");
         }
