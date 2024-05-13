@@ -858,7 +858,7 @@ public final class v1_20_R5 extends VersionSupport {
         return null;
     }
 
-    private @Nullable NBTTagCompound getTag(@NotNull net.minecraft.world.item.ItemStack itemStack) {
+    private @Nullable NBTTagCompound getTag(@NotNull ItemStack itemStack) {
         // todo - fix this
         // return itemStack.v();
         return null;
