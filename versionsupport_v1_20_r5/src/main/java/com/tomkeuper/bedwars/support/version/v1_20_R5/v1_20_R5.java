@@ -21,6 +21,8 @@
 package com.tomkeuper.bedwars.support.version.v1_20_R5;
 
 import com.mojang.datafixers.util.Pair;
+import com.saicone.rtag.RtagItem;
+import com.saicone.rtag.util.OptionalType;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
@@ -87,10 +89,7 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
@@ -398,16 +397,18 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public org.bukkit.inventory.ItemStack addCustomData(org.bukkit.inventory.ItemStack i, String data) {
-        var tag = getCreateTag(i);
-        tag.a(VersionSupport.PLUGIN_TAG_GENERIC_KEY, data);
-        return applyTag(i, tag);
+        RtagItem rtagItem = new RtagItem(i);
+        rtagItem.set(data, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        rtagItem.update();
+        return rtagItem.getItem();
     }
 
     @Override
     public org.bukkit.inventory.ItemStack setTag(org.bukkit.inventory.ItemStack itemStack, String key, String value) {
-        var tag = getCreateTag(itemStack);
-        tag.a(key, value);
-        return applyTag(itemStack, tag);
+        RtagItem rtagItem = new RtagItem(itemStack);
+        rtagItem.set(value, key);
+        rtagItem.update();
+        return rtagItem.getItem();
     }
 
     @Override
@@ -418,12 +419,16 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public boolean isCustomBedWarsItem(org.bukkit.inventory.ItemStack i) {
-        return getCreateTag(i).e(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        RtagItem rtagItem = new RtagItem(i);
+        OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        return tag.isNotEmpty();
     }
 
     @Override
     public String getCustomData(org.bukkit.inventory.ItemStack i) {
-        return getCreateTag(i).l(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        RtagItem rtagItem = new RtagItem(i);
+        OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        return (tag.isEmpty() || tag.isNotInstance(String.class)) ? null : tag.asString(null);
     }
 
     @Override
@@ -550,15 +555,17 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public String getShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack) {
-        var tag = getCreateTag(itemStack);
-        return tag.e(VersionSupport.PLUGIN_TAG_TIER_KEY) ? tag.l(VersionSupport.PLUGIN_TAG_TIER_KEY) : "null";
+        RtagItem item = new RtagItem(itemStack);
+        OptionalType tag = item.getOptional(VersionSupport.PLUGIN_TAG_TIER_KEY);
+        return tag.isEmpty() ? "null" : tag.asString("null");
     }
 
     @Override
     public org.bukkit.inventory.ItemStack setShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack, String identifier) {
-        var tag = getCreateTag(itemStack);
-        tag.a(VersionSupport.PLUGIN_TAG_TIER_KEY, identifier);
-        return applyTag(itemStack, tag);
+        RtagItem item = new RtagItem(itemStack);
+        item.set(identifier, VersionSupport.PLUGIN_TAG_TIER_KEY);
+        item.load();
+        return item.getItem();
     }
 
     @Override
@@ -806,6 +813,9 @@ public final class v1_20_R5 extends VersionSupport {
 
     @Override
     public ArmorStand createPacketArmorStand(Location loc) {
+        if (loc.getWorld() == null) {
+            throw new RuntimeException("World of a location should not be null.");
+        }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = new PacketPlayOutSpawnEntity(nmsEntity);
@@ -849,64 +859,16 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            return null;
-        }
-        // todo = fix this
-        // return i.v();
-        return null;
-    }
-
-    private @Nullable NBTTagCompound getTag(@NotNull ItemStack itemStack) {
-        // todo - fix this
-        // return itemStack.v();
-        return null;
-    }
-
-    public NBTTagCompound getCreateTag(net.minecraft.world.item.ItemStack itemStack) {
-        var tag = getTag(itemStack);
-        return null == tag ? initializeTag(itemStack) : tag;
-    }
-
-    public ItemStack applyTag(@NotNull net.minecraft.world.item.ItemStack itemStack, NBTTagCompound tag) {
-        CustomData customData = CustomData.a(tag);
-        // todo - fix this
-        // itemStack.c(tag);
-        return itemStack;
-    }
-
-    public NBTTagCompound getCreateTag(org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            throw new RuntimeException("Cannot convert given item to a NMS item");
-        }
-        return getCreateTag(i);
+        RtagItem rtagItem = new RtagItem(itemStack);
+        OptionalType nbt = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        return (nbt.isEmpty() || nbt.isNotInstance(NBTTagCompound.class)) ? null : nbt.value();
     }
 
     public org.bukkit.inventory.ItemStack applyTag(org.bukkit.inventory.ItemStack itemStack, NBTTagCompound tag) {
-        return CraftItemStack.asBukkitCopy(applyTag(getNmsItemCopy(itemStack), tag));
-    }
-
-    public ItemStack getNmsItemCopy(org.bukkit.inventory.ItemStack itemStack) {
-        ItemStack i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            throw new RuntimeException("Cannot convert given item to a NMS item");
-        }
-        return i;
-    }
-
-    private @NotNull NBTTagCompound initializeTag(net.minecraft.world.item.ItemStack itemStack) {
-
-        var tag = getTag(itemStack);
-        if (null != tag) {
-            throw new RuntimeException("Provided item already has a Tag");
-        }
-        tag = new NBTTagCompound();
-        // todo fix this
-        // itemStack.c(tag);
-
-        return tag;
+        RtagItem rtagItem = new RtagItem(itemStack);
+        rtagItem.set(tag, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        rtagItem.load();
+        return rtagItem.getItem();
     }
 
     public EntityPlayer getPlayer(Player player) {
