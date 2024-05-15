@@ -307,7 +307,9 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
+        //noinspection removal
         EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, 1000.0);
+        //noinspection removal
         p.setLastDamageCause(event);
         p.setHealth(0);
     }
