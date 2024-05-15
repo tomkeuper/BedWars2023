@@ -269,7 +269,7 @@ public final class v1_20_R5 extends VersionSupport {
         }
         i.setAmount(i.getAmount() - amount);
         //noinspection UnstableApiUsage
-        p.updateInventory(); //TODO might be deprecated. Currently marked as unstable. Find a replacement later on.
+        p.updateInventory();
     }
 
     @Override
@@ -291,7 +291,7 @@ public final class v1_20_R5 extends VersionSupport {
         @SuppressWarnings("UnstableApiUsage")
         EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, DamageSource.builder(DamageType.GENERIC).build(), 1000.0);
         //noinspection removal
-        p.setLastDamageCause(event); // TODO is deprecated and marked for removal. Find a replacement as soon as possible
+        p.setLastDamageCause(event);
         p.setHealth(0);
     }
 
