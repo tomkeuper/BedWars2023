@@ -574,7 +574,10 @@ public final class v1_20_R5 extends VersionSupport {
 
         if (copyTagFrom != null) {
             var tag = getTag(copyTagFrom);
-            head = applyTag(head, tag);
+            RtagItem rtagItem = new RtagItem(head);
+            rtagItem.set(tag, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+            rtagItem.load();
+            head = rtagItem.getItem();
         }
 
         var meta = head.getItemMeta();
@@ -862,13 +865,6 @@ public final class v1_20_R5 extends VersionSupport {
         RtagItem rtagItem = new RtagItem(itemStack);
         OptionalType nbt = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
         return (nbt.isEmpty() || nbt.isNotInstance(NBTTagCompound.class)) ? null : nbt.value();
-    }
-
-    public org.bukkit.inventory.ItemStack applyTag(org.bukkit.inventory.ItemStack itemStack, NBTTagCompound tag) {
-        RtagItem rtagItem = new RtagItem(itemStack);
-        rtagItem.set(tag, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
-        rtagItem.load();
-        return rtagItem.getItem();
     }
 
     public EntityPlayer getPlayer(Player player) {
