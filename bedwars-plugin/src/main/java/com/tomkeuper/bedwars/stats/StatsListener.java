@@ -120,7 +120,7 @@ public class StatsListener implements Listener {
             }
 
             Bukkit.getPluginManager().callEvent(ev); //call player stat change event for killer (kills)
-            if (ev.isCancelled()) {
+            if (!ev.isCancelled()) {
                 // Store kills
                 if (killerStats != null) killerStats.setKills(killerStats.getKills() + 1);
             }
