@@ -49,7 +49,7 @@ body:
 - type: textarea
   attributes:
     label: "Expected Behaviour"
-    description: "What behaviour did you expect from PlaceholderAPI?"
+    description: "What behaviour did you expect from BedWars2023?"
     placeholder: "A clear and concise description of what you expected to happen..."
   validations:
     required: true
