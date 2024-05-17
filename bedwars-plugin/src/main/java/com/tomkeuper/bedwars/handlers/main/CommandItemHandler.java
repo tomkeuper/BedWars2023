@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.items.handlers.HandlerType;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.PermanentItemHandler;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -39,6 +40,10 @@ public class CommandItemHandler extends PermanentItemHandler {
     @Override
     public void handleUse(Player player, IArena arena, IPermanentItem lobbyItem) {
         String command = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", lobbyItem.getIdentifier()));
+        if (command == null) {
+            Bukkit.getLogger().warning("Command for lobby item " + lobbyItem.getIdentifier() + " is not set.");
+            return;
+        }
         player.performCommand(command);
     }
 
