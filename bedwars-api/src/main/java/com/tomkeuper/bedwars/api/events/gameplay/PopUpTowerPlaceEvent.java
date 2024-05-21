@@ -36,7 +36,7 @@ public class PopUpTowerPlaceEvent extends Event {
     private boolean cancelled = false;
 
     /**
-     * Called when a player places a pop up tower
+     * Called when a player places a pop-up tower
      */
     public PopUpTowerPlaceEvent(Player player, IArena arena) {
         this.player = player;

@@ -36,7 +36,7 @@ public class PopUpTowerBuildEvent extends Event {
     private final Block block;
 
     /**
-     * Called when the pop-up tower is building another block
+     * Called when a pop-up tower is building another block
      */
     public PopUpTowerBuildEvent(TeamColor teamColor, IArena arena, Block block) {
         this.teamColor = teamColor;
