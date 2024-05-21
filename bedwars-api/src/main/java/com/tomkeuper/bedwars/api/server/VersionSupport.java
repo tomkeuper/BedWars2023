@@ -179,6 +179,7 @@ public abstract class VersionSupport {
      * Is despawnable entity
      */
     public boolean isDespawnable(Entity e) {
+        if (e == null) return false;
         return despawnables.get(e.getUniqueId()) != null;
     }
 
