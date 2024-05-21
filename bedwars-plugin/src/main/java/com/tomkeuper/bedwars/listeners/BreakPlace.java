@@ -186,8 +186,9 @@ public class BreakPlace implements Listener {
                     Location loc = e.getBlock().getLocation();
                     IArena a1 = Arena.getArenaByPlayer(p);
                     TeamColor col = a1.getTeam(p).getColor();
+                    Block block = loc.getWorld().getBlockAt(loc.clone().subtract(0, -1, 0));
 
-                    PopUpTowerPlaceEvent event = new PopUpTowerPlaceEvent(p, a1);
+                    PopUpTowerPlaceEvent event = new PopUpTowerPlaceEvent(p, loc, block, a1);
                     Bukkit.getPluginManager().callEvent(event);
                     if (e.isCancelled()) return;
 
@@ -196,15 +197,15 @@ public class BreakPlace implements Listener {
                         rotation += 360.0D;
                     }
                     if (45.0D <= rotation && rotation < 135.0D) {
-                        new TowerSouth(loc, e.getBlockPlaced(), col, p);
+                        new TowerSouth(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (225.0D <= rotation && rotation < 315.0D) {
-                        new TowerNorth(loc, e.getBlockPlaced(), col, p);
+                        new TowerNorth(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (135.0D <= rotation && rotation < 225.0D) {
-                        new TowerWest(loc, e.getBlockPlaced(), col, p);
+                        new TowerWest(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (0.0D <= rotation && rotation < 45.0D) {
-                        new TowerEast(loc, e.getBlockPlaced(), col, p);
+                        new TowerEast(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (315.0D <= rotation && rotation < 360.0D) {
-                        new TowerEast(loc, e.getBlockPlaced(), col, p);
+                        new TowerEast(event.getLocation(), e.getBlockPlaced(), col, p);
                     }
                 }
             }
