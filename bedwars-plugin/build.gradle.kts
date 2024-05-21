@@ -23,7 +23,7 @@ repositories {
     maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
     maven("https://repo.alessiodp.com/releases/") // slimjar
     maven("https://repo.rapture.pw/repository/maven-releases/") // Flow-NBT
-
+    maven("https://jitpack.io") // Jitpack (RTag)
 }
 
 dependencies {
@@ -43,6 +43,7 @@ dependencies {
     api(projects.versionsupportV120R1)
     api(projects.versionsupportV120R2)
     api(projects.versionsupportV120R3)
+    api(projects.versionsupportV120R5)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1") {
@@ -75,6 +76,11 @@ dependencies {
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
+
+    compileOnly("com.saicone.rtag:rtag:1.5.3")
+    compileOnly("com.saicone.rtag:rtag-block:1.5.3")
+    compileOnly("com.saicone.rtag:rtag-entity:1.5.3")
+    compileOnly("com.saicone.rtag:rtag-item:1.5.3")
 }
 
 
@@ -116,6 +122,7 @@ val versions = setOf(
     projects.versionsupportV120R1,
     projects.versionsupportV120R2,
     projects.versionsupportV120R3,
+    projects.versionsupportV120R5,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.resetadapterAswm
@@ -152,6 +159,7 @@ tasks {
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
+        relocate("com.saicone.rtag", "com.tomkeuper.bedwars.libs.rtag")
     }
     build {
         dependsOn(shadowJar)
