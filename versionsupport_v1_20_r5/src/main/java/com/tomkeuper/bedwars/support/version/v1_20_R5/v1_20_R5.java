@@ -18,9 +18,11 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v1_20_R3;
+package com.tomkeuper.bedwars.support.version.v1_20_R5;
 
 import com.mojang.datafixers.util.Pair;
+import com.saicone.rtag.RtagItem;
+import com.saicone.rtag.util.OptionalType;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
@@ -34,11 +36,11 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableAttributes;
-import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableFactory;
-import com.tomkeuper.bedwars.support.version.v1_20_R3.despawnable.DespawnableType;
-import com.tomkeuper.bedwars.support.version.v1_20_R3.hologram.HoloLine;
-import com.tomkeuper.bedwars.support.version.v1_20_R3.hologram.Hologram;
+import com.tomkeuper.bedwars.support.version.v1_20_R5.despawnable.DespawnableAttributes;
+import com.tomkeuper.bedwars.support.version.v1_20_R5.despawnable.DespawnableFactory;
+import com.tomkeuper.bedwars.support.version.v1_20_R5.despawnable.DespawnableType;
+import com.tomkeuper.bedwars.support.version.v1_20_R5.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_20_R5.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -67,10 +69,12 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_20_R3.entity.*;
-import org.bukkit.craftbukkit.v1_20_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R4.entity.*;
+import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -83,29 +87,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
 
-public class v1_20_R3 extends VersionSupport {
+public final class v1_20_R5 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
 
-    public v1_20_R3(Plugin plugin, String name) {
+    public v1_20_R5(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);
-    }
-
-    @Override
-    public void registerVersionListeners() {
-        new VersionCommon(this);
     }
 
     @Override
@@ -114,45 +109,12 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public String getTag(org.bukkit.inventory.ItemStack itemStack, String key) {
-        var tag = getTag(itemStack);
-        return tag == null ? null : tag.e(key) ? tag.l(key) : null;
-    }
-
-    @Override
-    public void sendTitle(@NotNull Player p, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
+    public void sendTitle(Player p, String title, String subtitle, int fadeIn, int stay, int fadeOut) {
         p.sendTitle(title == null ? " " : title, subtitle == null ? " " : subtitle, fadeIn, stay, fadeOut);
     }
 
     @Override
-    public void spawnSilverfish(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, double damage) {
-        var attr = new DespawnableAttributes(DespawnableType.SILVERFISH, speed, health, damage, despawn);
-        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
-
-        new Despawnable(
-                entity,
-                bedWarsTeam, despawn,
-                Messages.SHOP_UTILITY_NPC_SILVERFISH_NAME,
-                PlayerKillEvent.PlayerKillCause.SILVERFISH_FINAL_KILL,
-                PlayerKillEvent.PlayerKillCause.SILVERFISH
-        );
-    }
-
-    @Override
-    public void spawnIronGolem(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn) {
-        var attr = new DespawnableAttributes(DespawnableType.IRON_GOLEM, speed, health, 4, despawn);
-        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
-        new Despawnable(
-                entity,
-                bedWarsTeam, despawn,
-                Messages.SHOP_UTILITY_NPC_IRON_GOLEM_NAME,
-                PlayerKillEvent.PlayerKillCause.IRON_GOLEM_FINAL_KILL,
-                PlayerKillEvent.PlayerKillCause.IRON_GOLEM
-        );
-    }
-
-    @Override
-    public void playAction(@NotNull Player p, String text) {
+    public void playAction(Player p, String text) {
         p.spigot().sendMessage(
                 ChatMessageType.ACTION_BAR,
                 new TextComponent(ChatColor.translateAlternateColorCodes('&', text)
@@ -171,36 +133,9 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public void hideEntity(@NotNull Entity e, Player p) {
+    public void hideEntity(Entity e, Player p) {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         sendPacket(p, packet);
-    }
-
-    @Override
-    public void minusAmount(Player p, org.bukkit.inventory.@NotNull ItemStack i, int amount) {
-        if (i.getAmount() - amount <= 0) {
-            if (p.getInventory().getItemInOffHand().equals(i)) {
-                p.getInventory().setItemInOffHand(null);
-            } else {
-                p.getInventory().removeItem(i);
-            }
-            return;
-        }
-        i.setAmount(i.getAmount() - amount);
-        p.updateInventory(); //TODO might be deprecated. Currently marked as unstable. Find a replacement later on.
-    }
-
-    @Override
-    public void setSource(TNTPrimed tnt, Player owner) {
-        EntityLiving nmsEntityLiving = (((CraftLivingEntity) owner).getHandle());
-        EntityTNTPrimed nmsTNT = (((CraftTNTPrimed) tnt).getHandle());
-        try {
-            Field sourceField = EntityTNTPrimed.class.getDeclaredField("g");
-            sourceField.setAccessible(true);
-            sourceField.set(nmsTNT, nmsEntityLiving);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     @Override
@@ -238,6 +173,7 @@ public class v1_20_R3 extends VersionSupport {
         return i instanceof ItemBow;
     }
 
+
     @Override
     public boolean isProjectile(org.bukkit.inventory.ItemStack itemStack) {
         var entity = getEntity(itemStack);
@@ -253,13 +189,13 @@ public class v1_20_R3 extends VersionSupport {
 
         return pm != null && pm.hasCustomEffects() && pm.hasCustomEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY);
     }
-
     @Override
     public void registerEntities() {
+
     }
 
     @Override
-    public void spawnShop(@NotNull Location loc, String name1, List<Player> players, IArena arena) {
+    public void spawnShop(Location loc, String name1, List<Player> players, IArena arena) {
         Location l = loc.clone();
 
         if (l.getWorld() == null) return;
@@ -294,21 +230,66 @@ public class v1_20_R3 extends VersionSupport {
         return tag.k("generic.attackDamage");
     }
 
-    private static ArmorStand createArmorStand(String name, Location loc) {
-        if (loc == null) return null;
-        if (loc.getWorld() == null) return null;
-        ArmorStand a = loc.getWorld().spawn(loc, ArmorStand.class);
-        a.setGravity(false);
-        a.setVisible(false);
-        a.setCustomNameVisible(true);
-        a.setCustomName(name);
-        return a;
+    @Override
+    public void spawnSilverfish(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, double damage) {
+        var attr = new DespawnableAttributes(DespawnableType.SILVERFISH, speed, health, damage, despawn);
+        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
+
+        new Despawnable(
+                entity,
+                bedWarsTeam, despawn,
+                Messages.SHOP_UTILITY_NPC_SILVERFISH_NAME,
+                PlayerKillEvent.PlayerKillCause.SILVERFISH_FINAL_KILL,
+                PlayerKillEvent.PlayerKillCause.SILVERFISH
+        );
+    }
+
+    @Override
+    public void spawnIronGolem(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn) {
+        var attr = new DespawnableAttributes(DespawnableType.IRON_GOLEM, speed, health, 4, despawn);
+        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
+        new Despawnable(
+                entity,
+                bedWarsTeam, despawn,
+                Messages.SHOP_UTILITY_NPC_IRON_GOLEM_NAME,
+                PlayerKillEvent.PlayerKillCause.IRON_GOLEM_FINAL_KILL,
+                PlayerKillEvent.PlayerKillCause.IRON_GOLEM
+        );
+    }
+
+    @Override
+    public void minusAmount(Player p, org.bukkit.inventory.@NotNull ItemStack i, int amount) {
+        if (i.getAmount() - amount <= 0) {
+            if (p.getInventory().getItemInOffHand().equals(i)) {
+                p.getInventory().setItemInOffHand(null);
+            } else {
+                p.getInventory().removeItem(i);
+            }
+            return;
+        }
+        i.setAmount(i.getAmount() - amount);
+        //noinspection UnstableApiUsage
+        p.updateInventory();
+    }
+
+    @Override
+    public void setSource(TNTPrimed tnt, Player owner) {
+        EntityLiving nmsEntityLiving = (((CraftLivingEntity) owner).getHandle());
+        EntityTNTPrimed nmsTNT = (((CraftTNTPrimed) tnt).getHandle());
+        try {
+            Field sourceField = EntityTNTPrimed.class.getDeclaredField("g");
+            sourceField.setAccessible(true);
+            sourceField.set(nmsTNT, nmsEntityLiving);
+        } catch (Exception ex) {
+            //noinspection CallToPrintStackTrace
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public void voidKill(Player p) {
-        //noinspection removal
-        EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, 1000.0);
+        @SuppressWarnings("UnstableApiUsage")
+        EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, DamageSource.builder(DamageType.GENERIC).build(), 1000.0);
         //noinspection removal
         p.setLastDamageCause(event);
         p.setHealth(0);
@@ -326,7 +307,7 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public void showArmor(@NotNull Player victim, Player receiver) {
+    public void showArmor(Player victim, Player receiver) {
         List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
         items.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(victim.getInventory().getHelmet())));
         items.add(new Pair<>(EnumItemSlot.e, CraftItemStack.asNMSCopy(victim.getInventory().getChestplate())));
@@ -337,7 +318,7 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public EnderDragon spawnDragon(Location l, ITeam bwt) {
+    public EnderDragon spawnDragon(Location l, ITeam team) {
         if (l == null || l.getWorld() == null) {
             getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
             return null;
@@ -392,12 +373,13 @@ public class v1_20_R3 extends VersionSupport {
                     }
             );
         } catch (NoSuchFieldException | IllegalAccessException e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
     }
 
     @Override
-    public void setBlockTeamColor(@NotNull Block block, TeamColor teamColor) {
+    public void setBlockTeamColor(Block block, TeamColor teamColor) {
         if (block.getType().toString().contains("STAINED_GLASS") || block.getType().toString().equals("GLASS")) {
             block.setType(teamColor.glassMaterial());
         } else if (block.getType().toString().contains("_TERRACOTTA")) {
@@ -408,32 +390,44 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public void setCollide(@NotNull Player p, IArena a, boolean value) {
+    public void setCollide(Player p, IArena a, boolean value) {
         p.setCollidable(value);
     }
 
     @Override
     public org.bukkit.inventory.ItemStack addCustomData(org.bukkit.inventory.ItemStack i, String data) {
-        var tag = getCreateTag(i);
-        tag.a(VersionSupport.PLUGIN_TAG_GENERIC_KEY, data);
-        return applyTag(i, tag);
+        RtagItem rtagItem = new RtagItem(i);
+        rtagItem.set(data, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        rtagItem.update();
+        return rtagItem.getItem();
     }
 
     @Override
     public org.bukkit.inventory.ItemStack setTag(org.bukkit.inventory.ItemStack itemStack, String key, String value) {
-        var tag = getCreateTag(itemStack);
-        tag.a(key, value);
-        return applyTag(itemStack, tag);
+        RtagItem rtagItem = new RtagItem(itemStack);
+        rtagItem.set(value, key);
+        rtagItem.update();
+        return rtagItem.getItem();
+    }
+
+    @Override
+    public String getTag(org.bukkit.inventory.ItemStack itemStack, String key) {
+        var tag = getTag(itemStack);
+        return tag == null ? null : tag.e(key) ? tag.l(key) : null;
     }
 
     @Override
     public boolean isCustomBedWarsItem(org.bukkit.inventory.ItemStack i) {
-        return getCreateTag(i).e(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        RtagItem rtagItem = new RtagItem(i);
+        OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        return tag.isNotEmpty();
     }
 
     @Override
     public String getCustomData(org.bukkit.inventory.ItemStack i) {
-        return getCreateTag(i).l(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        RtagItem rtagItem = new RtagItem(i);
+        OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        return (tag.isEmpty() || tag.isNotInstance(String.class)) ? null : tag.asString(null);
     }
 
     @Override
@@ -467,7 +461,7 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public org.bukkit.Material materialFireball() {
+    public Material materialFireball() {
         return org.bukkit.Material.FIRE_CHARGE;
     }
 
@@ -542,6 +536,13 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
+    public void setJoinSignBackground(BlockState b, Material material) {
+        if (b.getBlockData() instanceof WallSign) {
+            b.getBlock().getRelative(((WallSign) b.getBlockData()).getFacing().getOppositeFace()).setType(material);
+        }
+    }
+
+    @Override
     public org.bukkit.inventory.ItemStack redGlassPane(int amount) {
         return new org.bukkit.inventory.ItemStack(Material.RED_STAINED_GLASS_PANE, amount);
     }
@@ -553,15 +554,17 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public String getShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack) {
-        var tag = getCreateTag(itemStack);
-        return tag.e(VersionSupport.PLUGIN_TAG_TIER_KEY) ? tag.l(VersionSupport.PLUGIN_TAG_TIER_KEY) : "null";
+        RtagItem item = new RtagItem(itemStack);
+        OptionalType tag = item.getOptional(VersionSupport.PLUGIN_TAG_TIER_KEY);
+        return tag.isEmpty() ? "null" : tag.asString("null");
     }
 
     @Override
     public org.bukkit.inventory.ItemStack setShopUpgradeIdentifier(org.bukkit.inventory.ItemStack itemStack, String identifier) {
-        var tag = getCreateTag(itemStack);
-        tag.a(VersionSupport.PLUGIN_TAG_TIER_KEY, identifier);
-        return applyTag(itemStack, tag);
+        RtagItem item = new RtagItem(itemStack);
+        item.set(identifier, VersionSupport.PLUGIN_TAG_TIER_KEY);
+        item.load();
+        return item.getItem();
     }
 
     @Override
@@ -570,7 +573,10 @@ public class v1_20_R3 extends VersionSupport {
 
         if (copyTagFrom != null) {
             var tag = getTag(copyTagFrom);
-            head = applyTag(head, tag);
+            RtagItem rtagItem = new RtagItem(head);
+            rtagItem.set(tag, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+            rtagItem.load();
+            head = rtagItem.getItem();
         }
 
         var meta = head.getItemMeta();
@@ -598,7 +604,7 @@ public class v1_20_R3 extends VersionSupport {
 
         // retrieve current armor and in-hand items
         // we send a packet later for timing issues where other players do not see them
-        List<Pair<EnumItemSlot, ItemStack>> list = getPlayerEquipment(entityPlayer);
+        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> list = getPlayerEquipment(entityPlayer);
 
 
         for (Player p : arena.getPlayers()) {
@@ -656,8 +662,18 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public void setUnbreakable(@NotNull ItemMeta itemMeta) {
+    public void setUnbreakable(ItemMeta itemMeta) {
         itemMeta.setUnbreakable(true);
+    }
+
+    @Override
+    public int getVersion() {
+        return 12;
+    }
+
+    @Override
+    public void registerVersionListeners() {
+        new VersionCommon(this);
     }
 
     @Override
@@ -667,38 +683,16 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public int getVersion() {
-        return 11;
-    }
-
-    @Override
-    public void setJoinSignBackground(@NotNull BlockState b, org.bukkit.Material material) {
-        if (b.getBlockData() instanceof WallSign) {
-            b.getBlock().getRelative(((WallSign) b.getBlockData()).getFacing().getOppositeFace()).setType(material);
-        }
-    }
-
-    @Override
-    public void spigotShowPlayer(Player victim, @NotNull Player receiver) {
-        receiver.showPlayer(getPlugin(), victim);
-    }
-
-    @Override
-    public void spigotHidePlayer(Player victim, @NotNull Player receiver) {
-        receiver.hidePlayer(getPlugin(), victim);
-    }
-
-    @Override
-    public Fireball setFireballDirection(Fireball fireball, @NotNull Vector vector) {
+    public Fireball setFireballDirection(Fireball fireball, Vector vector) {
         EntityFireball fb = ((CraftFireball) fireball).getHandle();
-        fb.b = vector.getX() * 0.1D;
-        fb.c = vector.getY() * 0.1D;
-        fb.d = vector.getZ() * 0.1D;
+        fb.d = vector.getX() * 0.1D;
+        fb.e = vector.getY() * 0.1D;
+        fb.f = vector.getZ() * 0.1D;
         return (Fireball) fb.getBukkitEntity();
     }
 
     @Override
-    public void playRedStoneDot(@NotNull Player player) {
+    public void playRedStoneDot(Player player) {
         Color color = Color.RED;
         PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(
                 new ParticleParamRedstone(
@@ -723,120 +717,15 @@ public class v1_20_R3 extends VersionSupport {
         // minecraft clears them on death on newer version
     }
 
-    /**
-     * Gets the NMS Item from ItemStack
-     */
-    private @Nullable Item getItem(org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            return null;
-        }
-        return i.d();
-    }
-
-    /**
-     * Gets the NMS Entity from ItemStack
-     */
-    private @Nullable net.minecraft.world.entity.Entity getEntity(org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            return null;
-        }
-        return i.H();
-    }
-
-    private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            return null;
-        }
-        return i.v();
-    }
-
-    private @Nullable NBTTagCompound getTag(@NotNull ItemStack itemStack) {
-        return itemStack.v();
-    }
-
-    private @NotNull NBTTagCompound initializeTag(org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            throw new RuntimeException("Cannot convert given item to a NMS item");
-        }
-        return initializeTag(i);
-    }
-
-    private @NotNull NBTTagCompound initializeTag(ItemStack itemStack) {
-
-        var tag = getTag(itemStack);
-        if (null != tag) {
-            throw new RuntimeException("Provided item already has a Tag");
-        }
-        tag = new NBTTagCompound();
-        itemStack.c(tag);
-
-        return tag;
-    }
-
-    public NBTTagCompound getCreateTag(ItemStack itemStack) {
-        var tag = getTag(itemStack);
-        return null == tag ? initializeTag(itemStack) : tag;
-    }
-
-    public NBTTagCompound getCreateTag(org.bukkit.inventory.ItemStack itemStack) {
-        var i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            throw new RuntimeException("Cannot convert given item to a NMS item");
-        }
-        return getCreateTag(i);
-    }
-
-    public org.bukkit.inventory.ItemStack applyTag(org.bukkit.inventory.ItemStack itemStack, NBTTagCompound tag) {
-        return CraftItemStack.asBukkitCopy(applyTag(getNmsItemCopy(itemStack), tag));
-    }
-
-    public ItemStack applyTag(@NotNull ItemStack itemStack, NBTTagCompound tag) {
-        itemStack.c(tag);
-        return itemStack;
-    }
-
-    public ItemStack getNmsItemCopy(org.bukkit.inventory.ItemStack itemStack) {
-        ItemStack i = CraftItemStack.asNMSCopy(itemStack);
-        if (null == i) {
-            throw new RuntimeException("Cannot convert given item to a NMS item");
-        }
-        return i;
-    }
-
-    public EntityPlayer getPlayer(Player player) {
-        return ((CraftPlayer) player).getHandle();
-    }
-
-    public List<Pair<EnumItemSlot, ItemStack>> getPlayerEquipment(@NotNull Player player) {
-        return getPlayerEquipment(getPlayer(player));
-    }
-
-    public List<Pair<EnumItemSlot, ItemStack>> getPlayerEquipment(@NotNull EntityPlayer entityPlayer) {
-        List<Pair<EnumItemSlot, ItemStack>> list = new ArrayList<>();
-        list.add(new Pair<>(EnumItemSlot.a, entityPlayer.c(EnumItemSlot.a)));
-        list.add(new Pair<>(EnumItemSlot.b, entityPlayer.c(EnumItemSlot.b)));
-        list.add(new Pair<>(EnumItemSlot.f, entityPlayer.c(EnumItemSlot.f)));
-        list.add(new Pair<>(EnumItemSlot.e, entityPlayer.c(EnumItemSlot.e)));
-        list.add(new Pair<>(EnumItemSlot.d, entityPlayer.c(EnumItemSlot.d)));
-        list.add(new Pair<>(EnumItemSlot.c, entityPlayer.c(EnumItemSlot.c)));
-
-        return list;
-    }
-
     @Override
-    public Block placeTowerBlocks(@NotNull Block b, @NotNull IArena a, @NotNull TeamColor color, int x, int y, int z){
+    public void placeTowerBlocks(Block b, IArena a, TeamColor color, int x, int y, int z) {
         b.getRelative(x, y, z).setType(color.woolMaterial());
         a.addPlacedBlock(b.getRelative(x, y, z));
-        return b;
     }
 
     @Override
-    public Block placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData){
-        Block block = b.getRelative(x,y,z);  //ladder block
+    public void placeLadder(Block b, int x, int y, int z, IArena a, int ladderData) {
+        Block block = b.getRelative(x, y, z);  //ladder block
         block.setType(Material.LADDER);
         Ladder ladder = (Ladder) block.getBlockData();
         a.addPlacedBlock(block);
@@ -858,20 +747,19 @@ public class v1_20_R3 extends VersionSupport {
                 block.setBlockData(ladder);
             }
         }
-        return b;
     }
 
     @Override
-    public void playVillagerEffect(@NotNull Player player, Location location) {
-        player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
+    public void playVillagerEffect(Player player, Location location) {
+        player.spawnParticle(Particle.HAPPY_VILLAGER, location, 1);
     }
 
     @Override
     public void updatePacketArmorStand(GeneratorHolder generatorHolder) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         PacketPlayOutSpawnEntity spawn = new PacketPlayOutSpawnEntity(((CraftArmorStand) armorStand).getHandle());
-        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().an().c());
-        Pair<EnumItemSlot, ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().ap().c());
+        Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
 
         for (Player p : armorStand.getWorld().getPlayers()) {
@@ -887,17 +775,6 @@ public class v1_20_R3 extends VersionSupport {
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
         for (Player p : armorStand.getWorld().getPlayers()) {
             sendPacket(p, equipment);
-        }
-    }
-
-    public static void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().c.b(packet);
-    }
-
-    public static void sendPackets(Player player, Packet<?> @NotNull ... packets) {
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().c;
-        for (Packet<?> p : packets) {
-            connection.b(p);
         }
     }
 
@@ -918,7 +795,7 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public IHoloLine lineFromText(String text, @Nonnull IHologram hologram) {
+    public IHoloLine lineFromText(String text, @NotNull IHologram hologram) {
         return new HoloLine(text, hologram);
     }
 
@@ -938,6 +815,9 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public ArmorStand createPacketArmorStand(Location loc) {
+        if (loc.getWorld() == null) {
+            throw new RuntimeException("World of a location should not be null.");
+        }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = new PacketPlayOutSpawnEntity(nmsEntity);
@@ -945,5 +825,60 @@ public class v1_20_R3 extends VersionSupport {
             sendPacket(p, spawn);
         }
         return new CraftArmorStand((CraftServer) getPlugin().getServer(), nmsEntity);
+    }
+
+    public static void sendPacket(Player player, Packet<?> packet) {
+        ((CraftPlayer) player).getHandle().c.b(packet);
+    }
+
+    public static void sendPackets(Player player, Packet<?> @NotNull ... packets) {
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().c;
+        for (Packet<?> p : packets) {
+            connection.b(p);
+        }
+    }
+
+    /**
+     * Gets the NMS Item from ItemStack
+     */
+    private @Nullable Item getItem(org.bukkit.inventory.ItemStack itemStack) {
+        var i = CraftItemStack.asNMSCopy(itemStack);
+        if (null == i) {
+            return null;
+        }
+        return i.g();
+    }
+
+    /**
+     * Gets the NMS Entity from ItemStack
+     */
+    private @Nullable net.minecraft.world.entity.Entity getEntity(org.bukkit.inventory.ItemStack itemStack) {
+        var i = CraftItemStack.asNMSCopy(itemStack);
+        if (null == i) {
+            return null;
+        }
+        return i.F();
+    }
+
+    private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
+        RtagItem rtagItem = new RtagItem(itemStack);
+        OptionalType nbt = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        return (nbt.isEmpty() || nbt.isNotInstance(NBTTagCompound.class)) ? null : nbt.value();
+    }
+
+    public EntityPlayer getPlayer(Player player) {
+        return ((CraftPlayer) player).getHandle();
+    }
+
+    public List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> getPlayerEquipment(@NotNull EntityPlayer entityPlayer) {
+        List<Pair<EnumItemSlot, net.minecraft.world.item.ItemStack>> list = new ArrayList<>();
+        list.add(new Pair<>(EnumItemSlot.a, entityPlayer.a(EnumItemSlot.a)));
+        list.add(new Pair<>(EnumItemSlot.b, entityPlayer.a(EnumItemSlot.b)));
+        list.add(new Pair<>(EnumItemSlot.f, entityPlayer.a(EnumItemSlot.f)));
+        list.add(new Pair<>(EnumItemSlot.e, entityPlayer.a(EnumItemSlot.e)));
+        list.add(new Pair<>(EnumItemSlot.d, entityPlayer.a(EnumItemSlot.d)));
+        list.add(new Pair<>(EnumItemSlot.c, entityPlayer.a(EnumItemSlot.c)));
+
+        return list;
     }
 }
