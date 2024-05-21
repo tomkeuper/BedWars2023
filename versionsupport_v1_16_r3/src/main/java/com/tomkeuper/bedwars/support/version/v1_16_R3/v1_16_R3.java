@@ -714,13 +714,14 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public void placeTowerBlocks(Block b, IArena a, TeamColor color, int x, int y,int z){
+    public Block placeTowerBlocks(Block b, IArena a, TeamColor color, int x, int y,int z){
         b.getRelative(x, y, z).setType(color.woolMaterial());
         a.addPlacedBlock(b.getRelative(x, y, z));
+        return b;
     }
 
     @Override
-    public void placeLadder(Block b, int x, int y,int z, IArena a, int ladderdata){
+    public Block placeLadder(Block b, int x, int y,int z, IArena a, int ladderdata){
         Block block = b.getRelative(x,y,z);  //ladder block
         block.setType(Material.LADDER);
         Ladder ladder = (Ladder) block.getBlockData();
@@ -729,19 +730,21 @@ public class v1_16_R3 extends VersionSupport {
             case 2:
                 ladder.setFacing(BlockFace.NORTH);
                 block.setBlockData(ladder);
-                return;
+                break;
             case 3:
                 ladder.setFacing(BlockFace.SOUTH);
                 block.setBlockData(ladder);
-                return;
+                break;
             case 4:
                 ladder.setFacing(BlockFace.WEST);
                 block.setBlockData(ladder);
-                return;
+                break;
             case 5:
                 ladder.setFacing(BlockFace.EAST);
                 block.setBlockData(ladder);
+                break;
         }
+        return block;
     }
 
     @Override

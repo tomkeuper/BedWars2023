@@ -24,8 +24,10 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.gameplay.PopUpTowerBuildEvent;
 import com.tomkeuper.bedwars.api.region.Region;
 import com.tomkeuper.bedwars.arena.Arena;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -47,10 +49,16 @@ public class NewPlaceBlock {
                 if (r.isInRegion(b.getRelative(x, y, z).getLocation()))
                     return;
 
+            IArena arena = Arena.getArenaByPlayer(p);
+            Block block;
+
             if (!ladder)
-                BedWars.nms.placeTowerBlocks(b, Arena.getArenaByPlayer(p), color, x, y, z);
+                block = BedWars.nms.placeTowerBlocks(b, arena, color, x, y, z);
             else
-                BedWars.nms.placeLadder(b, x, y, z, Arena.getArenaByPlayer(p), ladderdata);
+                block = BedWars.nms.placeLadder(b, x, y, z, arena, ladderdata);
+
+            PopUpTowerBuildEvent event = new PopUpTowerBuildEvent(color, arena, block);
+            Bukkit.getPluginManager().callEvent(event);
         }
 
     }

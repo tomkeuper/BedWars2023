@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.gameplay.PopUpTowerPlaceEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerBedBreakEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
@@ -185,6 +186,11 @@ public class BreakPlace implements Listener {
                     Location loc = e.getBlock().getLocation();
                     IArena a1 = Arena.getArenaByPlayer(p);
                     TeamColor col = a1.getTeam(p).getColor();
+
+                    PopUpTowerPlaceEvent event = new PopUpTowerPlaceEvent(p, a1);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (e.isCancelled()) return;
+
                     double rotation = (p.getLocation().getYaw() - 90.0F) % 360.0F;
                     if (rotation < 0.0D) {
                         rotation += 360.0D;

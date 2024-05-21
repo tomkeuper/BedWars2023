@@ -21,48 +21,55 @@
 package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.arena.team.TeamColor;
-import org.bukkit.block.Block;
+import lombok.Setter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class EggBridgeBuildEvent extends Event {
+public class PopUpTowerPlaceEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final TeamColor teamColor;
+    private final Player player;
     private final IArena arena;
-    private final Block block;
+    private boolean cancelled = false;
 
     /**
-     * Called when an egg bridge is building another block
+     * Called when a player places a pop up tower
      */
-    public EggBridgeBuildEvent(TeamColor teamColor, IArena arena, Block block) {
-        this.teamColor = teamColor;
+    public PopUpTowerPlaceEvent(Player player, IArena arena) {
+        this.player = player;
         this.arena = arena;
-        this.block = block;
     }
 
     /**
-     * Get the arena
+     * Get player
+     */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Get arena
      */
     public IArena getArena() {
         return arena;
     }
 
     /**
-     * Get the built block
+     * Used to cancel the event
      */
-    public Block getBlock() {
-        return block;
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     /**
-     * Get the block's team color
+     * Used to check if whether the event is cancelled
+     * @return whether the event is cancelled
      */
-    public TeamColor getTeamColor() {
-        return teamColor;
+    public boolean isCancelled() {
+        return cancelled;
     }
 
     @NotNull
