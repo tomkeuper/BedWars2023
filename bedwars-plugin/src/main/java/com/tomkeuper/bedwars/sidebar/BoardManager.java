@@ -88,6 +88,8 @@ public class BoardManager implements IScoreboardService {
     }
 
     public void registerLobbyScoreboards() {
+        if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) return;
+
         for (Language language : Language.getLanguages()) {
             List<String> lines = language.l(Messages.SCOREBOARD_LOBBY);
             lines.replaceAll(s -> s.isEmpty() ? " " : s); // TAB doesn't display empty lines, we need to replace them with spaces
@@ -333,8 +335,8 @@ public class BoardManager implements IScoreboardService {
             Language playerLanguage = Language.getPlayerLanguage(player);
 
             // Set scoreboard name and temporary group based on arena status
-            if (arenaStatus == null){
-                scoreboardName = "bw_lobby_" + playerLanguage.getIso();
+            if (arenaStatus == null) {
+                if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) scoreboardName = "bw_lobby_" + playerLanguage.getIso();
             } else {
                 String temporaryGroup = null;
                 switch (arenaStatus) {
@@ -352,7 +354,7 @@ public class BoardManager implements IScoreboardService {
                     default:
                         scoreboardName = "bw_lobby_" + playerLanguage.getIso();
                 }
-                tabPlayer.setTemporaryGroup(temporaryGroup);
+                if (temporaryGroup != null) tabPlayer.setTemporaryGroup(temporaryGroup);
             }
 
             // Set below name health if enabled in config
