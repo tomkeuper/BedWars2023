@@ -289,7 +289,7 @@ public class BoardManager implements IScoreboardService {
             String line = null;
             if (null != arena && null != arena.getStatus()) {
                 if (arena.getStatus() == GameState.playing || arena.getStatus() == GameState.restarting) {
-                    line = Language.getMsg((Player) tabPlayer.getPlayer(), Messages.FORMATTING_SCOREBOARD_HEALTH);
+                    line = getMsg((Player) tabPlayer.getPlayer(), Messages.FORMATTING_SCOREBOARD_HEALTH);
                 }
             }
             return null ==  line? "" : line;
@@ -330,7 +330,7 @@ public class BoardManager implements IScoreboardService {
                 return;
             }
 
-            String scoreboardName;
+            String scoreboardName = null;
             GameState arenaStatus = (arena != null) ? arena.getStatus() : null;
             Language playerLanguage = Language.getPlayerLanguage(player);
 
@@ -368,8 +368,10 @@ public class BoardManager implements IScoreboardService {
                 }
             }
 
-            Scoreboard scoreboard = scoreboardManager.getRegisteredScoreboards().get(scoreboardName);
-            scoreboardManager.showScoreboard(tabPlayer, scoreboard);
+            if (scoreboardName != null) {
+                Scoreboard scoreboard = scoreboardManager.getRegisteredScoreboards().get(scoreboardName);
+                scoreboardManager.showScoreboard(tabPlayer, scoreboard);
+            }
 
             setHeaderFooter(tabPlayer, arena);
 

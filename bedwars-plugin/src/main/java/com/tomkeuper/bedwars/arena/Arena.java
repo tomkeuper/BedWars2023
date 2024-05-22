@@ -668,7 +668,7 @@ public class Arena implements IArena {
                 setArenaByPlayer(p, this);
             }
 
-//            BoardManager.getInstance().giveSidebar(p, this, false);
+            BoardManager.getInstance().giveTabFeatures(p, this, false);
             nms.setCollide(p, this, false);
 
             if (!playerBefore) {
