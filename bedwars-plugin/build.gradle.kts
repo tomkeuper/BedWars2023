@@ -5,14 +5,14 @@ plugins {
     java
     `maven-publish`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
-    id("io.github.slimjar").version("1.3.0")
+    id("dev.racci.slimjar") version "2.0.1"
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
     // Important Repos
-    maven("https://repo.tomkeuper.com/repository/bedwars-releases/") // TAB
+    maven("https://repo.kryptonmc.org/releases/") // TAB
     maven("https://papermc.io/repo/repository/maven-public/") // PaperLib
     maven("https://repo.codemc.io/repository/nms/") // Spigot
     maven("https://repo.codemc.io/repository/maven-public/") // VipFeatures
@@ -21,7 +21,8 @@ repositories {
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // placeholderapi
     maven("https://repo.cloudnetservice.eu/repository/releases/") // cloudnet-wrapper-jvm
     maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
-    maven("https://repo.alessiodp.com/releases/") // slimjar
+    maven("https://repo.tomkeuper.com/repository/releases/") // slimjar
+    maven("https://repo.alessiodp.com/releases/") // slimjar - dependencies
     maven("https://repo.rapture.pw/repository/maven-releases/") // Flow-NBT
     maven("https://jitpack.io") // Jitpack (RTag)
 }
@@ -56,7 +57,7 @@ dependencies {
         exclude("com.google.protobuf", "protobuf-java")
     }
 
-    implementation("io.github.slimjar:slimjar:1.2.7")
+    implementation("dev.racci.slimjar:slimjar:2.0.1")
     compileOnly("de.simonsator:Party-and-Friends-MySQL-Edition-Spigot-API:1.5.4-RELEASE")
     compileOnly("de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT") {
         exclude("redis.clients", "jedis")
@@ -128,7 +129,7 @@ val versions = setOf(
     projects.resetadapterAswm
 ).map { it.dependencyProject }
 
-tasks.slimJar {
+slimJar {
     relocate("org.h2", "com.tomkeuper.bedwars.libs.h2")
     relocate("com.mysql", "com.tomkeuper.bedwars.libs.mysql")
 }
@@ -136,6 +137,7 @@ tasks.slimJar {
 
 tasks {
     shadowJar {
+        mustRunAfter("slimJar")
         archiveFileName.set("BedWars-${project.version}.jar")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

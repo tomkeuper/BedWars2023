@@ -104,7 +104,6 @@ import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import io.github.slimjar.app.builder.ApplicationBuilder;
-import io.github.slimjar.resolver.data.Repository;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
@@ -202,10 +201,11 @@ public class BedWars extends JavaPlugin {
                     .logger(new SlimLogger(this))
                     .downloadDirectoryPath(downloadPath)
                     .mirrorSelector((a, b) -> a)
-                    .internalRepositories(Collections.singleton(new Repository(new URI("https://repo1.maven.org/maven2/").toURL())))
                     .build();
         } catch (IOException | ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
 
