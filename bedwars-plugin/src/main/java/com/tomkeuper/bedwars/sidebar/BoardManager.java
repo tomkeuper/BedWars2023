@@ -88,6 +88,8 @@ public class BoardManager implements IScoreboardService {
     }
 
     public void registerLobbyScoreboards() {
+        if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) return;
+
         for (Language language : Language.getLanguages()) {
             List<String> lines = language.l(Messages.SCOREBOARD_LOBBY);
             lines.replaceAll(s -> s.isEmpty() ? " " : s); // TAB doesn't display empty lines, we need to replace them with spaces
@@ -287,7 +289,7 @@ public class BoardManager implements IScoreboardService {
             String line = null;
             if (null != arena && null != arena.getStatus()) {
                 if (arena.getStatus() == GameState.playing || arena.getStatus() == GameState.restarting) {
-                    line = Language.getMsg((Player) tabPlayer.getPlayer(), Messages.FORMATTING_SCOREBOARD_HEALTH);
+                    line = getMsg((Player) tabPlayer.getPlayer(), Messages.FORMATTING_SCOREBOARD_HEALTH);
                 }
             }
             return null ==  line? "" : line;
@@ -328,13 +330,13 @@ public class BoardManager implements IScoreboardService {
                 return;
             }
 
-            String scoreboardName;
+            String scoreboardName = null;
             GameState arenaStatus = (arena != null) ? arena.getStatus() : null;
             Language playerLanguage = Language.getPlayerLanguage(player);
 
             // Set scoreboard name and temporary group based on arena status
-            if (arenaStatus == null){
-                scoreboardName = "bw_lobby_" + playerLanguage.getIso();
+            if (arenaStatus == null) {
+                if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) scoreboardName = "bw_lobby_" + playerLanguage.getIso();
             } else {
                 String temporaryGroup = null;
                 switch (arenaStatus) {
@@ -352,7 +354,7 @@ public class BoardManager implements IScoreboardService {
                     default:
                         scoreboardName = "bw_lobby_" + playerLanguage.getIso();
                 }
-                tabPlayer.setTemporaryGroup(temporaryGroup);
+                if (temporaryGroup != null) tabPlayer.setTemporaryGroup(temporaryGroup);
             }
 
             // Set below name health if enabled in config
@@ -366,8 +368,10 @@ public class BoardManager implements IScoreboardService {
                 }
             }
 
-            Scoreboard scoreboard = scoreboardManager.getRegisteredScoreboards().get(scoreboardName);
-            scoreboardManager.showScoreboard(tabPlayer, scoreboard);
+            if (scoreboardName != null) {
+                Scoreboard scoreboard = scoreboardManager.getRegisteredScoreboards().get(scoreboardName);
+                scoreboardManager.showScoreboard(tabPlayer, scoreboard);
+            }
 
             setHeaderFooter(tabPlayer, arena);
 
