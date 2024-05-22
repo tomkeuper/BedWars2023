@@ -143,7 +143,7 @@ public class BedWars extends JavaPlugin {
     private static ServerType serverType = ServerType.MULTIARENA;
     public static boolean debug = true, autoscale = false, isPaper = false;
     public static int hologramUpdateDistance = 50; // DEFAULT DISTANCE (update distance measured in blocks)
-    public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
+    public static String mainCmd = "bw", link = "https://polymart.org/resource/bedwars2023.5702";
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
