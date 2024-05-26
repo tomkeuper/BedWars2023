@@ -288,6 +288,37 @@ public class Inventory implements Listener {
         }
     }
 
+    @EventHandler
+    public void onSwordEnchantInChest(InventoryOpenEvent event) {
+        Player player = (Player) event.getView().getPlayer();
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena == null || BedWars.getAPI().getTeamUpgradesUtil().isWatchingGUI(player)) {
+            return;
+        }
+        // Check if player is watching a shop GUI
+        if (ShopCategory.categoryViewers.contains(player.getUniqueId())) {
+            return;
+        }
+        // Check if player is watching quick buy menu
+        if (ShopIndex.indexViewers.contains(player.getUniqueId())) {
+            return;
+        }
+        org.bukkit.inventory.Inventory inventory = event.getInventory();
+        InventoryType inventoryType = inventory.getType();
+        if (inventoryType == InventoryType.ENDER_CHEST || inventoryType == InventoryType.CHEST) {
+            for (ItemStack item : inventory.getContents()) {
+                if (item != null && VersionCommon.api.getVersionSupport().isSword(item)) {
+                    ItemMeta im = item.getItemMeta();
+                    for (TeamEnchant e : arena.getTeam(player).getSwordsEnchantments()) {
+                        im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
+                    }
+                    nms.setUnbreakable(im);
+                    item.setItemMeta(im);
+                }
+            }
+        }
+    }
+
     /**
      * Check if an item is command-item
      */
