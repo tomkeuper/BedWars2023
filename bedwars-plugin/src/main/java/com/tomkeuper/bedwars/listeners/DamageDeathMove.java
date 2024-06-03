@@ -458,9 +458,8 @@ public class DamageDeathMove implements Listener {
             }
 
             // send respawn packet
-            victim.spigot().respawn();
-            // TODO Investigate if this actually requires a run task later
-//            Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> victim.spigot().respawn(), 3L);
+            // Needs a delay to prevent hit delay but after respawning (mainly casued by projectile hits)
+            Bukkit.getScheduler().runTask(BedWars.plugin, () -> victim.spigot().respawn());
             a.addPlayerDeath(victim);
 
             // reset last damager
