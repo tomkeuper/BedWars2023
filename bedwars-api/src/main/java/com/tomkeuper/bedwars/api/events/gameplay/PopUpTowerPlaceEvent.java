@@ -21,48 +21,81 @@
 package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.arena.team.TeamColor;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class EggBridgeBuildEvent extends Event {
+public class PopUpTowerPlaceEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final TeamColor teamColor;
-    private final IArena arena;
+    private final Player player;
     private final Block block;
+    private final IArena arena;
+    private Location loc;
+    private boolean cancelled = false;
 
     /**
-     * Called when an egg bridge is building another block
+     * Called when a player places a pop-up tower
      */
-    public EggBridgeBuildEvent(TeamColor teamColor, IArena arena, Block block) {
-        this.teamColor = teamColor;
-        this.arena = arena;
+    public PopUpTowerPlaceEvent(Player player, Location loc, Block block, IArena arena) {
+        this.player = player;
+        this.loc = loc;
         this.block = block;
+        this.arena = arena;
     }
 
     /**
-     * Get the arena
+     * Get the location where the pop-up tower was placed on
      */
-    public IArena getArena() {
-        return arena;
+    public Location getLocation() {
+        return loc;
     }
 
     /**
-     * Get the built block
+     * Set the location where the pop-up tower is being placed on
+     */
+    public void setLocation(Location loc) {
+        this.loc = loc;
+    }
+
+    /**
+     * Get the block the pop-up tower was placed on
      */
     public Block getBlock() {
         return block;
     }
 
     /**
-     * Get the block's team color
+     * Get player
      */
-    public TeamColor getTeamColor() {
-        return teamColor;
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Get arena
+     */
+    public IArena getArena() {
+        return arena;
+    }
+
+    /**
+     * Used to cancel the event
+     */
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
+
+    /**
+     * Used to check if whether the event is cancelled
+     * @return whether the event is cancelled
+     */
+    public boolean isCancelled() {
+        return cancelled;
     }
 
     @NotNull

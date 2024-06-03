@@ -775,17 +775,19 @@ public class v1_8_R3 extends VersionSupport {
     }
 
     @Override
-    public void placeTowerBlocks(org.bukkit.block.Block b, IArena a, TeamColor color, int x, int y, int z){
+    public org.bukkit.block.Block placeTowerBlocks(org.bukkit.block.Block b, IArena a, TeamColor color, int x, int y, int z){
         b.getRelative(x, y, z).setType(Material.WOOL);
         setBlockTeamColor(b.getRelative(x, y, z), color);
         a.addPlacedBlock(b.getRelative(x, y, z));
+        return b;
     }
 
     @Override
-    public void placeLadder(org.bukkit.block.Block b, int x, int y, int z, IArena a, int ladderdata){
+    public org.bukkit.block.Block placeLadder(org.bukkit.block.Block b, int x, int y, int z, IArena a, int ladderdata){
         b.getRelative(x, y, z).setType(Material.LADDER);
         b.getRelative(x, y, z).setData((byte)ladderdata);
         a.addPlacedBlock(b.getRelative(x, y, z));
+        return b;
     }
 
     @Override

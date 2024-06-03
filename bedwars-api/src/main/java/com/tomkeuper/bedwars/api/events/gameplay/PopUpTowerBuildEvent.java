@@ -27,7 +27,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class EggBridgeBuildEvent extends Event {
+public class PopUpTowerBuildEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
@@ -36,9 +36,9 @@ public class EggBridgeBuildEvent extends Event {
     private final Block block;
 
     /**
-     * Called when an egg bridge is building another block
+     * Called when a pop-up tower is building another block
      */
-    public EggBridgeBuildEvent(TeamColor teamColor, IArena arena, Block block) {
+    public PopUpTowerBuildEvent(TeamColor teamColor, IArena arena, Block block) {
         this.teamColor = teamColor;
         this.arena = arena;
         this.block = block;
