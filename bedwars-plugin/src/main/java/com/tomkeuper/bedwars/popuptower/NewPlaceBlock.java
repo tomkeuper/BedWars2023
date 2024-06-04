@@ -17,7 +17,9 @@
  *
  * Contact e-mail: contact@fyreblox.com
  */
+
 package com.tomkeuper.bedwars.popuptower;
+
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
@@ -57,6 +59,5 @@ public class NewPlaceBlock {
             PopUpTowerBuildEvent event = new PopUpTowerBuildEvent(color, arena, block);
             Bukkit.getPluginManager().callEvent(event);
         }
-
     }
 }
