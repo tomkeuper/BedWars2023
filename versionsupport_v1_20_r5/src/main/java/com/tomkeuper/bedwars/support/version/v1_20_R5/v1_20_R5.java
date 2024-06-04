@@ -718,14 +718,15 @@ public final class v1_20_R5 extends VersionSupport {
     }
 
     @Override
-    public void placeTowerBlocks(Block b, IArena a, TeamColor color, int x, int y, int z) {
+    public Block placeTowerBlocks(@NotNull Block b, @NotNull IArena a, @NotNull TeamColor color, int x, int y, int z){
         b.getRelative(x, y, z).setType(color.woolMaterial());
         a.addPlacedBlock(b.getRelative(x, y, z));
+        return b;
     }
 
     @Override
-    public void placeLadder(Block b, int x, int y, int z, IArena a, int ladderData) {
-        Block block = b.getRelative(x, y, z);  //ladder block
+    public Block placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData){
+        Block block = b.getRelative(x,y,z);  //ladder block
         block.setType(Material.LADDER);
         Ladder ladder = (Ladder) block.getBlockData();
         a.addPlacedBlock(block);
@@ -747,6 +748,7 @@ public final class v1_20_R5 extends VersionSupport {
                 block.setBlockData(ladder);
             }
         }
+        return b;
     }
 
     @Override
