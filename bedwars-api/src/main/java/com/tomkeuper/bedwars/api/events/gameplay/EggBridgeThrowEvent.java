@@ -17,6 +17,7 @@
  *
  * Contact e-mail: contact@fyreblox.com
  */
+
 package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -40,12 +41,14 @@ public class EggBridgeThrowEvent extends Event {
         this.player = player;
         this.arena = arena;
     }
+
     /**
      * Get player
      */
     public Player getPlayer() {
         return player;
     }
+
     /**
      * Get arena
      */
@@ -72,6 +75,7 @@ public class EggBridgeThrowEvent extends Event {
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
