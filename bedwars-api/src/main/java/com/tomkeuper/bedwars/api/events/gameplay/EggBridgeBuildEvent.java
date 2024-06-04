@@ -17,7 +17,9 @@
  *
  * Contact e-mail: contact@fyreblox.com
  */
+
 package com.tomkeuper.bedwars.api.events.gameplay;
+
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import org.bukkit.block.Block;
@@ -42,18 +44,21 @@ public class EggBridgeBuildEvent extends Event {
         this.arena = arena;
         this.block = block;
     }
+    
     /**
      * Get the arena
      */
     public IArena getArena() {
         return arena;
     }
+    
     /**
      * Get the built block
      */
     public Block getBlock() {
         return block;
     }
+    
     /**
      * Get the block's team color
      */
@@ -65,6 +70,7 @@ public class EggBridgeBuildEvent extends Event {
     public HandlerList getHandlers() {
         return HANDLERS;
     }
+    
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }
