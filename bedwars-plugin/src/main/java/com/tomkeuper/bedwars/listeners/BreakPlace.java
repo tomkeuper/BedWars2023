@@ -61,6 +61,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValueAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -190,7 +191,7 @@ public class BreakPlace implements Listener {
 
                     PopUpTowerPlaceEvent event = new PopUpTowerPlaceEvent(p, loc, block, a1);
                     Bukkit.getPluginManager().callEvent(event);
-                    if (e.isCancelled()) return;
+                    if (event.isCancelled()) return;
 
                     double rotation = (p.getLocation().getYaw() - 90.0F) % 360.0F;
                     if (rotation < 0.0D) {
