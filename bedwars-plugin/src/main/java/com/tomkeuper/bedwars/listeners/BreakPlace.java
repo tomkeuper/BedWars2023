@@ -387,8 +387,7 @@ public class BreakPlace implements Listener {
 
             if (!e.isCancelled() && p.getGameMode() != GameMode.CREATIVE){
                 Block drop = e.getBlock();
-                e.setCancelled(true);
-                Collection<ItemStack> drops = drop.getDrops();
+                Collection<ItemStack> drops = drop.getDrops(e.getPlayer().getItemInHand());
                 drop.setType(Material.AIR);
                 for (ItemStack item : drops){
                     ItemStack newItem = nms.addCustomData(item, "");
