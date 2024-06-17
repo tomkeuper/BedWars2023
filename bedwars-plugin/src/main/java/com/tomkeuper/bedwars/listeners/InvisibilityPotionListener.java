@@ -61,6 +61,7 @@ public class InvisibilityPotionListener implements Listener {
     public void onPotion(PlayerInvisibilityPotionEvent e) {
         if (!footstepsEnabled) return;
         if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
+            if (this.invisiblePlayers.contains(e.getPlayer())) return;
             this.invisiblePlayers.add(e.getPlayer());
             steps.put(e.getPlayer(), 12);
         } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
