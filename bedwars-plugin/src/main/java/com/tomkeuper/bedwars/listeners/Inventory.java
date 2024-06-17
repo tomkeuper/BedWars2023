@@ -302,6 +302,10 @@ public class Inventory implements Listener {
         if (ShopIndex.indexViewers.contains(player.getUniqueId())) {
             return;
         }
+        // Check if player is in a team (not a spectator, waiting in lobby etc.)
+        if (arena.getTeam(player) == null || arena.getStatus() != GameState.playing) {
+            return;
+        }
         org.bukkit.inventory.Inventory inventory = event.getInventory();
         InventoryType inventoryType = inventory.getType();
         if (inventoryType == InventoryType.ENDER_CHEST || inventoryType == InventoryType.CHEST) {
