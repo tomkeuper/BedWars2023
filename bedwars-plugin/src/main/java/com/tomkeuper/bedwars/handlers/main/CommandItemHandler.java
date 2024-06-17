@@ -39,9 +39,18 @@ public class CommandItemHandler extends PermanentItemHandler {
 
     @Override
     public void handleUse(Player player, IArena arena, IPermanentItem lobbyItem) {
-        String command = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", lobbyItem.getIdentifier()));
+        String command;
+        if (arena == null) {
+            command = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", lobbyItem.getIdentifier()));
+        } else {
+            if (arena.isSpectator(player)) {
+                command = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", lobbyItem.getIdentifier()));
+            } else {
+                command = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", lobbyItem.getIdentifier()));
+            }
+        }
         if (command == null) {
-            Bukkit.getLogger().warning("Command for lobby item " + lobbyItem.getIdentifier() + " is not set.");
+            Bukkit.getLogger().warning("Command for item `" + lobbyItem.getIdentifier() + "` is not set.");
             return;
         }
         player.performCommand(command);
