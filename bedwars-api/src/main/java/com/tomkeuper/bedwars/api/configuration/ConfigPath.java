@@ -65,7 +65,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_GAMES_BEFORE_RESTART = "bungeecord-settings.games-before-restart";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_AUTO_SCALE_LIMIT = "bungeecord-settings.auto-scale-clone-limit";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_RESTART_CMD = "bungeecord-settings.restart-cmd";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL = "bungeecord-settings.messaging-protocol";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_HOST = "bungeecord-settings.redis-configuration.host";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_PORT = "bungeecord-settings.redis-configuration.port";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_PASSWORD = "bungeecord-settings.redis-configuration.password";
@@ -79,7 +78,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
     public static final String GENERAL_CONFIGURATION_ENABLE_ANTI_DROP = "enable-anti-drop-feature";
     public static final String GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE = "hologram-update-distance";
-    public static final String GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN = "enable-generator-replace-air-sudden-death";
     public static final String GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR = "enable-teammate-tracking-action-bar";
 
 
@@ -241,7 +239,6 @@ public class ConfigPath {
     public static final String GENERAL_TNT_BLAST_PROTECTION = "blast-protection";
     public static final String GENERAL_TNT_PROTECTION_END_STONE_BLAST = GENERAL_TNT_BLAST_PROTECTION+".end-stone";
     public static final String GENERAL_TNT_PROTECTION_GLASS_BLAST = GENERAL_TNT_BLAST_PROTECTION+".glass";
-    public static final String GENERAL_TNT_RAY_BLOCKED_BY_GLASS = GENERAL_TNT_BLAST_PROTECTION+".ray-blocked-by-glass";
 
     public static final String GENERAL_TNT_PRIME = "tnt-prime-settings";
     public static final String GENERAL_TNT_AUTO_IGNITE = GENERAL_TNT_PRIME+".auto-ignite";
