@@ -932,6 +932,9 @@ public class Arena implements IArena {
             this.sendToMainLobby(p);
         }
 
+        // Clear shop holo's for leaving players.
+        ShopHolo.clearForPlayer(p);
+
         /**
          * Below is *only* executed if serverType != BUNGEE
          */
