@@ -5,7 +5,7 @@ plugins {
     java
     `maven-publish`
     id("net.minecrell.plugin-yml.bukkit") version "0.5.3"
-    id("dev.racci.slimjar") version "2.0.1"
+    id("dev.racci.slimjar") version "2.0.2"
 }
 
 repositories {
@@ -57,7 +57,7 @@ dependencies {
         exclude("com.google.protobuf", "protobuf-java")
     }
 
-    implementation("dev.racci.slimjar:slimjar:2.0.1")
+    implementation("dev.racci.slimjar:slimjar:2.0.2")
     compileOnly("de.simonsator:Party-and-Friends-MySQL-Edition-Spigot-API:1.5.4-RELEASE")
     compileOnly("de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT") {
         exclude("redis.clients", "jedis")
