@@ -33,9 +33,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -132,22 +134,50 @@ public class InvisibilityPotionListener implements Listener {
         if (a == null) return;
         if (e.getItem().getType() != Material.POTION) return;
         if (e.isCancelled()) return;
-        // remove potion bottle
-        nms.minusAmount(e.getPlayer(), e.getItem(), 1);
 
         if (nms.isInvisibilityPotion(e.getItem())) {
-                BedWars.debug("Potions: " + e.getPlayer().getActivePotionEffects().size());
+            // remove potion bottle
+            nms.minusAmount(e.getPlayer(), e.getItem(), 1);
+            BedWars.debug("Potions: " + e.getPlayer().getActivePotionEffects().size());
 
-                PotionMeta meta = (PotionMeta) e.getItem().getItemMeta();
-                for (PotionEffect effect : meta.getCustomEffects()) {
+            PotionMeta meta = (PotionMeta) e.getItem().getItemMeta();
+            for (PotionEffect effect : meta.getCustomEffects()) {
+                if (effect.getType().equals(PotionEffectType.INVISIBILITY)) {
+                    BedWars.debug("Adding invis with duration: " + effect.getDuration());
+                    PotionEffect pe = new PotionEffect(PotionEffectType.INVISIBILITY, effect.getDuration(), effect.getAmplifier());
+                    e.getPlayer().addPotionEffect(pe, true);
+                    handleInvisibility(e.getPlayer(), a, pe);
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSplash(PotionSplashEvent event) {
+        BedWars.debug("Potion splash event");
+        if (event.isCancelled()) return;
+        for (LivingEntity entity : event.getAffectedEntities()) {
+            if (entity instanceof Player) {
+                Player player = (Player) entity;
+
+                IArena a = Arena.getArenaByPlayer(player);
+                if (a == null) return;
+
+                double intensity = event.getIntensity(player);
+
+                for (PotionEffect effect : event.getPotion().getEffects()) {
+                    BedWars.debug("Effect: " + effect.getType());
                     if (effect.getType().equals(PotionEffectType.INVISIBILITY)) {
-                        BedWars.debug("Adding invis with duration: " + effect.getDuration());
-                        PotionEffect pe = new PotionEffect(PotionEffectType.INVISIBILITY, effect.getDuration(), effect.getAmplifier());
-                        e.getPlayer().addPotionEffect(pe, true);
-                        handleInvisibility(e.getPlayer(), a, pe);
-                        e.setCancelled(true);
+                        int duration = (int) (effect.getDuration() * intensity);
+                        BedWars.debug("Adding invis with duration: " + duration);
+                        PotionEffect pe = new PotionEffect(PotionEffectType.INVISIBILITY, duration, effect.getAmplifier());
+                        player.addPotionEffect(pe, true);
+                        handleInvisibility(player, a, pe);
+                        event.setCancelled(true);
                     }
                 }
+            }
         }
     }
 
