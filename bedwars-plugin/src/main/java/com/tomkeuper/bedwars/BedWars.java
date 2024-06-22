@@ -197,7 +197,7 @@ public class BedWars extends JavaPlugin {
 
         try {
             Path downloadPath = Paths.get(getDataFolder().getPath() + File.separator + "libs");
-            ApplicationBuilder.appending("ajLeaderboards")
+            ApplicationBuilder.appending("BedWars2023")
                     .logger(new SlimLogger(this))
                     .downloadDirectoryPath(downloadPath)
                     .mirrorSelector((a, b) -> a)
