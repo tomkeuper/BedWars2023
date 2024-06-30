@@ -1051,15 +1051,15 @@ public class BedWars extends JavaPlugin {
                 preGameItem = new PreGameItem(
                         handler,
                         nms.addCustomData(i, "preGameItem"),
-                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
                         item);
             } else {
                 // Check if item has a command listed instead
-                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
+                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)) != null){
                     preGameItem = new PreGameItem(
                             itemHandlers.get("command"),
                             nms.addCustomData(i, "preGameItem"),
-                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
                             item);
                 } else {
                     this.getLogger().severe("No handler or command found for pre-game item: " + item);
