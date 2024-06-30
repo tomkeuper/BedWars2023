@@ -116,7 +116,6 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY, true);
 
         // tnt jump category
-        yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_BARYCENTER_IN_Y, 0.5);
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION, 5);
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION, 2);
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_HORIZONTAL_FORGIVENESS, 1.2);
