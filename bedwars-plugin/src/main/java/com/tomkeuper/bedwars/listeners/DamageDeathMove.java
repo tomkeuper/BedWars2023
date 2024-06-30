@@ -139,7 +139,8 @@ public class DamageDeathMove implements Listener {
         String message = lang.m(Messages.PLAYER_HIT_BOW)
                 .replace("%bw_damage_amount%", new DecimalFormat("00.#").format(((Player) e.getEntity()).getHealth() - e.getFinalDamage()))
                 .replace("%bw_player%", p.getDisplayName())
-                .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang));
+                .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang))
+                .replace("%bw_health_remaining%", new DecimalFormat("00.#").format(Math.max(((Player) e.getEntity()).getHealth() - e.getFinalDamage(), 0)));
         damager.sendMessage(message);
     }
 
