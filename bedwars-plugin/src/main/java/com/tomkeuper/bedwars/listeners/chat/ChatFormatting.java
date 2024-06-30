@@ -165,13 +165,16 @@ public class ChatFormatting implements Listener {
 
     @SafeVarargs
     public static void setRecipients(AsyncPlayerChatEvent event, List<Player>... target) {
-        event.getRecipients().clear(); // Used for console message only.
         if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CHAT_GLOBAL)) {
             recipients.clear();
             for (List<Player> list : target) {
                 recipients.addAll(list);
             }
+        } else {
+            recipients.clear();
+            recipients.addAll(event.getRecipients());
         }
+        event.getRecipients().clear(); // Used for console message only.
     }
 
     public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team){
