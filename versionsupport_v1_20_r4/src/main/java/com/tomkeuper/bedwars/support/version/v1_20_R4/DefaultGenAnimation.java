@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v1_20_R5;
+package com.tomkeuper.bedwars.support.version.v1_20_R4;
 
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity;
@@ -82,7 +82,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.al(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            v1_20_R5.sendPackets(p, teleportPacket, moveLookPacket);
+            v1_20_R4.sendPackets(p, teleportPacket, moveLookPacket);
         }
         tickCount++;
     }

@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v1_20_R5;
+package com.tomkeuper.bedwars.support.version.v1_20_R4;
 
 import com.mojang.datafixers.util.Pair;
 import com.saicone.rtag.RtagItem;
@@ -36,11 +36,11 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.tomkeuper.bedwars.support.version.v1_20_R5.despawnable.DespawnableAttributes;
-import com.tomkeuper.bedwars.support.version.v1_20_R5.despawnable.DespawnableFactory;
-import com.tomkeuper.bedwars.support.version.v1_20_R5.despawnable.DespawnableType;
-import com.tomkeuper.bedwars.support.version.v1_20_R5.hologram.HoloLine;
-import com.tomkeuper.bedwars.support.version.v1_20_R5.hologram.Hologram;
+import com.tomkeuper.bedwars.support.version.v1_20_R4.despawnable.DespawnableAttributes;
+import com.tomkeuper.bedwars.support.version.v1_20_R4.despawnable.DespawnableFactory;
+import com.tomkeuper.bedwars.support.version.v1_20_R4.despawnable.DespawnableType;
+import com.tomkeuper.bedwars.support.version.v1_20_R4.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_20_R4.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -93,11 +93,11 @@ import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
 
-public final class v1_20_R5 extends VersionSupport {
+public final class v1_20_R4 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
 
-    public v1_20_R5(Plugin plugin, String name) {
+    public v1_20_R4(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);
