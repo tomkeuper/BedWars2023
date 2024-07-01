@@ -78,10 +78,10 @@ dependencies {
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
 
-    compileOnly("com.saicone.rtag:rtag:1.5.3")
-    compileOnly("com.saicone.rtag:rtag-block:1.5.3")
-    compileOnly("com.saicone.rtag:rtag-entity:1.5.3")
-    compileOnly("com.saicone.rtag:rtag-item:1.5.3")
+    slim("com.saicone.rtag:rtag:1.5.4")
+    slim("com.saicone.rtag:rtag-block:1.5.4")
+    slim("com.saicone.rtag:rtag-entity:1.5.4")
+    slim("com.saicone.rtag:rtag-item:1.5.4")
 }
 
 
@@ -161,7 +161,6 @@ tasks {
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
-        relocate("com.saicone.rtag", "com.tomkeuper.bedwars.libs.rtag")
     }
     build {
         dependsOn(shadowJar)
