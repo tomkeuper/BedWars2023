@@ -18,11 +18,11 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v1_20_R5.hologram;
+package com.tomkeuper.bedwars.support.version.v1_20_R4.hologram;
 
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
-import com.tomkeuper.bedwars.support.version.v1_20_R5.v1_20_R5;
+import com.tomkeuper.bedwars.support.version.v1_20_R4.v1_20_R4;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
@@ -54,7 +54,7 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_20_R5.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
+        v1_20_R4.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_20_R5.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
+        v1_20_R4.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class HoloLine implements IHoloLine {
         destroyed = false;
 
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
-        v1_20_R5.sendPacket(hologram.getPlayer(), packet);
+        v1_20_R4.sendPacket(hologram.getPlayer(), packet);
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
@@ -133,7 +133,7 @@ public class HoloLine implements IHoloLine {
     @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.al());
-        v1_20_R5.sendPacket(hologram.getPlayer(), packet);
+        v1_20_R4.sendPacket(hologram.getPlayer(), packet);
     }
 
     @Override
