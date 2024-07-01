@@ -526,8 +526,8 @@ public class BedWarsTeam implements ITeam {
 
         public void create() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
-            h = BedWars.hologramManager.createHologram(Bukkit.getPlayer(p), getBed().clone().add(0.5, -0.3, 0.5), "");
-            line = h.getLine(0);
+            // Note: Getting location after retrieving the block will make sure the hologram location will always be relative to the block instead of the actual config entry.
+            h = BedWars.hologramManager.createHologram(Bukkit.getPlayer(p), getBed().getBlock().getLocation().clone().add(0.5, -0.3, 0.5), "");            line = h.getLine(0);
 
             if (isBedDestroyed()) {
                 line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
