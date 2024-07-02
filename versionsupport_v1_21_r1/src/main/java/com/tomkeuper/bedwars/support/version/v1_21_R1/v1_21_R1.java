@@ -88,7 +88,10 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
@@ -189,6 +192,7 @@ public final class v1_21_R1 extends VersionSupport {
 
         return pm != null && pm.hasCustomEffects() && pm.hasCustomEffect(org.bukkit.potion.PotionEffectType.INVISIBILITY);
     }
+
     @Override
     public void registerEntities() {
 
@@ -597,7 +601,7 @@ public final class v1_21_R1 extends VersionSupport {
         if (arena.getRespawnSessions().containsKey(respawned)) return;
 
         EntityPlayer entityPlayer = getPlayer(respawned);
-        PacketPlayOutSpawnEntity show = new PacketPlayOutSpawnEntity(entityPlayer);
+        PacketPlayOutSpawnEntity show = newPacketPlayOutSpawnEntity(entityPlayer);
         PacketPlayOutEntityVelocity playerVelocity = new PacketPlayOutEntityVelocity(entityPlayer);
         // we send head rotation packet because sometimes on respawn others see him with bad rotation
         PacketPlayOutEntityHeadRotation head = new PacketPlayOutEntityHeadRotation(entityPlayer, getCompressedAngle(entityPlayer.getBukkitYaw()));
@@ -628,7 +632,8 @@ public final class v1_21_R1 extends VersionSupport {
                     if (p.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
                         hideArmor(p, respawned);
                     } else {
-                        PacketPlayOutSpawnEntity show2 = new PacketPlayOutSpawnEntity(boundTo);
+                        PacketPlayOutSpawnEntity show2 = newPacketPlayOutSpawnEntity(boundTo);
+
                         PacketPlayOutEntityVelocity playerVelocity2 = new PacketPlayOutEntityVelocity(boundTo);
                         PacketPlayOutEntityHeadRotation head2 = new PacketPlayOutEntityHeadRotation(boundTo, getCompressedAngle(boundTo.getBukkitYaw()));
                         sendPackets(respawned, show2, playerVelocity2, head2);
@@ -685,9 +690,9 @@ public final class v1_21_R1 extends VersionSupport {
     @Override
     public Fireball setFireballDirection(Fireball fireball, Vector vector) {
         EntityFireball fb = ((CraftFireball) fireball).getHandle();
-        fb.d = vector.getX() * 0.1D;
-        fb.e = vector.getY() * 0.1D;
-        fb.f = vector.getZ() * 0.1D;
+        // fb.d = vector.getX() * 0.1D;
+        // fb.e = vector.getY() * 0.1D;
+        // fb.f = vector.getZ() * 0.1D;
         return (Fireball) fb.getBukkitEntity();
     }
 
@@ -718,15 +723,15 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public Block placeTowerBlocks(@NotNull Block b, @NotNull IArena a, @NotNull TeamColor color, int x, int y, int z){
+    public Block placeTowerBlocks(@NotNull Block b, @NotNull IArena a, @NotNull TeamColor color, int x, int y, int z) {
         b.getRelative(x, y, z).setType(color.woolMaterial());
         a.addPlacedBlock(b.getRelative(x, y, z));
         return b;
     }
 
     @Override
-    public Block placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData){
-        Block block = b.getRelative(x,y,z);  //ladder block
+    public Block placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData) {
+        Block block = b.getRelative(x, y, z);  //ladder block
         block.setType(Material.LADDER);
         Ladder ladder = (Ladder) block.getBlockData();
         a.addPlacedBlock(block);
@@ -759,8 +764,9 @@ public final class v1_21_R1 extends VersionSupport {
     @Override
     public void updatePacketArmorStand(GeneratorHolder generatorHolder) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
-        PacketPlayOutSpawnEntity spawn = new PacketPlayOutSpawnEntity(((CraftArmorStand) armorStand).getHandle());
-        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().ap().c());
+        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+        PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().ar().c());
         Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
 
@@ -822,7 +828,8 @@ public final class v1_21_R1 extends VersionSupport {
         }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
-        PacketPlayOutSpawnEntity spawn = new PacketPlayOutSpawnEntity(nmsEntity);
+        PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
+
         for (Player p : loc.getWorld().getPlayers()) {
             sendPacket(p, spawn);
         }
@@ -882,5 +889,21 @@ public final class v1_21_R1 extends VersionSupport {
         list.add(new Pair<>(EnumItemSlot.c, entityPlayer.a(EnumItemSlot.c)));
 
         return list;
+    }
+
+    private PacketPlayOutSpawnEntity newPacketPlayOutSpawnEntity(net.minecraft.world.entity.Entity nmsEntity) {
+        return new PacketPlayOutSpawnEntity(
+                nmsEntity.hashCode(),
+                nmsEntity.cz(),
+                nmsEntity.dt(),
+                nmsEntity.dv(),
+                nmsEntity.dz(),
+                nmsEntity.dG(),
+                nmsEntity.getBukkitYaw(),
+                nmsEntity.am(),
+                0,
+                nmsEntity.dr(),
+                nmsEntity.ct()
+        );
     }
 }
