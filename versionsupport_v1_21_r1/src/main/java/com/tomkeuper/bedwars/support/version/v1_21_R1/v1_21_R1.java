@@ -891,7 +891,7 @@ public final class v1_21_R1 extends VersionSupport {
         return list;
     }
 
-    private PacketPlayOutSpawnEntity newPacketPlayOutSpawnEntity(net.minecraft.world.entity.Entity nmsEntity) {
+    public static PacketPlayOutSpawnEntity newPacketPlayOutSpawnEntity(net.minecraft.world.entity.Entity nmsEntity) {
         return new PacketPlayOutSpawnEntity(
                 nmsEntity.hashCode(),
                 nmsEntity.cz(),

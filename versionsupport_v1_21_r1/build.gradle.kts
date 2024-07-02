@@ -12,7 +12,7 @@ dependencies {
 }
 
 tasks.compileJava {
-    options.release.set(22)
+    options.release.set(21)
 }
 
 repositories {
