@@ -682,11 +682,8 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public Fireball setFireballDirection(Fireball fireball, Vector vector) {
-        EntityFireball fb = ((CraftFireball) fireball).getHandle();
-        // fb.d = vector.getX() * 0.1D;
-        // fb.e = vector.getY() * 0.1D;
-        // fb.f = vector.getZ() * 0.1D;
-        return (Fireball) fb.getBukkitEntity();
+        fireball.setDirection(vector);
+        return fireball;
     }
 
     @Override
