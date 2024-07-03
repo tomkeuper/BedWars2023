@@ -44,8 +44,8 @@ public class HoloLine implements IHoloLine {
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
         entity.b(CraftChatMessage.fromStringOrNull(text));
-        entity.n(true);
-        entity.j(true);
+        entity.o(true);
+        entity.k(true);
         entity.ag = true;
         Location loc = hologram.getLocation();
         entity.p(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
