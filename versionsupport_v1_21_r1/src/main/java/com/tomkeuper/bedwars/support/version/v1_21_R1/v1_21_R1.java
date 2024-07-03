@@ -572,6 +572,15 @@ public final class v1_21_R1 extends VersionSupport {
     @Override
     public org.bukkit.inventory.ItemStack getPlayerHead(Player player, org.bukkit.inventory.ItemStack copyTagFrom) {
         org.bukkit.inventory.ItemStack head = SkullTexture.getTexturedHead(player.getUniqueId().toString());
+
+        if (copyTagFrom != null) {
+            var tag = getTag(copyTagFrom);
+            RtagItem rtagItem = new RtagItem(head);
+            rtagItem.set(tag, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+            rtagItem.load();
+            head = rtagItem.getItem();
+        }
+
         return head;
     }
 
