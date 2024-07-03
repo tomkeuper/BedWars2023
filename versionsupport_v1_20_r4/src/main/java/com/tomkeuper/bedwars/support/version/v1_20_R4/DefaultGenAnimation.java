@@ -96,7 +96,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     }
 
     private float getArmorStandYAW() {
-        return armorStand.dH();
+        return armorStand.dF();
     }
 
     private void setArmorStandMotY(double y) {

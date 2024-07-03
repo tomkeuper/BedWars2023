@@ -23,6 +23,7 @@ package com.tomkeuper.bedwars.support.version.v1_20_R4;
 import com.mojang.datafixers.util.Pair;
 import com.saicone.rtag.RtagItem;
 import com.saicone.rtag.util.OptionalType;
+import com.saicone.rtag.util.SkullTexture;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
@@ -396,18 +397,16 @@ public final class v1_20_R4 extends VersionSupport {
 
     @Override
     public org.bukkit.inventory.ItemStack addCustomData(org.bukkit.inventory.ItemStack i, String data) {
-        RtagItem rtagItem = new RtagItem(i);
-        rtagItem.set(data, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
-        rtagItem.update();
-        return rtagItem.getItem();
+        return RtagItem.edit(i, tag -> {
+            tag.set(data, VersionSupport.PLUGIN_TAG_GENERIC_KEY);
+        });
     }
 
     @Override
     public org.bukkit.inventory.ItemStack setTag(org.bukkit.inventory.ItemStack itemStack, String key, String value) {
-        RtagItem rtagItem = new RtagItem(itemStack);
-        rtagItem.set(value, key);
-        rtagItem.update();
-        return rtagItem.getItem();
+        return RtagItem.edit(itemStack, tag -> {
+            tag.set(value, key);
+        });
     }
 
     @Override
@@ -569,7 +568,7 @@ public final class v1_20_R4 extends VersionSupport {
 
     @Override
     public org.bukkit.inventory.ItemStack getPlayerHead(Player player, org.bukkit.inventory.ItemStack copyTagFrom) {
-        org.bukkit.inventory.ItemStack head = new org.bukkit.inventory.ItemStack(materialPlayerHead());
+        org.bukkit.inventory.ItemStack head = SkullTexture.getTexturedHead(player.getUniqueId().toString());
 
         if (copyTagFrom != null) {
             var tag = getTag(copyTagFrom);
@@ -579,11 +578,6 @@ public final class v1_20_R4 extends VersionSupport {
             head = rtagItem.getItem();
         }
 
-        var meta = head.getItemMeta();
-        if (meta instanceof SkullMeta) {
-            ((SkullMeta) meta).setOwnerProfile(player.getPlayerProfile());
-        }
-        head.setItemMeta(meta);
         return head;
     }
 
@@ -864,8 +858,7 @@ public final class v1_20_R4 extends VersionSupport {
 
     private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
         RtagItem rtagItem = new RtagItem(itemStack);
-        OptionalType nbt = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
-        return (nbt.isEmpty() || nbt.isNotInstance(NBTTagCompound.class)) ? null : nbt.value();
+        return (NBTTagCompound) rtagItem.getTag();
     }
 
     public EntityPlayer getPlayer(Player player) {

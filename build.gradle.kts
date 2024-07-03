@@ -20,6 +20,7 @@ val versions = setOf(
     projects.versionsupportV120R2,
     projects.versionsupportV120R3,
     projects.versionsupportV120R4,
+    projects.versionsupportV121R1,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.bedwarsApi,
