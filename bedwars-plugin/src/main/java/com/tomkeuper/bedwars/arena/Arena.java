@@ -668,7 +668,7 @@ public class Arena implements IArena {
                 setArenaByPlayer(p, this);
             }
 
-//            BoardManager.getInstance().giveSidebar(p, this, false);
+            BoardManager.getInstance().giveTabFeatures(p, this, false);
             nms.setCollide(p, this, false);
 
             if (!playerBefore) {
@@ -931,6 +931,9 @@ public class Arena implements IArena {
         } else {
             this.sendToMainLobby(p);
         }
+
+        // Clear shop holo's for leaving players.
+        ShopHolo.clearForPlayer(p);
 
         /**
          * Below is *only* executed if serverType != BUNGEE

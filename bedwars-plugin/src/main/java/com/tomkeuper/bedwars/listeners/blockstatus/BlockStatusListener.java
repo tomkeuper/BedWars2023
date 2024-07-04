@@ -60,11 +60,11 @@ public class BlockStatusListener implements Listener {
                     break;
                 case playing:
                     path = ConfigPath.SIGNS_STATUS_BLOCK_PLAYING_MATERIAL;
-                    data = ConfigPath.SIGNS_STATUS_BLOCK_STARTING_DATA;
+                    data = ConfigPath.SIGNS_STATUS_BLOCK_PLAYING_DATA;
                     break;
                 case starting:
-                    path = ConfigPath.SIGNS_STATUS_BLOCK_PLAYING_MATERIAL;
-                    data = ConfigPath.SIGNS_STATUS_BLOCK_PLAYING_DATA;
+                    path = ConfigPath.SIGNS_STATUS_BLOCK_STARTING_MATERIAL;
+                    data = ConfigPath.SIGNS_STATUS_BLOCK_STARTING_DATA;
                     break;
                 case restarting:
                     path = ConfigPath.SIGNS_STATUS_BLOCK_RESTARTING_MATERIAL;

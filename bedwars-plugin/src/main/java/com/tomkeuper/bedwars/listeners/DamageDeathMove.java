@@ -67,17 +67,17 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class DamageDeathMove implements Listener {
 
-    private final double tntJumpBarycenterAlterationInY;
     private final double tntJumpStrengthReductionConstant;
     private final double tntJumpYAxisReductionConstant;
+    private final double tntJumpHorizontalForgiveness;
     private final double tntDamageSelf;
     private final double tntDamageTeammates;
     private final double tntDamageOthers;
 
     public DamageDeathMove() {
-        this.tntJumpBarycenterAlterationInY = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_BARYCENTER_IN_Y);
         this.tntJumpStrengthReductionConstant = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION);
         this.tntJumpYAxisReductionConstant = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION);
+        this.tntJumpHorizontalForgiveness = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_HORIZONTAL_FORGIVENESS);
         this.tntDamageSelf = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_SELF);
         this.tntDamageTeammates = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES);
         this.tntDamageOthers = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
@@ -139,7 +139,8 @@ public class DamageDeathMove implements Listener {
         String message = lang.m(Messages.PLAYER_HIT_BOW)
                 .replace("%bw_damage_amount%", new DecimalFormat("00.#").format(((Player) e.getEntity()).getHealth() - e.getFinalDamage()))
                 .replace("%bw_player%", p.getDisplayName())
-                .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang));
+                .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang))
+                .replace("%bw_health_remaining%", new DecimalFormat("00.#").format(Math.max(((Player) e.getEntity()).getHealth() - e.getFinalDamage(), 0)));
         damager.sendMessage(message);
     }
 
@@ -181,13 +182,28 @@ public class DamageDeathMove implements Listener {
                                 if (tntDamageSelf > -1) {
                                     e.setDamage(tntDamageSelf);
                                 }
-                                // tnt jump. credits to feargames.it
+
                                 LivingEntity damaged = (LivingEntity) e.getEntity();
-                                Vector distance = damaged.getLocation().subtract(0, tntJumpBarycenterAlterationInY, 0).toVector().subtract(tnt.getLocation().toVector());
+                                Vector tntLocation = tnt.getLocation().toVector();
+                                tntLocation.setX(Math.floor(tntLocation.getX()) + 0.5);
+                                tntLocation.setZ(Math.floor(tntLocation.getZ()) + 0.5);
+                                Vector playerLocation = damaged.getLocation().toVector();
+
+                                // Calculate the direction vector from TNT to player
+                                Vector directionToPlayer = playerLocation.clone().subtract(tntLocation);
+
+                                // Normalize the direction and scale by forgiveness factor proportionally
+                                double distanceMagnitude = directionToPlayer.length();
+                                double originalDistance = directionToPlayer.length();
+                                Vector forgivenessVector = directionToPlayer.clone().normalize().multiply(tntJumpHorizontalForgiveness / distanceMagnitude);
+
+                                Vector adjustedPlayerLocation = playerLocation.clone().add(forgivenessVector);
+
+                                Vector distance = adjustedPlayerLocation.subtract(tntLocation);
                                 Vector direction = distance.clone().normalize();
-                                double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + distance.length()));
+                                double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + originalDistance));
                                 Vector resultingForce = direction.clone().multiply(force);
-                                resultingForce.setY(resultingForce.getY() / (distance.length() + tntJumpYAxisReductionConstant));
+                                resultingForce.setY(resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant));
                                 damaged.setVelocity(resultingForce);
                             } else {
                                 ITeam currentTeam = a.getTeam(p);
@@ -458,9 +474,8 @@ public class DamageDeathMove implements Listener {
             }
 
             // send respawn packet
-            victim.spigot().respawn();
-            // TODO Investigate if this actually requires a run task later
-//            Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> victim.spigot().respawn(), 3L);
+            // Needs a delay to prevent hit delay but after respawning (mainly casued by projectile hits)
+            Bukkit.getScheduler().runTask(BedWars.plugin, () -> victim.spigot().respawn());
             a.addPlayerDeath(victim);
 
             // reset last damager

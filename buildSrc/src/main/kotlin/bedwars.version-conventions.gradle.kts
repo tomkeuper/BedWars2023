@@ -1,6 +1,6 @@
 plugins {
     id("bedwars.standard-conventions")
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
 }
 
 tasks {

@@ -104,7 +104,6 @@ import com.tomkeuper.bedwars.upgrades.UpgradesManager;
 import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import io.github.slimjar.app.builder.ApplicationBuilder;
-import io.github.slimjar.resolver.data.Repository;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
@@ -144,7 +143,7 @@ public class BedWars extends JavaPlugin {
     private static ServerType serverType = ServerType.MULTIARENA;
     public static boolean debug = true, autoscale = false, isPaper = false;
     public static int hologramUpdateDistance = 50; // DEFAULT DISTANCE (update distance measured in blocks)
-    public static String mainCmd = "bw", link = "https://www.spigotmc.org/resources/50942/";
+    public static String mainCmd = "bw", link = "https://polymart.org/resource/bedwars2023.5702";
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
@@ -198,14 +197,15 @@ public class BedWars extends JavaPlugin {
 
         try {
             Path downloadPath = Paths.get(getDataFolder().getPath() + File.separator + "libs");
-            ApplicationBuilder.appending("ajLeaderboards")
+            ApplicationBuilder.appending("BedWars2023")
                     .logger(new SlimLogger(this))
                     .downloadDirectoryPath(downloadPath)
                     .mirrorSelector((a, b) -> a)
-                    .internalRepositories(Collections.singleton(new Repository(new URI("https://repo1.maven.org/maven2/").toURL())))
                     .build();
         } catch (IOException | ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
 
@@ -223,6 +223,9 @@ public class BedWars extends JavaPlugin {
         switch (minecraftVersion){
             case "1.20.4":
                 nmsVersion = "v1_20_R3";
+                break;
+            case "1.20.6":
+                nmsVersion = "v1_20_R5";
                 break;
             default:
                 break;
@@ -1048,15 +1051,15 @@ public class BedWars extends JavaPlugin {
                 preGameItem = new PreGameItem(
                         handler,
                         nms.addCustomData(i, "preGameItem"),
-                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
                         item);
             } else {
                 // Check if item has a command listed instead
-                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
+                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)) != null){
                     preGameItem = new PreGameItem(
                             itemHandlers.get("command"),
                             nms.addCustomData(i, "preGameItem"),
-                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
+                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
                             item);
                 } else {
                     this.getLogger().severe("No handler or command found for pre-game item: " + item);

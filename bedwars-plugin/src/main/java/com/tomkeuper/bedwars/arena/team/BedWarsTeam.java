@@ -67,41 +67,53 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 @SuppressWarnings("WeakerAccess")
 public class BedWarsTeam implements ITeam {
 
+    @Getter
     private List<Player> members = new ArrayList<>();
+    @Getter
     private TeamColor color;
     @Getter
     private Location spawn, bed, shop, teamUpgrades;
     //private IGenerator ironGenerator = null, goldGenerator = null, emeraldGenerator = null;
+    @Getter
     private String name;
+    @Getter
     private Arena arena;
+    @Getter
     private boolean bedDestroyed = false;
     private boolean shopSpawned = false;
     private Vector killDropsLoc = null;
 
     // team generators
-    private List<IGenerator> generators = new ArrayList<>();
+    private final List<IGenerator> generators = new ArrayList<>();
 
     // team upgrade name, tier
-    private ConcurrentHashMap<String, Integer> teamUpgradeList = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Integer> teamUpgradeList = new ConcurrentHashMap<>();
     // Potion effects for teammates from the upgrades
+    @Getter
     private List<PotionEffect> teamEffects = new ArrayList<>();
     // Potion effects for teammates on base only
     private List<PotionEffect> base = new ArrayList<>();
     // Enchantments for bows
+    @Getter
     private List<TeamEnchant> bowsEnchantments = new ArrayList<>();
     // Enchantments for swords
+    @Getter
     private List<TeamEnchant> swordsEnchantments = new ArrayList<>();
     // Enchantments for armors
+    @Getter
     private List<TeamEnchant> armorsEnchantments = new ArrayList<>();
     // Used for show/ hide bed hologram
+    @Getter
     private final HashMap<UUID, BedHolo> beds = new HashMap<>();
     // Queued traps
     private final LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
     // Amount of dragons for Sudden Death phase
+    @Getter
     private int dragonAmount = 1;
     // Player cache, used for losers stats and rejoin
     private List<EnderDragon> dragonEntities = new ArrayList<>();
     // Player cache, used for losers stats and rejoin
+    @Getter
     private List<Player> membersCache = new ArrayList<>();
     // Invulnerability at re-spawn
     // Fall invulnerability when teammates respawn
@@ -514,8 +526,8 @@ public class BedWarsTeam implements ITeam {
 
         public void create() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
-            h = BedWars.hologramManager.createHologram(Bukkit.getPlayer(p), getBed().clone().add(0.5, -0.3, 0.5), "");
-            line = h.getLine(0);
+            // Note: Getting location after retrieving the block will make sure the hologram location will always be relative to the block instead of the actual config entry.
+            h = BedWars.hologramManager.createHologram(Bukkit.getPlayer(p), getBed().getBlock().getLocation().clone().add(0.5, -0.3, 0.5), "");            line = h.getLine(0);
 
             if (isBedDestroyed()) {
                 line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
@@ -654,6 +666,7 @@ public class BedWarsTeam implements ITeam {
     /**
      * Enchantments for bows, swords and armors from the team upgrades
      */
+    @Getter
     public static class Enchant implements TeamEnchant {
         Enchantment enchantment;
         int amplifier;
@@ -663,13 +676,6 @@ public class BedWarsTeam implements ITeam {
             this.amplifier = amplifier;
         }
 
-        public Enchantment getEnchantment() {
-            return enchantment;
-        }
-
-        public int getAmplifier() {
-            return amplifier;
-        }
     }
 
     public boolean isMember(Player u) {
@@ -693,38 +699,10 @@ public class BedWarsTeam implements ITeam {
         return false;
     }
 
-    public boolean isBedDestroyed() {
-        return bedDestroyed;
-    }
-
-    public Location getSpawn() {
-        return spawn;
-    }
-
-    public Location getShop() {
-        return shop;
-    }
-
-    public Location getTeamUpgrades() {
-        return teamUpgrades;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String getDisplayName(Language language) {
         String m = language.m(ConfigPath.TEAM_NAME_PATH.replace("{arena}", getArena().getArenaName()).replace("{team}", getName()));
         return m == null ? getName() : m;
-    }
-
-    public TeamColor getColor() {
-        return color;
-    }
-
-    public List<Player> getMembers() {
-        return members;
     }
 
     @Override
@@ -768,41 +746,9 @@ public class BedWarsTeam implements ITeam {
         return base;
     }
 
-    public List<PotionEffect> getTeamEffects() {
-        return teamEffects;
-    }
-
-    public List<TeamEnchant> getBowsEnchantments() {
-        return bowsEnchantments;
-    }
-
-    public List<TeamEnchant> getSwordsEnchantments() {
-        return swordsEnchantments;
-    }
-
-    public List<TeamEnchant> getArmorsEnchantments() {
-        return armorsEnchantments;
-    }
-
-    public Arena getArena() {
-        return arena;
-    }
-
-    public int getDragonAmount() {
-        return dragonAmount;
-    }
-
     @Override
     public void setDragonAmount(int amount) {
         this.dragonAmount = amount;
-    }
-
-    public List<Player> getMembersCache() {
-        return membersCache;
-    }
-
-    public HashMap<UUID, BedHolo> getBeds() {
-        return beds;
     }
 
     /**

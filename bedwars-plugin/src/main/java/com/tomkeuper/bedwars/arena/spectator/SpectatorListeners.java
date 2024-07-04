@@ -57,27 +57,13 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 public class SpectatorListeners implements Listener {
 
     @EventHandler
-    public void onSpectatorItemInteract(PlayerInteractEvent e) {
-        Player p = e.getPlayer();
-        ItemStack i = nms.getItemInHand(p);
-        if (i == null) return;
-        if (i.getType() == Material.AIR) return;
-        if (!nms.isCustomBedWarsItem(i)) return;
-        IArena a = Arena.getArenaByPlayer(p);
-        if (a == null) return;
-        if (!a.isSpectator(p)) return;
-
-        // Disable spectator interact
-        e.setCancelled(true);
-    }
-
-    @EventHandler
     public void onSpectatorBlockInteract(PlayerInteractEvent e) {
-        if (e.getClickedBlock() == null) return;
-        if (!BedWars.getAPI().getArenaUtil().isSpectating(e.getPlayer())) return;
-
-        // Disable spectator interact with any entity
-        e.setCancelled(true);
+        if (e.getClickedBlock() == null) return; // Allow use of command items when clicked in air
+        IArena a = Arena.getArenaByPlayer(e.getPlayer());
+        if (a == null) return;
+        if (a.isSpectator(e.getPlayer()) || a.getRespawnSessions().containsKey(e.getPlayer())) {
+            e.setCancelled(true);
+        }
     }
 
     @EventHandler

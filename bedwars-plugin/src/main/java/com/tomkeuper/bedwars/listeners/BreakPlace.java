@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.gameplay.PopUpTowerPlaceEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerBedBreakEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
@@ -60,6 +61,7 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValueAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -185,20 +187,26 @@ public class BreakPlace implements Listener {
                     Location loc = e.getBlock().getLocation();
                     IArena a1 = Arena.getArenaByPlayer(p);
                     TeamColor col = a1.getTeam(p).getColor();
+                    Block block = loc.getWorld().getBlockAt(loc.clone().subtract(0, -1, 0));
+
+                    PopUpTowerPlaceEvent event = new PopUpTowerPlaceEvent(p, loc, block, a1);
+                    Bukkit.getPluginManager().callEvent(event);
+                    if (event.isCancelled()) return;
+
                     double rotation = (p.getLocation().getYaw() - 90.0F) % 360.0F;
                     if (rotation < 0.0D) {
                         rotation += 360.0D;
                     }
                     if (45.0D <= rotation && rotation < 135.0D) {
-                        new TowerSouth(loc, e.getBlockPlaced(), col, p);
+                        new TowerSouth(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (225.0D <= rotation && rotation < 315.0D) {
-                        new TowerNorth(loc, e.getBlockPlaced(), col, p);
+                        new TowerNorth(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (135.0D <= rotation && rotation < 225.0D) {
-                        new TowerWest(loc, e.getBlockPlaced(), col, p);
+                        new TowerWest(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (0.0D <= rotation && rotation < 45.0D) {
-                        new TowerEast(loc, e.getBlockPlaced(), col, p);
+                        new TowerEast(event.getLocation(), e.getBlockPlaced(), col, p);
                     } else if (315.0D <= rotation && rotation < 360.0D) {
-                        new TowerEast(loc, e.getBlockPlaced(), col, p);
+                        new TowerEast(event.getLocation(), e.getBlockPlaced(), col, p);
                     }
                 }
             }
@@ -380,8 +388,7 @@ public class BreakPlace implements Listener {
 
             if (!e.isCancelled() && p.getGameMode() != GameMode.CREATIVE){
                 Block drop = e.getBlock();
-                e.setCancelled(true);
-                Collection<ItemStack> drops = drop.getDrops();
+                Collection<ItemStack> drops = drop.getDrops(e.getPlayer().getItemInHand());
                 drop.setType(Material.AIR);
                 for (ItemStack item : drops){
                     ItemStack newItem = nms.addCustomData(item, "");

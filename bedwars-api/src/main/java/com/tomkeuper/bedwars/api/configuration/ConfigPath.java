@@ -65,7 +65,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_GAMES_BEFORE_RESTART = "bungeecord-settings.games-before-restart";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_AUTO_SCALE_LIMIT = "bungeecord-settings.auto-scale-clone-limit";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_RESTART_CMD = "bungeecord-settings.restart-cmd";
-    public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_MESSAGING_PROTOCOL = "bungeecord-settings.messaging-protocol";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_HOST = "bungeecord-settings.redis-configuration.host";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_PORT = "bungeecord-settings.redis-configuration.port";
     public static final String GENERAL_CONFIGURATION_BUNGEE_OPTION_REDIS_PASSWORD = "bungeecord-settings.redis-configuration.password";
@@ -79,7 +78,6 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
     public static final String GENERAL_CONFIGURATION_ENABLE_ANTI_DROP = "enable-anti-drop-feature";
     public static final String GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE = "hologram-update-distance";
-    public static final String GENERAL_CONFIGURATION_ENABLE_GENERATOR_REPLACE_AIR_SUDDEN = "enable-generator-replace-air-sudden-death";
     public static final String GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR = "enable-teammate-tracking-action-bar";
 
 
@@ -115,7 +113,7 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.slot";
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.enchanted";
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.command";
-    public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_LEAVE_DELAY = GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH + ".%path%.leave-delay";
+    public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_LEAVE_DELAY = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.leave-delay";
 
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_REGULAR = "countdowns.game-start-regular";
     public static final String GENERAL_CONFIGURATION_START_COUNTDOWN_SHORTENED = "countdowns.game-start-shortened";
@@ -155,12 +153,10 @@ public class ConfigPath {
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_STARTING = "scoreboard-settings.player-list.format-starting-list";
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_PLAYING = "scoreboard-settings.player-list.format-playing-list";
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_RESTARTING = "scoreboard-settings.player-list.format-restarting-list";
-    public static final String SB_CONFIG_SIDEBAR_LIST_REFRESH = "scoreboard-settings.player-list.names-refresh-interval";
     public static final String SB_CONFIG_SIDEBAR_TAB_NAME = "scoreboard-settings.tab-name";
     public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED = "scoreboard-settings.abovehead-name-enable";
     public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME = "scoreboard-settings.abovehead-name";
     public static final String SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED= "scoreboard-settings.tab-name-formatting-enable";
-    public static final String SB_CONFIG_SIDEBAR_HEALTH_IN_TAB = "scoreboard-settings.health.display-in-tab";
     public static final String SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME = "scoreboard-settings.health.display-below-name";
     public static final String GENERAL_CONFIGURATION_DISABLED_LANGUAGES = "disabled-languages";
 
@@ -231,9 +227,9 @@ public class ConfigPath {
     public static final String GENERAL_ALESSIODP_PARTIES_RANK = GENERAL_PARTY_SETTINGS_PATH + ".alessioDP-choose-arena-rank";
 
     private static final String GENERAL_TNT_JUMP_PATH = "tnt-jump-settings";
-    public static final String GENERAL_TNT_JUMP_BARYCENTER_IN_Y = GENERAL_TNT_JUMP_PATH + ".barycenter-alteration-in-y";
     public static final String GENERAL_TNT_JUMP_STRENGTH_REDUCTION = GENERAL_TNT_JUMP_PATH + ".strength-reduction-constant";
     public static final String GENERAL_TNT_JUMP_Y_REDUCTION = GENERAL_TNT_JUMP_PATH + ".y-axis-reduction-constant";
+    public static final String GENERAL_TNT_JUMP_HORIZONTAL_FORGIVENESS = GENERAL_TNT_JUMP_PATH + ".knockback-horizontal-forgiveness";
     public static final String GENERAL_TNT_JUMP_DAMAGE_SELF = GENERAL_TNT_JUMP_PATH + ".damage-self";
     public static final String GENERAL_TNT_JUMP_DAMAGE_TEAMMATES = GENERAL_TNT_JUMP_PATH + ".damage-teammates";
     public static final String GENERAL_TNT_JUMP_DAMAGE_OTHERS = GENERAL_TNT_JUMP_PATH + ".damage-others";
@@ -241,7 +237,6 @@ public class ConfigPath {
     public static final String GENERAL_TNT_BLAST_PROTECTION = "blast-protection";
     public static final String GENERAL_TNT_PROTECTION_END_STONE_BLAST = GENERAL_TNT_BLAST_PROTECTION+".end-stone";
     public static final String GENERAL_TNT_PROTECTION_GLASS_BLAST = GENERAL_TNT_BLAST_PROTECTION+".glass";
-    public static final String GENERAL_TNT_RAY_BLOCKED_BY_GLASS = GENERAL_TNT_BLAST_PROTECTION+".ray-blocked-by-glass";
 
     public static final String GENERAL_TNT_PRIME = "tnt-prime-settings";
     public static final String GENERAL_TNT_AUTO_IGNITE = GENERAL_TNT_PRIME+".auto-ignite";

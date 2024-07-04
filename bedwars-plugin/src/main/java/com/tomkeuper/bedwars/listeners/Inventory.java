@@ -23,6 +23,7 @@ package com.tomkeuper.bedwars.listeners;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.TeamEnchant;
 import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
@@ -41,11 +42,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.Objects;
@@ -285,6 +284,41 @@ public class Inventory implements Listener {
             Misc.moveToLobbyOrKick(player, arena, arena.isSpectator(player.getUniqueId()));
         } else if (data.startsWith("STAY")) {
             player.closeInventory();
+        }
+    }
+
+    @EventHandler
+    public void onSwordEnchantInChest(InventoryOpenEvent event) {
+        Player player = (Player) event.getView().getPlayer();
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena == null || BedWars.getAPI().getTeamUpgradesUtil().isWatchingGUI(player)) {
+            return;
+        }
+        // Check if player is watching a shop GUI
+        if (ShopCategory.categoryViewers.contains(player.getUniqueId())) {
+            return;
+        }
+        // Check if player is watching quick buy menu
+        if (ShopIndex.indexViewers.contains(player.getUniqueId())) {
+            return;
+        }
+        // Check if player is in a team (not a spectator, waiting in lobby etc.)
+        if (arena.getTeam(player) == null || arena.getStatus() != GameState.playing) {
+            return;
+        }
+        org.bukkit.inventory.Inventory inventory = event.getInventory();
+        InventoryType inventoryType = inventory.getType();
+        if (inventoryType == InventoryType.ENDER_CHEST || inventoryType == InventoryType.CHEST) {
+            for (ItemStack item : inventory.getContents()) {
+                if (item != null && VersionCommon.api.getVersionSupport().isSword(item)) {
+                    ItemMeta im = item.getItemMeta();
+                    for (TeamEnchant e : arena.getTeam(player).getSwordsEnchantments()) {
+                        im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
+                    }
+                    nms.setUnbreakable(im);
+                    item.setItemMeta(im);
+                }
+            }
         }
     }
 

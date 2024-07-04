@@ -1,7 +1,7 @@
 
 plugins {
     `java-library`
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     id("io.freefair.lombok")
 }
 
@@ -26,6 +26,6 @@ tasks {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }

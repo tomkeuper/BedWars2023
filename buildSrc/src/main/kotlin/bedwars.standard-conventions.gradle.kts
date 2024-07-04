@@ -1,6 +1,6 @@
 plugins {
     id("bedwars.base-conventions")
-    id("com.github.johnrengelman.shadow")
+    id("io.github.goooler.shadow")
     `maven-publish`
 }
 

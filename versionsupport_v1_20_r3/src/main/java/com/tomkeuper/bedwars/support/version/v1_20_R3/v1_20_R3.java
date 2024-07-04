@@ -55,8 +55,8 @@ import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityTNTPrimed;
 import net.minecraft.world.entity.projectile.EntityFireball;
 import net.minecraft.world.entity.projectile.IProjectile;
-import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBase;
 import org.bukkit.*;
@@ -96,11 +96,13 @@ import static com.tomkeuper.bedwars.api.language.Language.getList;
 public class v1_20_R3 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
+
     public v1_20_R3(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);
     }
+
     @Override
     public void registerVersionListeners() {
         new VersionCommon(this);
@@ -122,6 +124,7 @@ public class v1_20_R3 extends VersionSupport {
         p.sendTitle(title == null ? " " : title, subtitle == null ? " " : subtitle, fadeIn, stay, fadeOut);
     }
 
+    @Override
     public void spawnSilverfish(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, double damage) {
         var attr = new DespawnableAttributes(DespawnableType.SILVERFISH, speed, health, damage, despawn);
         var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
@@ -304,7 +307,9 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
+        //noinspection removal
         EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, 1000.0);
+        //noinspection removal
         p.setLastDamageCause(event);
         p.setHealth(0);
     }
@@ -369,12 +374,12 @@ public class v1_20_R3 extends VersionSupport {
             field.set(Blocks.aQ, glassBlast);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
-                    Blocks.ej, Blocks.ek, Blocks.el, Blocks.em,
-                    Blocks.en, Blocks.eo, Blocks.ep, Blocks.eq,
-                    Blocks.er, Blocks.es, Blocks.et, Blocks.eu,
-                    Blocks.ev, Blocks.ew, Blocks.ex, Blocks.ey,
+                    Blocks.ei, Blocks.ej, Blocks.ek, Blocks.el,
+                    Blocks.em, Blocks.en, Blocks.eo, Blocks.ep,
+                    Blocks.eq, Blocks.er, Blocks.es, Blocks.et,
+                    Blocks.eu, Blocks.ev, Blocks.ew, Blocks.ex,
 
-                    Blocks.qB,
+                    Blocks.aQ,
             };
 
             Arrays.stream(coloredGlass).forEach(
@@ -823,13 +828,14 @@ public class v1_20_R3 extends VersionSupport {
     }
 
     @Override
-    public void placeTowerBlocks(@NotNull Block b, @NotNull IArena a, @NotNull TeamColor color, int x, int y, int z){
+    public Block placeTowerBlocks(@NotNull Block b, @NotNull IArena a, @NotNull TeamColor color, int x, int y, int z){
         b.getRelative(x, y, z).setType(color.woolMaterial());
         a.addPlacedBlock(b.getRelative(x, y, z));
+        return b;
     }
 
     @Override
-    public void placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData){
+    public Block placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData){
         Block block = b.getRelative(x,y,z);  //ladder block
         block.setType(Material.LADDER);
         Ladder ladder = (Ladder) block.getBlockData();
@@ -852,10 +858,11 @@ public class v1_20_R3 extends VersionSupport {
                 block.setBlockData(ladder);
             }
         }
+        return b;
     }
 
     @Override
-    public void playVillagerEffect(@NotNull Player player, Location location){
+    public void playVillagerEffect(@NotNull Player player, Location location) {
         player.spawnParticle(Particle.VILLAGER_HAPPY, location, 1);
     }
 

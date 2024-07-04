@@ -79,6 +79,7 @@ public class ShopHolo {
     }
 
     public static void clearForPlayer(Player p) {
+        if (!shopHolo.containsKey(p)) return;
         shopHolo.get(p).forEach(h -> h.getHologram().remove());
         shopHolo.remove(p);
     }

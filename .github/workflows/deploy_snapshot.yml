@@ -19,10 +19,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: 'development'
-      - name: Set up JDK 17.0.7
+          fetch-depth: 0 # Fetch all history and tags
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17.0.7'
+          java-version: '21'
           distribution: 'temurin'
       - name: Cache Gradle packages
         uses: actions/cache@v4
@@ -72,10 +73,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: 'development'
-      - name: Set up JDK 17.0.7
+          fetch-depth: 0 # Fetch all history and tags
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '17.0.7'
+          java-version: '21'
           distribution: 'temurin'
       - name: Cache Gradle packages
         uses: actions/cache@v4

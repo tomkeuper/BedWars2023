@@ -26,19 +26,24 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.gameplay.GameEndEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerInvisibilityPotionEvent;
+import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +65,7 @@ public class InvisibilityPotionListener implements Listener {
     public void onPotion(PlayerInvisibilityPotionEvent e) {
         if (!footstepsEnabled) return;
         if (e.getType() == PlayerInvisibilityPotionEvent.Type.ADDED) {
+            if (this.invisiblePlayers.contains(e.getPlayer())) return;
             this.invisiblePlayers.add(e.getPlayer());
             steps.put(e.getPlayer(), 12);
         } else if (e.getType() == PlayerInvisibilityPotionEvent.Type.REMOVED) {
@@ -115,52 +121,96 @@ public class InvisibilityPotionListener implements Listener {
     }
 
     @EventHandler
+    public void onDeath(PlayerKillEvent event) {
+        if (this.invisiblePlayers.contains(event.getVictim())) {
+            event.getArena().getShowTime().remove(event.getVictim());
+            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, event.getArena().getTeam(event.getVictim()), event.getVictim(), event.getArena()));
+        }
+    }
+
+    @EventHandler
     public void onDrink(PlayerItemConsumeEvent e) {
         IArena a = Arena.getArenaByPlayer(e.getPlayer());
         if (a == null) return;
         if (e.getItem().getType() != Material.POTION) return;
-        // remove potion bottle
-        Bukkit.getScheduler().runTaskLater(plugin, () ->
-                        nms.minusAmount(e.getPlayer(), new ItemStack(Material.GLASS_BOTTLE), 1),
-                5L);
-        //
+        if (e.isCancelled()) return;
 
         if (nms.isInvisibilityPotion(e.getItem())) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                for (PotionEffect pe : e.getPlayer().getActivePotionEffects()) {
-                    if (pe.getType().toString().contains("INVISIBILITY")) {
-                        // if is already invisible
-                        if (a.getShowTime().containsKey(e.getPlayer())) {
-                            ITeam t = a.getTeam(e.getPlayer());
-                            // increase invisibility timer
-                            // keep trace of invisible players to send hide armor packet when required
-                            // because potions do not hide armors
-                            a.getShowTime().replace(e.getPlayer(), pe.getDuration() / 20);
-                            // call custom event
-                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.ADDED, t, e.getPlayer(), t.getArena()));
-                        } else {
-                            // if not already invisible
-                            ITeam t = a.getTeam(e.getPlayer());
-                            // keep track of invisible players to send hide armor packet when required
-                            // because potions do not hide armor
-                            a.getShowTime().put(e.getPlayer(), pe.getDuration() / 20);
-                            //
-                            for (Player p1 : e.getPlayer().getWorld().getPlayers()) {
-                                if (a.isSpectator(p1)) {
-                                    // hide player armor to spectators
-                                    nms.hideArmor(e.getPlayer(), p1);
-                                } else if (t != a.getTeam(p1)) {
-                                    // hide player armor to other teams
-                                    nms.hideArmor(e.getPlayer(), p1);
-                                }
-                            }
-                            // call custom event
-                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.ADDED, t, e.getPlayer(), t.getArena()));
-                        }
-                        break;
+            // remove potion bottle
+            nms.minusAmount(e.getPlayer(), e.getItem(), 1);
+            BedWars.debug("Potions: " + e.getPlayer().getActivePotionEffects().size());
+
+            PotionMeta meta = (PotionMeta) e.getItem().getItemMeta();
+            for (PotionEffect effect : meta.getCustomEffects()) {
+                if (effect.getType().equals(PotionEffectType.INVISIBILITY)) {
+                    BedWars.debug("Adding invis with duration: " + effect.getDuration());
+                    PotionEffect pe = new PotionEffect(PotionEffectType.INVISIBILITY, effect.getDuration(), effect.getAmplifier());
+                    e.getPlayer().addPotionEffect(pe, true);
+                    handleInvisibility(e.getPlayer(), a, pe);
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onSplash(PotionSplashEvent event) {
+        BedWars.debug("Potion splash event");
+        if (event.isCancelled()) return;
+        for (LivingEntity entity : event.getAffectedEntities()) {
+            if (entity instanceof Player) {
+                Player player = (Player) entity;
+
+                IArena a = Arena.getArenaByPlayer(player);
+                if (a == null) return;
+
+                double intensity = event.getIntensity(player);
+
+                for (PotionEffect effect : event.getPotion().getEffects()) {
+                    BedWars.debug("Effect: " + effect.getType());
+                    if (effect.getType().equals(PotionEffectType.INVISIBILITY)) {
+                        int duration = (int) (effect.getDuration() * intensity);
+                        BedWars.debug("Adding invis with duration: " + duration);
+                        PotionEffect pe = new PotionEffect(PotionEffectType.INVISIBILITY, duration, effect.getAmplifier());
+                        player.addPotionEffect(pe, true);
+                        handleInvisibility(player, a, pe);
+                        event.setCancelled(true);
                     }
                 }
-            }, 5L);
+            }
+        }
+    }
+
+    private void handleInvisibility(Player player, IArena arena, PotionEffect pe){
+        // if is already invisible
+        if (arena.getShowTime().containsKey(player)) {
+            BedWars.debug("Player is already invisible");
+            ITeam t = arena.getTeam(player);
+            // increase invisibility timer
+            // keep trace of invisible players to send hide armor packet when required
+            // because potions do not hide armors
+            arena.getShowTime().replace(player, pe.getDuration() / 20);
+            // call custom event
+            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.ADDED, t, player, t.getArena()));
+        } else {
+            BedWars.debug("Player is not invisible");
+            // if not already invisible
+            ITeam t = arena.getTeam(player);
+            // keep track of invisible players to send hide armor packet when required
+            // because potions do not hide armor
+            arena.getShowTime().put(player, pe.getDuration() / 20);
+            //
+            for (Player p1 : player.getWorld().getPlayers()) {
+                if (arena.isSpectator(p1)) {
+                    // hide player armor to spectators
+                    nms.hideArmor(player, p1);
+                } else if (t != arena.getTeam(p1)) {
+                    // hide player armor to other teams
+                    nms.hideArmor(player, p1);
+                }
+            }
+            // call custom event
+            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.ADDED, t, player, t.getArena()));
         }
     }
 }

@@ -18,9 +18,19 @@ include(":versionsupport_v1_19_r3")
 include(":versionsupport_v1_20_r1")
 include(":versionsupport_v1_20_r2")
 include(":versionsupport_v1_20_r3")
+include(":versionsupport_v1_20_r5")
 include(":versionsupport_common")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+pluginManagement {
+    repositories {
+        maven("https://repo.tomkeuper.com/repository/releases/") // SlimJar
+        mavenLocal()
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
 
 plugins {
     id("io.alcide.gradle-semantic-build-versioning") version "4.2.2" // Used for automatic versioning
