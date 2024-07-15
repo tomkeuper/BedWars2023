@@ -735,7 +735,7 @@ public class v1_12_R1 extends VersionSupport {
         b.getRelative(x, y, z).setType(Material.WOOL);
         setBlockTeamColor(b.getRelative(x, y, z), color);
         a.addPlacedBlock(b.getRelative(x, y, z));
-        return b;
+        return b.getRelative(x, y, z);
     }
 
     @Override
@@ -743,7 +743,7 @@ public class v1_12_R1 extends VersionSupport {
         b.getRelative(x, y, z).setType(Material.LADDER);
         b.getRelative(x, y, z).setData((byte)ladderdata);
         a.addPlacedBlock(b.getRelative(x, y, z));
-        return b;
+        return b.getRelative(x, y, z);
     }
 
     @Override

@@ -717,7 +717,7 @@ public class v1_16_R3 extends VersionSupport {
     public Block placeTowerBlocks(Block b, IArena a, TeamColor color, int x, int y,int z){
         b.getRelative(x, y, z).setType(color.woolMaterial());
         a.addPlacedBlock(b.getRelative(x, y, z));
-        return b;
+        return b.getRelative(x, y, z);
     }
 
     @Override
