@@ -37,6 +37,7 @@ import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.Hologram;
 import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,6 +50,7 @@ import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.inventory.InventoryEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -215,12 +217,33 @@ public class v1_8_R3 extends VersionSupport {
 
     @Override
     public void minusAmount(Player p, ItemStack i, int amount) {
-        if (i.getAmount() - amount <= 0) {
-            p.getInventory().removeItem(i);
+        org.bukkit.inventory.PlayerInventory inventory = p.getInventory();
+        int selectedSlot = inventory.getHeldItemSlot();
+        ItemStack selectedItem = inventory.getItem(selectedSlot);
+
+        // Check if the selected item matches the item to be reduced
+        if (selectedItem != null && selectedItem.isSimilar(i)) {
+            if (selectedItem.getAmount() - amount <= 0) {
+                inventory.setItem(selectedSlot, null);
+            } else {
+                selectedItem.setAmount(selectedItem.getAmount() - amount);
+            }
+            p.updateInventory();
             return;
         }
-        i.setAmount(i.getAmount() - amount);
-        p.updateInventory();
+
+        // If not found in the selected slot, proceed with the rest of the inventory
+        for (ItemStack item : inventory.getContents()) {
+            if (item != null && item.isSimilar(i)) {
+                if (item.getAmount() - amount <= 0) {
+                    inventory.removeItem(item);
+                } else {
+                    item.setAmount(item.getAmount() - amount);
+                }
+                p.updateInventory();
+                return;
+            }
+        }
     }
 
     public static class VillagerShop extends EntityVillager {
