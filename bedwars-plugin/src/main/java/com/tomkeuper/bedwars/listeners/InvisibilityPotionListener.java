@@ -134,8 +134,10 @@ public class InvisibilityPotionListener implements Listener {
         if (a == null) return;
         if (e.getItem().getType() != Material.POTION) return;
         if (e.isCancelled()) return;
+        BedWars.debug("onDrink invisible potion event");
 
         if (nms.isInvisibilityPotion(e.getItem())) {
+            BedWars.debug("onDrink invisible potion event2");
             // remove potion bottle
             nms.minusAmount(e.getPlayer(), e.getItem(), 1);
             BedWars.debug("Potions: " + e.getPlayer().getActivePotionEffects().size());
