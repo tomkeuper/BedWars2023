@@ -449,7 +449,7 @@ public class v1_8_R3 extends VersionSupport {
             tag = new NBTTagCompound();
         }
 
-        tag.setString("BedWars2023", data);
+        tag.setString(VersionSupport.PLUGIN_TAG_GENERIC_KEY, data);
         itemStack.setTag(tag);
         return CraftItemStack.asBukkitCopy(itemStack);
     }
@@ -480,7 +480,7 @@ public class v1_8_R3 extends VersionSupport {
         if (itemStack == null) return false;
         NBTTagCompound tag = itemStack.getTag();
         if (tag == null) return false;
-        return tag.hasKey("BedWars2023");
+        return tag.hasKey(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
@@ -488,7 +488,7 @@ public class v1_8_R3 extends VersionSupport {
         net.minecraft.server.v1_8_R3.ItemStack itemStack = CraftItemStack.asNMSCopy(i);
         NBTTagCompound tag = itemStack.getTag();
         if (tag == null) return "";
-        return tag.getString("BedWars2023");
+        return tag.getString(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
