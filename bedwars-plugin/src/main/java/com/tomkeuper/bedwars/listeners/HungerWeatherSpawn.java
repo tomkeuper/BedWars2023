@@ -137,7 +137,7 @@ public class HungerWeatherSpawn implements Listener {
                     Arena.magicMilk.remove(p.getUniqueId());
                     p.sendMessage(getMsg(p, Messages.INTERACT_MAGIC_MILK_REMOVED));
                     debug("PlayerItemConsumeEvent player " + p + " was removed from magicMilk");
-                }, 20 * 30L).getTaskId();
+                }, 20L * Arena.getArenaByPlayer(p).getMagicMilkTime()).getTaskId();
 
                 Arena.magicMilk.put(p.getUniqueId(), task);
 
