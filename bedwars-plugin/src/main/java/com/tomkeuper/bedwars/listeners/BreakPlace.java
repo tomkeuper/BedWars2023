@@ -519,6 +519,9 @@ public class BreakPlace implements Listener {
         IArena a = Arena.getArenaByIdentifier(e.getLocation().getWorld().getName());
         if (a != null) {
             if (a.getStatus() == GameState.playing) {
+                if (e.getEntity().getType() == EntityType.ENDER_DRAGON && a.isAllowEnderDragonDestroy()) {
+                    return;
+                }
                 e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
             }
         }

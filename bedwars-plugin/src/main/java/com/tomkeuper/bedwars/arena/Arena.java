@@ -121,7 +121,7 @@ public class Arena implements IArena {
     private ArenaConfig cm;
     private int minPlayers = 2, maxPlayers = 10, maxInTeam = 1, islandRadius = 10;
     public int upgradeDiamondsCount = 0, upgradeEmeraldsCount = 0;
-    public boolean allowSpectate = true, allowMapBreak = false;
+    public boolean allowSpectate = true, allowMapBreak = false, enderDragonDestory = false;
     private World world;
     private String group = "Default", arenaName, worldName;
     private List<ITeam> teams = new ArrayList<>();
@@ -238,6 +238,7 @@ public class Arena implements IArena {
         minPlayers = yml.getInt("minPlayers");
         allowSpectate = yml.getBoolean("allowSpectate");
         allowMapBreak = yml.getBoolean("allow-map-break");
+        enderDragonDestory = yml.getBoolean(ConfigPath.ARENA_ALLOW_DRAGON_DESTROY_WHEN_PROTECTED);
         islandRadius = yml.getInt(ConfigPath.ARENA_ISLAND_RADIUS);
         if (config.getYml().get("arenaGroups") != null) {
             if (config.getYml().getStringList("arenaGroups").contains(yml.getString("group"))) {
@@ -2515,6 +2516,16 @@ public class Arena implements IArena {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isAllowEnderDragonDestroy() {
+        return enderDragonDestory;
+    }
+
+    @Override
+    public void setAllowEnderDragonDestroy(boolean allowDestory) {
+        this.enderDragonDestory = allowDestory;
     }
 
     @Override
