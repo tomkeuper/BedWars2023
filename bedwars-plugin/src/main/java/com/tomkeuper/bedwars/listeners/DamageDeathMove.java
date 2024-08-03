@@ -673,9 +673,9 @@ public class DamageDeathMove implements Listener {
                     if (e.getPlayer().getLocation().getBlockY() <= 0) {
                         ITeam bwt = a.getTeam(e.getPlayer());
                         if (bwt != null) {
-                            PaperSupport.teleport(e.getPlayer(), bwt.getSpawn());
+                            PaperSupport.teleportC(e.getPlayer(), bwt.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         } else {
-                           PaperSupport.teleport(e.getPlayer(), a.getSpectatorLocation());
+                           PaperSupport.teleportC(e.getPlayer(), a.getSpectatorLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         }
                     }
                 }
