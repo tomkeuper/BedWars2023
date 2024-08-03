@@ -385,16 +385,6 @@ public class BreakPlace implements Listener {
                     e.setCancelled(true);
                 }
             }
-
-            if (!e.isCancelled() && p.getGameMode() != GameMode.CREATIVE){
-                Block drop = e.getBlock();
-                Collection<ItemStack> drops = drop.getDrops(e.getPlayer().getItemInHand());
-                drop.setType(Material.AIR);
-                for (ItemStack item : drops){
-                    ItemStack newItem = nms.addCustomData(item, "");
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5,0.5,0.5), newItem);
-                }
-            }
         }
     }
 
@@ -530,27 +520,6 @@ public class BreakPlace implements Listener {
         if (a != null) {
             if (a.getStatus() == GameState.playing) {
                 e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
-                // Process the remaining blocks to add custom data to the drops
-                for (Block block : e.blockList()) {
-                    // Get the original drops
-                    List<ItemStack> drops = new ArrayList<>(block.getDrops());
-
-                    // Clear the block drops to prevent them from being dropped automatically
-                    e.setYield(0);
-
-                    List<ItemStack> modifiedDrops = new ArrayList<>();
-
-                    for (ItemStack drop : drops) {
-                        // Add custom data to each drop using the provided function
-                        ItemStack modifiedDrop = nms.addCustomData(drop, ""); // replace "custom_nbt_data" with the actual data you want to add
-                        modifiedDrops.add(modifiedDrop);
-                    }
-
-                    // Drop only the modified items at the block location
-                    for (ItemStack modifiedDrop : modifiedDrops) {
-                        block.getWorld().dropItemNaturally(block.getLocation(), modifiedDrop);
-                    }
-                }
             }
         }
     }
@@ -564,27 +533,6 @@ public class BreakPlace implements Listener {
         if (a != null) {
             if (a.getStatus() == GameState.playing) {
                 e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
-                // Process the remaining blocks to add custom data to the drops
-                for (Block block : e.blockList()) {
-                    // Get the original drops
-                    List<ItemStack> drops = new ArrayList<>(block.getDrops());
-
-                    // Clear the block drops to prevent them from being dropped automatically
-                    e.setYield(0);
-
-                    List<ItemStack> modifiedDrops = new ArrayList<>();
-
-                    for (ItemStack drop : drops) {
-                        // Add custom data to each drop using the provided function
-                        ItemStack modifiedDrop = nms.addCustomData(drop, ""); // replace "custom_nbt_data" with the actual data you want to add
-                        modifiedDrops.add(modifiedDrop);
-                    }
-
-                    // Drop only the modified items at the block location
-                    for (ItemStack modifiedDrop : modifiedDrops) {
-                        block.getWorld().dropItemNaturally(block.getLocation(), modifiedDrop);
-                    }
-                }
             }
         }
     }
