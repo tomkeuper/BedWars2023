@@ -121,7 +121,7 @@ public class Arena implements IArena {
     private ArenaConfig cm;
     private int minPlayers = 2, maxPlayers = 10, maxInTeam = 1, islandRadius = 10;
     public int upgradeDiamondsCount = 0, upgradeEmeraldsCount = 0;
-    public boolean allowSpectate = true, allowMapBreak = false;
+    public boolean allowSpectate = true, allowMapBreak = false, enderDragonDestory = false;
     private World world;
     private String group = "Default", arenaName, worldName;
     private List<ITeam> teams = new ArrayList<>();
@@ -237,6 +237,7 @@ public class Arena implements IArena {
         maxPlayers = yml.getConfigurationSection("Team").getKeys(false).size() * maxInTeam;
         minPlayers = yml.getInt("minPlayers");
         allowSpectate = yml.getBoolean("allowSpectate");
+        enderDragonDestory = yml.getBoolean(ConfigPath.ARENA_ALLOW_DRAGON_DESTROY_WHEN_PROTECTED);
         allowMapBreak = yml.getBoolean(ConfigPath.ARENA_ALLOW_MAP_BREAK);
         magicMilkTime = yml.getInt(ConfigPath.ARENA_MAGIC_MILK_TIME);
         islandRadius = yml.getInt(ConfigPath.ARENA_ISLAND_RADIUS);
@@ -2518,6 +2519,16 @@ public class Arena implements IArena {
         return null;
     }
 
+    @Override
+    public boolean isAllowEnderDragonDestroy() {
+        return enderDragonDestory;
+    }
+
+    @Override
+    public void setAllowEnderDragonDestroy(boolean allowDestory) {
+        this.enderDragonDestory = allowDestory;
+    }
+  
     @Override
     public int getMagicMilkTime() {
         return magicMilkTime;
