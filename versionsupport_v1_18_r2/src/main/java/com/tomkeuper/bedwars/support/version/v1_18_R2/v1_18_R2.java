@@ -398,7 +398,7 @@ public class v1_18_R2 extends VersionSupport {
             itemStack.c(tag);
         }
 
-        tag.a("BedWars2023", data);
+        tag.a(VersionSupport.PLUGIN_TAG_GENERIC_KEY, data);
         return CraftItemStack.asBukkitCopy(itemStack);
     }
 
@@ -420,7 +420,7 @@ public class v1_18_R2 extends VersionSupport {
         ItemStack itemStack = CraftItemStack.asNMSCopy(i);
         NBTTagCompound tag = itemStack.t();
         if (tag == null) return false;
-        return tag.e("BedWars2023");
+        return tag.e(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override
@@ -428,7 +428,7 @@ public class v1_18_R2 extends VersionSupport {
         ItemStack itemStack = CraftItemStack.asNMSCopy(i);
         NBTTagCompound tag = itemStack.t();
         if (tag == null) return "";
-        return tag.l("BedWars2023");
+        return tag.l(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
     }
 
     @Override

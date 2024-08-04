@@ -385,16 +385,6 @@ public class BreakPlace implements Listener {
                     e.setCancelled(true);
                 }
             }
-
-            if (!e.isCancelled() && p.getGameMode() != GameMode.CREATIVE){
-                Block drop = e.getBlock();
-                Collection<ItemStack> drops = drop.getDrops(e.getPlayer().getItemInHand());
-                drop.setType(Material.AIR);
-                for (ItemStack item : drops){
-                    ItemStack newItem = nms.addCustomData(item, "");
-                    e.getBlock().getWorld().dropItemNaturally(e.getBlock().getLocation().add(0.5,0.5,0.5), newItem);
-                }
-            }
         }
     }
 
@@ -530,7 +520,6 @@ public class BreakPlace implements Listener {
         if (a != null) {
             if (a.getStatus() == GameState.playing) {
                 e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
-                return;
             }
         }
     }
