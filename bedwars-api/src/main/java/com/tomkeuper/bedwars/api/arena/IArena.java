@@ -751,4 +751,10 @@ public interface IArena {
     @SuppressWarnings("unused")
     void setAllowEnderDragonDestroy(boolean allowDestory);
 
+     /**
+     * Get the time in seconds when the magic milk effect will expire.
+     *
+     * @return The time when the magic milk effect will expire.
+     */
+    int getMagicMilkTime();
 }

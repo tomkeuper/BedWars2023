@@ -131,7 +131,7 @@ public class Arena implements IArena {
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
-    private int renderDistance;
+    private int renderDistance, magicMilkTime = 30;
 
     private final List<Player> leaving = new ArrayList<>();
 
@@ -237,8 +237,9 @@ public class Arena implements IArena {
         maxPlayers = yml.getConfigurationSection("Team").getKeys(false).size() * maxInTeam;
         minPlayers = yml.getInt("minPlayers");
         allowSpectate = yml.getBoolean("allowSpectate");
-        allowMapBreak = yml.getBoolean("allow-map-break");
         enderDragonDestory = yml.getBoolean(ConfigPath.ARENA_ALLOW_DRAGON_DESTROY_WHEN_PROTECTED);
+        allowMapBreak = yml.getBoolean(ConfigPath.ARENA_ALLOW_MAP_BREAK);
+        magicMilkTime = yml.getInt(ConfigPath.ARENA_MAGIC_MILK_TIME);
         islandRadius = yml.getInt(ConfigPath.ARENA_ISLAND_RADIUS);
         if (config.getYml().get("arenaGroups") != null) {
             if (config.getYml().getStringList("arenaGroups").contains(yml.getString("group"))) {
@@ -2527,6 +2528,11 @@ public class Arena implements IArena {
     public void setAllowEnderDragonDestroy(boolean allowDestory) {
         this.enderDragonDestory = allowDestory;
     }
+  
+    @Override
+    public int getMagicMilkTime() {
+        return magicMilkTime;
+    }
 
     @Override
     public boolean isMapBreakable() {
@@ -2744,4 +2750,6 @@ public class Arena implements IArena {
             dragonBossbars.add(bb);
         }
     }
+
+
 }
