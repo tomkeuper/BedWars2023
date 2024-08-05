@@ -615,7 +615,9 @@ public class DamageDeathMove implements Listener {
                     // generic hide packets
                     for (Map.Entry<Player, Integer> entry : a.getShowTime().entrySet()) {
                         if (entry.getValue() > 1) {
-                            BedWars.nms.hideArmor(entry.getKey(), e.getPlayer());
+                            if (!a.getTeam(entry.getKey()).equals(a.getTeam(e.getPlayer()))) {
+                                BedWars.nms.hideArmor(entry.getKey(), e.getPlayer());
+                            }
                         }
                     }
                     // if the moving player has invisible armor
@@ -673,9 +675,9 @@ public class DamageDeathMove implements Listener {
                     if (e.getPlayer().getLocation().getBlockY() <= 0) {
                         ITeam bwt = a.getTeam(e.getPlayer());
                         if (bwt != null) {
-                            PaperSupport.teleport(e.getPlayer(), bwt.getSpawn());
+                            PaperSupport.teleportC(e.getPlayer(), bwt.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         } else {
-                           PaperSupport.teleport(e.getPlayer(), a.getSpectatorLocation());
+                           PaperSupport.teleportC(e.getPlayer(), a.getSpectatorLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                         }
                     }
                 }
