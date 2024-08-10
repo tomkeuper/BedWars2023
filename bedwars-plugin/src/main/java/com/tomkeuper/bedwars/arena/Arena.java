@@ -532,16 +532,23 @@ public class Arena implements IArena {
 
             /* check if you can start the arena */
             if (status == GameState.waiting) {
-                int teams = 0, teammates = 0;
+                int teams = 0, teammates = 0, partyMembers = 0;
+
                 for (Player on : getPlayers()) {
                     if (getPartyManager().isOwner(on)) {
                         teams++;
                     }
                     if (getPartyManager().hasParty(on)) {
                         teammates++;
+                        partyMembers += getPartyManager().getMembers(on).size();
                     }
                 }
-                if (minPlayers <= players.size() && teams > 0 && players.size() != teammates / teams) {
+
+                // Check if the party fills the arena
+                if (partyMembers >= maxPlayers) {
+                    Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> changeStatus(GameState.starting), 10L);
+                    isStatusChange = true;
+                } else if (minPlayers <= players.size() && teams > 0 && players.size() != teammates / teams) {
                     Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> changeStatus(GameState.starting), 10L);
                     isStatusChange = true;
                 } else if (players.size() >= minPlayers && teams == 0) {
