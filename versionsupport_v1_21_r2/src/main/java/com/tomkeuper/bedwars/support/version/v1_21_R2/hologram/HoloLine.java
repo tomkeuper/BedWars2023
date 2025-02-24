@@ -51,10 +51,10 @@ public class HoloLine implements IHoloLine {
         entity.o(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
 
         PacketPlayOutSpawnEntity packet = v1_21_R2.newPacketPlayOutSpawnEntity(entity);
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.an(), entity.ar().c());
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
+//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_21_R2.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
+        v1_21_R2.sendPackets(hologram.getPlayer(), packet, metadataPacket);
     }
 
     @Override
@@ -94,10 +94,10 @@ public class HoloLine implements IHoloLine {
         entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
         if (isDestroyed()) return;
 
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.an(), entity.ar().c());
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
+//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_21_R2.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
+        v1_21_R2.sendPackets(hologram.getPlayer(), metadataPacket);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class HoloLine implements IHoloLine {
 
     @Override
     public void remove() {
-        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.an());
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.ar());
         v1_21_R2.sendPacket(hologram.getPlayer(), packet);
     }
 

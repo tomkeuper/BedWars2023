@@ -144,7 +144,7 @@ public final class v1_21_R3 extends VersionSupport {
     public boolean isArmor(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
-        return i instanceof ItemArmor || i instanceof ItemElytra;
+        return i instanceof ItemArmor;
     }
 
     @Override
@@ -280,7 +280,7 @@ public final class v1_21_R3 extends VersionSupport {
         EntityLiving nmsEntityLiving = (((CraftLivingEntity) owner).getHandle());
         EntityTNTPrimed nmsTNT = (((CraftTNTPrimed) tnt).getHandle());
         try {
-            Field sourceField = EntityTNTPrimed.class.getDeclaredField("h");
+            Field sourceField = EntityTNTPrimed.class.getDeclaredField("i");
             sourceField.setAccessible(true);
             sourceField.set(nmsTNT, nmsEntityLiving);
         } catch (Exception ex) {
@@ -348,22 +348,22 @@ public final class v1_21_R3 extends VersionSupport {
     public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             // blast resistance
-            Field field = BlockBase.class.getDeclaredField("aH");
+            Field field = BlockBase.class.getDeclaredField("aI");
             field.setAccessible(true);
             // end stone
-            field.set(Blocks.fz, endStoneBlast);
+            field.set(Blocks.fU, endStoneBlast);
             // obsidian
-            field.set(Blocks.co, glassBlast);
+            field.set(Blocks.cv, glassBlast);
             // standard glass
-            field.set(Blocks.aQ, glassBlast);
+            field.set(Blocks.aX, glassBlast);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
-                    Blocks.ei, Blocks.ej, Blocks.ek, Blocks.el,
-                    Blocks.em, Blocks.en, Blocks.eo, Blocks.ep,
-                    Blocks.eq, Blocks.er, Blocks.es, Blocks.et,
-                    Blocks.eu, Blocks.ev, Blocks.ew, Blocks.ex,
+                    Blocks.ev, Blocks.ew, Blocks.ex, Blocks.ey,
+                    Blocks.ez, Blocks.eA, Blocks.eB, Blocks.eC,
+                    Blocks.eD, Blocks.eE, Blocks.eF, Blocks.eG,
+                    Blocks.eH, Blocks.eI, Blocks.eJ, Blocks.eK,
 
-                    Blocks.aQ,
+                    Blocks.aX,
             };
 
             Arrays.stream(coloredGlass).forEach(
@@ -676,7 +676,7 @@ public final class v1_21_R3 extends VersionSupport {
     @Override
     public String getMainLevel() {
         //noinspection deprecation
-        return ((DedicatedServer) MinecraftServer.getServer()).a().n;
+        return ((DedicatedServer) MinecraftServer.getServer()).a().l;
     }
 
     @Override
@@ -688,21 +688,19 @@ public final class v1_21_R3 extends VersionSupport {
     @Override
     public void playRedStoneDot(Player player) {
         Color color = Color.RED;
-        PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(
-                new ParticleParamRedstone(
-                        new Vector3f((float) color.getRed(),
-                                (float) color.getGreen(),
-                                (float) color.getBlue()), (float) 1
-                ),
-                true,
-                player.getLocation().getX(),
-                player.getLocation().getY() + 2.6,
-                player.getLocation().getZ(),
-                0, 0, 0, 0, 0
-        );
+//        PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(
+//                new ParticleParamRedstone(
+//                        color.asRGB(), (float) 1
+//                ),
+//                true,
+//                player.getLocation().getX(),
+//                player.getLocation().getY() + 2.6,
+//                player.getLocation().getZ(),
+//                0, 0, 0, 0, 0
+//        );
         for (Player inWorld : player.getWorld().getPlayers()) {
             if (inWorld.equals(player)) continue;
-            sendPacket(inWorld, particlePacket);
+//            sendPacket(inWorld, particlePacket);
         }
     }
 
@@ -755,7 +753,7 @@ public final class v1_21_R3 extends VersionSupport {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
-        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().ar().c());
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().au().c());
         Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
 
@@ -826,11 +824,11 @@ public final class v1_21_R3 extends VersionSupport {
     }
 
     public static void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().c.b(packet);
+        ((CraftPlayer) player).getHandle().f.b(packet);
     }
 
     public static void sendPackets(Player player, Packet<?> @NotNull ... packets) {
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().c;
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().f;
         for (Packet<?> p : packets) {
             connection.b(p);
         }
@@ -844,7 +842,7 @@ public final class v1_21_R3 extends VersionSupport {
         if (null == i) {
             return null;
         }
-        return i.g();
+        return i.h();
     }
 
     /**
@@ -855,7 +853,7 @@ public final class v1_21_R3 extends VersionSupport {
         if (null == i) {
             return null;
         }
-        return i.E();
+        return i.I();
     }
 
     private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
@@ -882,16 +880,16 @@ public final class v1_21_R3 extends VersionSupport {
     public static PacketPlayOutSpawnEntity newPacketPlayOutSpawnEntity(net.minecraft.world.entity.Entity nmsEntity) {
         return new PacketPlayOutSpawnEntity(
                 nmsEntity.hashCode(),
-                nmsEntity.cz(),
-                nmsEntity.dt(),
-                nmsEntity.dv(),
-                nmsEntity.dz(),
+                nmsEntity.cG(),
+                nmsEntity.dA(),
+                nmsEntity.dC(),
                 nmsEntity.dG(),
+                nmsEntity.dN(),
                 nmsEntity.getBukkitYaw(),
-                nmsEntity.am(),
+                nmsEntity.aq(),
                 0,
-                nmsEntity.dr(),
-                nmsEntity.ct()
+                nmsEntity.dy(),
+                nmsEntity.cA()
         );
     }
 }

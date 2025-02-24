@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import net.minecraft.network.protocol.game.PacketPlayOutEntity;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -76,27 +77,30 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         addArmorStandMotY(sinusoidalMotY);
 
         armorStand.o(loc.getX(), loc.getY(), loc.getZ()); // SETTING NEW LOCATION
-        armorStand.aG = false; // SETTING ON GROUND TO FALSE
+        armorStand.aD = false; // SETTING ON GROUND TO FALSE
 
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand);
-        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.an(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
+        PositionMoveRotation pos = new PositionMoveRotation(null,armorStand.dv(), (float) armorStand.dv().d, (float) armorStand.dv().e);
+
+//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.ar(),pos, armorStand.);
+        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ar(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            v1_21_R1.sendPackets(p, teleportPacket, moveLookPacket);
+//            v1_21_R2.sendPackets(p, teleportPacket, moveLookPacket);
+            v1_21_R2.sendPackets(p, moveLookPacket);
         }
         tickCount++;
     }
 
     private void setArmorStandYAW(float yaw) {
-        armorStand.t(yaw);
+        armorStand.v(yaw);
     }
 
     private void addArmorStandYAW(float yaw) {
-        armorStand.t(getArmorStandYAW() + yaw);
+        armorStand.v(getArmorStandYAW() + yaw);
     }
 
     private float getArmorStandYAW() {
-        return armorStand.dE();
+        return armorStand.dM();
     }
 
     private void setArmorStandMotY(double y) {
@@ -108,6 +112,6 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     }
 
     private double getArmorStandMotY() {
-        return armorStand.ag().d;
+        return armorStand.ah().d;
     }
 }

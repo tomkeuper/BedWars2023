@@ -51,21 +51,21 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected PathfinderGoalSelector getTargetSelector(@NotNull EntityCreature entityLiving) {
-        return entityLiving.bX;
+        return entityLiving.bT;
     }
 
     protected PathfinderGoalSelector getGoalSelector(@NotNull EntityCreature entityLiving) {
-        return entityLiving.bW;
+        return entityLiving.bS;
     }
 
     protected void clearSelectors(@NotNull EntityCreature entityLiving) {
-        entityLiving.bW.b().clear();
-        entityLiving.bX.b().clear();
+        entityLiving.bS.b().clear();
+        entityLiving.bT.b().clear();
     }
 
     protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
         return new PathfinderGoalNearestAttackableTarget<>(entity, EntityLiving.class, 20, true, false,
-                entityLiving -> {
+                (entityLiving, sourceEntity) -> { // Two parameters now
                     if (entityLiving instanceof EntityHuman) {
                         return !((EntityHuman) entityLiving).getBukkitEntity().isDead() &&
                                 !team.wasMember(((EntityHuman) entityLiving).getBukkitEntity().getUniqueId()) &&
@@ -85,8 +85,8 @@ public abstract class DespawnableProvider<T> {
 
         var entity = ((EntityInsentient)((CraftEntity)bukkitEntity).getHandle());
 
-        Objects.requireNonNull(entity.eS().a(GenericAttributes.s)).a(attr.health());
-        Objects.requireNonNull(entity.eS().a(GenericAttributes.v)).a(attr.speed());
-        Objects.requireNonNull(entity.eS().a(GenericAttributes.c)).a(attr.damage());
+        Objects.requireNonNull(entity.eY().a(GenericAttributes.s)).a(attr.health());
+        Objects.requireNonNull(entity.eY().a(GenericAttributes.v)).a(attr.speed());
+        Objects.requireNonNull(entity.eY().a(GenericAttributes.c)).a(attr.damage());
     }
 }

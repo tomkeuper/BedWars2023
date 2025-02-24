@@ -76,27 +76,28 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         addArmorStandMotY(sinusoidalMotY);
 
         armorStand.o(loc.getX(), loc.getY(), loc.getZ()); // SETTING NEW LOCATION
-        armorStand.aG = false; // SETTING ON GROUND TO FALSE
+        armorStand.aD = false; // SETTING ON GROUND TO FALSE
 
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand);
-        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.an(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
+//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand);
+        PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ar(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            v1_21_R1.sendPackets(p, teleportPacket, moveLookPacket);
+//            v1_21_R3.sendPackets(p, teleportPacket, moveLookPacket);
+            v1_21_R3.sendPackets(p, moveLookPacket);
         }
         tickCount++;
     }
 
     private void setArmorStandYAW(float yaw) {
-        armorStand.t(yaw);
+        armorStand.v(yaw);
     }
 
     private void addArmorStandYAW(float yaw) {
-        armorStand.t(getArmorStandYAW() + yaw);
+        armorStand.v(getArmorStandYAW() + yaw);
     }
 
     private float getArmorStandYAW() {
-        return armorStand.dE();
+        return armorStand.dM();
     }
 
     private void setArmorStandMotY(double y) {
@@ -108,6 +109,6 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     }
 
     private double getArmorStandMotY() {
-        return armorStand.ag().d;
+        return armorStand.ah().d;
     }
 }
