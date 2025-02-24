@@ -79,10 +79,10 @@ dependencies {
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
-    slim("com.saicone.rtag:rtag:1.5.4")
-    slim("com.saicone.rtag:rtag-block:1.5.4")
-    slim("com.saicone.rtag:rtag-entity:1.5.4")
-    slim("com.saicone.rtag:rtag-item:1.5.4")
+    slim("com.saicone.rtag:rtag:1.5.9")
+    slim("com.saicone.rtag:rtag-block:1.5.9")
+    slim("com.saicone.rtag:rtag-entity:1.5.9")
+    slim("com.saicone.rtag:rtag-item:1.5.9")
 }
 
 
