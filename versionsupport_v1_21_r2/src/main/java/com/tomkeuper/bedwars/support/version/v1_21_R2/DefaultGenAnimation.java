@@ -25,6 +25,7 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntity;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,6 +33,9 @@ import org.bukkit.craftbukkit.v1_21_R2.entity.CraftArmorStand;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Lagggpixel
@@ -46,7 +50,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     // Constants for the sinusoidal motion
     final double frequency = 0.035; // Controls the oscillation speed.
     final double amplitude = 260; // Controls the range of YAW motion.
-    final double verticalAmplitude = 10; // Controls the range of vertical motion.
+    final double verticalAmplitude = 0.15; // Controls the range of vertical motion.
 
     public DefaultGenAnimation(ArmorStand armorStand) {
         this.armorStand = ((CraftArmorStand) armorStand).getHandle();
@@ -69,7 +73,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     public void run() {
         // Calculate sinusoidal values for YAW and MotY
         float sinusoidalYaw = (float) (Math.sin(frequency * tickCount) * amplitude);
-        float sinusoidalMotY = (float) (Math.sin(frequency * tickCount) * verticalAmplitude);
+        float sinusoidalMotY = (float) (Math.sin((frequency * tickCount) + Math.PI/2) * verticalAmplitude);
 
         // Update the armor stand's YAW and MotY based on the sinusoidal functions
         final double lastMotY = getArmorStandMotY();
@@ -79,14 +83,16 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         armorStand.o(loc.getX(), loc.getY(), loc.getZ()); // SETTING NEW LOCATION
         armorStand.aD = false; // SETTING ON GROUND TO FALSE
 
-        PositionMoveRotation pos = new PositionMoveRotation(null,armorStand.dv(), (float) armorStand.dv().d, (float) armorStand.dv().e);
+        final var delta = new Vec3D(0,0,0);
+        final var positionMoveRotation = new PositionMoveRotation(armorStand.du(), delta, 0, 0);
+        final Set<Relative> set = new HashSet<>();
 
-//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.ar(),pos, armorStand.);
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.ar(),positionMoveRotation, set, false);
+
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ar(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-//            v1_21_R2.sendPackets(p, teleportPacket, moveLookPacket);
-            v1_21_R2.sendPackets(p, moveLookPacket);
+            v1_21_R2.sendPackets(p, teleportPacket, moveLookPacket);
         }
         tickCount++;
     }

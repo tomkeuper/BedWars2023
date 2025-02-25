@@ -27,10 +27,16 @@ import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
 import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
+import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R3.util.CraftChatMessage;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class HoloLine implements IHoloLine {
     private String text;
@@ -52,9 +58,13 @@ public class HoloLine implements IHoloLine {
 
         PacketPlayOutSpawnEntity packet = v1_21_R3.newPacketPlayOutSpawnEntity(entity);
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
-//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_21_R3.sendPackets(hologram.getPlayer(), packet, metadataPacket);
+        final var delta = new Vec3D(0,0,0);
+        final var positionMoveRotation = new PositionMoveRotation(entity.du(), delta, 0, entity.dN());
+        final Set<Relative> set = new HashSet<>();
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(),positionMoveRotation, set, false);
+
+        v1_21_R3.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
     }
 
     @Override
@@ -95,9 +105,13 @@ public class HoloLine implements IHoloLine {
         if (isDestroyed()) return;
 
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
-//        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_21_R3.sendPackets(hologram.getPlayer(), metadataPacket);
+        final var delta = new Vec3D(0,0,0);
+        final var positionMoveRotation = new PositionMoveRotation(entity.du(), delta, 0, entity.dN());
+        final Set<Relative> set = new HashSet<>();
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(),positionMoveRotation, set, false);
+
+        v1_21_R3.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
     }
 
     @Override
