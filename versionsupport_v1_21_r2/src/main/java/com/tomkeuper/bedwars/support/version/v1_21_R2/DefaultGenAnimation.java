@@ -37,10 +37,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Lagggpixel
- * @since May 10, 2024
- */
 public class DefaultGenAnimation implements IGeneratorAnimation {
 
     private final Entity armorStand;
@@ -87,7 +83,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         final var positionMoveRotation = new PositionMoveRotation(armorStand.du(), delta, 0, 0);
         final Set<Relative> set = new HashSet<>();
 
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.ar(),positionMoveRotation, set, false);
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand.ar(), positionMoveRotation, set, false);
 
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ar(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
