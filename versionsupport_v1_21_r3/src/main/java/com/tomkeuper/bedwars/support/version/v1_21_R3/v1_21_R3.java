@@ -814,7 +814,7 @@ public final class v1_21_R3 extends VersionSupport {
             throw new RuntimeException("World of a location should not be null.");
         }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
-        nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
+        nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
 
         for (Player p : loc.getWorld().getPlayers()) {

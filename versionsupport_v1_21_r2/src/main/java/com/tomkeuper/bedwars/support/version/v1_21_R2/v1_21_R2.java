@@ -349,7 +349,7 @@ public final class v1_21_R2 extends VersionSupport {
     public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             // blast resistance
-            Field field = BlockBase.class.getDeclaredField("aH");
+            Field field = BlockBase.class.getDeclaredField("aI");
             field.setAccessible(true);
             // end stone
             field.set(Blocks.fN, endStoneBlast);
@@ -815,7 +815,7 @@ public final class v1_21_R2 extends VersionSupport {
             throw new RuntimeException("World of a location should not be null.");
         }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
-        nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
+        nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
 
         for (Player p : loc.getWorld().getPlayers()) {

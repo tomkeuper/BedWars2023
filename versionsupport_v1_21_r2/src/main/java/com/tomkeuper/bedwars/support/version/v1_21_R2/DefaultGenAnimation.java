@@ -37,10 +37,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * @author Lagggpixel
- * @since May 10, 2024
- */
 public class DefaultGenAnimation implements IGeneratorAnimation {
 
     private final Entity armorStand;
