@@ -144,7 +144,7 @@ public final class v1_21_R3 extends VersionSupport {
     public boolean isArmor(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
-        return i instanceof ItemArmor;
+        return i instanceof ItemArmor || itemStack.getType() == materialElytra();
     }
 
     @Override
