@@ -280,14 +280,7 @@ public final class v1_21_R2 extends VersionSupport {
     public void setSource(TNTPrimed tnt, Player owner) {
         EntityLiving nmsEntityLiving = (((CraftLivingEntity) owner).getHandle());
         EntityTNTPrimed nmsTNT = (((CraftTNTPrimed) tnt).getHandle());
-        try {
-            Field sourceField = EntityTNTPrimed.class.getDeclaredField("i");
-            sourceField.setAccessible(true);
-            sourceField.set(nmsTNT, nmsEntityLiving);
-        } catch (Exception ex) {
-            //noinspection CallToPrintStackTrace
-            ex.printStackTrace();
-        }
+        nmsTNT.i = nmsEntityLiving;
     }
 
     @Override

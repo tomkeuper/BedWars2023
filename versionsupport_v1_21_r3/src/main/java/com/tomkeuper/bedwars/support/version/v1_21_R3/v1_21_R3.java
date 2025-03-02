@@ -279,14 +279,7 @@ public final class v1_21_R3 extends VersionSupport {
     public void setSource(TNTPrimed tnt, Player owner) {
         EntityLiving nmsEntityLiving = (((CraftLivingEntity) owner).getHandle());
         EntityTNTPrimed nmsTNT = (((CraftTNTPrimed) tnt).getHandle());
-        try {
-            Field sourceField = EntityTNTPrimed.class.getDeclaredField("i");
-            sourceField.setAccessible(true);
-            sourceField.set(nmsTNT, nmsEntityLiving);
-        } catch (Exception ex) {
-            //noinspection CallToPrintStackTrace
-            ex.printStackTrace();
-        }
+        nmsTNT.i = nmsEntityLiving;
     }
 
     @Override
@@ -689,20 +682,18 @@ public final class v1_21_R3 extends VersionSupport {
 
     @Override
     public void playRedStoneDot(Player player) {
-        Color color = Color.RED;
-//        PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(
-//                new ParticleParamRedstone(
-//                        color.asRGB(), (float) 1
-//                ),
-//                true,
-//                player.getLocation().getX(),
-//                player.getLocation().getY() + 2.6,
-//                player.getLocation().getZ(),
-//                0, 0, 0, 0, 0
-//        );
-        for (Player inWorld : player.getWorld().getPlayers()) {
-            if (inWorld.equals(player)) continue;
-//            sendPacket(inWorld, particlePacket);
+        PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(
+                ParticleParamRedstone.b,
+                true,
+                true,
+                player.getLocation().getX(),
+                player.getLocation().getY() + 2.6,
+                player.getLocation().getZ(),
+                0, 0, 0, 0, 0
+        );
+        for (Player p : player.getWorld().getPlayers()) {
+            if (p.equals(player)) continue;
+            sendPacket(p, particlePacket);
         }
     }
 
