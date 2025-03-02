@@ -419,6 +419,8 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public boolean isCustomBedWarsItem(org.bukkit.inventory.ItemStack i) {
+        if (i == null) return false;
+        if (i.getType() == org.bukkit.Material.AIR) return false;
         RtagItem rtagItem = new RtagItem(i);
         OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
         return tag.isNotEmpty();

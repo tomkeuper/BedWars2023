@@ -106,14 +106,14 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
     }
 
     private void setArmorStandMotY(double y) {
-        armorStand.i(new Vec3D(0, y, 0));
+        armorStand.h(new Vec3D(0, y, 0));
     }
 
     private void addArmorStandMotY(double y) {
-        armorStand.i(new Vec3D(0, getArmorStandMotY() + y, 0));
+        armorStand.h(new Vec3D(0, getArmorStandMotY() + y, 0));
     }
 
     private double getArmorStandMotY() {
-        return armorStand.ah().d;
+        return armorStand.dz().e;
     }
 }
