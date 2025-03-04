@@ -187,7 +187,7 @@ public class v1_20_R3 extends VersionSupport {
             return;
         }
         i.setAmount(i.getAmount() - amount);
-        p.updateInventory(); //TODO might be deprecated. Currently marked as unstable. Find a replacement later on.
+        p.getInventory().setContents(p.getInventory().getContents());
     }
 
     @Override
