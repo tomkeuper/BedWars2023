@@ -45,6 +45,8 @@ dependencies {
     api(projects.versionsupportV120R3)
     api(projects.versionsupportV120R4)
     api(projects.versionsupportV121R1)
+    api(projects.versionsupportV121R2)
+    api(projects.versionsupportV121R3)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1") {
@@ -77,10 +79,10 @@ dependencies {
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
-    slim("com.saicone.rtag:rtag:1.5.4")
-    slim("com.saicone.rtag:rtag-block:1.5.4")
-    slim("com.saicone.rtag:rtag-entity:1.5.4")
-    slim("com.saicone.rtag:rtag-item:1.5.4")
+    slim("com.saicone.rtag:rtag:1.5.9")
+    slim("com.saicone.rtag:rtag-block:1.5.9")
+    slim("com.saicone.rtag:rtag-entity:1.5.9")
+    slim("com.saicone.rtag:rtag-item:1.5.9")
 }
 
 
@@ -134,6 +136,8 @@ val versions = setOf(
     projects.versionsupportV120R3,
     projects.versionsupportV120R4,
     projects.versionsupportV121R1,
+    projects.versionsupportV121R2,
+    projects.versionsupportV121R3,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.resetadapterAswm

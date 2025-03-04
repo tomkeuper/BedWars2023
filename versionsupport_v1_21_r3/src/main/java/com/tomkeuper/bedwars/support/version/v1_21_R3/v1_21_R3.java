@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v1_21_R1;
+package com.tomkeuper.bedwars.support.version.v1_21_R3;
 
 import com.mojang.datafixers.util.Pair;
 import com.saicone.rtag.RtagItem;
@@ -37,11 +37,11 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.tomkeuper.bedwars.support.version.v1_21_R1.despawnable.DespawnableAttributes;
-import com.tomkeuper.bedwars.support.version.v1_21_R1.despawnable.DespawnableFactory;
-import com.tomkeuper.bedwars.support.version.v1_21_R1.despawnable.DespawnableType;
-import com.tomkeuper.bedwars.support.version.v1_21_R1.hologram.HoloLine;
-import com.tomkeuper.bedwars.support.version.v1_21_R1.hologram.Hologram;
+import com.tomkeuper.bedwars.support.version.v1_21_R3.despawnable.DespawnableAttributes;
+import com.tomkeuper.bedwars.support.version.v1_21_R3.despawnable.DespawnableFactory;
+import com.tomkeuper.bedwars.support.version.v1_21_R3.despawnable.DespawnableType;
+import com.tomkeuper.bedwars.support.version.v1_21_R3.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v1_21_R3.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -69,10 +69,10 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
-import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_21_R1.entity.*;
-import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_21_R3.entity.*;
+import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
@@ -95,11 +95,11 @@ import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
 
-public final class v1_21_R1 extends VersionSupport {
+public final class v1_21_R3 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
 
-    public v1_21_R1(Plugin plugin, String name) {
+    public v1_21_R3(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);
@@ -144,7 +144,7 @@ public final class v1_21_R1 extends VersionSupport {
     public boolean isArmor(org.bukkit.inventory.ItemStack itemStack) {
         var i = getItem(itemStack);
         if (null == i) return false;
-        return i instanceof ItemArmor || i instanceof ItemElytra;
+        return i instanceof ItemArmor || itemStack.getType() == materialElytra();
     }
 
     @Override
@@ -279,14 +279,7 @@ public final class v1_21_R1 extends VersionSupport {
     public void setSource(TNTPrimed tnt, Player owner) {
         EntityLiving nmsEntityLiving = (((CraftLivingEntity) owner).getHandle());
         EntityTNTPrimed nmsTNT = (((CraftTNTPrimed) tnt).getHandle());
-        try {
-            Field sourceField = EntityTNTPrimed.class.getDeclaredField("h");
-            sourceField.setAccessible(true);
-            sourceField.set(nmsTNT, nmsEntityLiving);
-        } catch (Exception ex) {
-            //noinspection CallToPrintStackTrace
-            ex.printStackTrace();
-        }
+        nmsTNT.i = nmsEntityLiving;
     }
 
     @Override
@@ -348,22 +341,22 @@ public final class v1_21_R1 extends VersionSupport {
     public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             // blast resistance
-            Field field = BlockBase.class.getDeclaredField("aH");
+            Field field = BlockBase.class.getDeclaredField("aI");
             field.setAccessible(true);
             // end stone
-            field.set(Blocks.fz, endStoneBlast);
+            field.set(Blocks.fU, endStoneBlast);
             // obsidian
-            field.set(Blocks.co, glassBlast);
+            field.set(Blocks.cv, glassBlast);
             // standard glass
-            field.set(Blocks.aQ, glassBlast);
+            field.set(Blocks.aX, glassBlast);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
-                    Blocks.ei, Blocks.ej, Blocks.ek, Blocks.el,
-                    Blocks.em, Blocks.en, Blocks.eo, Blocks.ep,
-                    Blocks.eq, Blocks.er, Blocks.es, Blocks.et,
-                    Blocks.eu, Blocks.ev, Blocks.ew, Blocks.ex,
+                    Blocks.ev, Blocks.ew, Blocks.ex, Blocks.ey,
+                    Blocks.ez, Blocks.eA, Blocks.eB, Blocks.eC,
+                    Blocks.eD, Blocks.eE, Blocks.eF, Blocks.eG,
+                    Blocks.eH, Blocks.eI, Blocks.eJ, Blocks.eK,
 
-                    Blocks.aQ,
+                    Blocks.aX,
             };
 
             Arrays.stream(coloredGlass).forEach(
@@ -678,7 +671,7 @@ public final class v1_21_R1 extends VersionSupport {
     @Override
     public String getMainLevel() {
         //noinspection deprecation
-        return ((DedicatedServer) MinecraftServer.getServer()).a().n;
+        return ((DedicatedServer) MinecraftServer.getServer()).a().l;
     }
 
     @Override
@@ -689,22 +682,18 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public void playRedStoneDot(Player player) {
-        Color color = Color.RED;
         PacketPlayOutWorldParticles particlePacket = new PacketPlayOutWorldParticles(
-                new ParticleParamRedstone(
-                        new Vector3f((float) color.getRed(),
-                                (float) color.getGreen(),
-                                (float) color.getBlue()), (float) 1
-                ),
+                ParticleParamRedstone.b,
+                true,
                 true,
                 player.getLocation().getX(),
                 player.getLocation().getY() + 2.6,
                 player.getLocation().getZ(),
                 0, 0, 0, 0, 0
         );
-        for (Player inWorld : player.getWorld().getPlayers()) {
-            if (inWorld.equals(player)) continue;
-            sendPacket(inWorld, particlePacket);
+        for (Player p : player.getWorld().getPlayers()) {
+            if (p.equals(player)) continue;
+            sendPacket(p, particlePacket);
         }
     }
 
@@ -757,7 +746,7 @@ public final class v1_21_R1 extends VersionSupport {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
-        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().ar().c());
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().au().c());
         Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
 
@@ -828,11 +817,11 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     public static void sendPacket(Player player, Packet<?> packet) {
-        ((CraftPlayer) player).getHandle().c.b(packet);
+        ((CraftPlayer) player).getHandle().f.b(packet);
     }
 
     public static void sendPackets(Player player, Packet<?> @NotNull ... packets) {
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().c;
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().f;
         for (Packet<?> p : packets) {
             connection.b(p);
         }
@@ -846,7 +835,7 @@ public final class v1_21_R1 extends VersionSupport {
         if (null == i) {
             return null;
         }
-        return i.g();
+        return i.h();
     }
 
     /**
@@ -857,7 +846,7 @@ public final class v1_21_R1 extends VersionSupport {
         if (null == i) {
             return null;
         }
-        return i.E();
+        return i.I();
     }
 
     private @Nullable NBTTagCompound getTag(@NotNull org.bukkit.inventory.ItemStack itemStack) {
@@ -884,16 +873,16 @@ public final class v1_21_R1 extends VersionSupport {
     public static PacketPlayOutSpawnEntity newPacketPlayOutSpawnEntity(net.minecraft.world.entity.Entity nmsEntity) {
         return new PacketPlayOutSpawnEntity(
                 nmsEntity.hashCode(),
-                nmsEntity.cz(),
-                nmsEntity.dt(),
-                nmsEntity.dv(),
-                nmsEntity.dz(),
+                nmsEntity.cG(),
+                nmsEntity.dA(),
+                nmsEntity.dC(),
                 nmsEntity.dG(),
+                nmsEntity.dN(),
                 nmsEntity.getBukkitYaw(),
-                nmsEntity.am(),
+                nmsEntity.aq(),
                 0,
-                nmsEntity.dr(),
-                nmsEntity.ct()
+                nmsEntity.dy(),
+                nmsEntity.cA()
         );
     }
 }
