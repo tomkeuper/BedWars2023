@@ -288,11 +288,7 @@ public final class v1_20_R4 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
-        @SuppressWarnings("UnstableApiUsage")
-        EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, DamageSource.builder(DamageType.GENERIC).build(), 1000.0);
-        //noinspection removal
-        p.setLastDamageCause(event);
-        p.setHealth(0);
+        p.damage(1000.0);
     }
 
     @Override
