@@ -633,7 +633,7 @@ public class BedWars extends JavaPlugin {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
                 getLogger().info("Hooking into TAB support!");
                 if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())){
-                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v4.0.2 or higher is required!" );
+                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v5.0.0 or higher is required!" );
                     Bukkit.getPluginManager().disablePlugin(this);
                     return;
                 }
