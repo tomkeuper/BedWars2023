@@ -470,13 +470,6 @@ public class OreGenerator implements IGenerator {
     }
 
     @Override
-    @Deprecated(since = "1.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0")
-    public ITeam getBwt() {
-        return bwt;
-    }
-
-    @Override
     public ITeam getBedWarsTeam() {
         return bwt;
     }
