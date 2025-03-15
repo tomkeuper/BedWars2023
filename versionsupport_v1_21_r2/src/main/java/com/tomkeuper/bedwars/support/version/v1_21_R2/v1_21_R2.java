@@ -84,7 +84,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -284,11 +283,7 @@ public final class v1_21_R2 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
-        @SuppressWarnings("UnstableApiUsage")
-        EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, DamageSource.builder(DamageType.GENERIC).build(), 1000.0);
-        //noinspection removal
-        p.setLastDamageCause(event);
-        p.setHealth(0);
+        p.damage(1000.0);
     }
 
     @Override
