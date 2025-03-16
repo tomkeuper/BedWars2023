@@ -63,8 +63,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
