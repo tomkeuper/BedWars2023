@@ -275,12 +275,12 @@ public class Arena implements IArena {
             }
         }
         if (yml.get("generator.Diamond") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Diamond generator on: " + name);
-            plugin.getLogger().severe("There isn't set any Diamond generator on: " + name);
+            if (p != null) p.sendMessage("§cThere aren't any Diamond generators set on: " + name);
+            plugin.getLogger().severe("There aren't any Diamond generators set on: " + name);
         }
         if (yml.get("generator.Emerald") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Emerald generator on: " + name);
-            plugin.getLogger().severe("There isn't set any Emerald generator on: " + name);
+            if (p != null) p.sendMessage("§cThere aren't any Emerald generators set on: " + name);
+            plugin.getLogger().severe("There aren't any Emerald generators set on: " + name);
         }
         if (yml.get("waiting.Loc") == null) {
             if (p != null) p.sendMessage("§cWaiting spawn not set on: " + name);
