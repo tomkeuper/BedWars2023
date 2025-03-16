@@ -258,7 +258,7 @@ public class BoardManager implements IScoreboardService {
             List<String> lines = null;
             String titleLine;
             if (null == arena) {
-                if (BedWars.getServerType() != ServerType.SHARED) {
+                if (player.getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                     lines = Language.getList(player, Messages.SCOREBOARD_LOBBY);
                 }
             } else {
