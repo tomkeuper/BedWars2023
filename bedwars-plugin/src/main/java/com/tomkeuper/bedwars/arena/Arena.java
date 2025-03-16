@@ -427,6 +427,14 @@ public class Arena implements IArena {
      */
     public boolean addPlayer(Player p, boolean skipOwnerCheck) {
         if (p == null) return false;
+        // Check if the player is already in an arena
+        if (getArenaByPlayer(p) != null) {
+            if (getArenaByPlayer(p).isSpectator(p)){
+                getArenaByPlayer(p).removeSpectator(p, false);
+            } else {
+                getArenaByPlayer(p).removePlayer(p, false);
+            }
+        }
         debug("Player added: " + p.getName() + " arena: " + getArenaName());
 
 //        Used to check if a sidebar must be given or not
@@ -1087,6 +1095,10 @@ public class Arena implements IArena {
             this.sendToMainLobby(p);
 
         }
+
+        // Clear shop holo's for leaving players.
+        ShopHolo.clearForPlayer(p);
+
         for (PotionEffect pf : p.getActivePotionEffects()) {
             p.removePotionEffect(pf.getType());
         }
