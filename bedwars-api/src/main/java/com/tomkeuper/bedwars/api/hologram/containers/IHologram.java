@@ -51,6 +51,8 @@ public interface IHologram {
      */
     void removeLine(int index);
 
+    void removeLineContaining(String text);
+
     /**
      * Clear all lines from the hologram.
      */
