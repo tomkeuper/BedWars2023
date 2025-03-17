@@ -32,30 +32,13 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class Misc {
 
-    /**
-     * This is used to spawn armorStands during the setup
-     * so the player knows what he set
-     *
-     */
-    public static void createArmorStand(String name, @NotNull Location location, String configLoc) {
-        ArmorStand a = (ArmorStand) location.getWorld().spawnEntity(location.getBlock().getLocation().add(0.5, 2, 0.5), EntityType.ARMOR_STAND);
-        a.setVisible(false);
-        a.setMarker(true);
-        a.setGravity(false);
-        a.setCustomNameVisible(true);
-        a.setCustomName(name);
-        a.setMetadata("bw2023-setup", new FixedMetadataValue(BedWars.plugin, "hologram"));
-        if (configLoc != null) {
-            a.setMetadata("bw2023-loc", new FixedMetadataValue(BedWars.plugin, configLoc));
-        }
-    }
+
 
     /**
      * Remove an armor stand

@@ -92,7 +92,7 @@ public class SetBed extends SubCommand {
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Bed") != null) {
                     com.tomkeuper.bedwars.commands.Misc.removeArmorStand("bed", ss.getConfig().getArenaLoc("Team." + args[0] + ".Bed"), null);
                 }
-                com.tomkeuper.bedwars.commands.Misc.createArmorStand(team + " " + ChatColor.GOLD + "BED SET", p.getLocation().add(0.5, 0, 0.5), null);
+                ss.createBedHologram(p, p.getLocation().add(0.5, 0, 0.5), team);
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Bed", p.getLocation());
                 p.sendMessage(ss.getPrefix() + "Bed set for: " + team);
 

@@ -81,13 +81,13 @@ public class SetShop extends SubCommand {
                     }
                 }
             } else {
-                String teamm = ss.getTeamColor(args[0]) + args[0];
+                String team = ss.getTeamColor(args[0]) + args[0];
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Shop") != null) {
                     com.tomkeuper.bedwars.commands.Misc.removeArmorStand("shop", ss.getConfig().getArenaLoc("Team." + args[0] + ".Shop"), ss.getConfig().getString("Team." + args[0] + ".Shop"));
                 }
-                com.tomkeuper.bedwars.commands.Misc.createArmorStand(teamm + " " + ChatColor.GOLD + "SHOP SET", p.getLocation(), ss.getConfig().stringLocationArenaFormat(p.getLocation()));
+                ss.createShopHologram(p, p.getLocation(), team);
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Shop", p.getLocation());
-                p.sendMessage(ss.getPrefix() + "Shop set for: " + teamm);
+                p.sendMessage(ss.getPrefix() + "Shop set for: " + team);
                 if (ss.getSetupType() == SetupType.ASSISTED) {
                     Bukkit.dispatchCommand(p, getParent().getName());
                 }
