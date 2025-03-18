@@ -59,6 +59,7 @@ public class Interact implements Listener {
     /* Handle custom items with commands on them */
     public void onItemCommand(PlayerInteractEvent e) {
         if (e == null) return;
+        if (e.getMaterial() == Material.AIR) return;
         Player player = e.getPlayer();
         if (e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR) {
             ItemStack item = BedWars.nms.getItemInHand(player);
