@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.arena;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.server.SetupSessionCloseEvent;
@@ -254,16 +255,16 @@ public class SetupSession implements ISetupSession {
             for (String team : getTeams()) {
                 for (String gen : new String[]{"Iron", "Gold", "Emerald"}) {
                     if (getConfig().getYml().get("Team." + team + "." + gen) != null) {
-                        for (String loc : getConfig().getList("Team." + team + ".Iron")) {
+                        for (String loc : getConfig().getList("Team." + team + "." + gen)) {
                             createGeneratorHologram(player, getConfig().convertStringToArenaLocation(loc), team, gen);
                         }
                     }
-                    if (getConfig().getYml().get("Team." + team + ".Spawn") != null) {
-                        createSpawnHologram(player, getConfig().getArenaLoc("Team." + team + ".Spawn"), team);
-                    }
-                    if (getConfig().getYml().get("Team." + team + ".Bed") != null) {
-                        createBedHologram(player, getConfig().getArenaLoc("Team." + team + ".Bed"), team);
-                    }
+                }
+                if (getConfig().getYml().get("Team." + team + ".Spawn") != null) {
+                    createSpawnHologram(player, getConfig().getArenaLoc("Team." + team + ".Spawn"), team);
+                }
+                if (getConfig().getYml().get("Team." + team + ".Bed") != null) {
+                    createBedHologram(player, getConfig().getArenaLoc("Team." + team + ".Bed"), team);
                 }
                 if (getConfig().getYml().get("Team." + team + ".Shop") != null) {
                     createShopHologram(player, getConfig().getArenaLoc("Team." + team + ".Shop"), team);
@@ -411,6 +412,65 @@ public class SetupSession implements ISetupSession {
         manageHologramForLocation(generatorHologramsPerTeam, p, loc, message);
     }
 
+    public void removeBedHologram(String team) {
+        if (bedHologramsPerTeam.containsKey(team)) {
+            bedHologramsPerTeam.get(team).remove();
+            bedHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeSpawnHologram(String team) {
+        if (spawnHologramsPerTeam.containsKey(team)) {
+            spawnHologramsPerTeam.get(team).remove();
+            spawnHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeShopHologram(String team) {
+        if (shopHologramsPerTeam.containsKey(team)) {
+            shopHologramsPerTeam.get(team).remove();
+            shopHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeUpgradeHologram(String team) {
+        if (upgradeHologramsPerTeam.containsKey(team)) {
+            upgradeHologramsPerTeam.get(team).remove();
+            upgradeHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeKillDropsHologram(String team) {
+        if (killDropsHologramsPerTeam.containsKey(team)) {
+            killDropsHologramsPerTeam.get(team).remove();
+            killDropsHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeGeneratorHologram(Location loc) {
+        // Find the hologram using the helper method
+        IHologram hologram = getHologramForLocation(generatorHologramsPerTeam, loc);
+
+        if (hologram != null) {
+            // Remove the hologram from the game
+            hologram.remove();
+
+            // Remove the entry from the generator hologram map
+            generatorHologramsPerTeam.entrySet().removeIf(entry -> isSameBlockLocation(entry.getKey(), loc));
+        }
+    }
+
+    public void removeGeneratorHologramLineContainingType(Location loc, GeneratorType type) {
+        IHologram hologram = getHologramForLocation(generatorHologramsPerTeam, loc);
+
+        if (hologram != null) {
+            BedWars.debug("Removing line containing " + type + " from hologram at " + loc);
+            hologram.removeLineContaining(type.toString()); // Remove the line containing the type
+            hologram.update();
+        } else {
+            BedWars.debug("Hologram not found for location: " + loc);
+        }
+    }
 
     private void manageHologram(Map<String, IHologram> teamHologramsMap, Player player, Location location, String team, String displayText) {
         // Make sure team name in map is always lowercase
@@ -425,16 +485,45 @@ public class SetupSession implements ISetupSession {
     }
 
     private void manageHologramForLocation(Map<Location, IHologram> locationHologramsMap, Player player, Location location, String displayText) {
-        // Stream to check if location exists (by x, y, z, and world)
-        if (locationHologramsMap.keySet().stream().anyMatch(existingLoc ->
-                existingLoc.getWorld().equals(location.getWorld()) &&
-                        existingLoc.getBlockX() == location.getBlockX() &&
-                        existingLoc.getBlockY() == location.getBlockY() &&
-                        existingLoc.getBlockZ() == location.getBlockZ())) {
+        // Get the hologram using the new utility method
+        IHologram hologram = getHologramForLocation(locationHologramsMap, location);
 
-            locationHologramsMap.get(location).addLine(displayText);
+        if (hologram != null) {
+            hologram.addLine(displayText); // Update existing hologram
         } else {
-            locationHologramsMap.put(location, BedWars.nms.createHologram(player, location, displayText));
+            locationHologramsMap.put(location, BedWars.nms.createHologram(player, location, displayText)); // Create a new hologram
         }
+    }
+
+    private IHologram getHologramForLocation(Map<Location, IHologram> locationHologramsMap, Location location) {
+        // Debugging: Log the map and input location for analysis
+        BedWars.debug("Looking for hologram at location: " + location + " in map with " + locationHologramsMap.size() + " entries");
+
+        // Stream to find the existing location by comparing x, y, z, and world
+        IHologram hologram = locationHologramsMap.entrySet().stream()
+                .filter(entry -> isSameBlockLocation(entry.getKey(), location))
+                .map(Map.Entry::getValue) // Get the IHologram related to the matching location
+                .findFirst()
+                .orElse(null); // Return null if no match is found
+
+        if (hologram == null) {
+            // Debugging: Log all entries for failed matches
+            locationHologramsMap.forEach((key, value) -> BedWars.debug("Map entry: Location=" + key + ", IHologram=" + value));
+            BedWars.debug("No hologram found for location: " + location);
+        } else {
+            BedWars.debug("Found hologram at location: " + location);
+        }
+
+        return hologram;
+    }
+
+    private boolean isSameBlockLocation(Location loc1, Location loc2) {
+        if (loc1.getWorld() == null || loc2.getWorld() == null) return false;
+
+        // Compare block-level coordinates and world
+        return loc1.getWorld().getName().equals(loc2.getWorld().getName()) &&
+                loc1.getBlockX() == loc2.getBlockX() &&
+                loc1.getBlockY() == loc2.getBlockY() &&
+                loc1.getBlockZ() == loc2.getBlockZ();
     }
 }
