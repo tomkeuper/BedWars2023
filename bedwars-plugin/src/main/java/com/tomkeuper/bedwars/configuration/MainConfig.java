@@ -62,9 +62,7 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ALLOW_PARTIES, true);
         yml.addDefault(ConfigPath.GENERAL_ALESSIODP_PARTIES_RANK, 10);
         //
-        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_TAB_NAME, "%bw_playername%");
-        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED, false);
-        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME, "%bw_player%");
+        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_PLAYER_NAME, "%bw_playername%");
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED, true);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR, true);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_USE_GAME_SIDEBAR, true);
@@ -77,7 +75,6 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_LIST_FORMAT_STARTING, false);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_LIST_FORMAT_PLAYING, true);
         yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_LIST_FORMAT_RESTARTING, true);
-        yml.addDefault(ConfigPath.SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_REJOIN_TIME, 60 * 5);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY, 4000);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_IN_GAME_ANNOUNCEMENT_ENABLE, true);
@@ -196,6 +193,10 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ARENA_SELECTOR_STATUS_MATERIAL.replace("%path%", "skipped-slot"), BedWars.getForCurrentVersion("STAINED_GLASS_PANE", "STAINED_GLASS_PANE", "BLACK_STAINED_GLASS_PANE"));
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ARENA_SELECTOR_STATUS_DATA.replace("%path%", "skipped-slot"), 15);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ARENA_SELECTOR_STATUS_ENCHANTED.replace("%path%", "skipped-slot"), false);
+
+        /* default teleporter GUI settings */
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_TELEPORTER_GUI_SIZE, 36);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_TELEPORTER_SLOTS, "10,11,12,13,14,15,16,19,20,21,22,23,24,25");
 
         /* default stats GUI items */
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_STATS_GUI_SIZE, 27);

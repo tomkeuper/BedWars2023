@@ -63,8 +63,6 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -152,10 +150,10 @@ public class DamageDeathMove implements Listener {
         if (lang.m(Messages.PLAYER_HIT_BOW).isEmpty()) return;
 
         String message = lang.m(Messages.PLAYER_HIT_BOW)
-                .replace("%bw_damage_amount%", new DecimalFormat("00.#").format(((Player) e.getEntity()).getHealth() - e.getFinalDamage()))
+                .replace("%bw_damage_amount%", new DecimalFormat("#.#").format(((Player) e.getEntity()).getHealth() - e.getFinalDamage()))
                 .replace("%bw_player%", player.getDisplayName())
                 .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang))
-                .replace("%bw_health_remaining%", new DecimalFormat("00.#").format(Math.max(((Player) e.getEntity()).getHealth() - e.getFinalDamage(), 0)));
+                .replace("%bw_health_remaining%", new DecimalFormat("#.#").format(Math.max(((Player) e.getEntity()).getHealth() - e.getFinalDamage(), 0)));
         damager.sendMessage(message);
     }
 

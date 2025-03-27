@@ -56,7 +56,6 @@ import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityTNTPrimed;
-import net.minecraft.world.entity.projectile.EntityFireball;
 import net.minecraft.world.entity.projectile.IProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.*;
@@ -420,6 +419,8 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public boolean isCustomBedWarsItem(org.bukkit.inventory.ItemStack i) {
+        if (i == null) return false;
+        if (i.getType() == org.bukkit.Material.AIR) return false;
         RtagItem rtagItem = new RtagItem(i);
         OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
         return tag.isNotEmpty();
@@ -817,7 +818,7 @@ public final class v1_21_R1 extends VersionSupport {
             throw new RuntimeException("World of a location should not be null.");
         }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
-        nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
+        nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
 
         for (Player p : loc.getWorld().getPlayers()) {
