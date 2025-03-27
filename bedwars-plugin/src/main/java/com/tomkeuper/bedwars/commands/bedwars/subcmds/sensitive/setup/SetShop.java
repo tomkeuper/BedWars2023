@@ -83,7 +83,7 @@ public class SetShop extends SubCommand {
             } else {
                 String team = ss.getTeamColor(args[0]) + args[0];
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Shop") != null) {
-                    com.tomkeuper.bedwars.commands.Misc.removeArmorStand("shop", ss.getConfig().getArenaLoc("Team." + args[0] + ".Shop"), ss.getConfig().getString("Team." + args[0] + ".Shop"));
+                    ss.removeShopHologram(team);
                 }
                 ss.createShopHologram(p, p.getLocation(), team);
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Shop", p.getLocation());

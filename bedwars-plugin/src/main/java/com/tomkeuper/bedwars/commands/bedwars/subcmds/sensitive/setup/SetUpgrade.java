@@ -83,7 +83,7 @@ public class SetUpgrade extends SubCommand {
             } else {
                 String team = ss.getTeamColor(args[0]) + args[0];
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Upgrade") != null) {
-                    com.tomkeuper.bedwars.commands.Misc.removeArmorStand("upgrade", ss.getConfig().getArenaLoc("Team." + args[0] + ".Upgrade"), null);
+                    ss.removeUpgradeHologram(args[0]);
                 }
                 ss.createUpgradeHologram(p, p.getLocation(), team);
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Upgrade", p.getLocation());

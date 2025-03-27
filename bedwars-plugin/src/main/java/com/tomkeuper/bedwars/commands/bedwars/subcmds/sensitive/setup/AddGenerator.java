@@ -152,7 +152,7 @@ public class AddGenerator extends SubCommand {
                 gen = "Emerald";
             }
 
-            com.tomkeuper.bedwars.BedWars.nms.createHologram(p, p.getLocation(), ChatColor.GOLD + gen + " generator added for team: " + ss.getTeamColor(team) + team);
+            ss.createGeneratorHologram(p, p.getLocation(), team, gen);
             p.sendMessage(ss.getPrefix() + gen + " generator added for team: " + ss.getTeamColor(team) + team);
             saveTeamGen(p.getLocation(), team, ss, gen);
             com.tomkeuper.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GOLD + gen + ChatColor.GREEN + " generator for " + ss.getTeamColor(team) + team + ChatColor.GREEN + " was added!", 5, 60, 5);

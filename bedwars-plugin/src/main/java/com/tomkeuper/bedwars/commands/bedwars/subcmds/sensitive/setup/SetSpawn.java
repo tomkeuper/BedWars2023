@@ -78,7 +78,7 @@ public class SetSpawn extends SubCommand {
                 }
             } else {
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Spawn") != null) {
-                    com.tomkeuper.bedwars.commands.Misc.removeArmorStand("spawn", ss.getConfig().getArenaLoc("Team." + args[0] + ".Spawn"), ss.getConfig().getString("Team." + args[0] + ".Spawn"));
+                    ss.removeSpawnHologram(args[0]);
                 }
                 ss.getConfig().saveArenaLoc("Team." + args[0] + ".Spawn", p.getLocation());
                 String teamm = ss.getTeamColor(args[0]) + args[0];
