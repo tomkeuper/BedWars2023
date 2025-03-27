@@ -460,15 +460,17 @@ public class SetupSession implements ISetupSession {
         }
     }
 
-    public void removeGeneratorHologramLineContainingType(Location loc, GeneratorType type) {
+    public void removeGeneratorHologramLineContainingType(Location loc, String type) {
         IHologram hologram = getHologramForLocation(generatorHologramsPerTeam, loc);
 
         if (hologram != null) {
-            BedWars.debug("Removing line containing " + type + " from hologram at " + loc);
-            hologram.removeLineContaining(type.toString()); // Remove the line containing the type
-            hologram.update();
-        } else {
-            BedWars.debug("Hologram not found for location: " + loc);
+            if (hologram.getLines().size() == 1) {
+                hologram.remove();
+                generatorHologramsPerTeam.remove(loc);
+            } else {
+                hologram.removeLineContaining(type);
+                hologram.update();
+            }
         }
     }
 
