@@ -76,7 +76,12 @@ public class Hologram implements IHologram {
 
     @Override
     public void removeLineContaining(String text) {
-        this.lines.removeIf(line -> line.getText().contains(text));
+        for (IHoloLine line : this.lines) {
+            if (line.getText().contains(text)) {
+                line.remove();
+                break; // Only remove 1 line
+            }
+        }
     }
 
     @Override
