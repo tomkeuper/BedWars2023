@@ -308,13 +308,14 @@ public class DamageDeathMove implements Listener {
         ITeam killersTeam = null;
         IArena a = Arena.getArenaByPlayer(victim);
 
-        if (a == null) return;
+        if (a == null) {
+            if ((BedWars.getServerType() == ServerType.MULTIARENA && BedWars.getLobbyWorld().equals(victim.getWorld().getName()))) {
+                e.setDeathMessage(null);
+            }
+            return;
+        }
 
         Player bedDestroyer = a.getTeam(victim).getBedDestroyer();
-
-        if ((BedWars.getServerType() == ServerType.MULTIARENA && BedWars.getLobbyWorld().equals(victim.getWorld().getName())) || a != null) {
-            e.setDeathMessage(null);
-        }
 
         e.setDeathMessage(null);
 
