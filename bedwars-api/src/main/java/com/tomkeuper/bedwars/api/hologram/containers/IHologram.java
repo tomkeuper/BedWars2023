@@ -52,6 +52,13 @@ public interface IHologram {
     void removeLine(int index);
 
     /**
+     * Removes a line from the hologram that contains the specified text.
+     *
+     * @param text the text to search for within the lines of the hologram. If a line contains this text, it will be removed.
+     */
+    void removeLineContaining(String text);
+
+    /**
      * Clear all lines from the hologram.
      */
     void clearLines();
