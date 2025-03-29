@@ -11,7 +11,7 @@ dependencies {
     }
     compileOnly("com.iridium:IridiumColorAPI:1.0.9")
     compileOnly("org.apache.commons:commons-lang3:3.14.0") // Used by UridiumColorAPI
-    compileOnly("com.github.NEZNAMY:TAB-API:4.1.9")
+    compileOnly("com.github.NEZNAMY:TAB-API:5.0.7")
 }
 
 tasks.javadoc {

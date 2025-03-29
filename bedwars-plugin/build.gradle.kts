@@ -45,6 +45,8 @@ dependencies {
     api(projects.versionsupportV120R3)
     api(projects.versionsupportV120R4)
     api(projects.versionsupportV121R1)
+    api(projects.versionsupportV121R2)
+    api(projects.versionsupportV121R3)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1") {
@@ -73,14 +75,14 @@ dependencies {
     }
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.github.NEZNAMY:TAB-API:4.1.9")
+    compileOnly("com.github.NEZNAMY:TAB-API:5.0.7")
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
-    slim("com.saicone.rtag:rtag:1.5.4")
-    slim("com.saicone.rtag:rtag-block:1.5.4")
-    slim("com.saicone.rtag:rtag-entity:1.5.4")
-    slim("com.saicone.rtag:rtag-item:1.5.4")
+    slim("com.saicone.rtag:rtag:1.5.9")
+    slim("com.saicone.rtag:rtag-block:1.5.9")
+    slim("com.saicone.rtag:rtag-entity:1.5.9")
+    slim("com.saicone.rtag:rtag-item:1.5.9")
 }
 
 
@@ -111,6 +113,16 @@ bukkit {
 tasks.compileJava {
     options.release.set(11)
 }
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE // Prevents duplicate file errors
+
+    from("src/main/resources") {
+        include("**/*.yml") // Ensures YAML files are copied
+    }
+}
+
+
 val versions = setOf(
     projects.versionsupportCommon,
     projects.versionsupport18R3,
@@ -124,6 +136,8 @@ val versions = setOf(
     projects.versionsupportV120R3,
     projects.versionsupportV120R4,
     projects.versionsupportV121R1,
+    projects.versionsupportV121R2,
+    projects.versionsupportV121R3,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
     projects.resetadapterAswm

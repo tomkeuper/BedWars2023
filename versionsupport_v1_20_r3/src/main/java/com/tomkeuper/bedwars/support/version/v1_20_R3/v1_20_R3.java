@@ -187,7 +187,7 @@ public class v1_20_R3 extends VersionSupport {
             return;
         }
         i.setAmount(i.getAmount() - amount);
-        p.updateInventory(); //TODO might be deprecated. Currently marked as unstable. Find a replacement later on.
+        p.getInventory().setContents(p.getInventory().getContents());
     }
 
     @Override
@@ -307,13 +307,9 @@ public class v1_20_R3 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
-        //noinspection removal
-        EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, 1000.0);
-        //noinspection removal
-        p.setLastDamageCause(event);
-        p.setHealth(0);
+        p.damage(1000.0);
     }
-
+    
     @Override
     public void hideArmor(@NotNull Player victim, Player receiver) {
         List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();

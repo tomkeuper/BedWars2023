@@ -1,0 +1,175 @@
+header-footer:
+  enabled: true
+  header: []
+  footer: []
+  disable-condition: '%world%=disabledworld'
+  per-world:
+    world1:
+      header:
+        - an example of world with custom
+      footer:
+        - header/footer and prefix/suffix
+    world2;world3:
+      header:
+        - This is a shared header for
+        - world2 and world3
+  per-server:
+    server1:
+      header:
+        - an example of server with custom header
+playerlist-objective:
+  enabled: true
+  value: '0%health%'
+  fancy-value: '&e%health% HP'
+  disable-condition: '%bw_arena_status%!=playing'
+tablist-name-formatting:
+  enabled: true
+  anti-override: true
+  disable-condition: '%world%=disabledworld'
+scoreboard-teams:
+  enabled: true
+  enable-collision: true
+  invisible-nametags: false
+  anti-override: true
+  sorting-types:
+    - GROUPS:owner,admin,mod,helper,builder,vip,red,blue,green,yellow,aqua,white,pink,gray,none,default
+    - PLACEHOLDER_A_TO_Z:%bw_team%
+  case-sensitive-sorting: true
+  can-see-friendly-invisibles: false
+  disable-condition: '%world%=disabledworld'
+belowname-objective:
+  enabled: true
+  value: '%health%'
+  title: '&cHealth'
+  fancy-value: '&f%health%'
+  fancy-value-default: NPC
+  disable-condition: '%bw_arena_status%!=playing'
+prevent-spectator-effect:
+  enabled: false
+bossbar:
+  enabled: true
+  toggle-command: /bossbar
+  remember-toggle-choice: false
+  hidden-by-default: false
+  bars: null
+scoreboard:
+  enabled: true
+  toggle-command: /sb
+  remember-toggle-choice: false
+  hidden-by-default: false
+  use-numbers: true
+  static-number: 0
+  delay-on-join-milliseconds: 0
+  scoreboards: null
+layout:
+  enabled: false
+  direction: COLUMNS
+  default-skin: mineskin:383747683
+  enable-remaining-players-text: true
+  remaining-players-text: '... and %s more'
+  empty-slot-ping-value: 1000
+  layouts:
+    default:
+      fixed-slots:
+        - '1|&3Website&f:'
+        - 2|&bmyserver.net
+        - '3|&8&m                       '
+        - '4|&3Name&f:'
+        - 5|&b%player%
+        - '7|&3Rank&f:'
+        - '8|Rank: %group%'
+        - '10|&3World&f:'
+        - 11|&b%world%
+        - '13|&3Time&f:'
+        - 14|&b%time%
+        - '21|&3Teamspeak&f:'
+        - 22|&bts.myserver.net
+        - '23|&8&m                       '
+        - '41|&3Store&f:'
+        - 42|&bshop.myserver.net
+        - '43|&8&m                       '
+      groups:
+        staff:
+          condition: permission:tab.staff
+          slots:
+           - 24-40
+        players:
+          slots:
+            - 44-80
+ping-spoof:
+  enabled: false
+  value: 0
+placeholders:
+  date-format: dd.MM.yyyy
+  time-format: '[HH:mm:ss / h:mm a]'
+  time-offset: 0
+  register-tab-expansion: false
+placeholder-output-replacements:
+  '%essentials_vanished%':
+    'yes': '&7| Vanished'
+    'no': ''
+conditions:
+  nick:
+    conditions:
+      - '%player%=%essentials_nickname%'
+    true: '%player%'
+    false: ~%essentials_nickname%
+placeholderapi-refresh-intervals:
+  default-refresh-interval: 500
+  '%server_uptime%': 1000
+  '%server_tps_1_colored%': 1000
+  '%server_unique_joins%': 5000
+  '%player_health%': 200
+  '%player_ping%': 1000
+  '%vault_prefix%': 1000
+  '%rel_factionsuuid_relation_color%': 1000
+assign-groups-by-permissions: false
+primary-group-finding-list:
+  - Owner
+  - Admin
+  - Mod
+  - Helper
+  - default
+permission-refresh-interval: 1000
+debug: false
+mysql:
+  enabled: false
+  host: 127.0.0.1
+  port: 3306
+  database: tab
+  username: user
+  password: password
+  useSSL: true
+per-world-playerlist:
+  enabled: false
+  allow-bypass-permission: false
+  ignore-effect-in-worlds:
+    - ignoredworld
+    - build
+  shared-playerlist-world-groups:
+    lobby:
+      - lobby1
+      - lobby2
+    minigames:
+      - paintball
+      - bedwars
+compensate-for-packetevents-bug: false
+global-playerlist:
+  enabled: false
+  display-others-as-spectators: false
+  display-vanished-players-as-spectators: true
+  isolate-unlisted-servers: false
+  spy-servers:
+    - spyserver1
+    - spyserver2
+  server-groups:
+    lobbies:
+      - lobby1
+      - lobby2
+    group2:
+      - server1
+      - server2
+  update-latency: false
+use-bukkit-permissions-manager: false
+use-online-uuid-in-tablist: true
+enable-redisbungee-support: true

@@ -182,7 +182,6 @@ public class Messages {
     public static String FORMATTING_CHAT_SPECTATOR = "format-chat-spectator";
     public static String FORMATTING_SCOREBOARD_DATE = "format-sb-date";
     public static String FORMATTING_SCOREBOARD_TEAM_GENERIC = "format-sb-team-generic";
-    public static String FORMATTING_SCOREBOARD_HEALTH = "format-sb-health";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_LOBBY = "format-sb-tab-prefix.lobby";
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_LOBBY = "format-sb-tab-suffix.lobby";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_WAITING = "format-sb-tab-prefix.waiting";

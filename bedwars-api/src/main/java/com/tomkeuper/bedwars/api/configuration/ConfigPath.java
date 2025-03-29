@@ -106,6 +106,11 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_STATS_ITEMS_DATA = GENERAL_CONFIGURATION_STATS_PATH + ".%path%.data";
     public static final String GENERAL_CONFIGURATION_STATS_ITEMS_SLOT = GENERAL_CONFIGURATION_STATS_PATH + ".%path%.slot";
 
+    public static final String GENERAL_CONFIGURATION_TELEPORTER_PATH = "teleporter-gui";
+    public static final String GENERAL_CONFIGURATION_TELEPORTER_SETTINGS_PATH = GENERAL_CONFIGURATION_TELEPORTER_PATH + ".settings";
+    public static final String GENERAL_CONFIGURATION_TELEPORTER_GUI_SIZE = GENERAL_CONFIGURATION_TELEPORTER_SETTINGS_PATH + ".inv-size";
+    public static final String GENERAL_CONFIGURATION_TELEPORTER_SLOTS = GENERAL_CONFIGURATION_TELEPORTER_SETTINGS_PATH + ".use-slots";
+
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH = "pre-game-items";
     // Replace %path% with name
     public static final String GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL = GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH + ".%path%.material";
@@ -153,11 +158,8 @@ public class ConfigPath {
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_STARTING = "scoreboard-settings.player-list.format-starting-list";
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_PLAYING = "scoreboard-settings.player-list.format-playing-list";
     public static final String SB_CONFIG_SIDEBAR_LIST_FORMAT_RESTARTING = "scoreboard-settings.player-list.format-restarting-list";
-    public static final String SB_CONFIG_SIDEBAR_TAB_NAME = "scoreboard-settings.tab-name";
-    public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME_ENABLED = "scoreboard-settings.abovehead-name-enable";
-    public static final String SB_CONFIG_SIDEBAR_ABOVEHEAD_NAME = "scoreboard-settings.abovehead-name";
+    public static final String SB_CONFIG_SIDEBAR_PLAYER_NAME = "scoreboard-settings.player-name";
     public static final String SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED= "scoreboard-settings.tab-name-formatting-enable";
-    public static final String SB_CONFIG_SIDEBAR_HEALTH_BELOW_NAME = "scoreboard-settings.health.display-below-name";
     public static final String GENERAL_CONFIGURATION_DISABLED_LANGUAGES = "disabled-languages";
 
     public static final String GENERAL_CONFIGURATION_ARENA_SELECTOR_PATH = "arena-gui";

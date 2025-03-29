@@ -85,25 +85,6 @@ public class OreGenerator implements IGenerator {
     @Getter
     private static final ConcurrentLinkedDeque<OreGenerator> rotation = new ConcurrentLinkedDeque<>();
 
-    @Deprecated(since = "1.0", forRemoval = true)
-    public OreGenerator(Location location, IArena arena, GeneratorType type, ITeam bwt) {
-        if (type == GeneratorType.EMERALD || type == GeneratorType.DIAMOND) {
-            this.location = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY() + 1.3, location.getBlockZ() + 0.5);
-        } else {
-            this.location = location.add(0, 1.3, 0);
-        }
-        this.arena = arena;
-        this.bwt = bwt;
-        this.type = type;
-        loadDefaults();
-        BedWars.debug("Initializing new generator at: " + location + " - " + type + " - " + (bwt == null ? "NOTEAM" : bwt.getName()));
-
-        Cuboid c = new Cuboid(location, arena.getConfig().getInt(ConfigPath.ARENA_GENERATOR_PROTECTION), true);
-        c.setMaxY(c.getMaxY() + 5);
-        c.setMinY(c.getMinY() - 2);
-        arena.getRegionsList().add(c);
-    }
-
     public OreGenerator(Location location, IArena arena, GeneratorType type, ITeam bwt, boolean hologram) {
         if (type == GeneratorType.EMERALD || type == GeneratorType.DIAMOND) {
             this.location = new Location(location.getWorld(), location.getBlockX() + 0.5, location.getBlockY() + 1.3, location.getBlockZ() + 0.5);
@@ -467,13 +448,6 @@ public class OreGenerator implements IGenerator {
                 break;
         }
         lastSpawn = delay;
-    }
-
-    @Override
-    @Deprecated(since = "1.0", forRemoval = true)
-    @ApiStatus.ScheduledForRemoval(inVersion = "2.0")
-    public ITeam getBwt() {
-        return bwt;
     }
 
     @Override

@@ -275,12 +275,12 @@ public class Arena implements IArena {
             }
         }
         if (yml.get("generator.Diamond") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Diamond generator on: " + name);
-            plugin.getLogger().severe("There isn't set any Diamond generator on: " + name);
+            if (p != null) p.sendMessage("§cThere aren't any Diamond generators set on: " + name);
+            plugin.getLogger().severe("There aren't any Diamond generators set on: " + name);
         }
         if (yml.get("generator.Emerald") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Emerald generator on: " + name);
-            plugin.getLogger().severe("There isn't set any Emerald generator on: " + name);
+            if (p != null) p.sendMessage("§cThere aren't any Emerald generators set on: " + name);
+            plugin.getLogger().severe("There aren't any Emerald generators set on: " + name);
         }
         if (yml.get("waiting.Loc") == null) {
             if (p != null) p.sendMessage("§cWaiting spawn not set on: " + name);
@@ -427,6 +427,14 @@ public class Arena implements IArena {
      */
     public boolean addPlayer(Player p, boolean skipOwnerCheck) {
         if (p == null) return false;
+        // Check if the player is already in an arena
+        if (getArenaByPlayer(p) != null) {
+            if (getArenaByPlayer(p).isSpectator(p)){
+                getArenaByPlayer(p).removeSpectator(p, false);
+            } else {
+                getArenaByPlayer(p).removePlayer(p, false);
+            }
+        }
         debug("Player added: " + p.getName() + " arena: " + getArenaName());
 
 //        Used to check if a sidebar must be given or not
@@ -1087,6 +1095,10 @@ public class Arena implements IArena {
             this.sendToMainLobby(p);
 
         }
+
+        // Clear shop holo's for leaving players.
+        ShopHolo.clearForPlayer(p);
+
         for (PotionEffect pf : p.getActivePotionEffects()) {
             p.removePotionEffect(pf.getType());
         }
@@ -2755,7 +2767,7 @@ public class Arena implements IArena {
             return;
         }
         String dragonPlaceholderName = "%bw_" + team.getArena().getWorldName() + "_" + team.getName() + "+" + dragonNumber + "%";
-        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500, () -> team.getDragons().get(dragonNumber).getHealth() / team.getDragons().get(dragonNumber).getMaxHealth() * 100);
+        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500,  () -> String.valueOf(team.getDragons().get(dragonNumber).getHealth()/team.getDragons().get(dragonNumber).getMaxHealth()*100));
         serverPlaceholders.add(dragonPlaceholder);
         for (Player player : team.getArena().getPlayers()) {
             String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat() + team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));

@@ -105,7 +105,6 @@ import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import io.github.slimjar.app.builder.ApplicationBuilder;
 import me.neznamy.tab.api.TabAPI;
-import me.neznamy.tab.api.nametag.UnlimitedNameTagManager;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.*;
@@ -141,7 +140,7 @@ import java.util.*;
 public class BedWars extends JavaPlugin {
 
     private static ServerType serverType = ServerType.MULTIARENA;
-    public static boolean debug = true, autoscale = false, isPaper = false, tabUnlimitedNameTagSupport = false;
+    public static boolean debug = true, autoscale = false, isPaper = false;
     public static int hologramUpdateDistance = 50; // DEFAULT DISTANCE (update distance measured in blocks)
     public static String mainCmd = "bw", link = "https://polymart.org/resource/bedwars2023.5702";
     public static ConfigManager signs, generators;
@@ -233,6 +232,13 @@ public class BedWars extends JavaPlugin {
             case "1.21":
             case "1.21.1":
                 nmsVersion = "v1_21_R1";
+                break;
+            case "1.21.3":
+            case "1.21.2":
+                nmsVersion = "v1_21_R2";
+                break;
+            case "1.21.4":
+                nmsVersion = "v1_21_R3";
                 break;
             default:
                 break;
@@ -627,7 +633,7 @@ public class BedWars extends JavaPlugin {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
                 getLogger().info("Hooking into TAB support!");
                 if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())){
-                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v4.0.2 or higher is required!" );
+                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v5.0.0 or higher is required!" );
                     Bukkit.getPluginManager().disablePlugin(this);
                     return;
                 }
@@ -638,8 +644,16 @@ public class BedWars extends JavaPlugin {
                     loadArenasAndSigns();
 
                 } else {
-                    this.getLogger().severe("Tab scoreboard is not enabled! please enable this in the tab configuration file!");
-                    Bukkit.getPluginManager().disablePlugin(this);
+                    this.getLogger().severe("Tab scoreboard is not enabled! Applying tab configuration automatically...");
+
+                    // Execute the command programmatically
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "bw applyTabConfig");
+                    getLogger().info("TAB configuration command has been executed.");
+
+                    this.getLogger().warning("\n\nRestarting the server to apply the changes...\n\n");
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart");
+
+
                 }
             } else {
                 this.getLogger().severe("TAB by NEZNAMY could not be hooked!");
@@ -718,13 +732,6 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("TAB Version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
             this.getLogger().info("TAB Features: ");
             this.getLogger().info("  - Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true"));
-            try {
-                this.getLogger().info("  - UnlimitedNameTag: " + ((TabAPI.getInstance().getNameTagManager() instanceof UnlimitedNameTagManager)  ? "true" : "false"));
-                tabUnlimitedNameTagSupport = true;
-            } catch (NoClassDefFoundError e) {
-                this.getLogger().info("  - UnlimitedNameTag: not supported!");
-                tabUnlimitedNameTagSupport = false;
-            }
             this.getLogger().info("  - BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true"));
             this.getLogger().info("  - TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
             this.getLogger().info("  - HeaderFooterFormatting: " + ((TabAPI.getInstance().getHeaderFooterManager() == null)  ? "false" : "true"));
@@ -995,7 +1002,7 @@ public class BedWars extends JavaPlugin {
 
 
     private boolean checkTABVersion(String version) {
-        String targetVersion = "4.0.2";
+        String targetVersion = "5.0.0";
 
         String[] currentParts = version.split("\\.");
         String[] targetParts = targetVersion.split("\\.");
