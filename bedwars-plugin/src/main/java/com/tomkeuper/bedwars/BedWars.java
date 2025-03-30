@@ -958,7 +958,7 @@ public class BedWars extends JavaPlugin {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimeAdapter";
             } else if ((major == 2 && (minor >= 8 && minor <= 10) && (release >= 0 && release <= 9)) && (nms.getVersion() == 8)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.AdvancedSlimeAdapter";
-            } else if ((major > 2 || major == 2 && minor >= 10) && nms.getVersion() == 9) {
+            } else if ((major > 2 || major == 2 && minor >= 10) && nms.getVersion() >= 9) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimePaperAdapter";
             } else {
                 this.getLogger().warning("Could not find adapter path for SWM version, is it unsupported?");
