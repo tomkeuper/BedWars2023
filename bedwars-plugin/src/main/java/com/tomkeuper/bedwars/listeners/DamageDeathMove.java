@@ -667,12 +667,18 @@ public class DamageDeathMove implements Listener {
                         if (player.getLocation().distance(team.getBed()) < 4) {
                             if (team.isMember(player)) {
                                 if (bedHolo == null) continue;
-                                if (bedHolo.getHologram().isShowing()) bedHolo.hide();
+                                if (bedHolo.getHologram().isShowing()) {
+                                    BedWars.debug("Hiding Holo");
+                                    bedHolo.getHologram().hide();
+                                }
                             }
                         } else {
                             if (team.isMember(player)) {
                                 if (bedHolo == null) continue;
-                                if (!bedHolo.getHologram().isShowing()) bedHolo.show();
+                                if (!bedHolo.getHologram().isShowing()) {
+                                    BedWars.debug("Showing Holo");
+                                    bedHolo.getHologram().show();
+                                }
                             }
                         }
                     }

@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Hologram implements IHologram {
     private final Player p;
@@ -110,6 +111,10 @@ public class Hologram implements IHologram {
 
     @Override
     public boolean isShowing() {
+        for (IHoloLine line : this.lines) {
+            line.isShowing();
+        }
+        Logger.getAnonymousLogger().info("isShowing: " + this.showing);
         return showing;
     }
 
