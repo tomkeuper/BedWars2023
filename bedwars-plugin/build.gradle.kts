@@ -40,10 +40,8 @@ dependencies {
     api(projects.versionsupportV117R1)
     api(projects.versionsupportV118R2)
     api(projects.versionsupportV119R3)
-    api(projects.versionsupportV120R1)
-    api(projects.versionsupportV120R2)
-    api(projects.versionsupportV120R3)
     api(projects.versionsupportV120R4)
+    api(projects.versionsupportV1206)
     api(projects.versionsupportV121R1)
     api(projects.versionsupportV121R2)
     api(projects.versionsupportV121R3)
@@ -131,10 +129,8 @@ val versions = setOf(
     projects.versionsupportV117R1,
     projects.versionsupportV118R2,
     projects.versionsupportV119R3,
-    projects.versionsupportV120R1,
-    projects.versionsupportV120R2,
-    projects.versionsupportV120R3,
     projects.versionsupportV120R4,
+    projects.versionsupportV1206,
     projects.versionsupportV121R1,
     projects.versionsupportV121R2,
     projects.versionsupportV121R3,
