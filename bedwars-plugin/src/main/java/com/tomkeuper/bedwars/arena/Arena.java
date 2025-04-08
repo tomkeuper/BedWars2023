@@ -68,6 +68,7 @@ import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.vault.WithEconomy;
+import com.tomkeuper.bedwars.utils.ItemBuilder;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
@@ -1731,87 +1732,101 @@ public class Arena implements IArena {
     }
 
     /**
-     * This will give the lobby items to the player.
+     * This method gives the lobby items to the player.
      * Not used in serverType BUNGEE.
      * This will clear the inventory first.
      */
     public static void sendLobbyCommandItems(Player p) {
+        // Check if the player is in the lobby world
         if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
         p.getInventory().clear();
 
         for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getLobbyItems()) {
-            ItemStack item = lobbyItem.getItem();
-            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
-            if (itemMeta != null) {
-                String name;
-                List<String> lore;
+            // Get the localized name for the player
+            String name = SupportPAPI.getSupportPAPI().replace(
+                    p,
+                    getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier()))
+            );
+            // Get the localized lore for the player
+            List<String> lore = SupportPAPI.getSupportPAPI().replace(
+                    p,
+                    getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier()))
+            );
 
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+            // Create the item using ItemBuilder with the same material as the original item
+            ItemStack newItem = new ItemBuilder(lobbyItem.getItem().getType())
+                    .setName(name)
+                    .setLore(lore)
+                    .build();
 
-                itemMeta.setDisplayName(name);
-                itemMeta.setLore(lore);
-
-                item.setItemMeta(itemMeta);
+            // Set the item in its designated slot if it is visible for the player
+            if (lobbyItem.getHandler().isVisible(p, null)) {
+                p.getInventory().setItem(lobbyItem.getSlot(), newItem);
             }
-            if (lobbyItem.getHandler().isVisible(p, null)) p.getInventory().setItem(lobbyItem.getSlot(), item);
         }
     }
 
     /**
-     * This will give the pre-game command Items.
+     * This method gives the pre-game command items.
      * This will clear the inventory first.
      */
     public void sendPreGameCommandItems(Player p) {
         p.getInventory().clear();
 
         for (IPermanentItem preGameItem : BedWars.getAPI().getItemUtil().getPreGameItems()) {
-            ItemStack item = preGameItem.getItem();
-            ItemMeta itemMeta = preGameItem.getItem().getItemMeta();
-            if (itemMeta != null) {
-                String name;
-                List<String> lore;
+            // Get the localized name for the pre-game item
+            String name = SupportPAPI.getSupportPAPI().replace(
+                    p,
+                    getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier()))
+            );
+            // Get the localized lore for the pre-game item
+            List<String> lore = SupportPAPI.getSupportPAPI().replace(
+                    p,
+                    getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier()))
+            );
 
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
+            // Create the item using ItemBuilder with the same material as the original item
+            ItemStack newItem = new ItemBuilder(preGameItem.getItem().getType())
+                    .setName(name)
+                    .setLore(lore)
+                    .build();
 
-                itemMeta.setDisplayName(name);
-                itemMeta.setLore(lore);
-
-                item.setItemMeta(itemMeta);
+            // Set the item in its designated slot if it is visible for the player
+            if (preGameItem.getHandler().isVisible(p, this)) {
+                p.getInventory().setItem(preGameItem.getSlot(), newItem);
             }
-            if (preGameItem.getHandler().isVisible(p, this))
-                p.getInventory().setItem(preGameItem.getSlot(), item);
         }
     }
 
     /**
-     * This will give the spectator command Items.
+     * This method gives the spectator command items.
      * This will clear the inventory first.
      */
     public void sendSpectatorCommandItems(Player p) {
         p.getInventory().clear();
 
-        for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
-            ItemStack item = lobbyItem.getItem();
-            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
-            if (itemMeta != null) {
-                String name;
-                List<String> lore;
+        for (IPermanentItem spectatorItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
+            // Get the localized name for the spectator item
+            String name = SupportPAPI.getSupportPAPI().replace(
+                    p,
+                    getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", spectatorItem.getIdentifier()))
+            );
+            // Get the localized lore for the spectator item
+            List<String> lore = SupportPAPI.getSupportPAPI().replace(
+                    p,
+                    getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", spectatorItem.getIdentifier()))
+            );
 
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+            // Create the item using ItemBuilder with the same material as the original item
+            ItemStack newItem = new ItemBuilder(spectatorItem.getItem().getType())
+                    .setName(name)
+                    .setLore(lore)
+                    .build();
 
-                itemMeta.setDisplayName(name);
-                itemMeta.setLore(lore);
-
-                item.setItemMeta(itemMeta);
+            // Set the item in its designated slot if it is visible for the player
+            if (spectatorItem.getHandler().isVisible(p, this)) {
+                p.getInventory().setItem(spectatorItem.getSlot(), newItem);
             }
-            if (lobbyItem.getHandler().isVisible(p, this))
-                p.getInventory().setItem(lobbyItem.getSlot(), item);
         }
     }
 
