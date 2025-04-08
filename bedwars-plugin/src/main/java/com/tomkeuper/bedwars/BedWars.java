@@ -101,6 +101,7 @@ import com.tomkeuper.bedwars.support.vault.WithEconomy;
 import com.tomkeuper.bedwars.support.vipfeatures.VipFeatures;
 import com.tomkeuper.bedwars.support.vipfeatures.VipListeners;
 import com.tomkeuper.bedwars.upgrades.UpgradesManager;
+import com.tomkeuper.bedwars.utils.ItemBuilder;
 import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import io.github.slimjar.app.builder.ApplicationBuilder;
@@ -219,7 +220,7 @@ public class BedWars extends JavaPlugin {
 
         /* Load version support */
         //noinspection rawtypes
-        switch (minecraftVersion){
+        switch (minecraftVersion) {
             case "1.20.4":
                 nmsVersion = "v1_20_R3";
                 break;
@@ -303,7 +304,7 @@ public class BedWars extends JavaPlugin {
 
         nms.registerVersionListeners();
 
-        if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null){
+        if (Bukkit.getPluginManager().getPlugin("Multiverse-Core") != null) {
             plugin.getLogger().warning("-=-=-=-=-=-=-=- Multiverse has been found! -=-=-=-=-=-=-=-");
             plugin.getLogger().warning("");
             plugin.getLogger().warning(" Unless properly configured, multiverse will cause issues!");
@@ -380,7 +381,7 @@ public class BedWars extends JavaPlugin {
             if (autoscale) {
                 redisConnection = new RedisConnection();
                 registerEvents(new RedisArenaListeners(redisConnection));
-                if (!redisConnection.connect()){
+                if (!redisConnection.connect()) {
                     getLogger().severe("Could not connect to redis server! Please check the redis configuration and make sure the redis server is running! Disabling the plugin...");
                     setEnabled(false);
                     return;
@@ -466,10 +467,10 @@ public class BedWars extends JavaPlugin {
                         "Using this remote connection is not recommended!");
             }
             remoteDatabase.init();
-        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("sqlite")){
+        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("sqlite")) {
             remoteDatabase = new SQLite();
             remoteDatabase.init();
-        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("h2")){
+        } else if (config.getString(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE).equalsIgnoreCase("h2")) {
             remoteDatabase = new H2();
             remoteDatabase.init();
         }
@@ -632,8 +633,8 @@ public class BedWars extends JavaPlugin {
         Bukkit.getScheduler().runTask(this, () -> {
             if (Bukkit.getPluginManager().getPlugin("TAB") != null) {
                 getLogger().info("Hooking into TAB support!");
-                if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())){
-                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v5.0.0 or higher is required!" );
+                if (!checkTABVersion(Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion())) {
+                    this.getLogger().severe("Invalid TAB version, you are using v" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion() + " but v5.0.0 or higher is required!");
                     Bukkit.getPluginManager().disablePlugin(this);
                     return;
                 }
@@ -686,9 +687,9 @@ public class BedWars extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> addonManager.loadAddons(), 60L);
 
         // Check config settings
-        if (redisConnection != null){
+        if (redisConnection != null) {
             Bukkit.getScheduler().runTaskLater(this, () -> {
-                if (redisConnection.checkSettings("default_rankup_cost", String.valueOf(LevelsConfig.getNextCost(1)))){
+                if (redisConnection.checkSettings("default_rankup_cost", String.valueOf(LevelsConfig.getNextCost(1)))) {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Redis settings match the default values.");
                 } else {
                     Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "The network settings do not match the set values! Please check the configuration!");
@@ -700,7 +701,7 @@ public class BedWars extends JavaPlugin {
         // Send startup message, delayed to make sure everything is loaded and registered.
         Bukkit.getScheduler().runTaskLater(this, () -> {
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            this.getLogger().info("BedWars2023 v"+ plugin.getDescription().getVersion()+" has been enabled!");
+            this.getLogger().info("BedWars2023 v" + plugin.getDescription().getVersion() + " has been enabled!");
             this.getLogger().info("");
             this.getLogger().info("Server Type: " + getServerType().toString() + (getServerType() == ServerType.BUNGEE ? " (ServerID: " + config.getString(ConfigPath.GENERAL_CONFIGURATION_BUNGEE_OPTION_SERVER_ID) + ")" : ""));
             this.getLogger().info("Auto Scale: " + autoscale);
@@ -719,7 +720,7 @@ public class BedWars extends JavaPlugin {
 
             StringJoiner addonString = new StringJoiner(", ");
             addonString.setEmptyValue("None");
-            for (Addon addon : api.getAddonsUtil().getAddons()){
+            for (Addon addon : api.getAddonsUtil().getAddons()) {
                 addonString.add(addon.getName());
             }
 
@@ -732,9 +733,9 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("TAB Version: " + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
             this.getLogger().info("TAB Features: ");
             this.getLogger().info("  - Scoreboard: " + (TabAPI.getInstance().getScoreboardManager() == null ? "false" : "true"));
-            this.getLogger().info("  - BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null)  ? "false" : "true"));
-            this.getLogger().info("  - TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null)  ? "false" : "true"));
-            this.getLogger().info("  - HeaderFooterFormatting: " + ((TabAPI.getInstance().getHeaderFooterManager() == null)  ? "false" : "true"));
+            this.getLogger().info("  - BossBar: " + ((TabAPI.getInstance().getBossBarManager() == null) ? "false" : "true"));
+            this.getLogger().info("  - TablistNameFormatting: " + ((TabAPI.getInstance().getTabListFormatManager() == null) ? "false" : "true"));
+            this.getLogger().info("  - HeaderFooterFormatting: " + ((TabAPI.getInstance().getHeaderFooterManager() == null) ? "false" : "true"));
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
@@ -922,7 +923,7 @@ public class BedWars extends JavaPlugin {
         return statsManager;
     }
 
-    public static UpgradesManager getUpgradeManager(){
+    public static UpgradesManager getUpgradeManager() {
         return upgradesManager;
     }
 
@@ -932,12 +933,13 @@ public class BedWars extends JavaPlugin {
 
     /**
      * Try loading custom adapter support.
+     *
      * @return true when custom adapter was registered.
      */
     private boolean handleWorldAdapter() { //todo fix version check because current check is limited
         Plugin swmPlugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
-        if (null == swmPlugin){
+        if (null == swmPlugin) {
             return false;
         }
         PluginDescriptionFile pluginDescription = swmPlugin.getDescription();
@@ -966,11 +968,11 @@ public class BedWars extends JavaPlugin {
             }
 
             Constructor<?> constructor = Class.forName(adapterPath).getConstructor(Plugin.class);
-            getLogger().info("Loading restore adapter: "+adapterPath+" ...");
+            getLogger().info("Loading restore adapter: " + adapterPath + " ...");
 
             RestoreAdapter candidate = (RestoreAdapter) constructor.newInstance(this);
             api.setRestoreAdapter(candidate);
-            getLogger().info("Hook into "+candidate.getDisplayName()+" as restore adapter.");
+            getLogger().info("Hook into " + candidate.getDisplayName() + " as restore adapter.");
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -996,7 +998,7 @@ public class BedWars extends JavaPlugin {
         return new VoidChunkGenerator();
     }
 
-    public static void setRemoteDatabase(IDatabase database){
+    public static void setRemoteDatabase(IDatabase database) {
         remoteDatabase = database;
     }
 
@@ -1045,10 +1047,12 @@ public class BedWars extends JavaPlugin {
     }
 
     private void loadPreGameItems() {
-
         if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH) == null) return;
 
-        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH).getKeys(false)) {
+        for (String item : config.getYml()
+                .getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_PATH)
+                .getKeys(false)) {
+
             if (!checkConfigEntries(item,
                     ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL,
                     ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA,
@@ -1057,29 +1061,46 @@ public class BedWars extends JavaPlugin {
                 continue;
             }
 
-            ItemStack i = new ItemStack(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item))), 1, (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item)));
-            ItemMeta im = i.getItemMeta();
-            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item))) {
-                im.addEnchant(Enchantment.LUCK, 1, true);
-                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            String materialStr = config.getYml().getString(
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item));
+            Material material = Material.valueOf(materialStr);
+            int data = config.getInt(
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item));
+            boolean enchanted = config.getBoolean(
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item));
+            int slot = config.getInt(
+                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item));
+
+            ItemBuilder builder = new ItemBuilder(material)
+                    .setData((short) data);
+            if (enchanted) {
+                builder.setGlow(true);
             }
-            i.setItemMeta(im);
+
+            // Default Head
+            if ((material == Material.SKULL_ITEM && data == 3) || material.name().equals("PLAYER_HEAD")) {
+                builder.setSkullOwner("MrCeasar");
+            }
+
+            ItemStack itemStack = builder.build();
+
+            ItemStack finalItemStack = nms.addCustomData(itemStack, "preGameItem");
 
             PreGameItem preGameItem;
             IPermanentItemHandler handler = itemHandlers.get(item);
             if (handler != null) {
                 preGameItem = new PreGameItem(
                         handler,
-                        nms.addCustomData(i, "preGameItem"),
-                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
+                        finalItemStack,
+                        slot,
                         item);
             } else {
-                // Check if item has a command listed instead
-                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)) != null){
+                if (config.getYml().getString(
+                        ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)) != null) {
                     preGameItem = new PreGameItem(
                             itemHandlers.get("command"),
-                            nms.addCustomData(i, "preGameItem"),
-                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item)),
+                            finalItemStack,
+                            slot,
                             item);
                 } else {
                     this.getLogger().severe("No handler or command found for pre-game item: " + item);
@@ -1092,10 +1113,13 @@ public class BedWars extends JavaPlugin {
         }
     }
 
-    void loadSpectatorItems(){
+    void loadSpectatorItems() {
         if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH) == null) return;
 
-        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH).getKeys(false)) {
+        for (String item : config.getYml()
+                .getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_PATH)
+                .getKeys(false)) {
+
             if (!checkConfigEntries(item,
                     ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL,
                     ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA,
@@ -1104,30 +1128,38 @@ public class BedWars extends JavaPlugin {
                 continue;
             }
 
-            ItemStack i = new ItemStack(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item))), 1, (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item)));
-            ItemMeta im = i.getItemMeta();
-            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item))) {
-                im.addEnchant(Enchantment.LUCK, 1, true);
-                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            String materialStr = config.getYml().getString(
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item));
+            Material material = Material.valueOf(materialStr);
+            int data = config.getInt(
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item));
+            boolean enchanted = config.getBoolean(
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item));
+            int slot = config.getInt(
+                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item));
+
+            ItemBuilder builder = new ItemBuilder(material)
+                    .setData((short) data);
+            if (enchanted) {
+                builder.setGlow(true);
             }
-            i.setItemMeta(im);
+
+            // Default Head
+            if ((material == Material.SKULL_ITEM && data == 3) || material.name().equals("PLAYER_HEAD")) {
+                builder.setSkullOwner("MrCeasar");
+            }
+
+            ItemStack itemStack = builder.build();
+            ItemStack finalItemStack = nms.addCustomData(itemStack, "spectatorItem");
 
             SpectatorItem spectatorItem;
             IPermanentItemHandler handler = itemHandlers.get(item);
             if (handler != null) {
-                spectatorItem = new SpectatorItem(
-                        handler,
-                        nms.addCustomData(i, "spectatorItem"),
-                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
-                        item);
+                spectatorItem = new SpectatorItem(handler, finalItemStack, slot, item);
             } else {
-                // Check if item has a command listed instead
-                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null){
-                    spectatorItem = new SpectatorItem(
-                            itemHandlers.get("command"),
-                            nms.addCustomData(i, "spectatorItem"),
-                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item)),
-                            item);
+                if (config.getYml().getString(
+                        ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_COMMAND.replace("%path%", item)) != null) {
+                    spectatorItem = new SpectatorItem(itemHandlers.get("command"), finalItemStack, slot, item);
                 } else {
                     this.getLogger().severe("No handler or command found for spectator item: " + item);
                     continue;
@@ -1139,10 +1171,12 @@ public class BedWars extends JavaPlugin {
         }
     }
 
-    void loadLobbyItems(){
+    void loadLobbyItems() {
         if (config.getYml().get(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH) == null) return;
 
-        for (String item : config.getYml().getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH).getKeys(false)) {
+        for (String item : config.getYml()
+                .getConfigurationSection(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH)
+                .getKeys(false)) {
 
             if (!checkConfigEntries(item,
                     ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL,
@@ -1152,31 +1186,38 @@ public class BedWars extends JavaPlugin {
                 continue;
             }
 
-            ItemStack i = new ItemStack(Material.valueOf(config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item))), 1, (byte) config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item)));
-            ItemMeta im = i.getItemMeta();
-            if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item))) {
-                im.addEnchant(Enchantment.LUCK, 1, true);
-                im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            String materialStr = config.getYml().getString(
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item));
+            Material material = Material.valueOf(materialStr);
+            int data = config.getInt(
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item));
+            boolean enchanted = config.getBoolean(
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item));
+            int slot = config.getInt(
+                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item));
+
+            ItemBuilder builder = new ItemBuilder(material)
+                    .setData((short) data);
+            if (enchanted) {
+                builder.setGlow(true);
             }
-            i.setItemMeta(im);
+
+            // Default Head
+            if ((material == Material.SKULL_ITEM && data == 3) || material.name().equals("PLAYER_HEAD")) {
+                builder.setSkullOwner("MrCeasar");
+            }
+
+            ItemStack itemStack = builder.build();
+            ItemStack finalItemStack = nms.addCustomData(itemStack, "lobbyItem");
 
             LobbyItem lobbyItem;
-
             IPermanentItemHandler handler = itemHandlers.get(item);
             if (handler != null) {
-                lobbyItem = new LobbyItem(
-                        handler,
-                        nms.addCustomData(i, "lobbyItem"),
-                        config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
-                        item);
+                lobbyItem = new LobbyItem(handler, finalItemStack, slot, item);
             } else {
-                // Check if item has a command listed instead
-                if (config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) != null){
-                    lobbyItem = new LobbyItem(
-                            itemHandlers.get("command"),
-                            nms.addCustomData(i, "lobbyItem"),
-                            config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item)),
-                            item);
+                if (config.getYml().getString(
+                        ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_COMMAND.replace("%path%", item)) != null) {
+                    lobbyItem = new LobbyItem(itemHandlers.get("command"), finalItemStack, slot, item);
                 } else {
                     this.getLogger().severe("No handler or command found for lobby item: " + item);
                     continue;
@@ -1199,16 +1240,16 @@ public class BedWars extends JavaPlugin {
         return valid;
     }
 
-    public static boolean registerItemHandler(IPermanentItemHandler handler){
-        if (itemHandlers.containsKey(handler.getId())){
+    public static boolean registerItemHandler(IPermanentItemHandler handler) {
+        if (itemHandlers.containsKey(handler.getId())) {
             return false;
         }
         itemHandlers.put(handler.getId(), handler);
         return true;
     }
 
-    private void registerItemHandlers(IPermanentItemHandler... handlers){
-        for (IPermanentItemHandler handler : handlers){
+    private void registerItemHandlers(IPermanentItemHandler... handlers) {
+        for (IPermanentItemHandler handler : handlers) {
             if (registerItemHandler(handler)) {
                 getLogger().info("Registered item handler: " + handler.getId());
             } else {
@@ -1217,7 +1258,7 @@ public class BedWars extends JavaPlugin {
         }
     }
 
-    public static Map<String, IPermanentItemHandler> getItemHandlers(){
+    public static Map<String, IPermanentItemHandler> getItemHandlers() {
         return itemHandlers;
     }
 }
