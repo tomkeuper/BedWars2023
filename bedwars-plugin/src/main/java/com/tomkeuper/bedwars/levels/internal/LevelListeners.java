@@ -23,10 +23,7 @@ package com.tomkeuper.bedwars.levels.internal;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.events.gameplay.GameEndEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerBedBreakEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerXpGainEvent;
+import com.tomkeuper.bedwars.api.events.player.*;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.configuration.LevelsConfig;
@@ -136,8 +133,8 @@ public class LevelListeners implements Listener {
 
     @EventHandler
     public void onKill(PlayerKillEvent e) {
-        Player player = e.getKiller ();
-        Player victim = e.getVictim ();
+        Player player = e.getKiller();
+        Player victim = e.getVictim();
         if (player == null || victim.equals(player)) {
             return;
         }
@@ -154,5 +151,16 @@ public class LevelListeners implements Listener {
                 player.sendMessage(Language.getMsg(player, Messages.XP_REWARD_REGULAR_KILL).replace("%bw_xp%", String.valueOf(regularKill)));
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerLevelUp(PlayerLevelUpEvent e) {
+        Player player = e.getPlayer();
+        if (player == null) return;
+
+        String newLevel = PlayerLevel.getLevelByPlayer(player.getUniqueId()).getLevelName();
+        if (newLevel == null) return;
+
+        player.sendMessage(Language.getMsg(player, Messages.PLAYER_LEVEL_UP).replace("%bw_level%", newLevel));
     }
 }
