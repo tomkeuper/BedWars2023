@@ -35,6 +35,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.List;
 import java.util.UUID;
 
 public class LevelListeners implements Listener {
@@ -73,7 +74,7 @@ public class LevelListeners implements Listener {
                 Player p1 = Bukkit.getPlayer(p);
                 if (p1 == null) continue;
                 int xpAmount = LevelsConfig.levels.getInt("xp-rewards.game-win");
-                if (xpAmount > 0){
+                if (xpAmount > 0) {
                     PlayerLevel.getLevelByPlayer(p).addXp(xpAmount, PlayerXpGainEvent.XpSource.GAME_WIN);
                     p1.sendMessage(Language.getMsg(p1, Messages.XP_REWARD_WIN).replace("%bw_xp%", String.valueOf(xpAmount)));
                 }
@@ -120,7 +121,7 @@ public class LevelListeners implements Listener {
 
     @EventHandler
     public void onBreakBed(PlayerBedBreakEvent e) {
-        Player player = e.getPlayer ();
+        Player player = e.getPlayer();
         if (player == null) {
             return;
         }
@@ -140,7 +141,7 @@ public class LevelListeners implements Listener {
         }
         int finalKill = LevelsConfig.levels.getInt("xp-rewards.final-kill");
         int regularKill = LevelsConfig.levels.getInt("xp-rewards.regular-kill");
-        if (e.getCause ().isFinalKill ()) {
+        if (e.getCause().isFinalKill()) {
             if (finalKill > 0) {
                 PlayerLevel.getLevelByPlayer(player.getUniqueId()).addXp(finalKill, PlayerXpGainEvent.XpSource.FINAL_KILL);
                 player.sendMessage(Language.getMsg(player, Messages.XP_REWARD_FINAL_KILL).replace("%bw_xp%", String.valueOf(finalKill)));
@@ -161,6 +162,9 @@ public class LevelListeners implements Listener {
         String newLevel = PlayerLevel.getLevelByPlayer(player.getUniqueId()).getLevelName();
         if (newLevel == null) return;
 
-        player.sendMessage(Language.getMsg(player, Messages.PLAYER_LEVEL_UP).replace("%bw_level%", newLevel));
+        List<String> messages = Language.getList(player, Messages.PLAYER_LEVEL_UP);
+        for (String message : messages) {
+            player.sendMessage(message.replace("%bw_level%", newLevel));
+        }
     }
 }
