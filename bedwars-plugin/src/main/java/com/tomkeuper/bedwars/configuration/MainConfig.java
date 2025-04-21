@@ -43,7 +43,7 @@ public class MainConfig extends ConfigManager {
         YamlConfiguration yml = getYml();
 
         yml.options().header(plugin.getDescription().getName() + " by Mr. Ceasar.\n" +
-                "Documentation here: https://github.com/tomkeuper/BedWars2023/wiki\n");
+                "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023\n");
         yml.addDefault("timeZone", "Europe/Rome");
         yml.addDefault("serverType", "MULTIARENA");
         yml.addDefault("language", "en");
