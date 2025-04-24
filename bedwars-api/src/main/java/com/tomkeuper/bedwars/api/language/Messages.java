@@ -323,6 +323,7 @@ public class Messages {
     public static String XP_REWARD_BED_DESTROY = "xp-reward-bed-destroyed";
     public static String XP_REWARD_REGULAR_KILL = "xp-reward-regular-kill";
     public static String XP_REWARD_FINAL_KILL = "xp-reward-final-kill";
+    public static String PLAYER_LEVEL_UP = "player-level-up";
 
     public static String MONEY_REWARD_WIN = "money-reward-game-win";
     public static String MONEY_REWARD_PER_MINUTE = "money-reward-per-minute";
