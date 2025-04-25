@@ -208,7 +208,8 @@ public class ChatFormatting implements Listener {
     public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team){
         e.setCancelled(true);
         BedWars.plugin.adventure().sender(Bukkit.getConsoleSender())
-                .sendMessage(parsePHolders(format, msg, eventTriggerPlayer,null, team));/*.replaceAll("%","%%")*/ // Used for console message only.
+                .sendMessage(parsePHolders(format, msg, eventTriggerPlayer,null, team)
+                        .replaceText(b -> b.match("%").replacement("%%"))); // Used for console message only.
         for (Player player : recipients) {
             var adventurePlayer = BedWars.plugin.adventure().player(player);
             adventurePlayer.sendMessage(parsePHolders(format, msg, eventTriggerPlayer, player, team));
