@@ -32,6 +32,10 @@ dependencies {
     implementation("com.iridium:IridiumColorAPI:1.0.9") // used by BedWars - API
     implementation("org.apache.commons:commons-lang3:3.14.0") // Used by IridiumColorAPI
 
+    implementation("net.kyori:adventure-text-minimessage:4.20.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.20.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+
     api(projects.bedwarsApi)
     api(projects.versionsupportCommon)
     api(projects.versionsupport18R3)
