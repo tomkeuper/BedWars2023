@@ -18,14 +18,19 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v1_8_R3.hologram;
+package com.tomkeuper.bedwars.support.version.v1_20_6.hologram;
 
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
-import net.minecraft.server.v1_8_R3.*;
+import com.tomkeuper.bedwars.support.version.v1_20_6.v1_20_6;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
+import net.minecraft.network.protocol.game.PacketPlayOutEntityTeleport;
+import net.minecraft.network.protocol.game.PacketPlayOutSpawnEntity;
+import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 
 public class HoloLine implements IHoloLine {
     private String text;
@@ -37,20 +42,18 @@ public class HoloLine implements IHoloLine {
         this.text = text;
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
-        entity.setCustomName(text)  ;
-        entity.setCustomNameVisible(true);
-        entity.setInvisible(true);
-        entity.setGravity(false);
+        entity.b(CraftChatMessage.fromStringOrNull(text));
+        entity.o(true); //setCustomNameVisible
+        entity.k(true); //setInvisible
+        entity.ag = true; //noPhysics
         Location loc = hologram.getLocation();
-        entity.setLocation(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ(), loc.getYaw(), loc.getPitch());
+        entity.p(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ()); //setPosRaw
 
-        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entity);
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
+        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity, 78);
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c()); //getId, getEntityData
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(teleportPacket);
+        v1_20_6.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
     }
 
     @Override
@@ -85,24 +88,23 @@ public class HoloLine implements IHoloLine {
 
     @Override
     public void update() {
-        entity.setCustomName(text);
-        Location loc = hologram.getLocation();
+        entity.b(CraftChatMessage.fromStringOrNull(text)); //setCustomName
         int position = hologram.getLines().indexOf(this);
-        entity.setLocation(loc.getX(), loc.getY() + position * hologram.getGap(), loc.getZ(), loc.getYaw(), loc.getPitch());
-        if (destroyed) return;
+        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ()); //setPosRaw
+        if (isDestroyed()) return;
 
-        PacketPlayOutEntityTeleport packet = new PacketPlayOutEntityTeleport(entity);
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true);
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c()); //getId, getEntityData
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(metadataPacket);
+        v1_20_6.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
     }
 
     @Override
     public void reveal() {
         destroyed = false;
-        PacketPlayOutSpawnEntityLiving packet = new PacketPlayOutSpawnEntityLiving(entity);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
+
+        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
+        v1_20_6.sendPacket(hologram.getPlayer(), packet);
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
@@ -110,8 +112,8 @@ public class HoloLine implements IHoloLine {
 
     @Override
     public void remove() {
-        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.getId());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection.sendPacket(packet);
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.al()); //getId
+        v1_20_6.sendPacket(hologram.getPlayer(), packet);
     }
 
     @Override

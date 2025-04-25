@@ -40,10 +40,8 @@ dependencies {
     api(projects.versionsupportV117R1)
     api(projects.versionsupportV118R2)
     api(projects.versionsupportV119R3)
-    api(projects.versionsupportV120R1)
-    api(projects.versionsupportV120R2)
-    api(projects.versionsupportV120R3)
     api(projects.versionsupportV120R4)
+    api(projects.versionsupportV1206)
     api(projects.versionsupportV121R1)
     api(projects.versionsupportV121R2)
     api(projects.versionsupportV121R3)
@@ -79,10 +77,10 @@ dependencies {
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
-    slim("com.saicone.rtag:rtag:1.5.9")
-    slim("com.saicone.rtag:rtag-block:1.5.9")
-    slim("com.saicone.rtag:rtag-entity:1.5.9")
-    slim("com.saicone.rtag:rtag-item:1.5.9")
+    slim("com.saicone.rtag:rtag:1.5.10")
+    slim("com.saicone.rtag:rtag-block:1.5.10")
+    slim("com.saicone.rtag:rtag-entity:1.5.10")
+    slim("com.saicone.rtag:rtag-item:1.5.10")
 }
 
 
@@ -131,10 +129,8 @@ val versions = setOf(
     projects.versionsupportV117R1,
     projects.versionsupportV118R2,
     projects.versionsupportV119R3,
-    projects.versionsupportV120R1,
-    projects.versionsupportV120R2,
-    projects.versionsupportV120R3,
     projects.versionsupportV120R4,
+    projects.versionsupportV1206,
     projects.versionsupportV121R1,
     projects.versionsupportV121R2,
     projects.versionsupportV121R3,

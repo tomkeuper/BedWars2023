@@ -667,7 +667,7 @@ public class DamageDeathMove implements Listener {
                         if (player.getLocation().distance(team.getBed()) < 4) {
                             if (team.isMember(player)) {
                                 if (bedHolo == null) continue;
-                                if (!bedHolo.getHologram().isShowing()) bedHolo.hide();
+                                if (bedHolo.getHologram().isShowing()) bedHolo.hide();
                             }
                         } else {
                             if (team.isMember(player)) {
