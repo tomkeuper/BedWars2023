@@ -4,11 +4,11 @@ dependencies {
     compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
     }
-    compileOnly("com.saicone.rtag:rtag:1.5.9")
+    compileOnly("com.saicone.rtag:rtag:1.5.10")
     // Other modules
-    compileOnly("com.saicone.rtag:rtag-block:1.5.9")
-    compileOnly("com.saicone.rtag:rtag-entity:1.5.9")
-    compileOnly("com.saicone.rtag:rtag-item:1.5.9")
+    compileOnly("com.saicone.rtag:rtag-block:1.5.10")
+    compileOnly("com.saicone.rtag:rtag-entity:1.5.10")
+    compileOnly("com.saicone.rtag:rtag-item:1.5.10")
 }
 
 tasks.compileJava {
