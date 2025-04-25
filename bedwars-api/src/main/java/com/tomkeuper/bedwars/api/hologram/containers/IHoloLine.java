@@ -39,21 +39,6 @@ public interface IHoloLine {
      */
     void update();
 
-    /**
-     * Show the hologram line.
-     */
-    void show();
-
-    /**
-     * Hide the hologram line.
-     */
-    void hide();
-
-    /**
-     * Check if the hologram line is showing.
-     * @return true if the hologram line is showing
-     */
-    boolean isShowing();
 
     /**
      * Check if the hologram line is destroyed.

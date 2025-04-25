@@ -33,7 +33,6 @@ public class HoloLine implements IHoloLine {
     private IHologram hologram;
     public final EntityArmorStand entity;
 
-    private boolean showing = true;
     private boolean destroyed = false;
 
     public HoloLine(String text, IHologram hologram) {
@@ -101,25 +100,6 @@ public class HoloLine implements IHoloLine {
         PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().playerConnection;
         connection.sendPacket(metadataPacket);
         connection.sendPacket(packet);
-    }
-
-    @Override
-    public void show() {
-        this.showing = true;
-        entity.setCustomNameVisible(true);
-        update();
-    }
-
-    @Override
-    public void hide() {
-        this.showing = false;
-        entity.setCustomNameVisible(false);
-        update();
-    }
-
-    @Override
-    public boolean isShowing() {
-        return showing;
     }
 
     @Override

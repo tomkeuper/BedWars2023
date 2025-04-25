@@ -32,14 +32,10 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
 
-import java.util.Objects;
-import java.util.logging.Logger;
-
 public class HoloLine implements IHoloLine {
     private String text;
     private IHologram hologram;
     public final EntityArmorStand entity;
-    private boolean showing = true;
     private boolean destroyed = false;
 
     public HoloLine(String text, IHologram hologram) {
@@ -101,28 +97,6 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
         v1_20_6.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
-    }
-
-    @Override
-    public void show() {
-        this.showing = true;
-        Logger.getAnonymousLogger().info("show");
-        entity.o(true); //setCustomNameVisible
-        update();
-    }
-
-    @Override
-    public void hide() {
-        this.showing = false;
-        Logger.getAnonymousLogger().info("hide");
-        entity.o(false); //setCustomNameVisible
-        update();
-    }
-
-    @Override
-    public boolean isShowing() {
-        Logger.getAnonymousLogger().info("isVisible: " + entity.cE());
-        return showing;
     }
 
     @Override
