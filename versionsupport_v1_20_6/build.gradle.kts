@@ -1,7 +1,7 @@
 dependencies {
     compileOnly(projects.bedwarsApi)
     implementation(projects.versionsupportCommon)
-    compileOnly("org.spigotmc:spigot:1.21.3-R0.1-SNAPSHOT") {
+    compileOnly("org.spigotmc:spigot:1.20.6-R0.1-SNAPSHOT") {
         exclude("commons-lang", "commons-lang")
     }
     compileOnly("com.saicone.rtag:rtag:1.5.10")
@@ -24,4 +24,4 @@ repositories {
     maven("https://jitpack.io") // Jitpack (RTag)
 }
 
-description = "versionsupport_v1_21_r2"
+description = "versionsupport_v1_20_6"

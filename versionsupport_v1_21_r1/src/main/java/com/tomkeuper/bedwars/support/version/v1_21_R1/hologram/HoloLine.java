@@ -36,7 +36,6 @@ public class HoloLine implements IHoloLine {
     private String text;
     private IHologram hologram;
     public final EntityArmorStand entity;
-    private boolean showing = true;
     private boolean destroyed = false;
 
     public HoloLine(String text, IHologram hologram) {
@@ -98,25 +97,6 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
         v1_21_R1.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
-    }
-
-    @Override
-    public void show() {
-        this.showing = true;
-        entity.n(true);
-        update();
-    }
-
-    @Override
-    public void hide() {
-        this.showing = false;
-        entity.n(false);
-        update();
-    }
-
-    @Override
-    public boolean isShowing() {
-        return showing;
     }
 
     @Override
