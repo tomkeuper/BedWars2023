@@ -327,7 +327,7 @@ public class SetupSession implements ISetupSession {
      * @return team color.
      */
     public ChatColor getTeamColor(String team) {
-        return TeamColor.getChatColor(getConfig().getString("Team." + team + ".Color"));
+        return TeamColor.getChatColor(getConfig().getString("Team." + ChatColor.stripColor(team) + ".Color"));
     }
 
     /**
