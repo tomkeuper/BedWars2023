@@ -1078,8 +1078,8 @@ public class BedWars extends JavaPlugin {
             }
 
             // Default Head
-            if ((material == Material.SKULL_ITEM && data == 3) || material.name().equals("PLAYER_HEAD")) {
-                builder.setSkullOwner("MrCeasar");
+            if ((material.name().equals("SKULL_ITEM") && data == 3)) {
+                builder.setSkull("MrCeasar");
             }
 
             ItemStack itemStack = builder.build();
@@ -1145,8 +1145,8 @@ public class BedWars extends JavaPlugin {
             }
 
             // Default Head
-            if ((material == Material.SKULL_ITEM && data == 3) || material.name().equals("PLAYER_HEAD")) {
-                builder.setSkullOwner("MrCeasar");
+            if ((material.name().equals("SKULL_ITEM") && data == 3) || material.name().equals("PLAYER_HEAD")) {
+                builder.setSkull("MrCeasar");
             }
 
             ItemStack itemStack = builder.build();
@@ -1186,25 +1186,18 @@ public class BedWars extends JavaPlugin {
                 continue;
             }
 
-            String materialStr = config.getYml().getString(
-                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item));
+            String materialStr = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL.replace("%path%", item));
             Material material = Material.valueOf(materialStr);
-            int data = config.getInt(
-                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item));
-            boolean enchanted = config.getBoolean(
-                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item));
-            int slot = config.getInt(
-                    ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item));
+            int data = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA.replace("%path%", item));
+            boolean enchanted = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item));
+            int slot = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item));
 
-            ItemBuilder builder = new ItemBuilder(material)
-                    .setData((short) data);
-            if (enchanted) {
-                builder.setGlow(true);
-            }
+            ItemBuilder builder = new ItemBuilder(material).setData((short) data);
+            if (enchanted) builder.setGlow(true);
 
             // Default Head
-            if ((material == Material.SKULL_ITEM && data == 3) || material.name().equals("PLAYER_HEAD")) {
-                builder.setSkullOwner("MrCeasar");
+            if (material.name().equals("PLAYER_HEAD") || material.name().equals("SKULL_ITEM") && data == 3) {
+                builder.setSkull("MrCeasar");
             }
 
             ItemStack itemStack = builder.build();
