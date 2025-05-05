@@ -1,8 +1,6 @@
 package com.tomkeuper.bedwars.utils;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import org.bukkit.Bukkit;
+import com.saicone.rtag.util.SkullTexture;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -10,18 +8,13 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ItemBuilder {
 
-    private final ItemStack item;
+    private ItemStack item;
     private ItemMeta itemMeta;
 
     public ItemBuilder(Material material) {
@@ -48,13 +41,8 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder addEnchant(Enchantment enchantment, int level) {
+    public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
         itemMeta.addEnchant(enchantment, level, true);
-        return this;
-    }
-
-    public ItemBuilder addUnsafeEnchant(Enchantment enchantment, int level) {
-        item.addUnsafeEnchantment(enchantment, level);
         return this;
     }
 
@@ -68,39 +56,9 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setSkullOwner(String owner) {
-        if (item.getType() == Material.SKULL_ITEM || item.getType().name().equals("PLAYER_HEAD")) {
-            SkullMeta skullMeta = (SkullMeta) itemMeta;
-            if (item.getType() == Material.SKULL_ITEM) {
-                skullMeta.setOwner(owner);
-            } else {
-                try {
-                    Method method = skullMeta.getClass().getMethod("setOwningPlayer", org.bukkit.OfflinePlayer.class);
-                    method.invoke(skullMeta, Bukkit.getOfflinePlayer(owner));
-                } catch (Exception e) {
-                    skullMeta.setOwner(owner);
-                }
-            }
-            this.itemMeta = skullMeta;
-        }
-        return this;
-    }
-
-    public ItemBuilder setSkullValue(String value) {
-        if ((item.getType() == Material.SKULL_ITEM && item.getDurability() == 3)
-                || item.getType().name().equals("PLAYER_HEAD")) {
-            SkullMeta skullMeta = (SkullMeta) itemMeta;
-            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-            profile.getProperties().put("textures", new Property("textures", value));
-            try {
-                Field profileField = skullMeta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(skullMeta, profile);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            this.itemMeta = skullMeta;
-        }
+    public ItemBuilder setSkull(String owner) {
+        ItemStack head = SkullTexture.getTexturedHead(owner);
+        this.item = head;
         return this;
     }
 
