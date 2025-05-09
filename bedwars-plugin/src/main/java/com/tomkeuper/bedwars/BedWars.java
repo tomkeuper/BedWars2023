@@ -1067,7 +1067,7 @@ public class BedWars extends JavaPlugin {
             boolean enchanted = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item));
             int slot = config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item));
 
-            ItemBuilder builder = new ItemBuilder(material).setData((short) data);
+            ItemBuilder builder = new ItemBuilder(material).setDurability((short) data);
             if (enchanted) builder.setGlow(true);
 
             // Default Head
@@ -1118,7 +1118,7 @@ public class BedWars extends JavaPlugin {
             boolean enchanted = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item));
             int slot = config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item));
 
-            ItemBuilder builder = new ItemBuilder(material).setData((short) data);
+            ItemBuilder builder = new ItemBuilder(material).setDurability((short) data);
             if (enchanted) builder.setGlow(true);
 
             // Default Head
@@ -1169,7 +1169,7 @@ public class BedWars extends JavaPlugin {
             boolean enchanted = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_ENCHANTED.replace("%path%", item));
             int slot = config.getInt(ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_SLOT.replace("%path%", item));
 
-            ItemBuilder builder = new ItemBuilder(material).setData((short) data);
+            ItemBuilder builder = new ItemBuilder(material).setDurability((short) data);
             if (enchanted) builder.setGlow(true);
 
             // Default Head

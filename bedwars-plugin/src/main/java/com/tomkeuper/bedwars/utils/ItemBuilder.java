@@ -67,11 +67,6 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder setData(short data) {
-        item.setDurability(data);
-        return this;
-    }
-
     public ItemBuilder setDurability(int durability) {
         item.setDurability((short) durability);
         return this;
