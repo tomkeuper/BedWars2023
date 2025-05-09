@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.arena;
 
+import com.saicone.rtag.util.SkullTexture;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -1745,12 +1746,9 @@ public class Arena implements IArena {
             ItemStack item = lobbyItem.getItem();
 
             if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
-                // Clone the item to preserve custom data (NBT tags).
-                ItemStack newItem = item.clone();
-                SkullMeta skullMeta = (SkullMeta) newItem.getItemMeta();
-                skullMeta.setOwner(p.getName());
-                newItem.setItemMeta(skullMeta);
-                item = newItem;
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                head.setItemMeta(item.getItemMeta());
+                item = head;
             }
 
             // Update the item's display name and lore based on the player's language.
@@ -1780,12 +1778,9 @@ public class Arena implements IArena {
             ItemStack item = preGameItem.getItem();
 
             if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
-                // Clone the item to preserve any custom data.
-                ItemStack newItem = item.clone();
-                SkullMeta skullMeta = (SkullMeta) newItem.getItemMeta();
-                skullMeta.setOwner(p.getName());
-                newItem.setItemMeta(skullMeta);
-                item = newItem;
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                head.setItemMeta(item.getItemMeta());
+                item = head;
             }
 
             // Update the item meta (display name and lore) based on the player's language.
@@ -1815,12 +1810,9 @@ public class Arena implements IArena {
             ItemStack item = spectatorItem.getItem();
 
             if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
-                // Clone the item to preserve custom data.
-                ItemStack newItem = item.clone();
-                SkullMeta skullMeta = (SkullMeta) newItem.getItemMeta();
-                skullMeta.setOwner(p.getName());
-                newItem.setItemMeta(skullMeta);
-                item = newItem;
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                head.setItemMeta(item.getItemMeta());
+                item = head;
             }
 
             // Update the item's display name and lore based on the player's language.
