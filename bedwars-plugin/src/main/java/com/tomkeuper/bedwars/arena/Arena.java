@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.arena;
 
+import com.saicone.rtag.util.SkullTexture;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -68,6 +69,7 @@ import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.vault.WithEconomy;
+import com.tomkeuper.bedwars.utils.ItemBuilder;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
@@ -84,6 +86,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -1731,7 +1734,7 @@ public class Arena implements IArena {
     }
 
     /**
-     * This will give the lobby items to the player.
+     * This method gives the lobby items to the player.
      * Not used in serverType BUNGEE.
      * This will clear the inventory first.
      */
@@ -1741,26 +1744,31 @@ public class Arena implements IArena {
 
         for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getLobbyItems()) {
             ItemStack item = lobbyItem.getItem();
-            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
+
+            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                head.setItemMeta(item.getItemMeta());
+                item = head;
+            }
+
+            // Update the item's display name and lore based on the player's language.
+            ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
-                String name;
-                List<String> lore;
-
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
-
+                String name = SupportPAPI.getSupportPAPI().replace(p,
+                        getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
+                List<String> lore = SupportPAPI.getSupportPAPI().replace(p,
+                        getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
-
                 item.setItemMeta(itemMeta);
             }
+
             if (lobbyItem.getHandler().isVisible(p, null)) p.getInventory().setItem(lobbyItem.getSlot(), item);
         }
     }
 
     /**
-     * This will give the pre-game command Items.
+     * This method gives the pre-game command items.
      * This will clear the inventory first.
      */
     public void sendPreGameCommandItems(Player p) {
@@ -1768,50 +1776,58 @@ public class Arena implements IArena {
 
         for (IPermanentItem preGameItem : BedWars.getAPI().getItemUtil().getPreGameItems()) {
             ItemStack item = preGameItem.getItem();
-            ItemMeta itemMeta = preGameItem.getItem().getItemMeta();
+
+            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                head.setItemMeta(item.getItemMeta());
+                item = head;
+            }
+
+            // Update the item meta (display name and lore) based on the player's language.
+            ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
-                String name;
-                List<String> lore;
-
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
-
+                String name = SupportPAPI.getSupportPAPI().replace(p,
+                        getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
+                List<String> lore = SupportPAPI.getSupportPAPI().replace(p,
+                        getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
-
                 item.setItemMeta(itemMeta);
             }
-            if (preGameItem.getHandler().isVisible(p, this))
-                p.getInventory().setItem(preGameItem.getSlot(), item);
+
+            if (preGameItem.getHandler().isVisible(p, this)) p.getInventory().setItem(preGameItem.getSlot(), item);
         }
     }
 
     /**
-     * This will give the spectator command Items.
+     * This method gives the spectator command items.
      * This will clear the inventory first.
      */
     public void sendSpectatorCommandItems(Player p) {
         p.getInventory().clear();
 
-        for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
-            ItemStack item = lobbyItem.getItem();
-            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
+        for (IPermanentItem spectatorItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
+            ItemStack item = spectatorItem.getItem();
+
+            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                head.setItemMeta(item.getItemMeta());
+                item = head;
+            }
+
+            // Update the item's display name and lore based on the player's language.
+            ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
-                String name;
-                List<String> lore;
-
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
-
+                String name = SupportPAPI.getSupportPAPI().replace(p,
+                        getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", spectatorItem.getIdentifier())));
+                List<String> lore = SupportPAPI.getSupportPAPI().replace(p,
+                        getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", spectatorItem.getIdentifier())));
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
-
                 item.setItemMeta(itemMeta);
             }
-            if (lobbyItem.getHandler().isVisible(p, this))
-                p.getInventory().setItem(lobbyItem.getSlot(), item);
+
+            if (spectatorItem.getHandler().isVisible(p, this)) p.getInventory().setItem(spectatorItem.getSlot(), item);
         }
     }
 
