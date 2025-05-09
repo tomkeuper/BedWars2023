@@ -1061,47 +1061,31 @@ public class BedWars extends JavaPlugin {
                 continue;
             }
 
-            String materialStr = config.getYml().getString(
-                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item));
+            String materialStr = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_MATERIAL.replace("%path%", item));
             Material material = Material.valueOf(materialStr);
-            int data = config.getInt(
-                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item));
-            boolean enchanted = config.getBoolean(
-                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item));
-            int slot = config.getInt(
-                    ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item));
+            int data = config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_DATA.replace("%path%", item));
+            boolean enchanted = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_ENCHANTED.replace("%path%", item));
+            int slot = config.getInt(ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_SLOT.replace("%path%", item));
 
-            ItemBuilder builder = new ItemBuilder(material)
-                    .setData((short) data);
-            if (enchanted) {
-                builder.setGlow(true);
-            }
+            ItemBuilder builder = new ItemBuilder(material).setData((short) data);
+            if (enchanted) builder.setGlow(true);
 
             // Default Head
-            if ((material.name().equals("SKULL_ITEM") && data == 3)) {
+            if (material.name().equals("PLAYER_HEAD") || material.name().equals("SKULL_ITEM") && data == 3) {
                 builder.setSkull("MrCeasar");
             }
 
             ItemStack itemStack = builder.build();
-
             ItemStack finalItemStack = nms.addCustomData(itemStack, "preGameItem");
 
             PreGameItem preGameItem;
             IPermanentItemHandler handler = itemHandlers.get(item);
             if (handler != null) {
-                preGameItem = new PreGameItem(
-                        handler,
-                        finalItemStack,
-                        slot,
-                        item);
+                preGameItem = new PreGameItem(handler, finalItemStack, slot, item);
             } else {
                 if (config.getYml().getString(
                         ConfigPath.GENERAL_CONFIGURATION_PRE_GAME_ITEMS_COMMAND.replace("%path%", item)) != null) {
-                    preGameItem = new PreGameItem(
-                            itemHandlers.get("command"),
-                            finalItemStack,
-                            slot,
-                            item);
+                    preGameItem = new PreGameItem(itemHandlers.get("command"), finalItemStack, slot, item);
                 } else {
                     this.getLogger().severe("No handler or command found for pre-game item: " + item);
                     continue;
@@ -1128,21 +1112,14 @@ public class BedWars extends JavaPlugin {
                 continue;
             }
 
-            String materialStr = config.getYml().getString(
-                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item));
+            String materialStr = config.getYml().getString(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_MATERIAL.replace("%path%", item));
             Material material = Material.valueOf(materialStr);
-            int data = config.getInt(
-                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item));
-            boolean enchanted = config.getBoolean(
-                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item));
-            int slot = config.getInt(
-                    ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item));
+            int data = config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_DATA.replace("%path%", item));
+            boolean enchanted = config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_ENCHANTED.replace("%path%", item));
+            int slot = config.getInt(ConfigPath.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_SLOT.replace("%path%", item));
 
-            ItemBuilder builder = new ItemBuilder(material)
-                    .setData((short) data);
-            if (enchanted) {
-                builder.setGlow(true);
-            }
+            ItemBuilder builder = new ItemBuilder(material).setData((short) data);
+            if (enchanted) builder.setGlow(true);
 
             // Default Head
             if ((material.name().equals("SKULL_ITEM") && data == 3) || material.name().equals("PLAYER_HEAD")) {
