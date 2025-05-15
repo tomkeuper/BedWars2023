@@ -136,6 +136,7 @@ val versions = setOf(
     projects.versionsupportV121R3,
     projects.resetadapterSlime,
     projects.resetadapterSlimepaper,
+    projects.resetadapterAdvancedslimepaper,
     projects.resetadapterAswm
 ).map { it.dependencyProject }
 

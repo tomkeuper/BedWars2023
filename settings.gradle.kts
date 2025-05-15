@@ -7,6 +7,7 @@ include(":bedwars-plugin")
 // world managers
 include(":resetadapter_aswm")
 include(":resetadapter_slimepaper")
+include(":resetadapter_advancedslimepaper")
 include(":resetadapter_slime")
 
 include(":versionsupport_1_8_r3")
