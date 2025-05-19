@@ -24,6 +24,7 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.player.PlayerItemDepositEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -98,13 +99,18 @@ public class ResourceChestFeature implements Listener {
         }
 
         if (hand.getType().name().contains("SWORD")) {
-            e.setCancelled(true);
-            Inventory inv = isChest
+            Inventory inventory = isChest
                     ? ((Chest) block.getState()).getBlockInventory()
                     : player.getEnderChest();
-            inv.addItem(hand.clone());
+
+            inventory.addItem(hand.clone());
             player.getInventory().remove(hand);
+
             team.defaultSword(player, true);
+
+            new PlayerItemDepositEvent(
+                    player, arena, hand.clone(), inventory, isEnderChest
+            );
             return;
         }
 
@@ -115,5 +121,9 @@ public class ResourceChestFeature implements Listener {
 
         inventory.addItem(hand.clone());
         player.getInventory().remove(hand);
+
+        new PlayerItemDepositEvent(
+                player, arena, hand.clone(), inventory, isEnderChest
+        );
     }
 }
