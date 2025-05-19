@@ -43,7 +43,7 @@ public class MainConfig extends ConfigManager {
         YamlConfiguration yml = getYml();
 
         yml.options().header(plugin.getDescription().getName() + " by Mr. Ceasar.\n" +
-                "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023\n");
+                "Documentation here: https://github.com/tomkeuper/BedWars2023/wiki\n");
         yml.addDefault("timeZone", "Europe/Rome");
         yml.addDefault("serverType", "MULTIARENA");
         yml.addDefault("language", "en");
@@ -54,7 +54,7 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE, 50);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR, false);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED, false);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED, Arrays.asList("WOODEN_SWORD", "SHEARS", "COMPASS"));
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED, Arrays.asList(BedWars.getForCurrentVersion("WOOD_SWORD", "WOODEN_SWORD", "WOODEN_SWORD"), "SHEARS", "COMPASS"));
         yml.addDefault(ConfigPath.GENERAL_CHAT_GLOBAL, yml.get("globalChat", false));
         yml.addDefault(ConfigPath.GENERAL_CHAT_FORMATTING, yml.get("formatChat", true));
         yml.addDefault("debug", false);
