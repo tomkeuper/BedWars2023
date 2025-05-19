@@ -678,6 +678,11 @@ public class BedWars extends JavaPlugin {
             HalloweenSpecial.init();
         }
 
+        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED)) {
+            // Resource Chest
+            ResourceChestFeature.init();
+        }
+
         // Register features
         SpoilPlayerTNTFeature.init();
         GenSplitFeature.init();
