@@ -98,22 +98,6 @@ public class ResourceChestFeature implements Listener {
             return;
         }
 
-        if (hand.getType().name().contains("SWORD")) {
-            Inventory inventory = isChest
-                    ? ((Chest) block.getState()).getBlockInventory()
-                    : player.getEnderChest();
-
-            inventory.addItem(hand.clone());
-            player.getInventory().remove(hand);
-
-            team.defaultSword(player, true);
-
-            new PlayerItemDepositEvent(
-                    player, arena, hand.clone(), inventory, isEnderChest
-            );
-            return;
-        }
-
         // determine which inventory to deposit into
         Inventory inventory = isChest
                 ? ((Chest) block.getState()).getBlockInventory()
@@ -122,8 +106,12 @@ public class ResourceChestFeature implements Listener {
         inventory.addItem(hand.clone());
         player.getInventory().remove(hand);
 
-        new PlayerItemDepositEvent(
-                player, arena, hand.clone(), inventory, isEnderChest
-        );
+        if (hand.getType().name().contains("SWORD")) team.defaultSword(player, true);
+
+        callEvent(player, arena, hand.clone(), inventory, isEnderChest);
+    }
+
+    private void callEvent(Player player, IArena arena, ItemStack item, Inventory inventory, boolean isEnderChest) {
+        new PlayerItemDepositEvent(player, arena, item.clone(), inventory, isEnderChest);
     }
 }
