@@ -21,7 +21,10 @@
 package com.tomkeuper.bedwars.arena.feature;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -63,6 +66,8 @@ public class ResourceChestFeature implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLeftClickChest(PlayerInteractEvent e) {
+        IArena arena = Arena.getArenaByPlayer(e.getPlayer());
+        if (arena == null) return;
         if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
         // get the clicked block and verify it's a chest or ender chest
@@ -73,16 +78,33 @@ public class ResourceChestFeature implements Listener {
         boolean isEnderChest = block.getType() == Material.ENDER_CHEST;
         if (!isChest && !isEnderChest) return;
 
+        ITeam team = arena.getTeam(e.getPlayer());
+        if (team == null) return;
+
         // get player and the item in hand
         Player player = e.getPlayer();
         ItemStack hand = e.getItem();
         if (hand == null || hand.getType() == Material.AIR) return;
 
-        // skip if item is in the blocked set or is a tool (axe/pickaxe/shears)
+        Material woodenSword = Material.getMaterial(BedWars.getForCurrentVersion("WOOD_SWORD", "WOODEN_SWORD", "WOODEN_SWORD"));
+
+        // skip if item is in the blocked set or is a tool (axe/pickaxe/shears/woodSword)
         if (blocked.contains(hand.getType())
                 || hand.getType().name().contains("AXE")
                 || hand.getType().name().contains("PICKAXE")
+                || hand.getType() == woodenSword
                 || hand.getType() == Material.SHEARS) {
+            return;
+        }
+
+        if (hand.getType().name().contains("SWORD")) {
+            e.setCancelled(true);
+            Inventory inv = isChest
+                    ? ((Chest) block.getState()).getBlockInventory()
+                    : player.getEnderChest();
+            inv.addItem(hand.clone());
+            player.getInventory().remove(hand);
+            team.defaultSword(player, true);
             return;
         }
 
