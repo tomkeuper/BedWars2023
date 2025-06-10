@@ -937,36 +937,44 @@ public class BedWars extends JavaPlugin {
      * @return true when custom adapter was registered.
      */
     private boolean handleWorldAdapter() { //todo fix version check because current check is limited
-        Plugin swmPlugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
+        String adapterPath;
+        if (nms.getVersion() <= 12){
+            Plugin swmPlugin = Bukkit.getPluginManager().getPlugin("SlimeWorldManager");
 
-        if (null == swmPlugin) {
-            return false;
-        }
-        PluginDescriptionFile pluginDescription = swmPlugin.getDescription();
-        if (null == pluginDescription) {
-            return false;
-        }
+            if (null == swmPlugin) {
+                return false;
+            }
+            PluginDescriptionFile pluginDescription = swmPlugin.getDescription();
+            if (null == pluginDescription) {
+                return false;
+            }
 
-        String[] versionString = pluginDescription.getVersion().split("\\.");
+            String[] versionString = pluginDescription.getVersion().split("\\.");
 
-
-        try {
             int major = Integer.parseInt(versionString[0]);
             int minor = Integer.parseInt(versionString[1]);
             int release = versionString.length >= 3 ? Integer.parseInt(versionString[2]) : 0;
 
-            String adapterPath;
             if (((major == 2 && minor == 2 && release == 1) || swmPlugin.getDescription().getVersion().equals("2.3.0-SNAPSHOT")) && (nms.getVersion() == 0 || nms.getVersion() == 5)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimeAdapter";
             } else if ((major == 2 && (minor >= 8 && minor <= 10) && (release >= 0 && release <= 9)) && (nms.getVersion() == 8)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.AdvancedSlimeAdapter";
-            } else if ((major > 2 || major == 2 && minor >= 10) && nms.getVersion() >= 9) {
+            } else if ((major > 2 || major == 2 && minor >= 10) && (nms.getVersion() >= 9 && nms.getVersion() <= 12)) {
                 adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.SlimePaperAdapter";
             } else {
                 this.getLogger().warning("Could not find adapter path for SWM version, is it unsupported?");
                 return false;
             }
+        } else {
+            if (Bukkit.getServer().getName().equalsIgnoreCase("AdvancedSlimePaper")){
+                adapterPath = "com.tomkeuper.bedwars.arena.mapreset.slime.AdvancedSlimePaperAdapter";
+            } else {
+                this.getLogger().warning("Could not find adapter path for ASP version, is it unsupported?");
+                return false;
+            }
+        }
 
+        try {
             Constructor<?> constructor = Class.forName(adapterPath).getConstructor(Plugin.class);
             getLogger().info("Loading restore adapter: " + adapterPath + " ...");
 
