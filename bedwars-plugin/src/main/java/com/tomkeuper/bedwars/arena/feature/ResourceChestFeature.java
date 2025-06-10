@@ -91,10 +91,8 @@ public class ResourceChestFeature implements Listener {
 
         // skip if item is in the blocked set or is a tool (axe/pickaxe/shears/woodSword)
         if (blocked.contains(hand.getType())
-                || hand.getType().name().contains("AXE")
-                || hand.getType().name().contains("PICKAXE")
-                || hand.getType() == woodenSword
-                || hand.getType() == Material.SHEARS) {
+                || bedwars.getNms().isTool(hand)
+                || bedwars.getNms().getCustomData(hand).equalsIgnoreCase("DEFAULT_ITEM")) {
             return;
         }
 
