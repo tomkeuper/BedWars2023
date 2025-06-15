@@ -104,16 +104,25 @@ public class TeamAssigner implements ITeamAssigner {
         if (remainingPlayers.isEmpty()) return;
 
         BedWars.debug("Assigning teams for arena: " + arena.getArenaName() + " with; max in team: " + arena.getMaxInTeam() + " size: " + arena.getPlayers().size() + " teams: " + arena.getTeams().size());
-        for (Player player: remainingPlayers) {
+
+        for (Player player : remainingPlayers) {
             player.closeInventory();
-            findTargetTeam(arena.getTeams(),arena.getMaxInTeam(), arena.getPlayers().size()).addPlayers(player);
+
+            ITeam target = findTargetTeam(arena.getTeams(), arena.getMaxInTeam(), arena.getPlayers().size());
+
+            if (target == null) {
+                BedWars.debug("No available team slot for player " + player.getName() + " in arena " + arena.getArenaName());
+                continue;
+            }
+
+            target.addPlayers(player);
         }
     }
 
     /**
      * Finds the target team to add a player based on the following criteria:
      * - If there is a team with fewer players than the maximum allowed per team, and fewer than maxPlayersPerTeam - 1 players,
-     *   it returns that team.
+     * it returns that team.
      * - If player amount > 2, it will check for teams with player count of 1 to return as target
      * - If no such team is found, it returns the first team with available space (i.e., fewer players than maxPlayersPerTeam).
      * - If no team with available space is found, it returns null (arena = full).
@@ -136,7 +145,7 @@ public class TeamAssigner implements ITeamAssigner {
             }
 
             // Group players together if 1 player in team. Only if playerAmount > 2 and team size is not bigger than maxPlayersPerTeam
-            if (numPlayers == 1 && (playerAmount > 2) && (maxPlayersPerTeam > numPlayers)){
+            if (numPlayers == 1 && (playerAmount > 2) && (maxPlayersPerTeam > numPlayers)) {
                 BedWars.debug("found team with 1 player (" + team.getName() + ")");
                 return team;
             }
