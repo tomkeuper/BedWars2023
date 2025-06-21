@@ -33,6 +33,7 @@ import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
+import com.tomkeuper.bedwars.arena.feature.ResourceChestFeature;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -673,10 +674,11 @@ public class BedWars extends JavaPlugin {
 
 //        registerEvents(new ScoreboardListener()); #Disabled for now
 
-        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN)) {
-            // Halloween Special
-            HalloweenSpecial.init();
-        }
+        // Halloween Special
+        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN)) HalloweenSpecial.init();
+
+        // Resource Chest
+        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED)) ResourceChestFeature.init();
 
         // Register features
         SpoilPlayerTNTFeature.init();
