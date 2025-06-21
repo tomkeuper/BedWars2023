@@ -20,7 +20,6 @@
 
 package com.tomkeuper.bedwars.arena;
 
-import com.saicone.rtag.util.SkullTexture;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -1739,16 +1738,25 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public static void sendLobbyCommandItems(Player p) {
+        // Check if the player is in the lobby world.
         if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
         p.getInventory().clear();
 
+        // Loop through all lobby items.
         for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getLobbyItems()) {
+            // Retrieve the loaded item.
             ItemStack item = lobbyItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
-                ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
-                item = head;
+            // If the item is a skull (SKULL_ITEM with durability 3 or PLAYER_HEAD), update its SkullMeta.
+            if ((item.getType() == Material.SKULL_ITEM && item.getDurability() == 3)
+                    || item.getType().name().equals("PLAYER_HEAD")) {
+                // Clone the item to preserve custom data (NBT tags).
+                ItemStack newItem = item.clone();
+                SkullMeta skullMeta = (SkullMeta) newItem.getItemMeta();
+                // Set the player's name as the skull owner, which updates the skin.
+                skullMeta.setOwner(p.getName());
+                newItem.setItemMeta(skullMeta);
+                item = newItem;
             }
 
             // Update the item's display name and lore based on the player's language.
@@ -1763,6 +1771,7 @@ public class Arena implements IArena {
                 item.setItemMeta(itemMeta);
             }
 
+            // If the item is visible for the player, set it in the inventory at the specified slot.
             if (lobbyItem.getHandler().isVisible(p, null)) p.getInventory().setItem(lobbyItem.getSlot(), item);
         }
     }
@@ -1772,15 +1781,24 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public void sendPreGameCommandItems(Player p) {
+        // Clear the player's inventory.
         p.getInventory().clear();
 
+        // Loop through all pre-game items.
         for (IPermanentItem preGameItem : BedWars.getAPI().getItemUtil().getPreGameItems()) {
+            // Retrieve the loaded item.
             ItemStack item = preGameItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
-                ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
-                item = head;
+            // If the item is a skull (SKULL_ITEM with durability 3 or PLAYER_HEAD), update its SkullMeta.
+            if ((item.getType() == Material.SKULL_ITEM && item.getDurability() == 3)
+                    || item.getType().name().equals("PLAYER_HEAD")) {
+                // Clone the item to preserve any custom data.
+                ItemStack newItem = item.clone();
+                SkullMeta skullMeta = (SkullMeta) newItem.getItemMeta();
+                // Set the skull owner to the current player's name.
+                skullMeta.setOwner(p.getName());
+                newItem.setItemMeta(skullMeta);
+                item = newItem;
             }
 
             // Update the item meta (display name and lore) based on the player's language.
@@ -1795,6 +1813,7 @@ public class Arena implements IArena {
                 item.setItemMeta(itemMeta);
             }
 
+            // If the pre-game item is visible, place it in the player's inventory at the specified slot.
             if (preGameItem.getHandler().isVisible(p, this)) p.getInventory().setItem(preGameItem.getSlot(), item);
         }
     }
@@ -1804,15 +1823,24 @@ public class Arena implements IArena {
      * This will clear the inventory first.
      */
     public void sendSpectatorCommandItems(Player p) {
+        // Clear the player's inventory.
         p.getInventory().clear();
 
+        // Loop through all spectator items.
         for (IPermanentItem spectatorItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
+            // Retrieve the loaded item.
             ItemStack item = spectatorItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
-                ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
-                item = head;
+            // If the item is a skull (SKULL_ITEM with durability 3 or PLAYER_HEAD), update its SkullMeta.
+            if ((item.getType() == Material.SKULL_ITEM && item.getDurability() == 3)
+                    || item.getType().name().equals("PLAYER_HEAD")) {
+                // Clone the item to preserve custom data.
+                ItemStack newItem = item.clone();
+                SkullMeta skullMeta = (SkullMeta) newItem.getItemMeta();
+                // Set the skull owner to the current player's name.
+                skullMeta.setOwner(p.getName());
+                newItem.setItemMeta(skullMeta);
+                item = newItem;
             }
 
             // Update the item's display name and lore based on the player's language.
@@ -1827,6 +1855,7 @@ public class Arena implements IArena {
                 item.setItemMeta(itemMeta);
             }
 
+            // If the spectator item is visible, add it to the player's inventory at the specified slot.
             if (spectatorItem.getHandler().isVisible(p, this)) p.getInventory().setItem(spectatorItem.getSlot(), item);
         }
     }
