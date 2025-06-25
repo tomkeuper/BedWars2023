@@ -100,7 +100,7 @@ public class Hologram implements IHologram {
     public void show() {
         this.showing = true;
         for (IHoloLine line : this.lines) {
-            line.show();
+            line.reveal();
         }
     }
 
@@ -108,7 +108,7 @@ public class Hologram implements IHologram {
     public void hide() {
         this.showing = false;
         for (IHoloLine line : this.lines) {
-            line.hide();
+            line.remove();
         }
     }
 
