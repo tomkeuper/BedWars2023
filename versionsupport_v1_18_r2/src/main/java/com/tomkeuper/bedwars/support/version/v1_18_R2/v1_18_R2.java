@@ -57,10 +57,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBase;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -99,6 +96,11 @@ public class v1_18_R2 extends VersionSupport {
     public v1_18_R2(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
+    }
+
+    @Override
+    public void customExplosion(World world, Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+
     }
 
     @Override

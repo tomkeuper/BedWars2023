@@ -105,6 +105,11 @@ public class v1_19_R3 extends VersionSupport {
     }
 
     @Override
+    public void customExplosion(World world, Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+
+    }
+
+    @Override
     public void registerVersionListeners() {
         new VersionCommon(this);
     }

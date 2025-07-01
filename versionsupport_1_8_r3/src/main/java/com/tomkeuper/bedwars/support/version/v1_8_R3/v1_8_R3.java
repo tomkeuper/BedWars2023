@@ -37,6 +37,7 @@ import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.Hologram;
 import net.minecraft.server.v1_8_R3.*;
+import net.minecraft.server.v1_8_R3.Entity;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -49,6 +50,7 @@ import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -63,6 +65,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
 
@@ -77,6 +80,27 @@ public class v1_8_R3 extends VersionSupport {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void customExplosion(org.bukkit.World world, org.bukkit.entity.Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+        World nmsWorld = ((CraftWorld) world).getHandle();
+        Entity nmsSource = ((CraftEntity) source).getHandle();
+        CustomExplosion explosion = new CustomExplosion(
+                nmsWorld,
+                nmsSource,
+                x,
+                y,
+                z,
+                power, // explosion size
+                setFire, // set fire
+                breakBlocks   // break blocks
+        );
+        explosion.a();
+        explosion.a(true);
+//        Logger.getAnonymousLogger().info("-= block list: " + explosion.getBlocks().size());
+//        Logger.getAnonymousLogger().info("was Cancelled: " + explosion.wasCanceled);
+    }
+
 
     public void spawnSilverfish(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, double damage) {
         new Despawnable(com.tomkeuper.bedwars.support.version.v1_8_R3.Silverfish.spawn(loc, bedWarsTeam, speed, health, despawn, damage), bedWarsTeam, despawn,

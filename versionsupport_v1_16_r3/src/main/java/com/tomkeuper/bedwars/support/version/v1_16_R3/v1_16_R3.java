@@ -42,6 +42,7 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -78,6 +79,11 @@ public class v1_16_R3 extends VersionSupport {
     public v1_16_R3(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
+    }
+
+    @Override
+    public void customExplosion(World world, Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+
     }
 
     @Override

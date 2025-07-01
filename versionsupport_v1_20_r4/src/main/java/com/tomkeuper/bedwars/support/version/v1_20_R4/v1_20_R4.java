@@ -104,6 +104,11 @@ public final class v1_20_R4 extends VersionSupport {
     }
 
     @Override
+    public void customExplosion(World world, Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+
+    }
+
+    @Override
     public void registerCommand(String name, Command cmd) {
         ((CraftServer) getPlugin().getServer()).getCommandMap().register(name, cmd);
     }

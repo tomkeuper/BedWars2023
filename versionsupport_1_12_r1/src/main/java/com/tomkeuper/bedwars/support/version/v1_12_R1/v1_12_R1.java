@@ -42,6 +42,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Bed;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
@@ -50,6 +51,7 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.entity.*;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -76,6 +78,11 @@ public class v1_12_R1 extends VersionSupport {
         } catch (InvalidEffectException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void customExplosion(World world, Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks) {
+
     }
 
     @Override

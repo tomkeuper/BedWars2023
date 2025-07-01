@@ -32,10 +32,12 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -71,6 +73,8 @@ public abstract class VersionSupport {
             e.printStackTrace();
         }
     }
+
+    public abstract void customExplosion(World world, Entity source, double x, double y, double z, float power, boolean setFire, boolean breakBlocks);
 
     /**
      * Register a new command as bukkit command

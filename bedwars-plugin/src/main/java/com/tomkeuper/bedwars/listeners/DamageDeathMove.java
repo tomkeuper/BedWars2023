@@ -98,6 +98,8 @@ public class DamageDeathMove implements Listener {
 
         if (!(e.getEntity() instanceof Player)) return;
 
+        BedWars.debug("Player " + e.getEntity().getName() + " got damaged by " + e.getCause().name() + " with damage: " + e.getDamage());
+
         Player player = (Player) e.getEntity();
         IArena arena = Arena.getArenaByPlayer(player);
 
