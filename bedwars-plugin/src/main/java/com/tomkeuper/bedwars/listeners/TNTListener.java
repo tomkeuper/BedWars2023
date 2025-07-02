@@ -55,15 +55,15 @@ public class TNTListener implements Listener {
     public void onEntityExplode(EntityExplodeEvent event) {
 
         BedWars.debug("TNT explosion detected");
-        BedWars.debug("Metadata: " + event.getEntity().getMetadata("custom-explosion"));
-        if (event.getEntity() != null && event.getEntity().hasMetadata("custom-explosion")) {
+        BedWars.debug("Metadata: " + event.getEntity().getMetadata("custom-explosion").get(0).asString());
+        if (event.getEntity() != null && event.getEntity().getMetadata("custom-explosion").get(0).asBoolean()) {
             // Let this one happen
             BedWars.debug("has custom-explosion metadata, allowing explosion.");
-            event.setCancelled(true);
             return;
         }
 
         // Cancel default explosion to prevent double execution
+        event.setCancelled(true);
         BedWars.debug("TNT explosion detected, cancelling default explosion behavior.");
     }
 
@@ -74,8 +74,6 @@ public class TNTListener implements Listener {
 
             // Run custom explosion instead
             if (!event.getEntity().hasMetadata("custom-explosion")){
-//                TNTPrimed tnt = (TNTPrimed) event.getEntity();
-//                tnt.remove(); // Important! Prevents duplicate explosion
                 event.setCancelled(true);
                 event.getEntity().remove();
 
@@ -89,7 +87,7 @@ public class TNTListener implements Listener {
                         newTNT.getLocation().getY(),
                         newTNT.getLocation().getZ(),
                         4.0F, // explosion size
-                        false, // set fire
+                        event.getFire(), // set fire
                         true   // break blocks
                 );
 

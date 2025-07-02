@@ -4,7 +4,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.event.CraftEventFactory;
+import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -89,6 +97,7 @@ public class CustomExplosion extends Explosion {
                                     float resistance = this.source != null ? this.source.a(this, this.world, pos, blockData) :
                                             block.a((Entity) null);
 
+
                                     power -= (resistance + 0.3F) * 0.3F;
                                 }
 
@@ -162,43 +171,186 @@ public class CustomExplosion extends Explosion {
     }
 
     @Override
-    public void a(boolean spawnParticles) {
-        this.world.makeSound(this.posX, this.posY, this.posZ, "random.explode", 4.0F, (1.0F + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2F) * 0.7F);
+    public void a(boolean showParticles) {
+        Logger.getAnonymousLogger().info("Custom Explosion a(boolean showParticles) called with size: " + this.size + ", particles: " + showParticles + " breakBlocks: " + this.breakBlocks);
+        world.makeSound(posX, posY, posZ, "random.explode", 4.0F,
+                (1.0F + (world.random.nextFloat() - world.random.nextFloat()) * 0.2F) * 0.7F);
 
-        if (this.size >= 2.0F && this.breakBlocks) {
-            this.world.addParticle(EnumParticle.EXPLOSION_HUGE, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D, new int[0]);
+        if (size >= 2.0F && breakBlocks) {
+            Logger.getAnonymousLogger().info("Spawning HUGE explosion particles at " + posX + ", " + posY + ", " + posZ);
+            Logger.getAnonymousLogger().info("World: " + world.getWorld().getName());
+//            this.world.addParticle(EnumParticle.EXPLOSION_HUGE, posX, posY, posZ, 1.0D, 0.0F, 0.0F, new int[0]);
+
+            // particles are client side only, so we need to send them to players instead
+            for (Player player : world.getWorld().getPlayers()) {
+                if (player.getLocation().distanceSquared(new Location(player.getWorld(), posX, posY, posZ)) < 64 * 64) {
+                    sendExplosionType(player, posX, posY, posZ, EnumParticle.EXPLOSION_HUGE);
+                }
+            }
+
+
         } else {
-            this.world.addParticle(EnumParticle.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D, new int[0]);
-        }
-
-        if (this.breakBlocks) {
-            for (BlockPosition pos : this.blocks) {
-                IBlockData blockData = this.world.getType(pos);
-                Block block = blockData.getBlock();
-
-                if (block.getMaterial() != Material.AIR) {
-                    if (block.a(this)) {
-                        block.dropNaturally(this.world, pos, blockData, this.size, 0);
-                    }
-
-                    this.world.setTypeAndData(pos, Blocks.AIR.getBlockData(), 3);
-                    block.wasExploded(this.world, pos, this);
+            Logger.getAnonymousLogger().info("Spawning LARGE explosion particles at " + posX + ", " + posY + ", " + posZ);
+//            this.world.addParticle(EnumParticle.EXPLOSION_LARGE, posX, posY, posZ, 1.0D, 0.0D, 0.0D, new int[0]);
+            for (Player player : world.getWorld().getPlayers()) {
+                if (player.getLocation().distanceSquared(new Location(player.getWorld(), posX, posY, posZ)) < 64 * 64) {
+                    sendExplosionType(player, posX, posY, posZ, EnumParticle.EXPLOSION_LARGE);
                 }
             }
         }
 
-        if (this.setFire) {
-            for (BlockPosition pos : this.blocks) {
-                if (this.world.getType(pos).getBlock().getMaterial() == Material.AIR &&
-                        this.world.getType(pos.down()).getBlock().o() &&
-                        this.random.nextInt(3) == 0) {
+        if (!breakBlocks) return;
 
-                    this.world.setTypeUpdate(pos, Blocks.FIRE.getBlockData());
+        // Bukkit explosion events
+        org.bukkit.World bukkitWorld = world.getWorld();
+        org.bukkit.entity.Entity bukkitEntity = source == null ? null : source.getBukkitEntity();
+        org.bukkit.Location location = new org.bukkit.Location(bukkitWorld, posX, posY, posZ);
+        List<org.bukkit.block.Block> blockList = Lists.newArrayList();
+
+        for (BlockPosition pos : blocks) {
+            org.bukkit.block.Block block = bukkitWorld.getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+            if (block.getType() != org.bukkit.Material.AIR) {
+                blockList.add(block);
+            }
+        }
+
+        float yield = 0.3F;
+        boolean cancelled;
+        List<org.bukkit.block.Block> finalList;
+
+        if (bukkitEntity != null) {
+            EntityExplodeEvent event = new EntityExplodeEvent(bukkitEntity, location, blockList, yield);
+            world.getServer().getPluginManager().callEvent(event);
+            cancelled = event.isCancelled();
+            finalList = event.blockList();
+            yield = event.getYield();
+        } else {
+            BlockExplodeEvent event = new BlockExplodeEvent(location.getBlock(), blockList, yield);
+            world.getServer().getPluginManager().callEvent(event);
+            cancelled = event.isCancelled();
+            finalList = event.blockList();
+            yield = event.getYield();
+        }
+
+        Plugin plugin = Bukkit.getPluginManager().getPlugin("BedWars2023");
+        bukkitEntity.setMetadata("custom-explosion", new FixedMetadataValue(plugin, false));
+        // This prevents the default explosion behavior from being triggered again thus creating a loop
+
+        Logger.getAnonymousLogger().info("is Cancelled: " + cancelled);
+        if (cancelled) {
+            Logger.getAnonymousLogger().severe("Explosion was canceled, clearing blocks.");
+            this.clearBlocks();
+            this.wasCanceled = true;
+            return;
+        }
+
+        // Clear and re-fill the internal list
+        blocks.clear();
+        for (org.bukkit.block.Block block : finalList) {
+            blocks.add(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+        }
+
+        // Damage blocks, spawn particles, drop items
+        for (BlockPosition pos : blocks) {
+            IBlockData blockData = world.getType(pos);
+            net.minecraft.server.v1_8_R3.Block block = blockData.getBlock();
+
+            world.spigotConfig.antiXrayInstance.updateNearbyBlocks(world, pos);
+//            Logger.getAnonymousLogger().info("Damaging block at " + pos + " with data: " + blockData + ", particles: " + showParticles);
+
+            if (showParticles) {
+                double dX = pos.getX() + world.random.nextFloat();
+                double dY = pos.getY() + world.random.nextFloat();
+                double dZ = pos.getZ() + world.random.nextFloat();
+
+                double motionX = dX - posX;
+                double motionY = dY - posY;
+                double motionZ = dZ - posZ;
+
+                double motionScale = 0.5D / (Math.sqrt(motionX * motionX + motionY * motionY + motionZ * motionZ) / size + 0.1D);
+                motionScale *= random.nextFloat() * random.nextFloat() + 0.3F;
+
+                motionX *= motionScale;
+                motionY *= motionScale;
+                motionZ *= motionScale;
+
+                Logger.getAnonymousLogger().info("Showing particles at " + pos + " with motion: (" + motionX + ", " + motionY + ", " + motionZ + ")");
+
+
+                for (Player player : world.getWorld().getPlayers()) {
+                    if (player.getLocation().distanceSquared(new Location(player.getWorld(), posX, posY, posZ)) < 64 * 64) {
+
+                        sendParticle(player, EnumParticle.EXPLOSION_NORMAL,
+                                (dX + posX) / 2.0D,
+                                (dY + posY) / 2.0D,
+                                (dZ + posZ) / 2.0D,
+                                motionX, motionY, motionZ,
+                                0.1f, 1);
+
+                        // Smoke particle at displaced location
+                        sendParticle(player, EnumParticle.SMOKE_NORMAL,
+                                dX, dY, dZ,
+                                motionX, motionY, motionZ,
+                                0.05f, 1);
+
+                    }
+                }
+
+                Logger.getAnonymousLogger().info("Showing particles for block at " + pos + ".");
+            }
+
+            if (block.getMaterial() != Material.AIR) {
+                if (block.a(this)) {
+                    block.dropNaturally(world, pos, blockData, yield, 0);
+                }
+
+                world.setTypeAndData(pos, Blocks.AIR.getBlockData(), 3);
+                block.wasExploded(world, pos, this);
+            }
+        }
+
+        // Set fire if configured
+        if (setFire) {
+            for (BlockPosition pos : blocks) {
+                if (world.getType(pos).getBlock().getMaterial() == Material.AIR &&
+                        world.getType(pos.down()).getBlock().o() &&
+                        random.nextInt(3) == 0 &&
+                        !CraftEventFactory.callBlockIgniteEvent(world, pos.getX(), pos.getY(), pos.getZ(), this).isCancelled()) {
+
+                    world.setTypeUpdate(pos, Blocks.FIRE.getBlockData());
                 }
             }
         }
     }
 
+    public void sendExplosionType(Player player, double x, double y, double z, EnumParticle particle) {
+        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(
+                particle, // Particle type
+                true,                        // Long distance (send far away)
+                (float) x, (float) y, (float) z, // Coordinates
+                0f, 0f, 0f,                  // Offset X, Y, Z
+                0f,                          // Speed
+                1                           // Count
+        );
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
+
+    public void sendParticle(Player player, EnumParticle particle, double x, double y, double z,
+                             double offsetX, double offsetY, double offsetZ,
+                             float speed, int count, int... data) {
+
+        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(
+                particle,
+                true, // long distance
+                (float) x, (float) y, (float) z,     // position
+                (float) offsetX, (float) offsetY, (float) offsetZ, // motion/offset
+                speed,
+                count,
+                data
+        );
+
+        ((CraftPlayer) player).getHandle().playerConnection.sendPacket(packet);
+    }
 
 
     private boolean isGlassLike(Block block) {
