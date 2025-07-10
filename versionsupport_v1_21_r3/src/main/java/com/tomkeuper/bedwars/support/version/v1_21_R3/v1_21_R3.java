@@ -73,10 +73,8 @@ import org.bukkit.craftbukkit.v1_21_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R3.entity.*;
 import org.bukkit.craftbukkit.v1_21_R3.inventory.CraftItemStack;
-import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
+import org.bukkit.craftbukkit.v1_21_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -367,6 +365,24 @@ public final class v1_21_R3 extends VersionSupport {
             //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
+        try {
+            // Convert Bukkit block to NMS Block
+            Block nmsBlock = (Block) CraftMagicNumbers.getBlock(bukkitBlock.getType());
+
+            // Access the 'durability' field
+            Field durabilityField = BlockBase.class.getDeclaredField("aI");
+            durabilityField.setAccessible(true);
+
+            return durabilityField.getFloat(nmsBlock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return 0; // Default if something fails
     }
 
     @Override

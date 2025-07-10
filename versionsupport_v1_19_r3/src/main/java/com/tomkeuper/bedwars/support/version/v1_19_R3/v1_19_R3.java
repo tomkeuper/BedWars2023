@@ -70,6 +70,7 @@ import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.*;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryEvent;
@@ -89,10 +90,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
-import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class v1_19_R3 extends VersionSupport {
 
@@ -395,6 +394,24 @@ public class v1_19_R3 extends VersionSupport {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
+        try {
+            // Convert Bukkit block to NMS Block
+            Block nmsBlock = (Block) CraftMagicNumbers.getBlock(bukkitBlock.getType());
+
+            // Access the 'durability' field
+            Field durabilityField = BlockBase.class.getDeclaredField("aH");
+            durabilityField.setAccessible(true);
+
+            return durabilityField.getFloat(nmsBlock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return 0; // Default if something fails
     }
 
     @Override

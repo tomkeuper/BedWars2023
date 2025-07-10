@@ -39,10 +39,7 @@ import com.tomkeuper.bedwars.popuptower.TowerEast;
 import com.tomkeuper.bedwars.popuptower.TowerNorth;
 import com.tomkeuper.bedwars.popuptower.TowerSouth;
 import com.tomkeuper.bedwars.popuptower.TowerWest;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Sign;
@@ -61,11 +58,15 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Bed;
 import org.bukkit.metadata.MetadataValueAdapter;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
+import java.util.logging.Logger;
 
 import static com.tomkeuper.bedwars.BedWars.*;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -523,7 +524,14 @@ public class BreakPlace implements Listener {
                 if (e.getEntity().getType() == EntityType.ENDER_DRAGON && a.isAllowEnderDragonDestroy()) {
                     return;
                 }
-                e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
+                Location explosionSource = e.getLocation(); // The block where the explosion started
+                e.blockList().removeIf(b ->
+                        a.isProtected(b.getLocation()) ||
+                                a.isTeamBed(b.getLocation()) ||
+                                (!a.isBlockPlaced(b) && !a.isAllowMapBreak())||
+                                isProtectedByBlastResistanceClose(b, explosionSource) ||
+                                isProtectedByBlastResistance(b, explosionSource)
+                );
             }
         }
     }
@@ -534,11 +542,79 @@ public class BreakPlace implements Listener {
         if (e.blockList().isEmpty()) return;
 
         IArena a = Arena.getArenaByIdentifier(e.blockList().get(0).getWorld().getName());
-        if (a != null) {
-            if (a.getStatus() == GameState.playing) {
-                e.blockList().removeIf((b) -> (a.isProtected(b.getLocation()) || a.isTeamBed(b.getLocation()) || (!a.isBlockPlaced(b) && !a.isAllowMapBreak())));
+        if (a != null && a.getStatus() == GameState.playing) {
+            Location explosionSource = e.getBlock().getLocation(); // The block where the explosion started
+            e.blockList().removeIf(b ->
+                    a.isProtected(b.getLocation()) ||
+                            a.isTeamBed(b.getLocation()) ||
+                            (!a.isBlockPlaced(b) && !a.isAllowMapBreak()) ||
+                            isProtectedByBlastResistanceClose(b, explosionSource) ||
+                            isProtectedByBlastResistance(b, explosionSource)
+            );
+        }
+    }
+
+    private boolean isProtectedByBlastResistance(Block targetBlock, Location explosionLoc) {
+        // Add offset to location vectors, prevent ray from going between blocks
+        org.bukkit.util.Vector explosionVec = explosionLoc.toVector().add(new org.bukkit.util.Vector(0.15, 0.15, 0.1));
+        org.bukkit.util.Vector targetCenter = targetBlock.getLocation().toVector().add(new org.bukkit.util.Vector(0.2, 0.1, 0.25));
+
+        // Direction vector from offset explosion location to target center
+        org.bukkit.util.Vector direction = targetCenter.clone().subtract(explosionVec);
+        double distance = direction.length();
+        direction.normalize();
+
+        org.bukkit.util.Vector current = explosionVec.clone();
+        // Step size: smaller = more accurate but more CPU
+        double step = 0.1;
+
+        for (double d = 0; d < distance; d += step) {
+            current.add(direction.clone().multiply(step));
+
+            Block b = current.toLocation(explosionLoc.getWorld()).getBlock();
+
+            if (b.getLocation().equals(targetBlock.getLocation())) continue;
+            if (b.getType() == Material.AIR) continue;
+
+            float resistance = nms.getBlastResistance(b);
+            if (resistance >= 20.0F) {
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean isProtectedByBlastResistanceClose(Block target, Location explosionLocation) {
+        // Get direction from explosion source to target
+        org.bukkit.util.Vector direction = explosionLocation.toVector().subtract(target.getLocation().toVector()).normalize();
+
+        // Get the block on the face where the explosion hits
+        BlockFace face = getClosestFace(direction);
+        Block adjacent = target.getRelative(face);
+
+        // Define a blast resistance threshold (e.g., > 20 is strong)
+        return adjacent.getType().isSolid() && nms.getBlastResistance(adjacent) > 20;
+    }
+
+    private static final BlockFace[] FACES = {
+            BlockFace.NORTH, BlockFace.SOUTH,
+            BlockFace.EAST, BlockFace.WEST,
+            BlockFace.UP, BlockFace.DOWN
+    };
+
+    private BlockFace getClosestFace(org.bukkit.util.Vector direction) {
+        BlockFace closest = BlockFace.NORTH;
+        double highestDot = -Double.MAX_VALUE;
+
+        for (BlockFace face : FACES) {
+            org.bukkit.util.Vector faceVec = new org.bukkit.util.Vector(face.getModX(), face.getModY(), face.getModZ());
+            double dot = faceVec.normalize().dot(direction);
+            if (dot > highestDot) {
+                highestDot = dot;
+                closest = face;
+            }
+        }
+        return closest;
     }
 
     @EventHandler

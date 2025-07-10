@@ -223,6 +223,8 @@ public abstract class VersionSupport {
      */
     public abstract void registerTntWhitelist(float endStoneBlast, float glassBlast);
 
+    public abstract float getBlastResistance(Block block);
+
     /**
      * Egg bridge particles
      */
