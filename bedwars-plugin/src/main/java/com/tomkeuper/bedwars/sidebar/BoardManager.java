@@ -250,9 +250,9 @@ public class BoardManager implements IScoreboardService {
         });
 
         placeholderManager.registerPlayerPlaceholder("%bw_prefix_tab%", PrefixRefresh, this::getPrefixTab);
-        placeholderManager.registerPlayerPlaceholder("%bw_suffix%", SuffixRefresh, this::getSuffixTab);
-        placeholderManager.registerPlayerPlaceholder("%bw_prefix_tab%", PrefixRefresh, this::getPrefixHead);
-        placeholderManager.registerPlayerPlaceholder("%bw_suffix%", SuffixRefresh, this::getSuffixHead);
+        placeholderManager.registerPlayerPlaceholder("%bw_suffix_tab%", SuffixRefresh, this::getSuffixTab);
+        placeholderManager.registerPlayerPlaceholder("%bw_prefix_head%", PrefixRefresh, this::getPrefixHead);
+        placeholderManager.registerPlayerPlaceholder("%bw_suffix_head%", SuffixRefresh, this::getSuffixHead);
 
         placeholderManager.registerPlayerPlaceholder("%bw_scoreboard_title%", titleRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
