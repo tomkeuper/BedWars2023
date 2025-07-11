@@ -9,31 +9,32 @@ allprojects {
 }
 
 val versions = setOf(
-    projects.versionsupportCommon,
-    projects.versionsupport18R3,
-    projects.versionsupport112R1,
-    projects.versionsupportV116R3,
-    projects.versionsupportV117R1,
-    projects.versionsupportV118R2,
-    projects.versionsupportV119R3,
-    projects.versionsupportV120R4,
-    projects.versionsupportV1206,
-    projects.versionsupportV121R1,
-    projects.versionsupportV121R2,
-    projects.versionsupportV121R3,
-    projects.resetadapterSlime,
-    projects.resetadapterSlimepaper,
-    projects.resetadapterAdvancedslimepaper,
-    projects.bedwarsApi,
-    projects.resetadapterAswm
-).map { it.dependencyProject }
+    ":versionsupport_common",
+    ":versionsupport_1_8_r3",
+    ":versionsupport_1_12_r1",
+    ":versionsupport_v1_16_r3",
+    ":versionsupport_v1_17_r1",
+    ":versionsupport_v1_18_r2",
+    ":versionsupport_v1_19_r3",
+    ":versionsupport_v1_20_r4",
+    ":versionsupport_v1_20_6",
+    ":versionsupport_v1_21_r1",
+    ":versionsupport_v1_21_r2",
+    ":versionsupport_v1_21_r3",
+    ":resetadapter_slime",
+    ":resetadapter_slimepaper",
+    ":resetadapter_advancedslimepaper",
+    ":resetadapter_aswm",
+    ":bedwars-api"
+)
 
 val special = setOf(
-    projects.bedwarsPlugin,
-).map { it.dependencyProject }
+    ":bedwars-plugin"
+)
 
 subprojects {
-    when (this) {
+//    println("Project: ${path}")
+    when (path) {
         in versions -> plugins.apply("bedwars.version-conventions")
         in special -> plugins.apply("bedwars.standard-conventions")
         else -> plugins.apply("bedwars.base-conventions")
