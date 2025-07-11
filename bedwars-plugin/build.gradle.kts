@@ -18,7 +18,7 @@ repositories {
     maven("https://simonsator.de/repo/") // Party-and-Friends-MySQL-Edition-Spigot-API, Spigot-Party-API-For-RedisBungee
     maven("https://maven.citizensnpcs.co/repo") // citizens-main
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // placeholderapi
-    maven("https://repo.cloudnetservice.eu/repository/releases/") // cloudnet-wrapper-jvm
+    maven("https://repo.cloudnetservice.eu/releases/") // cloudnet-wrapper-jvm
     maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
     maven("https://repo.tomkeuper.com/repository/releases/") // slimjar
     maven("https://repo.alessiodp.com/releases/") // slimjar - dependencies
