@@ -184,5 +184,6 @@ tasks {
 }
 
 tasks.named("slimJar") {
+    dependsOn("compileTestJava", "test")
     mustRunAfter("sourcesJar", "generateTestEffectiveLombokConfig", "processTestResources", "delombok", "javadocJar")
 }
