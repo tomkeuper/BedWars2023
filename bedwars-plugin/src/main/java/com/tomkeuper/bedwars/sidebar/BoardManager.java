@@ -60,6 +60,8 @@ public class BoardManager implements IScoreboardService {
     private static BoardManager instance;
     private final HashMap<TabPlayer, Integer> tabPlayersPrefix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersSuffix = new HashMap<>();
+    private final HashMap<TabPlayer, Integer> headPlayersPrefix = new HashMap<>();
+    private final HashMap<TabPlayer, Integer> headPlayersSuffix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersTitle = new HashMap<>();
 
     public static boolean init() {
@@ -247,8 +249,10 @@ public class BoardManager implements IScoreboardService {
             return null == arena ? "" : null == arena.getTeam(player) ? ""  : String.valueOf(arena.getTeam(player).getColor().chat());
         });
 
-        placeholderManager.registerPlayerPlaceholder("%bw_prefix%", PrefixRefresh, this::getPrefix);
-        placeholderManager.registerPlayerPlaceholder("%bw_suffix%", SuffixRefresh, this::getSuffix);
+        placeholderManager.registerPlayerPlaceholder("%bw_prefix_tab%", PrefixRefresh, this::getPrefixTab);
+        placeholderManager.registerPlayerPlaceholder("%bw_suffix_tab%", SuffixRefresh, this::getSuffixTab);
+        placeholderManager.registerPlayerPlaceholder("%bw_prefix_head%", PrefixRefresh, this::getPrefixHead);
+        placeholderManager.registerPlayerPlaceholder("%bw_suffix_head%", SuffixRefresh, this::getSuffixHead);
 
         placeholderManager.registerPlayerPlaceholder("%bw_scoreboard_title%", titleRefresh, tabPlayer -> {
             Player player = (Player) tabPlayer.getPlayer();
@@ -358,12 +362,12 @@ public class BoardManager implements IScoreboardService {
             setHeaderFooter(tabPlayer, arena);
 
             if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED)){
-                tabListFormatManager.setPrefix(tabPlayer, "%bw_prefix%");
-                tabListFormatManager.setSuffix(tabPlayer, "%bw_suffix%");
+                tabListFormatManager.setPrefix(tabPlayer, "%bw_prefix_tab%");
+                tabListFormatManager.setSuffix(tabPlayer, "%bw_suffix_tab%");
             }
 
-            nameTagManager.setPrefix(tabPlayer, "%bw_prefix%");
-            nameTagManager.setSuffix(tabPlayer, "%bw_suffix%");
+            nameTagManager.setPrefix(tabPlayer, "%bw_prefix_head%");
+            nameTagManager.setSuffix(tabPlayer, "%bw_suffix_head%");
 
             tabListFormatManager.setName(tabPlayer,BedWars.config.getString(ConfigPath.SB_CONFIG_SIDEBAR_PLAYER_NAME));
 
@@ -432,42 +436,95 @@ public class BoardManager implements IScoreboardService {
             scoreboardManager.resetScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
     }
 
-    public String getPrefix(TabPlayer tabPlayer) {
+    public String getPrefixTab(TabPlayer tabPlayer) {
+        return getPrefix(tabPlayer, "Tab");
+    }
+
+    public String getSuffixTab(TabPlayer tabPlayer) {
+        return getSuffix(tabPlayer, "Tab");
+    }
+
+    public String getPrefixHead(TabPlayer tabPlayer) {
+        return getPrefix(tabPlayer, "Head");
+    }
+
+    public String getSuffixHead(TabPlayer tabPlayer) {
+        return getSuffix(tabPlayer, "Head");
+    }
+
+    public String getPrefix(TabPlayer tabPlayer, String type) {
         Player player = (Player) tabPlayer.getPlayer();
         IArena arena = Arena.getArenaByPlayer(player);
-        int currentIndex = tabPlayersPrefix.getOrDefault(tabPlayer, 0);
-        List<String> fixList;
+        if (type.equalsIgnoreCase("tab")) {
+            int currentIndex = tabPlayersPrefix.getOrDefault(tabPlayer, 0);
+            List<String> fixList;
 
-        if (arena == null) {
-            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_LOBBY);
-        } else {
-            GameState arenaStatus = arena.getStatus();
-
-            if (arena.isSpectator(player)) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR);
+            if (arena == null) {
+                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_LOBBY);
             } else {
-                switch (arenaStatus) {
-                    case playing:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_PLAYING);
-                        break;
-                    case waiting:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_WAITING);
-                        break;
-                    case starting:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_STARTING);
-                        break;
-                    case restarting:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING);
-                        break;
-                    default:
-                        BedWars.debug("Unhandled game state for BedWars prefix");
-                        fixList = Collections.singletonList("");
-                        break;
+                GameState arenaStatus = arena.getStatus();
+
+                if (arena.isSpectator(player)) {
+                    fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR);
+                } else {
+                    switch (arenaStatus) {
+                        case playing:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_PLAYING);
+                            break;
+                        case waiting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_WAITING);
+                            break;
+                        case starting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_STARTING);
+                            break;
+                        case restarting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING);
+                            break;
+                        default:
+                            BedWars.debug("Unhandled game state for BedWars prefix");
+                            fixList = Collections.singletonList("");
+                            break;
+                    }
                 }
             }
-        }
 
-        return getString(tabPlayer, currentIndex, fixList, tabPlayersPrefix);
+            return getString(tabPlayer, currentIndex, fixList, tabPlayersPrefix);
+
+        } else {
+            int currentIndex = headPlayersPrefix.getOrDefault(tabPlayer, 0);
+            List<String> fixList;
+
+            if (arena == null) {
+                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_PREFIX_LOBBY);
+            } else {
+                GameState arenaStatus = arena.getStatus();
+
+                if (arena.isSpectator(player)) {
+                    fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR);
+                } else {
+                    switch (arenaStatus) {
+                        case playing:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_PREFIX_PLAYING);
+                            break;
+                        case waiting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_PREFIX_WAITING);
+                            break;
+                        case starting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_PREFIX_STARTING);
+                            break;
+                        case restarting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_PREFIX_RESTARTING);
+                            break;
+                        default:
+                            BedWars.debug("Unhandled game state for BedWars prefix");
+                            fixList = Collections.singletonList("");
+                            break;
+                    }
+                }
+            }
+
+            return getString(tabPlayer, currentIndex, fixList, headPlayersPrefix);
+        }
     }
 
     @NotNull
@@ -484,42 +541,78 @@ public class BoardManager implements IScoreboardService {
         return (prefix == null) ? "" : prefix;
     }
 
-    public String getSuffix(TabPlayer tabPlayer) {
+    public String getSuffix(TabPlayer tabPlayer, String type) {
         Player player = (Player) tabPlayer.getPlayer();
         IArena arena = Arena.getArenaByPlayer(player);
-        int currentIndex = tabPlayersSuffix.getOrDefault(tabPlayer, 0);
-        List<String> fixList;
+        if (type.equalsIgnoreCase("tab")) {
+            int currentIndex = tabPlayersSuffix.getOrDefault(tabPlayer, 0);
+            List<String> fixList;
 
-        if (arena == null) {
-            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_LOBBY);
-        } else {
-            GameState arenaStatus = arena.getStatus();
-
-            if (arena.isSpectator(player)) {
-                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR);
+            if (arena == null) {
+                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_LOBBY);
             } else {
-                switch (arenaStatus) {
-                    case playing:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_PLAYING);
-                        break;
-                    case waiting:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_WAITING);
-                        break;
-                    case starting:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_STARTING);
-                        break;
-                    case restarting:
-                        fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING);
-                        break;
-                    default:
-                        BedWars.debug("Unhandled game state for BedWars suffix");
-                        fixList = Collections.singletonList("");
-                        break;
+                GameState arenaStatus = arena.getStatus();
+
+                if (arena.isSpectator(player)) {
+                    fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR);
+                } else {
+                    switch (arenaStatus) {
+                        case playing:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_PLAYING);
+                            break;
+                        case waiting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_WAITING);
+                            break;
+                        case starting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_STARTING);
+                            break;
+                        case restarting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING);
+                            break;
+                        default:
+                            BedWars.debug("Unhandled game state for BedWars suffix");
+                            fixList = Collections.singletonList("");
+                            break;
+                    }
                 }
             }
-        }
 
-        return getString(tabPlayer, currentIndex, fixList, tabPlayersSuffix);
+            return getString(tabPlayer, currentIndex, fixList, tabPlayersSuffix);
+        } else {
+            int currentIndex = headPlayersSuffix.getOrDefault(tabPlayer, 0);
+            List<String> fixList;
+
+            if (arena == null) {
+                fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_SUFFIX_LOBBY);
+            } else {
+                GameState arenaStatus = arena.getStatus();
+
+                if (arena.isSpectator(player)) {
+                    fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR);
+                } else {
+                    switch (arenaStatus) {
+                        case playing:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_SUFFIX_PLAYING);
+                            break;
+                        case waiting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_SUFFIX_WAITING);
+                            break;
+                        case starting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_SUFFIX_STARTING);
+                            break;
+                        case restarting:
+                            fixList = Language.getList(player, Messages.FORMATTING_SCOREBOARD_HEAD_SUFFIX_RESTARTING);
+                            break;
+                        default:
+                            BedWars.debug("Unhandled game state for BedWars suffix");
+                            fixList = Collections.singletonList("");
+                            break;
+                    }
+                }
+            }
+
+            return getString(tabPlayer, currentIndex, fixList, headPlayersSuffix);
+        }
     }
 
     @NotNull
