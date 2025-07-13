@@ -106,6 +106,7 @@ import com.tomkeuper.bedwars.utils.SlimLogger;
 import de.dytanic.cloudnet.wrapper.Wrapper;
 import io.github.slimjar.app.builder.ApplicationBuilder;
 import me.neznamy.tab.api.TabAPI;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.*;
@@ -130,7 +131,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -152,6 +152,7 @@ public class BedWars extends JavaPlugin {
     public static ShopCache shopCache;
     public static StatsManager statsManager;
     public static BedWars plugin;
+    private BukkitAudiences adventure;
     public static VersionSupport nms;
 
     private static Party partyManager = new NoParty();
@@ -225,8 +226,6 @@ public class BedWars extends JavaPlugin {
                 nmsVersion = "v1_20_R3";
                 break;
             case "1.20.5":
-                nmsVersion = "v1_20_R4";
-                break;
             case "1.20.6":
                 nmsVersion = "v1_20_6";
                 break;
@@ -234,8 +233,8 @@ public class BedWars extends JavaPlugin {
             case "1.21.1":
                 nmsVersion = "v1_21_R1";
                 break;
-            case "1.21.3":
             case "1.21.2":
+            case "1.21.3":
                 nmsVersion = "v1_21_R2";
                 break;
             case "1.21.4":
@@ -301,6 +300,8 @@ public class BedWars extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
+
+        this.adventure = BukkitAudiences.create(this);
 
         nms.registerVersionListeners();
 
@@ -761,6 +762,10 @@ public class BedWars extends JavaPlugin {
         if (!serverSoftwareSupport) return;
         if (getServerType() == ServerType.BUNGEE) {
             redisConnection.close();
+        }
+        if (this.adventure != null) {
+            this.adventure.close();
+            this.adventure = null;
         }
         for (IArena a : new LinkedList<>(Arena.getArenas())) {
             try {
@@ -1238,5 +1243,9 @@ public class BedWars extends JavaPlugin {
 
     public static Map<String, IPermanentItemHandler> getItemHandlers() {
         return itemHandlers;
+    }
+
+    public BukkitAudiences adventure() {
+        return this.adventure;
     }
 }

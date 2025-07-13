@@ -33,6 +33,10 @@ import com.tomkeuper.bedwars.commands.party.PartyCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -60,7 +64,7 @@ public class ChatFormatting implements Listener {
             e.getRecipients().clear();
             e.getRecipients().addAll(BedWars.getPartyManager().getMembers(p));
             String format = ChatColor.translateAlternateColorCodes('&', "&e&lPARTY &8&l┃ &b%bw_playername% &7→ ") + ChatColor.GRAY + "%bw_message%";
-            e.setFormat(parsePHolders(format, e.getMessage(), p, null, null));
+            e.setFormat(LegacyComponentSerializer.legacySection().serialize(parsePHolders(format, e.getMessage(), p, null, null)));
             return;
         }
 
@@ -142,7 +146,7 @@ public class ChatFormatting implements Listener {
         sendMessage(e, language.m(Messages.FORMATTING_CHAT_LOBBY), e.getMessage(), p, null);
     }
 
-    private static String parsePHolders(String format, String msg, Player eventTriggerPlayer, Player recipientPlayer, @Nullable ITeam team) {
+    private static Component parsePHolders(String format, String msg, Player eventTriggerPlayer, Player recipientPlayer, @Nullable ITeam team) {
         format = format
                 .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(eventTriggerPlayer))
                 .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(eventTriggerPlayer))
@@ -155,7 +159,12 @@ public class ChatFormatting implements Listener {
                     .replace("%bw_team_name%", team.getDisplayName(Language.getPlayerLanguage(recipientPlayer)).toUpperCase());
             format = format.replace("%bw_team_format%", teamFormat);
         }
-        return SupportPAPI.getSupportPAPI().replace(eventTriggerPlayer, format).replace("%bw_message%", msg);
+        format = SupportPAPI.getSupportPAPI().replace(eventTriggerPlayer, format);
+        if (Permissions.hasPermission(eventTriggerPlayer, Permissions.PERMISSION_CHAT_COLOR, Permissions.PERMISSION_VIP, Permissions.PERMISSION_ALL))
+            return parseLegacyMini(format.replace("%bw_message%", msg));
+        else return parseLegacyMini(format).replaceText(builder ->
+                builder.match("%bw_message%").replacement(msg)
+        );
     }
 
     private static boolean isShouting(String msg, Language lang) {
@@ -187,10 +196,23 @@ public class ChatFormatting implements Listener {
         event.getRecipients().clear(); // Used for console message only.
     }
 
+    private static Component parseLegacyMini(String s) {
+        s = s.replaceAll("§", "&");
+        Component deserializedLegacy = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
+        String miniSerializedLegacy = MiniMessage.miniMessage().serialize(deserializedLegacy).replace("\\<", "<");
+
+        return MiniMessage.miniMessage().deserialize(miniSerializedLegacy);
+    }
+
+    @SuppressWarnings("resource")
     public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team){
-        e.setFormat(parsePHolders(format, msg, eventTriggerPlayer,null, team).replaceAll("%","%%")); // Used for console message only.
+        e.setCancelled(true);
+        BedWars.plugin.adventure().sender(Bukkit.getConsoleSender())
+                .sendMessage(parsePHolders(format, msg, eventTriggerPlayer,null, team)
+                        .replaceText(b -> b.match("%").replacement("%%"))); // Used for console message only.
         for (Player player : recipients) {
-            player.sendMessage(parsePHolders(format, msg, eventTriggerPlayer, player, team));
+            var adventurePlayer = BedWars.plugin.adventure().player(player);
+            adventurePlayer.sendMessage(parsePHolders(format, msg, eventTriggerPlayer, player, team));
         }
     }
 }
