@@ -432,7 +432,7 @@ public class Arena implements IArena {
         if (p == null) return false;
         // Check if the player is already in an arena
         if (getArenaByPlayer(p) != null) {
-            if (getArenaByPlayer(p).isSpectator(p)){
+            if (getArenaByPlayer(p).isSpectator(p)) {
                 getArenaByPlayer(p).removeSpectator(p, false);
             } else {
                 getArenaByPlayer(p).removePlayer(p, false);
@@ -789,8 +789,8 @@ public class Arena implements IArena {
     /**
      * Remove a player from the arena
      *
-     * @param p          Player to be removed
-     * @param disconnect True if the player was disconnected
+     * @param p              Player to be removed
+     * @param disconnect     True if the player was disconnected
      * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
      *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
      *                       player is the owner.
@@ -2789,7 +2789,7 @@ public class Arena implements IArena {
             return;
         }
         String dragonPlaceholderName = "%bw_" + team.getArena().getWorldName() + "_" + team.getName() + "+" + dragonNumber + "%";
-        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500,  () -> String.valueOf(team.getDragons().get(dragonNumber).getHealth()/team.getDragons().get(dragonNumber).getMaxHealth()*100));
+        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500, () -> String.valueOf(team.getDragons().get(dragonNumber).getHealth() / team.getDragons().get(dragonNumber).getMaxHealth() * 100));
         serverPlaceholders.add(dragonPlaceholder);
         for (Player player : team.getArena().getPlayers()) {
             String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat() + team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
