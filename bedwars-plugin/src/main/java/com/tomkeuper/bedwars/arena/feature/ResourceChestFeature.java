@@ -25,6 +25,8 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.player.PlayerItemDepositEvent;
+import com.tomkeuper.bedwars.api.language.Language;
+import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,6 +40,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -99,12 +102,36 @@ public class ResourceChestFeature implements Listener {
                 ? ((Chest) block.getState()).getBlockInventory()
                 : player.getEnderChest();
 
-        inventory.addItem(hand.clone());
-        player.getInventory().remove(hand);
+        safeDeposit(player, hand, inventory);
 
         if (hand.getType().name().contains("SWORD")) team.defaultSword(player, true);
 
         callEvent(player, arena, hand.clone(), inventory, isEnderChest);
+    }
+
+    private void safeDeposit(Player player, ItemStack hand, Inventory inventory) {
+        ItemStack toStore = hand.clone();
+
+        Map<Integer, ItemStack> leftovers = inventory.addItem(toStore);
+
+        int attempted = toStore.getAmount();
+        int notInserted = leftovers.values().stream()
+                .mapToInt(ItemStack::getAmount)
+                .sum();
+        int inserted = attempted - notInserted;
+
+        if (inserted <= 0) {
+            player.sendMessage(Language.getMsg(player, Messages.INTERACT_FULL_CHEST));
+            return;
+        }
+
+        ItemStack toRemove = hand.clone();
+        toRemove.setAmount(inserted);
+        player.getInventory().removeItem(toRemove);
+
+        if (!leftovers.isEmpty())
+            for (ItemStack leftover : leftovers.values())
+                player.getInventory().addItem(leftover);
     }
 
     private void callEvent(Player player, IArena arena, ItemStack item, Inventory inventory, boolean isEnderChest) {
