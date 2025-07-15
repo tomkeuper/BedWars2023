@@ -1765,6 +1765,7 @@ public class Arena implements IArena {
                 }
                 head.setItemMeta(skullMeta);
                 head = BedWars.nms.addCustomData(head, lobbyItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", lobbyItem.getIdentifier());
                 item = head;
             }
 
@@ -1808,6 +1809,7 @@ public class Arena implements IArena {
                 }
                 head.setItemMeta(skullMeta);
                 head = BedWars.nms.addCustomData(head, preGameItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", preGameItem.getIdentifier());
                 item = head;
             }
 
@@ -1851,6 +1853,7 @@ public class Arena implements IArena {
                 }
                 head.setItemMeta(skullMeta);
                 head = BedWars.nms.addCustomData(head, spectatorItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", spectatorItem.getIdentifier());
                 item = head;
             }
 
