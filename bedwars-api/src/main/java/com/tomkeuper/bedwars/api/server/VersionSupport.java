@@ -295,7 +295,7 @@ public abstract class VersionSupport {
      * Check if is a player head
      */
     public boolean isPlayerHead(String material, int data) {
-        return material.equalsIgnoreCase("PLAYER_HEAD");
+        return material.equalsIgnoreCase("PLAYER_HEAD") || (material.equalsIgnoreCase("SKULL_ITEM") && data == 3);
     }
 
     /**

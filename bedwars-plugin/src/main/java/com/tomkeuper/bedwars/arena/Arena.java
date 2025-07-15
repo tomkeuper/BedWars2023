@@ -82,8 +82,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -437,7 +439,7 @@ public class Arena implements IArena {
         if (p == null) return false;
         // Check if the player is already in an arena
         if (getArenaByPlayer(p) != null) {
-            if (getArenaByPlayer(p).isSpectator(p)){
+            if (getArenaByPlayer(p).isSpectator(p)) {
                 getArenaByPlayer(p).removeSpectator(p, false);
             } else {
                 getArenaByPlayer(p).removePlayer(p, false);
@@ -794,8 +796,8 @@ public class Arena implements IArena {
     /**
      * Remove a player from the arena
      *
-     * @param p          Player to be removed
-     * @param disconnect True if the player was disconnected
+     * @param p              Player to be removed
+     * @param disconnect     True if the player was disconnected
      * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
      *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
      *                       player is the owner.
@@ -933,10 +935,9 @@ public class Arena implements IArena {
                     .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                     .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                     .replace("%bw_playername%", p.getName())
-                    .replace("%bw_player%", p.getDisplayName()
-                            .replace("%bw_on%", String.valueOf(getPlayers().size()))
-                            .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                    )
+                    .replace("%bw_player%", p.getDisplayName())
+                    .replace("%bw_on%", String.valueOf(getPlayers().size()))
+                    .replace("%bw_max%", String.valueOf(getMaxPlayers()))
             );
         }
         for (Player on : getSpectators()) {
@@ -945,10 +946,9 @@ public class Arena implements IArena {
                     .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                     .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                     .replace("%bw_playername%", p.getName())
-                    .replace("%bw_player%", p.getDisplayName()
-                            .replace("%bw_on%", String.valueOf(getPlayers().size()))
-                            .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                    ));
+                    .replace("%bw_player%", p.getDisplayName())
+                    .replace("%bw_on%", String.valueOf(getPlayers().size()))
+                    .replace("%bw_max%", String.valueOf(getMaxPlayers())));
 
         }
 
@@ -1756,9 +1756,21 @@ public class Arena implements IArena {
         for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getLobbyItems()) {
             ItemStack item = lobbyItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
                 ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, lobbyItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", lobbyItem.getIdentifier());
                 item = head;
             }
 
@@ -1788,9 +1800,21 @@ public class Arena implements IArena {
         for (IPermanentItem preGameItem : BedWars.getAPI().getItemUtil().getPreGameItems()) {
             ItemStack item = preGameItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
                 ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, preGameItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", preGameItem.getIdentifier());
                 item = head;
             }
 
@@ -1820,13 +1844,24 @@ public class Arena implements IArena {
         for (IPermanentItem spectatorItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
             ItemStack item = spectatorItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
                 ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, spectatorItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", spectatorItem.getIdentifier());
                 item = head;
             }
 
-            // Update the item's display name and lore based on the player's language.
             ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
                 String name = SupportPAPI.getSupportPAPI().replace(p,
@@ -2794,7 +2829,7 @@ public class Arena implements IArena {
             return;
         }
         String dragonPlaceholderName = "%bw_" + team.getArena().getWorldName() + "_" + team.getName() + "+" + dragonNumber + "%";
-        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500,  () -> String.valueOf(team.getDragons().get(dragonNumber).getHealth()/team.getDragons().get(dragonNumber).getMaxHealth()*100));
+        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500, () -> String.valueOf(team.getDragons().get(dragonNumber).getHealth() / team.getDragons().get(dragonNumber).getMaxHealth() * 100));
         serverPlaceholders.add(dragonPlaceholder);
         for (Player player : team.getArena().getPlayers()) {
             String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat() + team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
