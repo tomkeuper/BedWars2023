@@ -224,10 +224,6 @@ public class Spanish extends Language {
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER2, "II");
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER3, "III");
         yml.addDefault(Messages.GENERATOR_UPGRADE_CHAT_ANNOUNCEMENT, "%bw_lang_prefix%%bw_generator_type% Los generadores &ehan sido mejorados al nivel &c%bw_tier%");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), "&bMEJORAS TEAM,&e&lCLICK DERECHO");
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), "&bMEJORAS SOLO,&e&lCLICK DERECHO");
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), "&bTIENDA,&e&lCLICK DERECHO");
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), "&bTIENDA,&e&lCLICK DERECHO");
 
         yml.addDefault(Messages.MEANING_FULL, "Lleno");
         yml.addDefault(Messages.MEANING_SHOUT, "global");
@@ -651,8 +647,17 @@ public class Spanish extends Language {
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&lALARMA!!!");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "&fTrampa de alarma activada por el equipo %bw_color%%bw_team%&f!");
         yml.addDefault(Messages.UPGRADES_UPGRADE_ALREADY_CHAT, "&cYou already unlocked this upgrade!");
+        generateNPCMessages(yml, "default");
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));
+    }
+
+    @Override
+    public void generateNPCMessages(YamlConfiguration yml, String group){
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group), "&bMEJORAS TEAM,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group), "&bMEJORAS SOLO,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group), "&bTIENDA,&e&lCLICK DERECHO");
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group), "&bTIENDA,&e&lCLICK DERECHO");
     }
 }

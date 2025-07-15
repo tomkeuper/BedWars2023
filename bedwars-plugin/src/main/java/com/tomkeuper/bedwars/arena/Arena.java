@@ -294,6 +294,11 @@ public class Arena implements IArena {
         yKillHeight = yml.getInt(ConfigPath.ARENA_Y_LEVEL_KILL);
         addToEnableQueue(this);
         Language.saveIfNotExists(Messages.ARENA_DISPLAY_GROUP_PATH + getGroup().toLowerCase(), String.valueOf(getGroup().charAt(0)).toUpperCase() + group.substring(1).toLowerCase());
+        Language.getLanguages().forEach(language -> {
+            if (!language.exists(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group))){
+                language.generateNPCMessages(language.getYml(), group);
+            }
+        });
     }
 
     /**
