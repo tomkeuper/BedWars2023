@@ -246,6 +246,7 @@ public class Hindi extends Language {
         yml.addDefault(Messages.MEANING_DISABLED, "&cDisabled");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cAp yahape blocks place nahi kar sakte!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cAp sirf ek player dvaara place kiye gaye blocks tod sakte hai!");
+        yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cAp khudke bistar nahi tod sakte!");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lBED DESTRUCTION > %bw_team_color%%bw_team_name% %bw_player_color%%bw_player% &7Ke bistar nasht kiye!\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&cBED TUTA!");
@@ -331,6 +332,7 @@ public class Hindi extends Language {
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience praapt kiye (Bed Destroyed).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience praapt kiye (Regular Kill).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience praapt kiye (Final Kill).");
+        yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money% Coins mila (Play Time).");
         yml.addDefault(Messages.MONEY_REWARD_WIN, "%bw_lang_prefix%&6+%bw_money% Coins mila (Game Win).");

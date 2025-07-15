@@ -247,6 +247,7 @@ public class Turkish extends Language {
         yml.addDefault(Messages.MEANING_DISABLED, "&cDisabled");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cBuraya blok koyamazsın!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cSadece oyuncular tarafından yerleştirilen blokları kırabilirsin!");
+        yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cKendi yatağını kıramazsın!");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lYATAK KIRMA > %bw_team_color%%bw_team_name% Yatak&7, %bw_player_color%%bw_player%&7 tarafından parçalandı!\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&cYATAK KIRILDI");
@@ -332,6 +333,7 @@ public class Turkish extends Language {
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% BedWars puanı kazanıldı (Yatak Kırma)");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars puanı kazanıldı (Öldürme)");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars puanı kazanıldı (Final Kill)");
+        yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money% Para (Oynama Süresi)");
         yml.addDefault(Messages.MONEY_REWARD_WIN, "%bw_lang_prefix%&6+%bw_money% Para (Galibiyet)");

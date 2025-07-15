@@ -247,6 +247,7 @@ public class Italian extends Language {
         yml.addDefault(Messages.MEANING_DISABLED, "&cDisabled");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cNon puoi piazzare blocchi in questa area!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cPuoi rompere solo i blocchi che sono stati piazzati dai giocatori!");
+        yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cNon puoi distruggere il tuo letto!");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lLETTO DISTRUTTO > Il letto del team %bw_team_color%%bw_team_name% &7è stato fatto a pezzi da %bw_player_color%%bw_player%&7!\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&cLETTO DISTRUTTO!");
@@ -385,6 +386,7 @@ public class Italian extends Language {
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% Esperienza BedWars ricevuta (Distruzione letto).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% Esperienza BedWars ricevuta (Uccisione).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% Esperienza BedWars ricevuta (Uccisione Finale).");
+        yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money% Coins (Tempo di Gioco).");
         yml.addDefault(Messages.MONEY_REWARD_WIN, "%bw_lang_prefix%&6+%bw_money% Coins (Vittoria).");

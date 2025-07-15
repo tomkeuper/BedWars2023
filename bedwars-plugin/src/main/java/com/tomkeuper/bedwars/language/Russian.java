@@ -172,6 +172,7 @@ public class Russian extends Language{
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&lЗащищайте свою кровать!");
         yml.addDefault(Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED, "&cТы не можешь открыть этот сундук, так как команда уничтожена!");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cВы не можете ставить блоки здесь!");
+        yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cВы можете ломать блоки только игроков!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cВы не можете разрушить свою кровать!");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lУНИЧТОЖЕНИЕ КОММАНДЫ > %bw_team_color%%bw_team_name% команда &cбыла уничтожена!\n");
@@ -232,6 +233,7 @@ public class Russian extends Language{
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% BedWars Опыта получено (Разрушение кровати).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Опыта получено (Убийство).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Опыта получено (Финальное убийство).");
+        yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money% Монет (Игровое время).");
         yml.addDefault(Messages.MONEY_REWARD_WIN, "%bw_lang_prefix%&6+%bw_money% Монет (Победа в игре).");

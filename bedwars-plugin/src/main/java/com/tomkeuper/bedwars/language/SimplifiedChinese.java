@@ -246,6 +246,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.MEANING_DISABLED, "&cDisabled");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&c你不能在这里放置方块！");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&c你只能破坏由玩家放置的方块！");
+        yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&c你不能破坏自己的床！");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&l床被破坏 > %bw_team_color%%bw_team_name%的床&7被%bw_player_color%%bw_player%&7破坏了！\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&c床被破坏！");
@@ -331,6 +332,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp%起床战争经验(破坏床)");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp%起床战争经验(击杀)");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp%起床战争经验(最终击杀)");
+        yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money%金币(游戏时间)");
         yml.addDefault(Messages.MONEY_REWARD_WIN, "%bw_lang_prefix%&6+%bw_money%金币(游戏胜利)");
