@@ -308,10 +308,6 @@ public class SimplifiedChinese extends Language {
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&l保护你的床！");
         yml.addDefault(Messages.BED_HOLOGRAM_DESTROYED, "&c&l你的床被破坏了！");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), "&b队伍升级,&e&l右键点击");
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), "&b单挑升级,&e&l右键点击");
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), "&b队伍商店,&e&l右键点击");
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), "&b单挑商店,&e&l右键点击");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&l队伍团灭 > %bw_team_color%%bw_team_name%&c已被团灭！\n");
         yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&f床被破坏");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&f钻石II级");
@@ -565,8 +561,17 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&l警报！！！");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "%bw_color%%bw_team%&f触发了陷阱！");
         yml.addDefault(Messages.UPGRADES_UPGRADE_ALREADY_CHAT, "&cYou already unlocked this upgrade!");
+        generateNPCMessages(yml, "default");
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));
+    }
+
+    @Override
+    public void generateNPCMessages(YamlConfiguration yml, String group){
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group), "&b队伍升级,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group), "&b单挑升级,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group), "&b队伍商店,&e&l右键点击");
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group), "&b单挑商店,&e&l右键点击");
     }
 }
