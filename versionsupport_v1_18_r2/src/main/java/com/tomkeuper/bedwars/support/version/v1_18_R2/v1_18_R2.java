@@ -375,7 +375,7 @@ public class v1_18_R2 extends VersionSupport {
     public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
         try {
             // Convert Bukkit block to NMS Block
-            Block nmsBlock = (Block) CraftMagicNumbers.getBlock(bukkitBlock.getType());
+            net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
 
             // Access the 'durability' field
             Field durabilityField = BlockBase.class.getDeclaredField("aH");

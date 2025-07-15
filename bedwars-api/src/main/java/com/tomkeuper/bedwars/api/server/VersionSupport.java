@@ -223,6 +223,13 @@ public abstract class VersionSupport {
      */
     public abstract void registerTntWhitelist(float endStoneBlast, float glassBlast);
 
+    /**
+     * Get blast resistance of a block.
+     * This will return the default blast resistance if not modified.
+     *
+     * @param block the block to get blast resistance for
+     * @return the blast resistance of the block
+     */
     public abstract float getBlastResistance(Block block);
 
     /**
