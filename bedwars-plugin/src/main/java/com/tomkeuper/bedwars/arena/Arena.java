@@ -82,8 +82,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -1749,9 +1751,20 @@ public class Arena implements IArena {
         for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getLobbyItems()) {
             ItemStack item = lobbyItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
                 ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, lobbyItem.getIdentifier());
                 item = head;
             }
 
@@ -1781,9 +1794,20 @@ public class Arena implements IArena {
         for (IPermanentItem preGameItem : BedWars.getAPI().getItemUtil().getPreGameItems()) {
             ItemStack item = preGameItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
                 ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, preGameItem.getIdentifier());
                 item = head;
             }
 
@@ -1813,13 +1837,23 @@ public class Arena implements IArena {
         for (IPermanentItem spectatorItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
             ItemStack item = spectatorItem.getItem();
 
-            if ((item.getType().name().equals("SKULL_ITEM") && item.getDurability() == 3) || item.getType().name().equals("PLAYER_HEAD")) {
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
                 ItemStack head = SkullTexture.getTexturedHead(p.getName());
-                head.setItemMeta(item.getItemMeta());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, spectatorItem.getIdentifier());
                 item = head;
             }
 
-            // Update the item's display name and lore based on the player's language.
             ItemMeta itemMeta = item.getItemMeta();
             if (itemMeta != null) {
                 String name = SupportPAPI.getSupportPAPI().replace(p,
