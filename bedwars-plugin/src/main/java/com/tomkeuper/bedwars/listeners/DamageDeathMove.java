@@ -444,12 +444,14 @@ public class DamageDeathMove implements Listener {
         }
         // End of death determine logic
 
-        if (killer != null) killersTeam = a.getTeam(killer);
-
         String finalMessage = message;
         PlayerKillEvent playerKillEvent = new PlayerKillEvent(a, victim, killer, player -> Language.getMsg(player, finalMessage), cause);
         Bukkit.getPluginManager().callEvent(playerKillEvent);
 
+        killer = playerKillEvent.getKiller();
+        cause = playerKillEvent.getCause();
+
+        if (killer != null) killersTeam = a.getTeam(killer);
         if (killer != null && playerKillEvent.playSound()) Sounds.playSound(ConfigPath.SOUNDS_KILL, killer);
 
         for (Player on : a.getPlayers()) {
