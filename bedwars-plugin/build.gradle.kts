@@ -177,6 +177,7 @@ tasks {
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
+        relocate("net.kyori", "com.tomkeuper.bedwars.libs.kyori")
     }
     build {
         dependsOn(shadowJar)
