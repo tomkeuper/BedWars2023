@@ -308,10 +308,6 @@ public class Bangla extends Language {
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&lApnar Bichana rokkha korun!");
         yml.addDefault(Messages.BED_HOLOGRAM_DESTROYED, "&c&lApnar Bichana dhongso hoye giyeche!");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), Arrays.asList("&bTEAM UPGRADES", "&e&lRIGHT CLICK"));
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), Arrays.asList("&bSOLO UPGRADES", "&e&lRIGHT CLICK"));
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), Arrays.asList("&bTEAM SHOP", "&e&lRIGHT CLICK"));
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), Arrays.asList("&bITEM SHOP", "&e&lRIGHT CLICK"));
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lTEAM ELIMINATED > %bw_team_color%%bw_team_name% &cTeam ti eliminate holen!\n");
         yml.addDefault(Messages.NEXT_EVENT_BEDS_DESTROY, "&fBichana Shesh");
         yml.addDefault(Messages.NEXT_EVENT_DIAMOND_UPGRADE_II, "&fDiamond II");
@@ -565,8 +561,17 @@ public class Bangla extends Language {
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_MSG + "3", "&c&lAlarm trap set off by &7&l%bw_player% &c&lfrom %bw_color%&l%bw_team% &c&lteam!");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&lALARM!!!");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "&fAlarm trap set off by {color}{team} &fteam!");
+        generateNPCMessages(yml, "default");
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));
+    }
+
+    @Override
+    public void generateNPCMessages(YamlConfiguration yml, String group){
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group), Arrays.asList("&bTEAM UPGRADES", "&e&lRIGHT CLICK"));
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group), Arrays.asList("&bSOLO UPGRADES", "&e&lRIGHT CLICK"));
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group), Arrays.asList("&bTEAM SHOP", "&e&lRIGHT CLICK"));
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group), Arrays.asList("&bITEM SHOP", "&e&lRIGHT CLICK"));
     }
 }

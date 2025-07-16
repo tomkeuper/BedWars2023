@@ -444,12 +444,14 @@ public class DamageDeathMove implements Listener {
         }
         // End of death determine logic
 
-        if (killer != null) killersTeam = a.getTeam(killer);
-
         String finalMessage = message;
         PlayerKillEvent playerKillEvent = new PlayerKillEvent(a, victim, killer, player -> Language.getMsg(player, finalMessage), cause);
         Bukkit.getPluginManager().callEvent(playerKillEvent);
 
+        killer = playerKillEvent.getKiller();
+        cause = playerKillEvent.getCause();
+
+        if (killer != null) killersTeam = a.getTeam(killer);
         if (killer != null && playerKillEvent.playSound()) Sounds.playSound(ConfigPath.SOUNDS_KILL, killer);
 
         for (Player on : a.getPlayers()) {
@@ -667,12 +669,12 @@ public class DamageDeathMove implements Listener {
                         if (player.getLocation().distance(team.getBed()) < 4) {
                             if (team.isMember(player)) {
                                 if (bedHolo == null) continue;
-                                if (bedHolo.getHologram().isShowing()) bedHolo.hide();
+                                if (bedHolo.getHologram().isShowing()) bedHolo.getHologram().hide();
                             }
                         } else {
                             if (team.isMember(player)) {
                                 if (bedHolo == null) continue;
-                                if (!bedHolo.getHologram().isShowing()) bedHolo.show();
+                                if (!bedHolo.getHologram().isShowing()) bedHolo.getHologram().show();
                             }
                         }
                     }

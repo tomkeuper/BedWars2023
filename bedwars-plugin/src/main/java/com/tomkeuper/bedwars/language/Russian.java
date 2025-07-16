@@ -223,10 +223,6 @@ public class Russian extends Language{
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER2, "II");
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER3, "III");
         yml.addDefault(Messages.GENERATOR_UPGRADE_CHAT_ANNOUNCEMENT, "%bw_lang_prefix%%bw_generator_type% Генератор &eбыл улучшен до уровня &c%bw_tier%");
-        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", "default"), Arrays.asList("&bКОМАНДНЫЕ УЛУЧШЕНИЯ", "&e&lПКМ"));
-        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", "default"), Arrays.asList("&bСОЛО УЛУЧШЕНИЯ", "&e&lПКМ"));
-        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", "default"), Arrays.asList("&bМАГАЗИН", "&e&lПКМ"));
-        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", "default"), Arrays.asList("&bМАГАЗИН", "&e&lПКМ"));
         yml.addDefault(Messages.XP_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_xp% BedWars Опыта получено (Игровое время).");
         yml.addDefault(Messages.XP_REWARD_WIN, "%bw_lang_prefix%&6+%bw_xp% BedWars Опыта получено (Победа в игре).");
         yml.addDefault(Messages.XP_REWARD_PER_TEAMMATE, "%bw_lang_prefix%&6+%bw_xp% BedWars Опыта получено (Поддержка команды).");
@@ -600,8 +596,17 @@ public class Russian extends Language{
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&lВНИМАНИЕ!!!");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "&fЛовушка была активирована командой %bw_color%%bw_team% &f!");
         yml.addDefault(Messages.UPGRADES_UPGRADE_ALREADY_CHAT, "&cYou already unlocked this upgrade!");
+        generateNPCMessages(yml, "default");
         save();
         setPrefix(m(Messages.PREFIX));
         setPrefixStatic(m(Messages.PREFIX));
+    }
+
+    @Override
+    public void generateNPCMessages(YamlConfiguration yml, String group){
+        yml.addDefault(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group), Arrays.asList("&bКОМАНДНЫЕ УЛУЧШЕНИЯ", "&e&lПКМ"));
+        yml.addDefault(Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group), Arrays.asList("&bСОЛО УЛУЧШЕНИЯ", "&e&lПКМ"));
+        yml.addDefault(Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group), Arrays.asList("&bМАГАЗИН", "&e&lПКМ"));
+        yml.addDefault(Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group), Arrays.asList("&bМАГАЗИН", "&e&lПКМ"));
     }
 }
