@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-    implementation("com.gradleup.shadow:shadow-gradle-plugin:8.3.8")
+    implementation("com.gradleup.shadow:shadow-gradle-plugin:9.0.0-beta6")
     implementation("io.freefair.gradle:lombok-plugin:8.6")
 }
