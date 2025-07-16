@@ -376,6 +376,7 @@ public class Romanian extends Language {
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Bed Destroyed).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Regular Kill).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Final Kill).");
+        yml.addDefault(Messages.XP_REWARD_HALLOWEEN, "%bw_lang_prefix%&6+5 BedWars Experience Received (Halloween).");
         yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money% Coins (Play Time).");
@@ -384,6 +385,8 @@ public class Romanian extends Language {
         yml.addDefault(Messages.MONEY_REWARD_BED_DESTROYED, "%bw_lang_prefix%&6+%bw_money% Coins (Bed Destroyed).");
         yml.addDefault(Messages.MONEY_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_money% Coins (Final Kill).");
         yml.addDefault(Messages.MONEY_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_money% Coins (Regular Kill).");
+
+        yml.addDefault(Messages.HALLOWEEN_ITEM_NAME, "&6&lHappy Halloween");
 
         //shop
         yml.addDefault(Messages.SHOP_INDEX_NAME, "&8Cumpara Repede");

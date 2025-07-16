@@ -358,6 +358,7 @@ public class Polish extends Language{
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% Otrzymano doswiedczenie BedWars (Zniszczone lozko).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% Otrzymano doswiedczenie BedWars (Regularne zabojstwo).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% Otrzymano doswiedczenie BedWars (Finalne zabojstwo).");
+        yml.addDefault(Messages.XP_REWARD_HALLOWEEN, "%bw_lang_prefix%&6+5 BedWars Experience Received (Halloween).");
         yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 
         yml.addDefault(Messages.MONEY_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_money% Monety (Czas grania).");
@@ -366,6 +367,8 @@ public class Polish extends Language{
         yml.addDefault(Messages.MONEY_REWARD_BED_DESTROYED, "%bw_lang_prefix%&6+%bw_money% Monety (Zniszczone lozko).");
         yml.addDefault(Messages.MONEY_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_money% Monety (Finalne zabojstwo).");
         yml.addDefault(Messages.MONEY_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_money% Monety (Regularne zabojstwo).");
+
+        yml.addDefault(Messages.HALLOWEEN_ITEM_NAME, "&6&lHappy Halloween");
 
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lWYELIMINOWANA DRUZYNA > %bw_team_color%%bw_team_name% &cdruzyna &czostala wyeliminowana!\n");
         yml.addDefault(Messages.BED_HOLOGRAM_DEFEND, "&c&lChron swojego lozka!");

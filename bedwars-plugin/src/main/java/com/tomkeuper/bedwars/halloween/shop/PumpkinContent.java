@@ -23,6 +23,7 @@ package com.tomkeuper.bedwars.halloween.shop;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
 import com.tomkeuper.bedwars.api.arena.shop.IContentTier;
+import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopCategory;
@@ -47,9 +48,9 @@ public class PumpkinContent extends CategoryContent {
         super(null, null, null, null, father);
 
         int foundSlot = -1;
-        for (int i = 19; i < 26; i++){
+        for (int i = 19; i < 26; i++) {
             int finalI = i;
-            if (father.getCategoryContentList().stream().noneMatch(categoryContent -> categoryContent.getSlot() == finalI)){
+            if (father.getCategoryContentList().stream().noneMatch(categoryContent -> categoryContent.getSlot() == finalI)) {
                 foundSlot = i;
                 break;
             }
@@ -115,7 +116,7 @@ public class PumpkinContent extends CategoryContent {
 
         pumpkin.setAmount(12);
         ItemMeta itemMeta = pumpkin.getItemMeta();
-        itemMeta.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Happy Halloween!");
+        itemMeta.setDisplayName(Language.getMsg(player, Messages.HALLOWEEN_ITEM_NAME));
         itemMeta.setLore(Arrays.asList("", cColor + String.valueOf(tier.getPrice()) + " " + cColor + translatedCurrency, " ", buyStatus));
         pumpkin.setItemMeta(itemMeta);
         return pumpkin;
@@ -140,22 +141,18 @@ public class PumpkinContent extends CategoryContent {
 
         @Override
         public void setCurrency(Material currency) {
-
         }
 
         @Override
         public void setPrice(int price) {
-
         }
 
         @Override
         public void setItemStack(ItemStack itemStack) {
-
         }
 
         @Override
         public void setBuyItemsList(List<IBuyItem> buyItemsList) {
-
         }
 
         @Override
@@ -198,7 +195,6 @@ public class PumpkinContent extends CategoryContent {
 
         @Override
         public void setItemStack(ItemStack itemStack) {
-
         }
 
         @Override
@@ -208,7 +204,6 @@ public class PumpkinContent extends CategoryContent {
 
         @Override
         public void setAutoEquip(boolean autoEquip) {
-
         }
 
         @Override
@@ -218,7 +213,6 @@ public class PumpkinContent extends CategoryContent {
 
         @Override
         public void setPermanent(boolean permanent) {
-
         }
 
         @Override
@@ -228,7 +222,6 @@ public class PumpkinContent extends CategoryContent {
 
         @Override
         public void setUnbreakable(boolean unbreakable) {
-
         }
     }
 }
