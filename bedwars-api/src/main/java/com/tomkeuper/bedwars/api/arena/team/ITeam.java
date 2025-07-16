@@ -304,12 +304,13 @@ public interface ITeam {
     void setDragonAmount(int amount);
 
     /**
-     * Get all players from team
+     * Get all cached team members
      */
     List<Player> getMembersCache();
 
     /**
-     * Get all players from team
+     * Get all dragons that are currently spawned for this team.
+     * Can only be used in the ENDER_DRAGON phase, will otherwise be empty
      */
     List<EnderDragon> getDragons();
 
