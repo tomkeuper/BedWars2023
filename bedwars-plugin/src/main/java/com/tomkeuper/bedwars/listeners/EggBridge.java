@@ -35,14 +35,14 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("WeakerAccess")
 public class EggBridge implements Listener {
 
     //Active eggBridges
-    private static final Map<Egg, EggBridgeTask> bridges = new ConcurrentHashMap<>();
+    private static final Map<Egg, EggBridgeTask> bridges = new HashMap<>();
 
     @EventHandler
     public void onLaunch(ProjectileLaunchEvent event) {

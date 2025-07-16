@@ -28,8 +28,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("WeakerAccess")
 public class PlayerLevel {
@@ -46,8 +47,8 @@ public class PlayerLevel {
     // keep trace if current level is different than the one in database
     private boolean modified = false;
 
-    private static final ConcurrentHashMap<UUID, PlayerLevel> levelByPlayer =
-            new ConcurrentHashMap<>(256, 0.75f, 4);
+    private static final Map<UUID, PlayerLevel> levelByPlayer =
+            new HashMap<>(256, 0.75f);
 
     private static final ThreadLocal<NumberFormat> NF = ThreadLocal.withInitial(() -> {
         NumberFormat f = NumberFormat.getInstance();
