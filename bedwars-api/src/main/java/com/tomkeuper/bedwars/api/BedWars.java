@@ -44,6 +44,7 @@ import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.stats.IStatsManager;
 import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import org.bukkit.ChatColor;
@@ -51,7 +52,6 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -64,7 +64,15 @@ public interface BedWars {
     /**
      * Get stats utils.
      */
+    @Deprecated
     IStats getStatsUtil();
+
+
+    /**
+     * Get stats manager.
+     */
+    @Deprecated
+    IStatsManager getStatsManager();
 
     /**
      * Get addon util
