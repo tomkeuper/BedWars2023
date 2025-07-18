@@ -69,7 +69,6 @@ import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import com.tomkeuper.bedwars.support.vault.WithEconomy;
-import com.tomkeuper.bedwars.utils.ItemBuilder;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
@@ -82,7 +81,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemFlag;
@@ -167,6 +165,7 @@ public class Arena implements IArena {
      * Those maps are not used for db stats but is for internal use only.
      */
     private HashMap<String, Integer> playerKills = new HashMap<>();
+    private HashMap<String, Integer> playerTotalKills = new HashMap<>();
     private HashMap<Player, Integer> playerBedsDestroyed = new HashMap<>();
     private HashMap<Player, Integer> playerFinalKills = new HashMap<>();
     private HashMap<Player, Integer> playerDeaths = new HashMap<>();
@@ -1451,9 +1450,20 @@ public class Arena implements IArena {
      * @param p          Target player
      * @param finalKills True if you want to get the Final Kills. False for regular kills.
      */
+    @Override
     public int getPlayerKills(Player p, boolean finalKills) {
         if (finalKills) return playerFinalKills.getOrDefault(p, 0);
         return playerKills.getOrDefault(p.getName(), 0);
+    }
+
+    /**
+     * Get a player total kills count.
+     *
+     * @param p          Target player
+     */
+    @Override
+    public int getPlayerTotalKills(Player p) {
+        return playerTotalKills.getOrDefault(p.getName(), 0);
     }
 
     /**
@@ -1718,10 +1728,10 @@ public class Arena implements IArena {
      */
     public void addPlayerKill(Player p, boolean finalKill, Player victim) {
         if (p == null) return;
-        if (playerKills.containsKey(p.getName())) {
-            playerKills.replace(p.getName(), playerKills.get(p.getName()) + 1);
+        if (playerTotalKills.containsKey(p.getName())) {
+            playerTotalKills.replace(p.getName(), playerTotalKills.get(p.getName()) + 1);
         } else {
-            playerKills.put(p.getName(), 1);
+            playerTotalKills.put(p.getName(), 1);
         }
         if (finalKill) {
             if (playerFinalKills.containsKey(p)) {
@@ -1730,6 +1740,12 @@ public class Arena implements IArena {
                 playerFinalKills.put(p, 1);
             }
             playerFinalKillDeaths.put(victim, 1);
+        } else {
+            if (playerKills.containsKey(p.getName())) {
+                playerKills.replace(p.getName(), playerKills.get(p.getName()) + 1);
+            } else {
+                playerKills.put(p.getName(), 1);
+            }
         }
     }
 
@@ -1968,12 +1984,12 @@ public class Arena implements IArena {
                     }
 
                     int first = 0, second = 0, third = 0;
-                    if (!playerKills.isEmpty()) {
+                    if (!playerTotalKills.isEmpty()) {
 
                         LinkedHashMap<String, Integer> reverseSortedMap = new LinkedHashMap<>();
 
                         //Use Comparator.reverseOrder() for reverse ordering
-                        playerKills.entrySet()
+                        playerTotalKills.entrySet()
                                 .stream()
                                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                                 .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
@@ -2507,6 +2523,7 @@ public class Arena implements IArena {
         respawnSessions = null;
         showTime = null;
         playerKills = null;
+        playerTotalKills = null;
         playerBedsDestroyed = null;
         playerFinalKills = null;
         playerDeaths = null;
@@ -2733,7 +2750,6 @@ public class Arena implements IArena {
     public void abandonGame(Player player) {
         if (player == null) return;
 
-        //this.playerKills.remove(player.getName());
         this.playerBedsDestroyed.remove(player);
         this.playerFinalKills.remove(player);
         this.playerDeaths.remove(player);
