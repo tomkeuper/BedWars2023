@@ -21,6 +21,7 @@ include(":versionsupport_v1_20_6")
 include(":versionsupport_v1_21_r1")
 include(":versionsupport_v1_21_r2")
 include(":versionsupport_v1_21_r3")
+include(":versionsupport_v1_21_r5")
 include(":versionsupport_common")
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")

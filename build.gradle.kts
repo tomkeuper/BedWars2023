@@ -21,6 +21,7 @@ val versions = setOf(
     ":versionsupport_v1_21_r1",
     ":versionsupport_v1_21_r2",
     ":versionsupport_v1_21_r3",
+    ":versionsupport_v1_21_r5",
     ":resetadapter_slime",
     ":resetadapter_slimepaper",
     ":resetadapter_advancedslimepaper",

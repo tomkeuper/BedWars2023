@@ -166,7 +166,12 @@ public class FireballListener implements Listener {
             } else {
                 y = y * fireballVertical * 1.5; // kb for jumping
             }
-            player.setVelocity(horizontalVector.setY(y));
+
+            try {
+                player.setVelocity(horizontalVector.setY(y));
+            } catch (IllegalArgumentException ex) {
+                // TODO: implement proper fix for Caused by: java.lang.IllegalArgumentException: x not finite
+            }
 
             LastHit lh = LastHit.getLastHit(player);
             if (lh != null) {
