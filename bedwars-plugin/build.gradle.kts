@@ -32,9 +32,9 @@ dependencies {
     implementation("com.iridium:IridiumColorAPI:1.0.9") // used by BedWars - API
     implementation("org.apache.commons:commons-lang3:3.14.0") // Used by IridiumColorAPI
 
-    implementation("net.kyori:adventure-text-minimessage:4.20.0")
-    implementation("net.kyori:adventure-text-serializer-legacy:4.20.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.4")
+    implementation("net.kyori:adventure-text-minimessage:4.23.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
 
     api(projects.bedwarsApi)
     api(projects.versionsupportCommon)
@@ -177,6 +177,7 @@ tasks {
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
+        relocate("net.kyori", "com.tomkeuper.bedwars.libs.kyori")
     }
     build {
         dependsOn(shadowJar)

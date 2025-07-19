@@ -347,6 +347,13 @@ public interface IArena {
     int getPlayerKills(Player p, boolean finalKills);
 
     /**
+     * Get a player total kills count.
+     *
+     * @param p          Target player
+     */
+    int getPlayerTotalKills(Player p);
+
+    /**
      * Get the number of beds destroyed by a player.
      *
      * @param p The target player.

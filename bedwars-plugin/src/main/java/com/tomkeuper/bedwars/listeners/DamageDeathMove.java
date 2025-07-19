@@ -496,7 +496,7 @@ public class DamageDeathMove implements Listener {
         }
 
         // send respawn packet
-        // Needs a delay to prevent hit delay but after respawning (mainly casued by projectile hits)
+        // Needs a delay to prevent hit delay but after respawning (mainly caused by projectile hits)
         Bukkit.getScheduler().runTask(BedWars.plugin, () -> victim.spigot().respawn());
         a.addPlayerDeath(victim);
 
@@ -659,7 +659,6 @@ public class DamageDeathMove implements Listener {
             } else {
                 if (a.getStatus() == GameState.playing) {
                     if (player.getLocation().getBlockY() <= a.getYKillHeight()) {
-                        player.getInventory().clear(); //Fix issue #149
                         BedWars.nms.voidKill(player);
                     }
                     for (ITeam team : a.getTeams()) {
@@ -735,6 +734,7 @@ public class DamageDeathMove implements Listener {
     public void onEntityDeath(EntityDeathEvent e) {
         if (Arena.getArenaByIdentifier(e.getEntity().getLocation().getWorld().getName()) != null) {
             if (e.getEntityType() == EntityType.IRON_GOLEM || e.getEntityType() == EntityType.SILVERFISH) {
+                BedWars.debug("Clearing Drops");
                 e.getDrops().clear();
                 e.setDroppedExp(0);
             }
