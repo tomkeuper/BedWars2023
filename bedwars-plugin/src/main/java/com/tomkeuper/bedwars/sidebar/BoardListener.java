@@ -56,4 +56,9 @@ public class BoardListener implements Listener {
         prefixPlaceholderHead.updateValue(tabPlayer, BoardManager.getInstance().getPrefixHead(tabPlayer));
         suffixPlaceholderHead.updateValue(tabPlayer, BoardManager.getInstance().getSuffixHead(tabPlayer));
     }
+
+    @EventHandler
+    public void onDisconnect(PlayerLeaveArenaEvent event) {
+        BoardManager.getInstance().cleanupPlayer(event.getPlayer());
+    }
 }

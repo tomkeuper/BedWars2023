@@ -440,6 +440,21 @@ public class BoardManager implements IScoreboardService {
             scoreboardManager.resetScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
     }
 
+    public void cleanupPlayer(@NotNull Player player) {
+        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+        if (tabPlayer == null) return;
+
+        // Reset all prefixes and suffixes
+        tabPlayersPrefix.remove(tabPlayer);
+        tabPlayersSuffix.remove(tabPlayer);
+        headPlayersPrefix.remove(tabPlayer);
+        headPlayersSuffix.remove(tabPlayer);
+        tabPlayersTitle.remove(tabPlayer);
+
+        // Reset scoreboard
+        scoreboardManager.resetScoreboard(tabPlayer);
+    }
+
     public String getPrefixTab(TabPlayer tabPlayer) {
         return getPrefix(tabPlayer, "Tab");
     }
