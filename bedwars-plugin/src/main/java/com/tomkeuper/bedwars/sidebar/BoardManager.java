@@ -98,22 +98,30 @@ public class BoardManager implements IScoreboardService {
         }
     }
 
-    public void registerArenaScoreboards(Arena arena) {
+    public List<Scoreboard> registerArenaScoreboards(Arena arena) {
         // Technically it's possible to have per arena scoreboards. Future feature?
         // TODO fix issue with scoreboard overwrites
+        List<Scoreboard> scoreboards = new ArrayList<>();
         for (Language language : Language.getLanguages()) {
             List<String> waiting = getScoreboardLines(arena, language, "waiting", Messages.SCOREBOARD_DEFAULT_WAITING);
             String scoreboardWaitingName = "bw_" + arena.getGroup() + "_waiting_" + language.getIso();
-            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardWaitingName)) scoreboardManager.createScoreboard(scoreboardWaitingName, "%bw_scoreboard_title%", waiting.subList(1, waiting.size()));
+            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardWaitingName)) {
+                scoreboards.add(scoreboardManager.createScoreboard(scoreboardWaitingName, "%bw_scoreboard_title%", waiting.subList(1, waiting.size())));
+            }
 
             List<String> starting = getScoreboardLines(arena, language, "starting", Messages.SCOREBOARD_DEFAULT_STARTING);
             String scoreboardStartingName = "bw_" + arena.getGroup() + "_starting_" + language.getIso();
-            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardStartingName)) scoreboardManager.createScoreboard(scoreboardStartingName,"%bw_scoreboard_title%", starting.subList(1, starting.size()));
+            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardStartingName)) {
+                scoreboards.add(scoreboardManager.createScoreboard(scoreboardStartingName,"%bw_scoreboard_title%", starting.subList(1, starting.size())));
+            }
 
             List<String> playing = getScoreboardLines(arena, language, "playing", Messages.SCOREBOARD_DEFAULT_PLAYING);
             String scoreboardPlayingName = "bw_" + arena.getGroup() + "_playing_" + language.getIso();
-            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardPlayingName)) scoreboardManager.createScoreboard(scoreboardPlayingName,"%bw_scoreboard_title%", playing.subList(1, playing.size()));
+            if (!scoreboardManager.getRegisteredScoreboards().containsKey(scoreboardPlayingName)) {
+                scoreboards.add(scoreboardManager.createScoreboard(scoreboardPlayingName,"%bw_scoreboard_title%", playing.subList(1, playing.size())));
+            }
         }
+        return scoreboards;
     }
 
     private List<String> getScoreboardLines(Arena arena, Language language, String phase, String path){
@@ -438,6 +446,21 @@ public class BoardManager implements IScoreboardService {
     public void remove(@NotNull Player player) {
         if (Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())).isLoaded())
             scoreboardManager.resetScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
+    }
+
+    public void cleanupPlayer(@NotNull Player player) {
+        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+        if (tabPlayer == null) return;
+
+        // Reset all prefixes and suffixes
+        tabPlayersPrefix.remove(tabPlayer);
+        tabPlayersSuffix.remove(tabPlayer);
+        headPlayersPrefix.remove(tabPlayer);
+        headPlayersSuffix.remove(tabPlayer);
+        tabPlayersTitle.remove(tabPlayer);
+
+        // Reset scoreboard
+        scoreboardManager.resetScoreboard(tabPlayer);
     }
 
     public String getPrefixTab(TabPlayer tabPlayer) {
