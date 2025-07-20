@@ -74,6 +74,7 @@ import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.placeholder.PlayerPlaceholder;
 import me.neznamy.tab.api.placeholder.ServerPlaceholder;
+import me.neznamy.tab.api.scoreboard.Scoreboard;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -134,6 +135,7 @@ public class Arena implements IArena {
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
+    private List<Scoreboard> scoreboards = new ArrayList<>();
     private int renderDistance, magicMilkTime = 30;
 
     private final List<Player> leaving = new ArrayList<>();
@@ -424,7 +426,7 @@ public class Arena implements IArena {
                 yaml.getInt("world-settings.default.entity-tracking-range.players") : yaml.getInt("world-settings." + getWorldName() + ".entity-tracking-range.players");
 
         //register scoreboards
-        BoardManager.getInstance().registerArenaScoreboards(this);
+        scoreboards = BoardManager.getInstance().registerArenaScoreboards(this);
     }
 
     /**
@@ -1496,7 +1498,8 @@ public class Arena implements IArena {
     @Override
     public void setGroup(String group) {
         this.group = group;
-        BoardManager.getInstance().registerArenaScoreboards(this);
+        scoreboards.forEach(Scoreboard::unregister);
+        scoreboards = BoardManager.getInstance().registerArenaScoreboards(this);
     }
 
     public static void setArenaByPlayer(Player p, IArena arena) {
@@ -2500,6 +2503,8 @@ public class Arena implements IArena {
             }
             dragonBossbars = null;
         }
+        scoreboards.forEach(Scoreboard::unregister);
+        scoreboards = null;
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
