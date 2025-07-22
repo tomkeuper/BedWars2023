@@ -204,11 +204,11 @@ public class BoardManager implements IScoreboardService {
         });
         placeholderManager.registerPlayerPlaceholder("%bw_total_kills%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return String.valueOf(Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerTotalKills((Player) player.getPlayer()));
-            return String.valueOf(BedWars.getStatsManager().get(player.getUniqueId()).getKills());
+            return String.valueOf(BedWars.getStatsManager().get(player.getUniqueId()).getTotalKills());
         });
         placeholderManager.registerPlayerPlaceholder("%bw_final_kills%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return String.valueOf(Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerKills((Player) player.getPlayer(), true));
-            return String.valueOf(BedWars.getStatsManager().get(player.getUniqueId()).getKills());
+            return String.valueOf(BedWars.getStatsManager().get(player.getUniqueId()).getFinalKills());
         });
         placeholderManager.registerPlayerPlaceholder("%bw_beds%", placeholderRefresh, player -> {
             if (null != Arena.getArenaByPlayer((Player) player.getPlayer())) return String.valueOf(Arena.getArenaByPlayer((Player) player.getPlayer()).getPlayerBedsDestroyed((Player) player.getPlayer()));
