@@ -48,20 +48,20 @@ public class HoloLine implements IHoloLine {
         this.text = text;
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
-        entity.b(CraftChatMessage.fromStringOrNull(text));
-        entity.p(true);
-        entity.k(true);
-        entity.ag = true;
+        entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
+        entity.p(true); // setCustomNameVisible
+        entity.l(true); // setInvisible
+        entity.aq = true; // noPhysics
         Location loc = hologram.getLocation();
-        entity.o(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
+        entity.o(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ()); // setPosRaw
 
         PacketPlayOutSpawnEntity packet = v1_21_R5.newPacketPlayOutSpawnEntity(entity);
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c()); // getId(), getEntityData()
 
         final var delta = new Vec3D(0,0,0);
-        final var positionMoveRotation = new PositionMoveRotation(entity.dw(), delta, 0, entity.dR());
+        final var positionMoveRotation = new PositionMoveRotation(entity.dw(), delta, 0, entity.dR()); // trackingPosition(), , , getXRot()
         final Set<Relative> set = new HashSet<>();
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(),positionMoveRotation, set, false);
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(), positionMoveRotation, set, false);
 
         v1_21_R5.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
     }
@@ -98,17 +98,17 @@ public class HoloLine implements IHoloLine {
 
     @Override
     public void update() {
-        entity.b(CraftChatMessage.fromStringOrNull(text));
+        entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
         int position = hologram.getLines().indexOf(this);
-        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ()); //
         if (isDestroyed()) return;
 
-        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c()); // getId(), getEntityData()
 
         final var delta = new Vec3D(0,0,0);
-        final var positionMoveRotation = new PositionMoveRotation(entity.dw(), delta, 0, entity.dR());
+        final var positionMoveRotation = new PositionMoveRotation(entity.dw(), delta, 0, entity.dR()); // trackingPosition(), , , getXRot()
         final Set<Relative> set = new HashSet<>();
-        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(),positionMoveRotation, set, false);
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(), positionMoveRotation, set, false); // getId()
 
         v1_21_R5.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
     }
