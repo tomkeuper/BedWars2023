@@ -64,6 +64,7 @@ public class ArenaConfig extends ConfigManager {
         rules.add("doImmediateRespawn:true");
         rules.add("doWeatherCycle:false");
         rules.add("doFireTick:false");
+        rules.add("locatorBar:false");
         yml.addDefault(ConfigPath.ARENA_GAME_RULES, rules);
         yml.options().copyDefaults(true);
         save();
