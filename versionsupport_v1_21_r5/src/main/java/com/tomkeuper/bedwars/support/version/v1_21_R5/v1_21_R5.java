@@ -731,24 +731,25 @@ public final class v1_21_R5 extends VersionSupport {
     public Block placeLadder(@NotNull Block b, int x, int y, int z, @NotNull IArena a, int ladderData) {
         Block block = b.getRelative(x, y, z);  //ladder block
         block.setType(Material.LADDER);
-        Ladder ladder = (Ladder) block.getBlockData();
-        a.addPlacedBlock(block);
-        switch (ladderData) {
-            case 2 -> {
-                ladder.setFacing(BlockFace.NORTH);
-                block.setBlockData(ladder);
-            }
-            case 3 -> {
-                ladder.setFacing(BlockFace.SOUTH);
-                block.setBlockData(ladder);
-            }
-            case 4 -> {
-                ladder.setFacing(BlockFace.WEST);
-                block.setBlockData(ladder);
-            }
-            case 5 -> {
-                ladder.setFacing(BlockFace.EAST);
-                block.setBlockData(ladder);
+        if(block.getBlockData() instanceof Ladder ladder) {
+            a.addPlacedBlock(block);
+            switch (ladderData) {
+                case 2 -> {
+                    ladder.setFacing(BlockFace.NORTH);
+                    block.setBlockData(ladder);
+                }
+                case 3 -> {
+                    ladder.setFacing(BlockFace.SOUTH);
+                    block.setBlockData(ladder);
+                }
+                case 4 -> {
+                    ladder.setFacing(BlockFace.WEST);
+                    block.setBlockData(ladder);
+                }
+                case 5 -> {
+                    ladder.setFacing(BlockFace.EAST);
+                    block.setBlockData(ladder);
+                }
             }
         }
         return b;
