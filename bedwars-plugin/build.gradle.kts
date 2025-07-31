@@ -149,11 +149,14 @@ slimJar {
     relocate("com.mysql", "com.tomkeuper.bedwars.libs.mysql")
 }
 
+tasks.compileJava {
+    options.release.set(21)
+}
 
 tasks {
     shadowJar {
-        mustRunAfter("slimJar")
-        archiveFileName.set("BedWars-${project.version}.jar")
+        dependsOn("slimJar")
+        archiveFileName = "BedWars-${project.version}.jar"
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
         fun registerPlatform(project: Project, shadeTask: org.gradle.jvm.tasks.Jar) {
@@ -178,9 +181,6 @@ tasks {
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
         relocate("net.kyori", "com.tomkeuper.bedwars.libs.kyori")
-    }
-    build {
-        dependsOn(shadowJar)
     }
 }
 

@@ -5,7 +5,7 @@ plugins {
 
 tasks {
     shadowJar {
-        archiveFileName.set("BedWars-${project.version}.jar")
+        archiveFileName = "BedWars-${project.version}.jar"
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 }
