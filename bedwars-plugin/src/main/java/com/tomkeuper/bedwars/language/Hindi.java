@@ -403,6 +403,7 @@ public class Hindi extends Language {
         yml.addDefault(Messages.SHOP_LORE_STATUS_CAN_BUY, "&ePurchase karne ke liye click kare!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_CANT_AFFORD, "&cApke paas paryaapt %bw_currency% nahi hai!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_MAXED, "&aMAXED!");
+        yml.addDefault(Messages.SHOP_LORE_STATUS_ARMOR, "&aEQUIPPED!");
         yml.addDefault(Messages.SHOP_LORE_QUICK_ADD, "&7Quick Buy pe add karne ke liye &bSneak Click &7kare");
         yml.addDefault(Messages.SHOP_LORE_QUICK_REMOVE, "&7Quick Buy se remove karne ke liye &bSneak Click &7kare");
 

@@ -403,6 +403,7 @@ public class Indonesia extends Language {
         yml.addDefault(Messages.SHOP_LORE_STATUS_CAN_BUY, "&eKlik untuk membeli!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_CANT_AFFORD, "&cKamu tidak mempunyai %bw_currency% yang cukup!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_MAXED, "&aMAKSIMAL!");
+        yml.addDefault(Messages.SHOP_LORE_STATUS_ARMOR, "&aEQUIPPED!");
         yml.addDefault(Messages.SHOP_LORE_QUICK_ADD, "&bJongkok Klik untuk menambahkan ke Beli Cepat!");
         yml.addDefault(Messages.SHOP_LORE_QUICK_REMOVE, "&bJongkok Klik untuk menhapus dari Beli Cepat!");
 

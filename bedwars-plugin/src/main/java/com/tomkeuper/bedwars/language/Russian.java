@@ -258,6 +258,7 @@ public class Russian extends Language{
         yml.addDefault(Messages.SHOP_LORE_STATUS_CAN_BUY, "&eНажми для покупки!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_CANT_AFFORD, "&cТебе нехватает %bw_currency%!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_MAXED, "&aМАКСИМАЛЬНО!");
+        yml.addDefault(Messages.SHOP_LORE_STATUS_ARMOR, "&aEQUIPPED!");
         yml.addDefault(Messages.SHOP_LORE_QUICK_ADD, "&bШифт-клик для добавления в быструю покупку");
         yml.addDefault(Messages.SHOP_LORE_QUICK_REMOVE, "&bШифт-клик для удаления из быстрой покупки!");
 

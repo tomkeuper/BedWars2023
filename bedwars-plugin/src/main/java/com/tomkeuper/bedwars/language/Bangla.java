@@ -404,6 +404,7 @@ public class Bangla extends Language {
         yml.addDefault(Messages.SHOP_LORE_STATUS_CAN_BUY, "&ePurchase korte click korun!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_CANT_AFFORD, "&cApnar kache porjaptop %bw_currency% ney");
         yml.addDefault(Messages.SHOP_LORE_STATUS_MAXED, "&aMAXED!");
+        yml.addDefault(Messages.SHOP_LORE_STATUS_ARMOR, "&aEQUIPPED!");
         yml.addDefault(Messages.SHOP_LORE_QUICK_ADD, "&7Quick Buy te add korte &bSneal Click &7korun");
         yml.addDefault(Messages.SHOP_LORE_QUICK_REMOVE, "&7Quick Buy theke remove korte &bSneak Click &7korun!");
 

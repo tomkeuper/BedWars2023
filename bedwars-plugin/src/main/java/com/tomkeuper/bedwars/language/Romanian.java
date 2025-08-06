@@ -405,6 +405,7 @@ public class Romanian extends Language {
         yml.addDefault(Messages.SHOP_LORE_STATUS_CAN_BUY, "&eClick pentru a cumpara!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_CANT_AFFORD, "&cNu ai destul %bw_currency%!");
         yml.addDefault(Messages.SHOP_LORE_STATUS_MAXED, "&aNIVEL MAXIM!");
+        yml.addDefault(Messages.SHOP_LORE_STATUS_ARMOR, "&aEQUIPPED!");
         yml.addDefault(Messages.SHOP_LORE_QUICK_ADD, "&bShift Click pentru Shop Rapid");
         yml.addDefault(Messages.SHOP_LORE_QUICK_REMOVE, "&bShift Click pentru a șterge din Shop Rapid!");
 
