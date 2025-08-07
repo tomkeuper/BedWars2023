@@ -334,6 +334,7 @@ public class Messages {
     public static String XP_REWARD_BED_DESTROY = "xp-reward-bed-destroyed";
     public static String XP_REWARD_REGULAR_KILL = "xp-reward-regular-kill";
     public static String XP_REWARD_FINAL_KILL = "xp-reward-final-kill";
+    public static String XP_REWARD_HALLOWEEN = "xp-reward-halloween";
     public static String PLAYER_LEVEL_UP = "player-level-up";
 
     public static String MONEY_REWARD_WIN = "money-reward-game-win";
@@ -347,6 +348,7 @@ public class Messages {
     public static String BED_HOLOGRAM_DESTROYED = "bed-hologram-destroyed";
     public static String TEAM_ELIMINATED_CHAT = "team-eliminated";
 
+    public static String HALLOWEEN_ITEM_NAME = "halloween-item-name";
 
     /** Upgrades/ Shop*/
     public static String NPC_NAME_TEAM_UPGRADES = "npcs.team-upgrades.%group%";

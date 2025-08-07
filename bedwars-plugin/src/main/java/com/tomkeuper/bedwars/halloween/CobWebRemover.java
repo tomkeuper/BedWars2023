@@ -34,9 +34,9 @@ public class CobWebRemover {
 
     private static final LinkedHashMap<IArena, CobWebRemover> taskByArena = new LinkedHashMap<>();
 
-    private int taskId;
-    private IArena arena;
-    private LinkedHashMap<Block, Long> cobWebs = new LinkedHashMap<>();
+    private final int taskId;
+    private final IArena arena;
+    private final LinkedHashMap<Block, Long> cobWebs = new LinkedHashMap<>();
 
     protected CobWebRemover(IArena arena) {
         taskByArena.remove(arena);
@@ -57,11 +57,11 @@ public class CobWebRemover {
         return arena;
     }
 
-    public static CobWebRemover getByArena(IArena arena){
+    public static CobWebRemover getByArena(IArena arena) {
         return taskByArena.get(arena);
     }
 
-    public static CobWebRemover getByArenaWorld(String world){
+    public static CobWebRemover getByArenaWorld(String world) {
         Optional<Map.Entry<IArena, CobWebRemover>> entry = taskByArena.entrySet().stream().filter(arena -> arena.getKey().getWorldName().equals(world)).findFirst();
         return entry.map(Map.Entry::getValue).orElse(null);
     }
@@ -86,7 +86,7 @@ public class CobWebRemover {
                     }
                 }
             });
-            toBeRemoved.forEach(block -> cobWebs.remove(block));
+            toBeRemoved.forEach(cobWebs::remove);
             toBeRemoved.clear();
         }
     }

@@ -40,6 +40,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.Nullable;
@@ -54,9 +55,10 @@ public class ChatFormatting implements Listener {
 
     private static final List<Player> recipients = new ArrayList<>();
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent e) {
         if (e == null) return;
+        if (e.isCancelled()) return;
         Player p = e.getPlayer();
 
         if (PartyCommand.chatToggle.getOrDefault(p.getUniqueId(), false) && BedWars.getPartyManager().hasParty(p)) {
