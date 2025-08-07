@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.configuration;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -64,7 +65,9 @@ public class ArenaConfig extends ConfigManager {
         rules.add("doImmediateRespawn:true");
         rules.add("doWeatherCycle:false");
         rules.add("doFireTick:false");
-        rules.add("locatorBar:false");
+        if (BedWars.nms.getVersion() >= 14) {
+            rules.add("locatorBar:false"); // Only apply for 1.21.6 and above
+        }
         yml.addDefault(ConfigPath.ARENA_GAME_RULES, rules);
         yml.options().copyDefaults(true);
         save();
