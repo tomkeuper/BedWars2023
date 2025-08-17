@@ -149,9 +149,11 @@ public class SpectatorListeners implements Listener {
     @EventHandler
     // Refresh placeholders from GUIs
     public void onPlayerLeave(PlayerLeaveArenaEvent e) {
-        if (e.getArena().isPlayer(e.getPlayer())) {
-            TeleporterGUI.refreshAllGUIs();
-        }
+        Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+            if (e.getArena().isPlayer(e.getPlayer())) {
+                TeleporterGUI.refreshAllGUIs();
+            }
+        });
     }
 
     @EventHandler
