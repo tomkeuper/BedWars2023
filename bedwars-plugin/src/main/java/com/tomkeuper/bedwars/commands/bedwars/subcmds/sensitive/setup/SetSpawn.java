@@ -92,7 +92,9 @@ public class SetSpawn extends SubCommand {
                             Block b = l.clone().add(x, y, z).getBlock();
                             if (BedWars.nms.isBed(b.getType())) {
                                 PaperSupport.teleport(p, b.getLocation());
-                                Bukkit.dispatchCommand(p, getParent().getName() + " setBed " + args[0]);
+                                Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+                                    Bukkit.dispatchCommand(p, getParent().getName() + " setBed " + args[0]);
+                                }, 2L);
                                 return true;
                             }
                         }
