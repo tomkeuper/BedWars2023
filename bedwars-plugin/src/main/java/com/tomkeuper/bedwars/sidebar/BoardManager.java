@@ -36,6 +36,7 @@ import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBarManager;
 import me.neznamy.tab.api.event.player.PlayerLoadEvent;
+import me.neznamy.tab.api.event.plugin.TabLoadEvent;
 import me.neznamy.tab.api.nametag.NameTagManager;
 import me.neznamy.tab.api.placeholder.PlaceholderManager;
 import me.neznamy.tab.api.scoreboard.Scoreboard;
@@ -72,8 +73,32 @@ public class BoardManager implements IScoreboardService {
             instance.registerLoadEvent();
             instance.registerLobbyScoreboards();
             Bukkit.getPluginManager().registerEvents(new BoardListener(), BedWars.plugin);
+            // Also watch TAB enable events to refresh references after its reload
+
+            Objects.requireNonNull(TabAPI.getInstance().getEventBus()).register(TabLoadEvent.class, event -> {
+                BoardManager.refreshTabManagers();
+                BedWars.plugin.getLogger().info("[BoardManager] TAB plugin enabled; refreshed TAB managers.");
+                instance.registerPlaceholders();
+                instance.registerLobbyScoreboards();
+                for (IArena arena : Arena.getArenas()) {
+                    arena.registerScoreboards();
+                }
+            });
         }
         return instance != null;
+    }
+
+    // Ensure our cached managers point to the current TAB instances
+    private static void refreshTabManagers() {
+        try {
+            var api = TabAPI.getInstance();
+            scoreboardManager = api.getScoreboardManager();
+            tabListFormatManager = api.getTabListFormatManager();
+            placeholderManager = api.getPlaceholderManager();
+            nameTagManager = api.getNameTagManager();
+        } catch (Throwable t) {
+            BedWars.plugin.getLogger().severe("[BoardManager] Failed to refresh TAB managers: " + t.getMessage());
+        }
     }
 
     public void registerLoadEvent() {
@@ -90,6 +115,7 @@ public class BoardManager implements IScoreboardService {
 
     public void registerLobbyScoreboards() {
         if (!BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) return;
+        BedWars.debug("Registering lobby scoreboards...");
 
         for (Language language : Language.getLanguages()) {
             List<String> lines = language.l(Messages.SCOREBOARD_LOBBY);
@@ -98,9 +124,10 @@ public class BoardManager implements IScoreboardService {
         }
     }
 
-    public List<Scoreboard> registerArenaScoreboards(Arena arena) {
+    public List<Scoreboard> registerArenaScoreboards(IArena arena) {
         // Technically it's possible to have per arena scoreboards. Future feature?
         // TODO fix issue with scoreboard overwrites
+        BedWars.debug("Registering scoreboard for arena: " + arena.getDisplayName());
         List<Scoreboard> scoreboards = new ArrayList<>();
         for (Language language : Language.getLanguages()) {
             List<String> waiting = getScoreboardLines(arena, language, "waiting", Messages.SCOREBOARD_DEFAULT_WAITING);
@@ -124,7 +151,7 @@ public class BoardManager implements IScoreboardService {
         return scoreboards;
     }
 
-    private List<String> getScoreboardLines(Arena arena, Language language, String phase, String path){
+    private List<String> getScoreboardLines(IArena arena, Language language, String phase, String path){
         List<String> lines = Language.getScoreboard(language, "scoreboard." + arena.getGroup() + "." + phase, path);
         lines.replaceAll(s -> s.isEmpty() ? " " : s); // TAB doesn't display empty lines, we need to replace them with spaces
         return lines;
