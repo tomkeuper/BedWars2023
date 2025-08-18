@@ -383,6 +383,11 @@ public interface IArena {
     void setGroup(String group);
 
     /**
+     * Register scoreboards for the arena.
+     */
+    void registerScoreboards();
+
+    /**
      * Set the game status of the arena without starting the corresponding tasks.
      *
      * @param status The game status to set.

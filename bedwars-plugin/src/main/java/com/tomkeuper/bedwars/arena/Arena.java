@@ -426,7 +426,7 @@ public class Arena implements IArena {
                 yaml.getInt("world-settings.default.entity-tracking-range.players") : yaml.getInt("world-settings." + getWorldName() + ".entity-tracking-range.players");
 
         //register scoreboards
-        scoreboards = BoardManager.getInstance().registerArenaScoreboards(this);
+        registerScoreboards();
     }
 
     /**
@@ -1499,6 +1499,11 @@ public class Arena implements IArena {
     public void setGroup(String group) {
         this.group = group;
         scoreboards.forEach(Scoreboard::unregister);
+        registerScoreboards();
+    }
+
+    @Override
+    public void registerScoreboards() {
         scoreboards = BoardManager.getInstance().registerArenaScoreboards(this);
     }
 
