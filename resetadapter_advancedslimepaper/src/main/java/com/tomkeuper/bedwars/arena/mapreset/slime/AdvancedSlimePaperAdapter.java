@@ -198,47 +198,71 @@ public class AdvancedSlimePaperAdapter extends RestoreAdapter {
                 Bukkit.getScheduler().runTask(getOwner(), () -> Bukkit.unloadWorld(s.getWorldName(), false));
             }
 
-            SlimeWorld world;
-            if (loader.worldExists(s.getWorldName())) {
-                getOwner().getLogger().info("Loading world from ASPaper container: " + s.getWorldName().toLowerCase());
-                slime.getLoadedWorlds();
+            // Run all heavy Slime operations asynchronously
+            Bukkit.getScheduler().runTaskAsynchronously(getOwner(), () -> {
+                SlimeWorld world;
+                try {
+                    if (loader.worldExists(s.getWorldName())) {
+                        getOwner().getLogger().info("Loading world from ASPaper container: " + s.getWorldName().toLowerCase());
+                        // IO: read world off-thread
+                        world = slime.readWorld(loader, s.getWorldName(), false, spm);
+                        Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Loading world from ASPaper container."));
+                    } else {
+                        getOwner().getLogger().info("Creating a new void map for world: " + s.getWorldName().toLowerCase());
+                        File levelDat = new File(Bukkit.getWorldContainer(), s.getWorldName() + "/level.dat");
+                        if (levelDat.exists()) {
+                            // IO: import an anvil world off-thread
+                            Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Importing world to the ASPaper container."));
+                            Bukkit.getLogger().info("Importing world to the ASPaper container: " + s.getWorldName().toLowerCase() + " from " + Bukkit.getWorldContainer().getName() + "/" + s.getWorldName() + "/level.dat");
 
-                world = slime.readWorld(loader, s.getWorldName(), false, spm);
-                Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Loading world from ASPaper container."));
-            } else {
-                getOwner().getLogger().info("Creating a new void map for world: " + s.getWorldName().toLowerCase());
-                if (new File(Bukkit.getWorldContainer(), s.getWorldName() + "/level.dat").exists()) {
-                    Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Importing world to the ASPaper container."));
-                    Bukkit.getLogger().info("Importing world to the ASPaper container: " + s.getWorldName().toLowerCase() + " from " + Bukkit.getWorldContainer().getName() + "/" + s.getWorldName() + "/level.dat");
+                            SlimeWorld tempworld = slime.readVanillaWorld(new File(Bukkit.getWorldContainer(), s.getWorldName()), s.getWorldName().toLowerCase(), loader);
+                            slime.saveWorld(tempworld);
+                            world = slime.readWorld(loader, s.getWorldName(), false, spm);
+                        } else {
+                            // IO: create empty world off-thread
+                            Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Creating a new void map."));
+                            world = slime.createEmptyWorld(s.getWorldName(), false, spm, loader);
+                        }
+                    }
 
-                    SlimeWorld tempworld = slime.readVanillaWorld(new File(Bukkit.getWorldContainer(), s.getWorldName()), s.getWorldName().toLowerCase(), loader);
-                    slime.saveWorld(tempworld);
-                    world = slime.readWorld(loader, s.getWorldName(), false, spm);
-                } else {
-                    Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Creating a new void map."));
-                    world = slime.createEmptyWorld(s.getWorldName(), false, spm, loader);
-                }
-            }
+                    // Switch back to the main thread to inject/load the world into Bukkit and interact with Bukkit API
+                    SlimeWorld sw = world;
+                    Bukkit.getScheduler().runTask(getOwner(), () -> {
+                        try {
+                            if (sw == null) {
+                                s.getPlayer().sendMessage(ChatColor.RED + "Something wrong... Could not load Slime world! (" + s.getWorldName() + ")");
+                                return;
+                            }
 
-            slime.loadWorld(world, false);
-            SlimeWorld sw = world;
-            // This method must be called synchronously
-            Bukkit.getScheduler().runTask(getOwner(), () -> {
-                if (null == sw) {
-                    Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.RED + "Something wrong... Could not load Slime world! (" + s.getWorldName() + ")"));
-                    return;
+                            // Ensure world is registered with Bukkit on the main thread
+                            slime.loadWorld(sw, false);
+
+                            World w = Bukkit.getWorld(sw.getName());
+                            if (w == null) {
+                                s.getPlayer().sendMessage(ChatColor.RED + "Something wrong... Could not load Bukkit world! (" + s.getWorldName() + ")");
+                                return;
+                            }
+
+                            Bukkit.getPluginManager().callEvent(new WorldInitEvent(w));
+                            Bukkit.getScheduler().runTask(getOwner(), () -> Bukkit.getPluginManager().callEvent(new WorldLoadEvent(w)));
+                            s.teleportPlayer();
+                        } catch (Exception e) {
+                            s.getPlayer().sendMessage(ChatColor.RED + "An error occurred while loading the world! Check console.");
+                            e.printStackTrace();
+                            s.close();
+                        }
+                    });
+                } catch (UnknownWorldException | IOException | CorruptedWorldException | NewerFormatException |
+                         WorldAlreadyExistsException | InvalidWorldException | WorldTooBigException | WorldLoadedException ex) {
+                    // Report errors back on the main thread to interact with player/session safely
+                    Bukkit.getScheduler().runTask(getOwner(), () -> {
+                        s.getPlayer().sendMessage(ChatColor.RED + "An error occurred! Please check console.");
+                        ex.printStackTrace();
+                        s.close();
+                    });
                 }
-                World w = Bukkit.getWorld(sw.getName());
-                if (w == null) {
-                    Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.RED + "Something wrong... Could not load Bukkit world! (" + s.getWorldName() + ")"));
-                    return;
-                }
-                Bukkit.getPluginManager().callEvent(new WorldInitEvent(w));
-                Bukkit.getScheduler().runTask(getOwner(), () -> Bukkit.getPluginManager().callEvent(new WorldLoadEvent(w)));
-                s.teleportPlayer();
             });
-        } catch (UnknownWorldException | IOException | CorruptedWorldException | NewerFormatException |
-                 WorldAlreadyExistsException | InvalidWorldException | WorldTooBigException | WorldLoadedException ex) {
+        } catch (Exception ex) {
             s.getPlayer().sendMessage(ChatColor.RED + "An error occurred! Please check console.");
             ex.printStackTrace();
             s.close();
