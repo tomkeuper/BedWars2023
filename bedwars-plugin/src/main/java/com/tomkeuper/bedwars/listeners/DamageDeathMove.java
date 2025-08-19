@@ -220,9 +220,9 @@ public class DamageDeathMove implements Listener {
                             } else {
                                 ITeam currentTeam = a.getTeam(p);
                                 ITeam damagerTeam = a.getTeam(damager);
-                                if (currentTeam == damagerTeam)
+                                if (currentTeam == damagerTeam) {
                                     if (tntDamageTeammates > -1) e.setDamage(tntDamageTeammates);
-                                    else if (tntDamageOthers > -1) e.setDamage(tntDamageOthers);
+                                } else if (tntDamageOthers > -1) e.setDamage(tntDamageOthers);
                             }
                         } else return;
                     }
