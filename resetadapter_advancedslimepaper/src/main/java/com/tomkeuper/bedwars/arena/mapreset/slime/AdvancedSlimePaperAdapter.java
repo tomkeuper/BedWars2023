@@ -194,18 +194,25 @@ public class AdvancedSlimePaperAdapter extends RestoreAdapter {
         try {
 
             if (Bukkit.getWorld(s.getWorldName()) != null) {
+                getOwner().getLogger().info("Unloading world: " + s.getWorldName().toLowerCase());
                 Bukkit.getScheduler().runTask(getOwner(), () -> Bukkit.unloadWorld(s.getWorldName(), false));
             }
 
             SlimeWorld world;
             if (loader.worldExists(s.getWorldName())) {
+                getOwner().getLogger().info("Loading world from ASPaper container: " + s.getWorldName().toLowerCase());
                 slime.getLoadedWorlds();
+
                 world = slime.readWorld(loader, s.getWorldName(), false, spm);
                 Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Loading world from ASPaper container."));
             } else {
+                getOwner().getLogger().info("Creating a new void map for world: " + s.getWorldName().toLowerCase());
                 if (new File(Bukkit.getWorldContainer(), s.getWorldName() + "/level.dat").exists()) {
                     Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Importing world to the ASPaper container."));
-                    slime.readVanillaWorld(new File(Bukkit.getWorldContainer(), s.getWorldName()), s.getWorldName().toLowerCase(), loader);
+                    Bukkit.getLogger().info("Importing world to the ASPaper container: " + s.getWorldName().toLowerCase() + " from " + Bukkit.getWorldContainer().getName() + "/" + s.getWorldName() + "/level.dat");
+
+                    SlimeWorld tempworld = slime.readVanillaWorld(new File(Bukkit.getWorldContainer(), s.getWorldName()), s.getWorldName().toLowerCase(), loader);
+                    slime.saveWorld(tempworld);
                     world = slime.readWorld(loader, s.getWorldName(), false, spm);
                 } else {
                     Bukkit.getScheduler().runTask(getOwner(), () -> s.getPlayer().sendMessage(ChatColor.GREEN + "Creating a new void map."));
