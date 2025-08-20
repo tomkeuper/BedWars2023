@@ -157,6 +157,33 @@ public class DamageDeathMove implements Listener {
         damager.sendMessage(message);
     }
 
+    // Need to call EntityDamage event manually since default tnt logic ignores the owner of tnt
+    @EventHandler
+    public void onTNTExplode(EntityExplodeEvent event) {
+        if (!(event.getEntity() instanceof TNTPrimed)) return;
+        TNTPrimed tnt = (TNTPrimed) event.getEntity();
+        if (!(tnt.getSource() instanceof Player)) return;
+        Player owner = (Player) tnt.getSource();
+
+        double radius = tnt.getYield();
+        for (Entity nearby : tnt.getNearbyEntities(radius, radius, radius)) {
+            if (!(nearby instanceof Player)) continue;
+            Player victim = (Player) nearby;
+            if (!victim.equals(owner)) continue; // only the placer here
+
+            // Fire a synthetic damage event so your existing listener runs
+            EntityDamageByEntityEvent fakeDamage =
+                    new EntityDamageByEntityEvent(tnt, victim,
+                            EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 4.0 /* base damage */);
+
+            Bukkit.getPluginManager().callEvent(fakeDamage);
+
+            if (!fakeDamage.isCancelled()) {
+                victim.damage(fakeDamage.getFinalDamage(), tnt);
+            }
+        }
+    }
+
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
