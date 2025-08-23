@@ -1,7 +1,7 @@
 
 plugins {
     `java-library`
-    id("io.github.goooler.shadow")
+    id("com.gradleup.shadow")
     id("io.freefair.lombok")
 }
 

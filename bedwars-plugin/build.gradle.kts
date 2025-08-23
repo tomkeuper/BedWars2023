@@ -12,13 +12,13 @@ repositories {
     mavenCentral()
     mavenLocal()
     // Important Repos
-    maven("https://papermc.io/repo/repository/maven-public/") // PaperLib
+    maven("https://repo.papermc.io/repository/maven-public/") // PaperLib
     maven("https://repo.codemc.io/repository/nms/") // Spigot
     maven("https://repo.codemc.io/repository/maven-public/") // VipFeatures
     maven("https://simonsator.de/repo/") // Party-and-Friends-MySQL-Edition-Spigot-API, Spigot-Party-API-For-RedisBungee
     maven("https://maven.citizensnpcs.co/repo") // citizens-main
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // placeholderapi
-    maven("https://repo.cloudnetservice.eu/repository/releases/") // cloudnet-wrapper-jvm
+    maven("https://repo.cloudnetservice.eu/releases/") // cloudnet-wrapper-jvm
     maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
     maven("https://repo.tomkeuper.com/repository/releases/") // slimjar
     maven("https://repo.alessiodp.com/releases/") // slimjar - dependencies
@@ -32,6 +32,10 @@ dependencies {
     implementation("com.iridium:IridiumColorAPI:1.0.9") // used by BedWars - API
     implementation("org.apache.commons:commons-lang3:3.14.0") // Used by IridiumColorAPI
 
+    implementation("net.kyori:adventure-text-minimessage:4.23.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.4.0")
+
     api(projects.bedwarsApi)
     api(projects.versionsupportCommon)
     api(projects.versionsupport18R3)
@@ -40,11 +44,11 @@ dependencies {
     api(projects.versionsupportV117R1)
     api(projects.versionsupportV118R2)
     api(projects.versionsupportV119R3)
-    api(projects.versionsupportV120R1)
-    api(projects.versionsupportV120R2)
-    api(projects.versionsupportV120R3)
     api(projects.versionsupportV120R4)
+    api(projects.versionsupportV1206)
     api(projects.versionsupportV121R1)
+    api(projects.versionsupportV121R2)
+    api(projects.versionsupportV121R3)
 
     api("com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)")
     api("com.zaxxer:HikariCP:5.0.1") {
@@ -73,14 +77,14 @@ dependencies {
     }
     compileOnly("org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT")
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly("com.github.NEZNAMY:TAB-API:4.1.9")
+    compileOnly("com.github.NEZNAMY:TAB-API:5.0.7")
     compileOnly("de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE")
     slim("redis.clients:jedis:5.0.2")
     slim("com.flowpowered:flow-nbt:2.0.2")
-    slim("com.saicone.rtag:rtag:1.5.4")
-    slim("com.saicone.rtag:rtag-block:1.5.4")
-    slim("com.saicone.rtag:rtag-entity:1.5.4")
-    slim("com.saicone.rtag:rtag-item:1.5.4")
+    slim("com.saicone.rtag:rtag:1.5.11")
+    slim("com.saicone.rtag:rtag-block:1.5.11")
+    slim("com.saicone.rtag:rtag-entity:1.5.11")
+    slim("com.saicone.rtag:rtag-item:1.5.11")
 }
 
 
@@ -111,23 +115,35 @@ bukkit {
 tasks.compileJava {
     options.release.set(11)
 }
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE // Prevents duplicate file errors
+
+    from("src/main/resources") {
+        include("**/*.yml") // Ensures YAML files are copied
+    }
+}
+
+
 val versions = setOf(
-    projects.versionsupportCommon,
-    projects.versionsupport18R3,
-    projects.versionsupport112R1,
-    projects.versionsupportV116R3,
-    projects.versionsupportV117R1,
-    projects.versionsupportV118R2,
-    projects.versionsupportV119R3,
-    projects.versionsupportV120R1,
-    projects.versionsupportV120R2,
-    projects.versionsupportV120R3,
-    projects.versionsupportV120R4,
-    projects.versionsupportV121R1,
-    projects.resetadapterSlime,
-    projects.resetadapterSlimepaper,
-    projects.resetadapterAswm
-).map { it.dependencyProject }
+    ":versionsupport_common",
+    ":versionsupport_1_8_r3",
+    ":versionsupport_1_12_r1",
+    ":versionsupport_v1_16_r3",
+    ":versionsupport_v1_17_r1",
+    ":versionsupport_v1_18_r2",
+    ":versionsupport_v1_19_r3",
+    ":versionsupport_v1_20_r4",
+    ":versionsupport_v1_20_6",
+    ":versionsupport_v1_21_r1",
+    ":versionsupport_v1_21_r2",
+    ":versionsupport_v1_21_r3",
+    ":versionsupport_v1_21_r5",
+    ":resetadapter_slime",
+    ":resetadapter_slimepaper",
+    ":resetadapter_advancedslimepaper",
+    ":resetadapter_aswm"
+)
 
 slimJar {
     relocate("org.h2", "com.tomkeuper.bedwars.libs.h2")
@@ -147,8 +163,9 @@ tasks {
             from(zipTree(shadeTask.archiveFile))
         }
 
-        versions.forEach {
-            registerPlatform(it, it.tasks.named<ShadowJar>("shadowJar").get())
+        versions.forEach { path ->
+            val versionProject = project(path)
+            registerPlatform(versionProject, versionProject.tasks.named<ShadowJar>("shadowJar").get())
         }
 
         relocate("io.papermc.lib", "com.tomkeuper.bedwars.libs.paper")
@@ -161,6 +178,7 @@ tasks {
         relocate("com.zaxxer.hikari", "com.tomkeuper.bedwars.libs.hikari")
         relocate("com.andrei1058.vipfeatures.api", "com.tomkeuper.bedwars.libs.vipfeatures")
         relocate("com.iridium.iridiumcolorapi", "com.tomkeuper.bedwars.libs.color")
+        relocate("net.kyori", "com.tomkeuper.bedwars.libs.kyori")
     }
     build {
         dependsOn(shadowJar)
@@ -168,5 +186,6 @@ tasks {
 }
 
 tasks.named("slimJar") {
+    dependsOn("compileTestJava", "test")
     mustRunAfter("sourcesJar", "generateTestEffectiveLombokConfig", "processTestResources", "delombok", "javadocJar")
 }

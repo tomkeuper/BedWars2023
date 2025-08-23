@@ -32,10 +32,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-/**
- * @author Lagggpixel
- * @since May 10, 2024
- */
 public class DefaultGenAnimation implements IGeneratorAnimation {
 
     private final Entity armorStand;

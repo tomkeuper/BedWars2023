@@ -500,14 +500,14 @@ public class AdvancedSlimeAdapter extends RestoreAdapter {
 
     private @NotNull SlimePropertyMap getCreateProperties(int spawnX, int spawnY, int spawnZ) {
         SlimePropertyMap spm = new SlimePropertyMap();
-        spm.setString(SlimeProperties.WORLD_TYPE, "flat");
-        spm.setInt(SlimeProperties.SPAWN_X, spawnX);
-        spm.setInt(SlimeProperties.SPAWN_Y, spawnY);
-        spm.setInt(SlimeProperties.SPAWN_Z, spawnZ);
-        spm.setBoolean(SlimeProperties.ALLOW_ANIMALS, false);
-        spm.setBoolean(SlimeProperties.ALLOW_MONSTERS, false);
-        spm.setString(SlimeProperties.DIFFICULTY, "easy");
-        spm.setBoolean(SlimeProperties.PVP, true);
+        spm.setValue(SlimeProperties.WORLD_TYPE, "flat");
+        spm.setValue(SlimeProperties.SPAWN_X, spawnX);
+        spm.setValue(SlimeProperties.SPAWN_Y, spawnY);
+        spm.setValue(SlimeProperties.SPAWN_Z, spawnZ);
+        spm.setValue(SlimeProperties.ALLOW_ANIMALS, false);
+        spm.setValue(SlimeProperties.ALLOW_MONSTERS, false);
+        spm.setValue(SlimeProperties.DIFFICULTY, "easy");
+        spm.setValue(SlimeProperties.PVP, true);
         return spm;
     }
 }

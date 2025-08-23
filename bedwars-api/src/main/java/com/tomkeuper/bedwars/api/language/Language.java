@@ -544,4 +544,12 @@ public class Language extends ConfigManager {
     public static Language getDefaultLanguage() {
         return defaultLanguage;
     }
+
+    /**
+     * Generates NPC messages for a specific group in the YAML configuration.
+     *
+     * @param yml   the YAML configuration to which the messages are to be added
+     * @param group the group for which the messages are to be generated
+     */
+    public void  generateNPCMessages(YamlConfiguration yml, String group){}
 }

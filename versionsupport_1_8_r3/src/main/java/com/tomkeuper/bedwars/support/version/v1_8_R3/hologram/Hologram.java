@@ -75,6 +75,16 @@ public class Hologram implements IHologram {
     }
 
     @Override
+    public void removeLineContaining(String text) {
+        for (IHoloLine line : this.lines) {
+            if (line.getText().contains(text)) {
+                line.remove();
+                break; // Only remove 1 line
+            }
+        }
+    }
+
+    @Override
     public void clearLines() {
         this.lines.clear();
     }
@@ -90,7 +100,7 @@ public class Hologram implements IHologram {
     public void show() {
         this.showing = true;
         for (IHoloLine line : this.lines) {
-            line.show();
+            line.reveal();
         }
     }
 
@@ -98,7 +108,7 @@ public class Hologram implements IHologram {
     public void hide() {
         this.showing = false;
         for (IHoloLine line : this.lines) {
-            line.hide();
+            line.remove();
         }
     }
 

@@ -28,67 +28,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class Misc {
-
-    /**
-     * This is used to spawn armorStands during the setup
-     * so the player knows what he set
-     *
-     */
-    public static void createArmorStand(String name, @NotNull Location location, String configLoc) {
-        ArmorStand a = (ArmorStand) location.getWorld().spawnEntity(location.getBlock().getLocation().add(0.5, 2, 0.5), EntityType.ARMOR_STAND);
-        a.setVisible(false);
-        a.setMarker(true);
-        a.setGravity(false);
-        a.setCustomNameVisible(true);
-        a.setCustomName(name);
-        a.setMetadata("bw2023-setup", new FixedMetadataValue(BedWars.plugin, "hologram"));
-        if (configLoc != null) {
-            a.setMetadata("bw2023-loc", new FixedMetadataValue(BedWars.plugin, configLoc));
-        }
-    }
-
-    /**
-     * Remove an armor stand
-     */
-    public static void removeArmorStand(String contains, @NotNull Location location, String configLoc) {
-        for (Entity e : location.getWorld().getNearbyEntities(location, 1, 3, 1)) {
-            if (e.hasMetadata("bw2023-setup")) {
-                if (e.hasMetadata("bw2023-loc")) {
-                    if (e.getMetadata("bw2023-loc").get(0).asString().equalsIgnoreCase(configLoc)) {
-                        if (contains != null){
-                            if (!contains.isEmpty()){
-                                if (ChatColor.stripColor(e.getCustomName()).contains(contains)){
-                                    e.remove();
-                                    return;
-                                }
-                            }
-                        }
-                        e.remove();
-                    }
-                } else {
-                    e.remove();
-                }
-                continue;
-            }
-            if (e.getType() == EntityType.ARMOR_STAND) {
-                if (!((ArmorStand) e).isVisible()) {
-                    if (contains != null && e.getCustomName().contains(contains)) {
-                        e.remove();
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Find and set generators

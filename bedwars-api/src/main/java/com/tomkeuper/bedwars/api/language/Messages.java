@@ -182,7 +182,6 @@ public class Messages {
     public static String FORMATTING_CHAT_SPECTATOR = "format-chat-spectator";
     public static String FORMATTING_SCOREBOARD_DATE = "format-sb-date";
     public static String FORMATTING_SCOREBOARD_TEAM_GENERIC = "format-sb-team-generic";
-    public static String FORMATTING_SCOREBOARD_HEALTH = "format-sb-health";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_LOBBY = "format-sb-tab-prefix.lobby";
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_LOBBY = "format-sb-tab-suffix.lobby";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_WAITING = "format-sb-tab-prefix.waiting";
@@ -191,6 +190,20 @@ public class Messages {
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_STARTING = "format-sb-tab-suffix.starting";
     public static String FORMATTING_SCOREBOARD_TAB_PREFIX_PLAYING = "format-sb-tab-prefix.playing";
     public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_PLAYING = "format-sb-tab-suffix.playing";
+    public static String FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING = "format-sb-tab-prefix.restarting";
+    public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING = "format-sb-tab-suffix.restarting";
+    public static String FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR = "format-sb-tab-prefix.spectator";
+    public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR = "format-sb-tab-suffix.spectator";
+    public static String FORMATTING_SCOREBOARD_HEAD_PREFIX_LOBBY = "format-sb-above-head-prefix.lobby";
+    public static String FORMATTING_SCOREBOARD_HEAD_SUFFIX_LOBBY = "format-sb-above-head-suffix.lobby";
+    public static String FORMATTING_SCOREBOARD_HEAD_PREFIX_WAITING = "format-sb-above-head-prefix.waiting";
+    public static String FORMATTING_SCOREBOARD_HEAD_SUFFIX_WAITING = "format-sb-above-head-suffix.waiting";
+    public static String FORMATTING_SCOREBOARD_HEAD_PREFIX_STARTING = "format-sb-above-head-prefix.starting";
+    public static String FORMATTING_SCOREBOARD_HEAD_SUFFIX_STARTING = "format-sb-above-head-suffix.starting";
+    public static String FORMATTING_SCOREBOARD_HEAD_PREFIX_PLAYING = "format-sb-above-head-prefix.playing";
+    public static String FORMATTING_SCOREBOARD_HEAD_SUFFIX_PLAYING = "format-sb-above-head-suffix.playing";
+    public static String FORMATTING_SCOREBOARD_HEAD_PREFIX_RESTARTING = "format-sb-above-head-prefix.restarting";
+    public static String FORMATTING_SCOREBOARD_HEAD_SUFFIX_RESTARTING = "format-sb-above-head-suffix.restarting";
 
     public static String FORMATTING_SIDEBAR_TAB_HEADER_LOBBY = "format-sb-tab-header.lobby";
     public static String FORMATTING_SIDEBAR_TAB_HEADER_WAITING = "format-sb-tab-header.waiting";
@@ -205,10 +218,6 @@ public class Messages {
     public static String FORMATTING_SIDEBAR_TAB_FOOTER_PLAYING = "format-sb-tab-footer.playing";
     public static String FORMATTING_SIDEBAR_TAB_FOOTER_RESTARTING = "format-sb-tab-footer.restarting";
     public static String FORMATTING_SIDEBAR_TAB_FOOTER_SPECTATOR = "format-sb-tab-footer.spectator";
-    public static String FORMATTING_SCOREBOARD_TAB_PREFIX_RESTARTING = "format-sb-tab-prefix.restarting";
-    public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_RESTARTING = "format-sb-tab-suffix.restarting";
-    public static String FORMATTING_SCOREBOARD_TAB_PREFIX_SPECTATOR = "format-sb-tab-prefix.spectator";
-    public static String FORMATTING_SCOREBOARD_TAB_SUFFIX_SPECTATOR = "format-sb-tab-suffix.spectator";
 
     public static String FORMATTING_SCOREBOARD_TEAM_ELIMINATED = "format-sb-team-eliminated";
     public static String FORMATTING_SCOREBOARD_BED_DESTROYED = "format-sb-bed-destroyed";
@@ -263,6 +272,7 @@ public class Messages {
     /** Player interact related */
     public static String INTERACT_CANNOT_PLACE_BLOCK = "interact-cant-place";
     public static String INTERACT_CANNOT_BREAK_BLOCK = "interact-cant-break";
+    public static String INTERACT_FULL_CHEST = "interact-full-chest";
     public static String INTERACT_CANNOT_BREAK_OWN_BED = "interact-cant-destroy-bed";
     public static String INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT = "interact-bed-destroy-chat";
     public static String INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT = "interact-bed-destroy-title";
@@ -324,6 +334,8 @@ public class Messages {
     public static String XP_REWARD_BED_DESTROY = "xp-reward-bed-destroyed";
     public static String XP_REWARD_REGULAR_KILL = "xp-reward-regular-kill";
     public static String XP_REWARD_FINAL_KILL = "xp-reward-final-kill";
+    public static String XP_REWARD_HALLOWEEN = "xp-reward-halloween";
+    public static String PLAYER_LEVEL_UP = "player-level-up";
 
     public static String MONEY_REWARD_WIN = "money-reward-game-win";
     public static String MONEY_REWARD_PER_MINUTE = "money-reward-per-minute";
@@ -336,6 +348,7 @@ public class Messages {
     public static String BED_HOLOGRAM_DESTROYED = "bed-hologram-destroyed";
     public static String TEAM_ELIMINATED_CHAT = "team-eliminated";
 
+    public static String HALLOWEEN_ITEM_NAME = "halloween-item-name";
 
     /** Upgrades/ Shop*/
     public static String NPC_NAME_TEAM_UPGRADES = "npcs.team-upgrades.%group%";

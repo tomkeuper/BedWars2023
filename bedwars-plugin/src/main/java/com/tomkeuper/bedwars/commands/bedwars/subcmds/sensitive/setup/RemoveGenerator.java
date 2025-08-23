@@ -26,7 +26,6 @@ import com.tomkeuper.bedwars.api.command.SubCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.server.SetupType;
 import com.tomkeuper.bedwars.arena.SetupSession;
-import com.tomkeuper.bedwars.commands.Misc;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import org.bukkit.ChatColor;
@@ -35,6 +34,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RemoveGenerator extends SubCommand {
@@ -58,30 +58,24 @@ public class RemoveGenerator extends SubCommand {
         SetupSession ss = SetupSession.getSession(p.getUniqueId());
         if (ss == null) return false;
 
+        // Case 1: "/bw removeGenerator" (find nearest generator and remove it)
         if (args.length == 0) {
-            String[] toRemove = new String[]{"", "", ""};
+            String[] toRemove = new String[]{"", "", ""}; // {GeneratorType, Location String, Team Name}
             Location nearest = null;
+
+            // Search team-based generators (Iron, Gold, Emerald)
             if (ss.getConfig().getYml().get("Team") != null) {
                 for (String team : ss.getConfig().getYml().getConfigurationSection("Team").getKeys(false)) {
                     for (String type : new String[]{"Iron", "Gold", "Emerald"}) {
                         if (ss.getConfig().getYml().get("Team." + team + "." + type) != null) {
                             for (String loc : ss.getConfig().getList("Team." + team + "." + type)) {
                                 Location loc2 = ss.getConfig().convertStringToArenaLocation(loc);
-                                if (loc2 != null) {
-                                    if (p.getLocation().distance(loc2) <= 2) {
-                                        if (nearest != null) {
-                                            if (p.getLocation().distance(nearest) > p.getLocation().distance(loc2)) {
-                                                nearest = loc2;
-                                                toRemove[0] = type;
-                                                toRemove[1] = loc;
-                                                toRemove[2] = team;
-                                            }
-                                        } else {
-                                            nearest = loc2;
-                                            toRemove[0] = type;
-                                            toRemove[1] = loc;
-                                            toRemove[2] = team;
-                                        }
+                                if (loc2 != null && p.getLocation().distance(loc2) <= 2) {
+                                    if (nearest == null || p.getLocation().distance(nearest) > p.getLocation().distance(loc2)) {
+                                        nearest = loc2;
+                                        toRemove[0] = type; // Type
+                                        toRemove[1] = loc;  // Location string
+                                        toRemove[2] = team; // Team
                                     }
                                 }
                             }
@@ -90,25 +84,18 @@ public class RemoveGenerator extends SubCommand {
                 }
             }
 
+            // Search standalone generators (Diamond, Emerald)
             if (ss.getConfig().getYml().get("generator") != null) {
                 for (String type : new String[]{"Emerald", "Diamond"}) {
                     if (ss.getConfig().getYml().get("generator." + type) != null) {
                         for (String loc : ss.getConfig().getList("generator." + type)) {
                             Location loc2 = ss.getConfig().convertStringToArenaLocation(loc);
-                            if (loc2 == null) continue;
-                            if (p.getLocation().distance(loc2) <= 2) {
-                                if (nearest != null) {
-                                    if (p.getLocation().distance(nearest) > p.getLocation().distance(loc2)) {
-                                        nearest = loc2;
-                                        toRemove[0] = type;
-                                        toRemove[1] = loc;
-                                        toRemove[2] = "";
-                                    }
-                                } else {
+                            if (loc2 != null && p.getLocation().distance(loc2) <= 2) {
+                                if (nearest == null || p.getLocation().distance(nearest) > p.getLocation().distance(loc2)) {
                                     nearest = loc2;
-                                    toRemove[0] = type;
-                                    toRemove[1] = loc;
-                                    toRemove[2] = "";
+                                    toRemove[0] = type; // Type
+                                    toRemove[1] = loc;  // Location string
+                                    toRemove[2] = "";   // No team
                                 }
                             }
                         }
@@ -116,46 +103,136 @@ public class RemoveGenerator extends SubCommand {
                 }
             }
 
+            // No generator found
             if (nearest == null) {
                 p.sendMessage(ss.getPrefix() + "Could not find any nearby generator (Range 2x2).");
-                p.sendMessage(ss.getPrefix() + "You mast stand close to the generator hologram's you want to remove.");
-                BedWars.nms.sendTitle(p, " ", ChatColor.RED + "Could not find any nearby generator.", 5, 40, 5);
+                p.sendMessage(ss.getPrefix() + "You must stand close to the generator hologram you want to remove.");
+                BedWars.nms.sendTitle(p, " ", ChatColor.RED + "No nearby generator found.", 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, p);
                 return true;
             }
 
+            // Remove standalone generator
             if (toRemove[2].isEmpty()) {
                 List<String> list = ss.getConfig().getList("generator." + toRemove[0]);
                 list.remove(toRemove[1]);
-
                 ss.getConfig().set("generator." + toRemove[0], list);
-                p.sendMessage(ss.getPrefix() + "Removed " + toRemove[0] + " generator at location: X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getZ());
+
+                p.sendMessage(ss.getPrefix() + "Removed " + toRemove[0] + " generator at location: X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getBlockZ());
                 BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + toRemove[0] + " generator removed.", 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
-                Misc.removeArmorStand(toRemove[0], nearest, toRemove[1]);
+                ss.removeGeneratorHologram(nearest);
                 return true;
             }
 
+            // Remove team-based generator
             if (ss.getSetupType() == SetupType.ASSISTED) {
+                // Remove all generators for this team
                 ss.getConfig().set("Team." + toRemove[2] + ".Emerald", new ArrayList<>());
                 ss.getConfig().set("Team." + toRemove[2] + ".Iron", new ArrayList<>());
                 ss.getConfig().set("Team." + toRemove[2] + ".Gold", new ArrayList<>());
+
                 BedWars.nms.sendTitle(p, " ", ss.getTeamColor(toRemove[2]) + toRemove[2] + " generator was removed.", 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
-                Misc.removeArmorStand(null, nearest, toRemove[1]);
+                ss.removeGeneratorHologram(nearest);
+
                 p.sendMessage(ss.getPrefix() + ss.getTeamColor(toRemove[2]) + toRemove[2] + ChatColor.getLastColors(ss.getPrefix()) + " generators were removed!");
+                return true;
+            } else {
+                // Remove only the specified generator type for this team
+                List<String> list = ss.getConfig().getList("Team." + toRemove[2] + "." + toRemove[0]);
+                list.remove(toRemove[1]);
+                ss.getConfig().set("Team." + toRemove[2] + "." + toRemove[0], list);
+
+                p.sendMessage(ss.getPrefix() + "Removed " + ss.getTeamColor(toRemove[2]) + toRemove[2] + " " + ChatColor.getLastColors(ss.getPrefix()) + toRemove[0] + " generator at location: X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getBlockZ());
+                BedWars.nms.sendTitle(p, " ", ss.getTeamColor(toRemove[2]) + toRemove[2] + " " + ChatColor.GREEN + toRemove[0] + " generator removed.", 5, 40, 5);
+                Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
+                ss.removeGeneratorHologramLineContainingType(nearest, toRemove[0]);
+                return true;
+            }
+        }
+
+        // Case 2: "/bw removeGenerator <type>" (remove specific generator type)
+
+        if (args.length == 1) {
+            String type = args[0];
+
+            // Validate generator type
+            List<String> validTypes = Arrays.asList("Iron", "Gold", "Emerald", "Diamond");
+            if (!validTypes.contains(type)) {
+                p.sendMessage(ss.getPrefix() + "Invalid generator type: " + type);
                 return true;
             }
 
-            List<String> list = ss.getConfig().getList("Team." + toRemove[2] + "." + toRemove[0]);
-            list.remove(toRemove[1]);
-            ss.getConfig().set("Team." + toRemove[2] + "." + toRemove[0], list);
-            p.sendMessage(ss.getPrefix() + "Removed " + ss.getTeamColor(toRemove[2]) + toRemove[2] + " " + ChatColor.getLastColors(ss.getPrefix()) + toRemove[0] + " generator at location: X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getZ());
-            BedWars.nms.sendTitle(p, " ", ss.getTeamColor(toRemove[2]) + toRemove[2] + " " + ChatColor.GREEN + toRemove[0] + " generator removed.", 5, 40, 5);
-            Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
-            Misc.removeArmorStand(toRemove[0], nearest, toRemove[1]);
+            Location nearest = null;
+            String locString = ""; // Found location string
+            String teamName = "";  // Found team name (if any)
+
+            // Search normal/global generators (e.g., "generator.<type>")
+            if (ss.getConfig().getYml().get("generator." + type) != null) {
+                for (String loc : ss.getConfig().getList("generator." + type)) {
+                    Location loc2 = ss.getConfig().convertStringToArenaLocation(loc);
+                    if (loc2 != null && p.getLocation().distance(loc2) <= 2) {
+                        nearest = loc2;
+                        locString = loc;
+                        break;
+                    }
+                }
+            }
+
+            // Search team-based generators (e.g., "Team.<team>.<type>")
+            if (ss.getConfig().getYml().get("Team") != null) {
+                for (String team : ss.getConfig().getYml().getConfigurationSection("Team").getKeys(false)) {
+                    if (ss.getConfig().getYml().get("Team." + team + "." + type) != null) {
+                        for (String loc : ss.getConfig().getList("Team." + team + "." + type)) {
+                            Location loc2 = ss.getConfig().convertStringToArenaLocation(loc);
+                            if (loc2 != null && p.getLocation().distance(loc2) <= 2) {
+                                nearest = loc2;
+                                locString = loc;
+                                teamName = team;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // If a nearest generator was found, remove it
+            if (nearest != null) {
+                if (teamName.isEmpty()) {
+                    // Normal generator
+                    List<String> list = ss.getConfig().getList("generator." + type);
+                    list.remove(locString);
+                    ss.getConfig().set("generator." + type, list);
+
+                    p.sendMessage(ss.getPrefix() + "Removed global " + type + " generator at location: " +
+                            "X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getBlockZ());
+                    ss.removeGeneratorHologram(nearest);
+                } else {
+                    // Team-based generator
+                    List<String> list = ss.getConfig().getList("Team." + teamName + "." + type);
+                    list.remove(locString);
+                    ss.getConfig().set("Team." + teamName + "." + type, list);
+
+                    p.sendMessage(ss.getPrefix() + "Removed team-specific " + type + " generator for team " +
+                            ss.getTeamColor(teamName) + teamName +
+                            ChatColor.getLastColors(ss.getPrefix()) + " at location: " +
+                            "X:" + nearest.getBlockX() + " Y:" + nearest.getBlockY() + " Z:" + nearest.getBlockZ());
+                    ss.removeGeneratorHologramLineContainingType(nearest, type);
+                }
+
+                // Save configuration after changes
+                ss.getConfig().save();
+                return true;
+            }
+
+            // No generator found
+            p.sendMessage(ss.getPrefix() + "Could not find a close " + type + " generator to remove.");
             return true;
         }
+
+        // If neither scenario matched, return true (command accepted but nothing executed)
+        BedWars.debug("Remove Generator command not executed.");
         return true;
     }
 

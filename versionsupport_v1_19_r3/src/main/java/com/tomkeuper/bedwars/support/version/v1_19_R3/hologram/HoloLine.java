@@ -30,7 +30,6 @@ import net.minecraft.server.network.PlayerConnection;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
 
@@ -38,7 +37,6 @@ public class HoloLine implements IHoloLine {
     private String text;
     private IHologram hologram;
     public final EntityArmorStand entity;
-    private boolean showing = true;
     private boolean destroyed = false;
 
     public HoloLine(String text, IHologram hologram) {
@@ -105,25 +103,6 @@ public class HoloLine implements IHoloLine {
         PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
         connection.a(metadataPacket);
         connection.a(teleportPacket);
-    }
-
-    @Override
-    public void show() {
-        this.showing = true;
-        entity.n(true);
-        update();
-    }
-
-    @Override
-    public void hide() {
-        this.showing = false;
-        entity.n(false);
-        update();
-    }
-
-    @Override
-    public boolean isShowing() {
-        return showing;
     }
 
     @Override

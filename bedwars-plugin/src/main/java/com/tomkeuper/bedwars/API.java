@@ -44,6 +44,7 @@ import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
 import com.tomkeuper.bedwars.api.shop.IShopManager;
 import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
+import com.tomkeuper.bedwars.api.stats.IStatsManager;
 import com.tomkeuper.bedwars.api.upgrades.MenuContent;
 import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -325,8 +326,15 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
 
     @SuppressWarnings("unused")
     @Override
+    @Deprecated
     public IStats getStatsUtil() {
         return StatsAPI.getInstance();
+    }
+
+    @SuppressWarnings("unused")
+    @Override
+    public IStatsManager getStatsManager() {
+        return BedWars.getStatsManager();
     }
 
     @SuppressWarnings("unused")

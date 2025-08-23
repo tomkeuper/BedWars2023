@@ -21,10 +21,12 @@
 package com.tomkeuper.bedwars.arena;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.server.SetupSessionCloseEvent;
 import com.tomkeuper.bedwars.api.events.server.SetupSessionStartEvent;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.server.ISetupSession;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.SetupType;
@@ -48,7 +50,6 @@ import java.util.*;
 
 import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.BedWars.plugin;
-import static com.tomkeuper.bedwars.commands.Misc.createArmorStand;
 
 public class SetupSession implements ISetupSession {
 
@@ -62,6 +63,12 @@ public class SetupSession implements ISetupSession {
     private boolean autoCreatedEmerald = false;
     private boolean autoCreatedDiamond = false;
     private List<Location> skipAutoCreateGen = new ArrayList<>();
+    private Map<String, IHologram> shopHologramsPerTeam = new HashMap<>();
+    private Map<String, IHologram> upgradeHologramsPerTeam = new HashMap<>();
+    private Map<String, IHologram> bedHologramsPerTeam = new HashMap<>();
+    private Map<String, IHologram> spawnHologramsPerTeam = new HashMap<>();
+    private Map<Location, IHologram> generatorHologramsPerTeam = new HashMap<>();
+    private Map<String, IHologram> killDropsHologramsPerTeam = new HashMap<>();
 
     public SetupSession(Player player, String worldName) {
         this.player = player;
@@ -248,32 +255,32 @@ public class SetupSession implements ISetupSession {
             for (String team : getTeams()) {
                 for (String gen : new String[]{"Iron", "Gold", "Emerald"}) {
                     if (getConfig().getYml().get("Team." + team + "." + gen) != null) {
-                        for (String loc : getConfig().getList("Team." + team + ".Iron")) {
-                            createArmorStand(ChatColor.GOLD + gen + " generator added for team: " + getTeamColor(team) + team, getConfig().convertStringToArenaLocation(loc), loc);
+                        for (String loc : getConfig().getList("Team." + team + "." + gen)) {
+                            createGeneratorHologram(player, getConfig().convertStringToArenaLocation(loc), team, gen);
                         }
                     }
-                    if (getConfig().getYml().get("Team." + team + ".Spawn") != null) {
-                        createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "SPAWN SET", getConfig().getArenaLoc("Team." + team + ".Spawn"), getConfig().getString("Team." + team + ".Spawn"));
-                    }
-                    if (getConfig().getYml().get("Team." + team + ".Bed") != null) {
-                        createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "BED SET", getConfig().getArenaLoc("Team." + team + ".Bed"), getConfig().getString("Team." + team + ".Bed"));
-                    }
+                }
+                if (getConfig().getYml().get("Team." + team + ".Spawn") != null) {
+                    createSpawnHologram(player, getConfig().getArenaLoc("Team." + team + ".Spawn"), team);
+                }
+                if (getConfig().getYml().get("Team." + team + ".Bed") != null) {
+                    createBedHologram(player, getConfig().getArenaLoc("Team." + team + ".Bed"), team);
                 }
                 if (getConfig().getYml().get("Team." + team + ".Shop") != null) {
-                    createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "SHOP SET", getConfig().getArenaLoc("Team." + team + ".Shop"), null);
+                    createShopHologram(player, getConfig().getArenaLoc("Team." + team + ".Shop"), team);
                 }
                 if (getConfig().getYml().get("Team." + team + ".Upgrade") != null) {
-                    createArmorStand(getTeamColor(team) + team + " " + ChatColor.GOLD + "UPGRADE SET", getConfig().getArenaLoc("Team." + team + ".Upgrade"), null);
+                    createUpgradeHologram(player, getConfig().getArenaLoc("Team." + team + ".Upgrade"), team);
                 }
                 if (getConfig().getYml().get("Team." + team + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC) != null) {
-                    createArmorStand(ChatColor.GOLD + "Kill drops " + team, getConfig().getArenaLoc("Team." + team + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
+                    createKillDropsHologram(player, getConfig().getArenaLoc("Team." + team + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), team);
                 }
             }
 
             for (String type : new String[]{"Emerald", "Diamond"}) {
                 if (getConfig().getYml().get("generator." + type) != null) {
                     for (String loc : getConfig().getList("generator." + type)) {
-                        createArmorStand(ChatColor.GOLD + type + " SET", getConfig().convertStringToArenaLocation(loc), loc);
+                        createGeneratorHologram(player, getConfig().convertStringToArenaLocation(loc), null, type);
                     }
                 }
             }
@@ -320,7 +327,7 @@ public class SetupSession implements ISetupSession {
      * @return team color.
      */
     public ChatColor getTeamColor(String team) {
-        return TeamColor.getChatColor(getConfig().getString("Team." + team + ".Color"));
+        return TeamColor.getChatColor(getConfig().getString("Team." + ChatColor.stripColor(team) + ".Color"));
     }
 
     /**
@@ -365,5 +372,160 @@ public class SetupSession implements ISetupSession {
     public List<String> getTeams() {
         if (getConfig().getYml().get("Team") == null) return new ArrayList<>();
         return new ArrayList<>(getConfig().getYml().getConfigurationSection("Team").getKeys(false));
+    }
+
+    public void createBedHologram(Player p, Location loc, String team) {
+        manageHologram(
+                bedHologramsPerTeam, p, loc, team, getTeamColor(team) + team + " " + ChatColor.GOLD + "BED SET"
+        );
+    }
+
+    public void createSpawnHologram(Player p, Location loc, String team) {
+        manageHologram(
+                spawnHologramsPerTeam, p, loc, team, getTeamColor(team) + team + " " + ChatColor.GOLD + "SPAWN SET"
+        );
+    }
+
+    public void createShopHologram(Player p, Location loc, String team) {
+        manageHologram(
+                shopHologramsPerTeam, p, loc, team, getTeamColor(team) + team + " " + ChatColor.GOLD + "SHOP SET"
+        );
+    }
+
+    public void createUpgradeHologram(Player p, Location loc, String team) {
+        manageHologram(
+                upgradeHologramsPerTeam, p, loc, team, getTeamColor(team) + team + " " + ChatColor.GOLD + "UPGRADE SET"
+        );
+    }
+
+    public void createKillDropsHologram(Player p, Location loc, String team) {
+        manageHologram(
+                killDropsHologramsPerTeam, p, loc, team, getTeamColor(team) + team + " " + ChatColor.GOLD + "KILL DROPS SET"
+        );
+    }
+
+    public void createGeneratorHologram(Player p, Location loc, String team, String type) {
+        String message = team != null
+                ? getTeamColor(team) + team + " " + ChatColor.GOLD + type + " GENERATOR SET"
+                : ChatColor.GOLD + type + " GENERATOR SET";
+
+        manageHologramForLocation(generatorHologramsPerTeam, p, loc, message);
+    }
+
+    public void removeBedHologram(String team) {
+        if (bedHologramsPerTeam.containsKey(team)) {
+            bedHologramsPerTeam.get(team).remove();
+            bedHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeSpawnHologram(String team) {
+        if (spawnHologramsPerTeam.containsKey(team)) {
+            spawnHologramsPerTeam.get(team).remove();
+            spawnHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeShopHologram(String team) {
+        if (shopHologramsPerTeam.containsKey(team)) {
+            shopHologramsPerTeam.get(team).remove();
+            shopHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeUpgradeHologram(String team) {
+        if (upgradeHologramsPerTeam.containsKey(team)) {
+            upgradeHologramsPerTeam.get(team).remove();
+            upgradeHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeKillDropsHologram(String team) {
+        if (killDropsHologramsPerTeam.containsKey(team)) {
+            killDropsHologramsPerTeam.get(team).remove();
+            killDropsHologramsPerTeam.remove(team);
+        }
+    }
+
+    public void removeGeneratorHologram(Location loc) {
+        // Find the hologram using the helper method
+        IHologram hologram = getHologramForLocation(generatorHologramsPerTeam, loc);
+
+        if (hologram != null) {
+            // Remove the hologram from the game
+            hologram.remove();
+
+            // Remove the entry from the generator hologram map
+            generatorHologramsPerTeam.entrySet().removeIf(entry -> isSameBlockLocation(entry.getKey(), loc));
+        }
+    }
+
+    public void removeGeneratorHologramLineContainingType(Location loc, String type) {
+        IHologram hologram = getHologramForLocation(generatorHologramsPerTeam, loc);
+
+        if (hologram != null) {
+            if (hologram.getLines().size() == 1) {
+                hologram.remove();
+                generatorHologramsPerTeam.remove(loc);
+            } else {
+                hologram.removeLineContaining(type);
+                hologram.update();
+            }
+        }
+    }
+
+    private void manageHologram(Map<String, IHologram> teamHologramsMap, Player player, Location location, String team, String displayText) {
+        // Make sure team name in map is always lowercase
+        String lowerTeam = team != null ? team.toLowerCase() : null;
+
+        // Check and remove existing hologram for the team
+        if (teamHologramsMap.containsKey(lowerTeam)) {
+            teamHologramsMap.get(lowerTeam).remove();
+        }
+
+        teamHologramsMap.put(lowerTeam, BedWars.nms.createHologram(player, location, displayText));
+    }
+
+    private void manageHologramForLocation(Map<Location, IHologram> locationHologramsMap, Player player, Location location, String displayText) {
+        // Get the hologram using the new utility method
+        IHologram hologram = getHologramForLocation(locationHologramsMap, location);
+
+        if (hologram != null) {
+            hologram.addLine(displayText); // Update existing hologram
+        } else {
+            locationHologramsMap.put(location, BedWars.nms.createHologram(player, location, displayText)); // Create a new hologram
+        }
+    }
+
+    private IHologram getHologramForLocation(Map<Location, IHologram> locationHologramsMap, Location location) {
+        // Debugging: Log the map and input location for analysis
+        BedWars.debug("Looking for hologram at location: " + location + " in map with " + locationHologramsMap.size() + " entries");
+
+        // Stream to find the existing location by comparing x, y, z, and world
+        IHologram hologram = locationHologramsMap.entrySet().stream()
+                .filter(entry -> isSameBlockLocation(entry.getKey(), location))
+                .map(Map.Entry::getValue) // Get the IHologram related to the matching location
+                .findFirst()
+                .orElse(null); // Return null if no match is found
+
+        if (hologram == null) {
+            // Debugging: Log all entries for failed matches
+            locationHologramsMap.forEach((key, value) -> BedWars.debug("Map entry: Location=" + key + ", IHologram=" + value));
+            BedWars.debug("No hologram found for location: " + location);
+        } else {
+            BedWars.debug("Found hologram at location: " + location);
+        }
+
+        return hologram;
+    }
+
+    private boolean isSameBlockLocation(Location loc1, Location loc2) {
+        if (loc1.getWorld() == null || loc2.getWorld() == null) return false;
+
+        // Compare block-level coordinates and world
+        return loc1.getWorld().getName().equals(loc2.getWorld().getName()) &&
+                loc1.getBlockX() == loc2.getBlockX() &&
+                loc1.getBlockY() == loc2.getBlockY() &&
+                loc1.getBlockZ() == loc2.getBlockZ();
     }
 }

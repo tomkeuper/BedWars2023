@@ -74,13 +74,10 @@ import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
 import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R4.entity.*;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
-import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
+import org.bukkit.craftbukkit.v1_20_R4.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -289,11 +286,7 @@ public final class v1_20_R4 extends VersionSupport {
 
     @Override
     public void voidKill(Player p) {
-        @SuppressWarnings("UnstableApiUsage")
-        EntityDamageEvent event = new EntityDamageEvent(p, EntityDamageEvent.DamageCause.VOID, DamageSource.builder(DamageType.GENERIC).build(), 1000.0);
-        //noinspection removal
-        p.setLastDamageCause(event);
-        p.setHealth(0);
+        p.damage(1000.0);
     }
 
     @Override
@@ -377,6 +370,24 @@ public final class v1_20_R4 extends VersionSupport {
             //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
+        try {
+            // Convert Bukkit block to NMS Block
+            net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
+
+            // Access the 'durability' field
+            Field durabilityField = BlockBase.class.getDeclaredField("aH");
+            durabilityField.setAccessible(true);
+
+            return durabilityField.getFloat(nmsBlock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return 0; // Default if something fails
     }
 
     @Override

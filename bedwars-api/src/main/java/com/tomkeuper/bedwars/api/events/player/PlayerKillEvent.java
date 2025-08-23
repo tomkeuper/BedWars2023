@@ -32,8 +32,8 @@ public class PlayerKillEvent extends Event {
 
     private final IArena arena;
     private final Player victim;
-    private final Player killer;
-    private final PlayerKillCause cause;
+    private Player killer;
+    private PlayerKillCause cause;
     private Function<Player, String> message;
     private boolean playSound = true;
 
@@ -130,6 +130,15 @@ public class PlayerKillEvent extends Event {
     }
 
     /**
+     * Set the killer player.
+     *
+     * @param killer The player who performed the kill, can be NULL.
+     */
+    public void setKiller(Player killer) {
+        this.killer = killer;
+    }
+
+    /**
      * Get the function that generates the kill chat message.
      *
      * @return The function generating the kill chat message.
@@ -154,6 +163,15 @@ public class PlayerKillEvent extends Event {
      */
     public PlayerKillCause getCause() {
         return cause;
+    }
+
+    /**
+     * Set the cause of the player's death.
+     *
+     * @param cause The cause to set.
+     */
+    public void setCause(PlayerKillCause cause) {
+        this.cause = cause;
     }
 
     /**

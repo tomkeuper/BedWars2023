@@ -224,6 +224,15 @@ public abstract class VersionSupport {
     public abstract void registerTntWhitelist(float endStoneBlast, float glassBlast);
 
     /**
+     * Get blast resistance of a block.
+     * This will return the default blast resistance if not modified.
+     *
+     * @param block the block to get blast resistance for
+     * @return the blast resistance of the block
+     */
+    public abstract float getBlastResistance(Block block);
+
+    /**
      * Egg bridge particles
      */
     public Effect eggBridge() {
@@ -286,7 +295,7 @@ public abstract class VersionSupport {
      * Check if is a player head
      */
     public boolean isPlayerHead(String material, int data) {
-        return material.equalsIgnoreCase("PLAYER_HEAD");
+        return material.equalsIgnoreCase("PLAYER_HEAD") || (material.equalsIgnoreCase("SKULL_ITEM") && data == 3);
     }
 
     /**

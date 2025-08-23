@@ -42,7 +42,7 @@ import java.util.Map;
 public class EggBridge implements Listener {
 
     //Active eggBridges
-    private static HashMap<Egg, EggBridgeTask> bridges = new HashMap<>();
+    private static final Map<Egg, EggBridgeTask> bridges = new HashMap<>();
 
     @EventHandler
     public void onLaunch(ProjectileLaunchEvent event) {

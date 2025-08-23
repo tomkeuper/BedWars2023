@@ -72,27 +72,27 @@ public class RemoveTeam extends SubCommand {
             } else {
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Iron") != null) {
                     for (Location loc : ss.getConfig().getArenaLocations("Team." + args[0] + ".Iron")) {
-                        com.tomkeuper.bedwars.commands.Misc.removeArmorStand(null, loc, null);
+                        ss.removeGeneratorHologramLineContainingType(loc, "Iron");
                     }
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Gold") != null) {
                     for (Location loc : ss.getConfig().getArenaLocations("Team." + args[0] + ".Gold")) {
-                        com.tomkeuper.bedwars.commands.Misc.removeArmorStand(null, loc, null);
+                        ss.removeGeneratorHologramLineContainingType(loc, "Gold");
                     }
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Emerald") != null) {
                     for (Location loc : ss.getConfig().getArenaLocations("Team." + args[0] + ".Emerald")) {
-                        com.tomkeuper.bedwars.commands.Misc.removeArmorStand(null, loc, null);
+                        ss.removeGeneratorHologramLineContainingType(loc, "Emerald");
                     }
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Shop") != null) {
-                    com.tomkeuper.bedwars.commands.Misc.removeArmorStand(null, ss.getConfig().getArenaLoc("Team." + args[0] + ".Shop"), null);
+                    ss.removeShopHologram(args[0]);
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + ".Upgrade") != null) {
-                    com.tomkeuper.bedwars.commands.Misc.removeArmorStand(null, ss.getConfig().getArenaLoc("Team." + args[0] + ".Upgrade"), null);
+                    ss.removeUpgradeHologram(args[0]);
                 }
                 if (ss.getConfig().getYml().get("Team." + args[0] + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC) != null) {
-                    com.tomkeuper.bedwars.commands.Misc.removeArmorStand(null, ss.getConfig().getArenaLoc("Team." + args[0] + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
+                    ss.removeKillDropsHologram(args[0]);
                 }
                 p.sendMessage(ss.getPrefix() + "Team removed: " + ss.getTeamColor(args[0]) + args[0]);
                 com.tomkeuper.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + "Team removed: " + ss.getTeamColor(args[0]) + args[0], 5, 40, 5);

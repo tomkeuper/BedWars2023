@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -166,7 +167,14 @@ public class FireballListener implements Listener {
             } else {
                 y = y * fireballVertical * 1.5; // kb for jumping
             }
-            player.setVelocity(horizontalVector.setY(y));
+
+            try {
+                player.setVelocity(horizontalVector.setY(y));
+            } catch (IllegalArgumentException ex) {
+                // TODO: implement proper fix for Caused by: java.lang.IllegalArgumentException: x not finite - Logging now!
+                Bukkit.getLogger().severe("IllegalArgumentException has been caught! Horizontal vector is: " + horizontalVector + " with Y being: " + y);
+                Bukkit.getLogger().severe("Player is: " + player.getName() + " and source is: " + source.getName() + " at " + player.getLocation());
+            }
 
             LastHit lh = LastHit.getLastHit(player);
             if (lh != null) {

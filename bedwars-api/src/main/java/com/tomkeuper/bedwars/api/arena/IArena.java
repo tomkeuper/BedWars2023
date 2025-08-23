@@ -347,6 +347,13 @@ public interface IArena {
     int getPlayerKills(Player p, boolean finalKills);
 
     /**
+     * Get a player total kills count.
+     *
+     * @param p          Target player
+     */
+    int getPlayerTotalKills(Player p);
+
+    /**
      * Get the number of beds destroyed by a player.
      *
      * @param p The target player.
@@ -374,6 +381,11 @@ public interface IArena {
      * @param group The arena group name to set.
      */
     void setGroup(String group);
+
+    /**
+     * Register scoreboards for the arena.
+     */
+    void registerScoreboards();
 
     /**
      * Set the game status of the arena without starting the corresponding tasks.

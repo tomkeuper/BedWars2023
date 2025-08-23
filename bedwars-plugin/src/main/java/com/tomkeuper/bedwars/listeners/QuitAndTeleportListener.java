@@ -135,16 +135,13 @@ public class QuitAndTeleportListener implements Listener {
 
     @EventHandler
     public void onWorldChange(PlayerChangedWorldEvent e) {
-        // I think this for shared mode should be removed
         if (BedWars.getServerType() == ServerType.SHARED) {
             if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) {
-                //Bukkit.getScheduler().runTaskLater(plugin, ()-> {
                 if (e.getPlayer().getWorld().getName().equalsIgnoreCase(BedWars.getLobbyWorld())) {
                     BoardManager.getInstance().giveTabFeatures(e.getPlayer(), null, true);
                 } else {
                     BoardManager.getInstance().remove(e.getPlayer());
                 }
-                //}, 2L);
             }
         } else if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) {

@@ -56,7 +56,6 @@ import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
 import net.minecraft.world.entity.item.EntityTNTPrimed;
-import net.minecraft.world.entity.projectile.EntityFireball;
 import net.minecraft.world.entity.projectile.IProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.*;
@@ -74,6 +73,7 @@ import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R1.entity.*;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_21_R1.util.CraftMagicNumbers;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
@@ -383,6 +383,24 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
+    public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
+        try {
+            // Convert Bukkit block to NMS Block
+            net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
+
+            // Access the 'durability' field
+            Field durabilityField = BlockBase.class.getDeclaredField("aH");
+            durabilityField.setAccessible(true);
+
+            return durabilityField.getFloat(nmsBlock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return 0; // Default if something fails
+    }
+
+    @Override
     public void setBlockTeamColor(Block block, TeamColor teamColor) {
         if (block.getType().toString().contains("STAINED_GLASS") || block.getType().toString().equals("GLASS")) {
             block.setType(teamColor.glassMaterial());
@@ -420,6 +438,8 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public boolean isCustomBedWarsItem(org.bukkit.inventory.ItemStack i) {
+        if (i == null) return false;
+        if (i.getType() == org.bukkit.Material.AIR) return false;
         RtagItem rtagItem = new RtagItem(i);
         OptionalType tag = rtagItem.getOptional(VersionSupport.PLUGIN_TAG_GENERIC_KEY);
         return tag.isNotEmpty();
@@ -666,7 +686,7 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public int getVersion() {
-        return 12;
+        return 13;
     }
 
     @Override
@@ -817,7 +837,7 @@ public final class v1_21_R1 extends VersionSupport {
             throw new RuntimeException("World of a location should not be null.");
         }
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
-        nmsEntity.p(loc.getX(), loc.getY(), loc.getZ());
+        nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
 
         for (Player p : loc.getWorld().getPlayers()) {

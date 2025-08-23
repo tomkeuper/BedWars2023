@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.arena;
 
+import com.saicone.rtag.util.SkullTexture;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -73,6 +74,7 @@ import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.placeholder.PlayerPlaceholder;
 import me.neznamy.tab.api.placeholder.ServerPlaceholder;
+import me.neznamy.tab.api.scoreboard.Scoreboard;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
@@ -82,8 +84,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -131,6 +135,7 @@ public class Arena implements IArena {
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
+    private List<Scoreboard> scoreboards = new ArrayList<>();
     private int renderDistance, magicMilkTime = 30;
 
     private final List<Player> leaving = new ArrayList<>();
@@ -162,6 +167,7 @@ public class Arena implements IArena {
      * Those maps are not used for db stats but is for internal use only.
      */
     private HashMap<String, Integer> playerKills = new HashMap<>();
+    private HashMap<String, Integer> playerTotalKills = new HashMap<>();
     private HashMap<Player, Integer> playerBedsDestroyed = new HashMap<>();
     private HashMap<Player, Integer> playerFinalKills = new HashMap<>();
     private HashMap<Player, Integer> playerDeaths = new HashMap<>();
@@ -275,12 +281,12 @@ public class Arena implements IArena {
             }
         }
         if (yml.get("generator.Diamond") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Diamond generator on: " + name);
-            plugin.getLogger().severe("There isn't set any Diamond generator on: " + name);
+            if (p != null) p.sendMessage("§cThere aren't any Diamond generators set on: " + name);
+            plugin.getLogger().severe("There aren't any Diamond generators set on: " + name);
         }
         if (yml.get("generator.Emerald") == null) {
-            if (p != null) p.sendMessage("§cThere isn't set any Emerald generator on: " + name);
-            plugin.getLogger().severe("There isn't set any Emerald generator on: " + name);
+            if (p != null) p.sendMessage("§cThere aren't any Emerald generators set on: " + name);
+            plugin.getLogger().severe("There aren't any Emerald generators set on: " + name);
         }
         if (yml.get("waiting.Loc") == null) {
             if (p != null) p.sendMessage("§cWaiting spawn not set on: " + name);
@@ -291,6 +297,11 @@ public class Arena implements IArena {
         yKillHeight = yml.getInt(ConfigPath.ARENA_Y_LEVEL_KILL);
         addToEnableQueue(this);
         Language.saveIfNotExists(Messages.ARENA_DISPLAY_GROUP_PATH + getGroup().toLowerCase(), String.valueOf(getGroup().charAt(0)).toUpperCase() + group.substring(1).toLowerCase());
+        Language.getLanguages().forEach(language -> {
+            if (!language.exists(Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group))){
+                language.generateNPCMessages(language.getYml(), group);
+            }
+        });
     }
 
     /**
@@ -415,7 +426,7 @@ public class Arena implements IArena {
                 yaml.getInt("world-settings.default.entity-tracking-range.players") : yaml.getInt("world-settings." + getWorldName() + ".entity-tracking-range.players");
 
         //register scoreboards
-        BoardManager.getInstance().registerArenaScoreboards(this);
+        registerScoreboards();
     }
 
     /**
@@ -427,6 +438,14 @@ public class Arena implements IArena {
      */
     public boolean addPlayer(Player p, boolean skipOwnerCheck) {
         if (p == null) return false;
+        // Check if the player is already in an arena
+        if (getArenaByPlayer(p) != null) {
+            if (getArenaByPlayer(p).isSpectator(p)) {
+                getArenaByPlayer(p).removeSpectator(p, false);
+            } else {
+                getArenaByPlayer(p).removePlayer(p, false);
+            }
+        }
         debug("Player added: " + p.getName() + " arena: " + getArenaName());
 
 //        Used to check if a sidebar must be given or not
@@ -515,7 +534,7 @@ public class Arena implements IArena {
             p.setHealth(p.getMaxHealth());
             for (Player on : players) {
                 Language language = Language.getPlayerLanguage(on);
-                if (ev.getMessage().equals("")){
+                if (ev.getMessage().equals("")) {
                     on.sendMessage(getMsg(language, p, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
@@ -628,9 +647,9 @@ public class Arena implements IArena {
             }
         }
         if (!isStatusChange)
-            if (BedWars.getServerType() == ServerType.MULTIARENA || BedWars.getServerType() == ServerType.SHARED){
-                BoardManager.getInstance().giveTabFeatures(p,this, false);
-        }
+            if (BedWars.getServerType() == ServerType.MULTIARENA || BedWars.getServerType() == ServerType.SHARED) {
+                BoardManager.getInstance().giveTabFeatures(p, this, false);
+            }
 
         refreshSigns();
         JoinNPC.updateNPCs(getGroup());
@@ -691,7 +710,7 @@ public class Arena implements IArena {
             p.setGameMode(GameMode.ADVENTURE);
 
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if(leaving.contains(p)) return;
+                if (leaving.contains(p)) return;
                 p.setAllowFlight(true);
                 p.setFlying(true);
             }, 5L);
@@ -700,7 +719,7 @@ public class Arena implements IArena {
                 p.getPassenger().remove();
 
             Bukkit.getScheduler().runTask(plugin, () -> {
-                if(leaving.contains(p)) return;
+                if (leaving.contains(p)) return;
                 for (Player on : Bukkit.getOnlinePlayers()) {
                     if (on == p) continue;
                     if (getSpectators().contains(on)) {
@@ -778,14 +797,14 @@ public class Arena implements IArena {
     /**
      * Remove a player from the arena
      *
-     * @param p          Player to be removed
-     * @param disconnect True if the player was disconnected
+     * @param p              Player to be removed
+     * @param disconnect     True if the player was disconnected
      * @param skipPartyCheck (default false) True if you want to skip the party checking for this player. This will stop the player
      *                       from leaving a party if he is in one. or will stop the party from being disbanded if the
      *                       player is the owner.
      */
     public void removePlayer(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
-        if(leaving.contains(p)) {
+        if (leaving.contains(p)) {
             return;
         } else {
             leaving.add(p);
@@ -870,7 +889,7 @@ public class Arena implements IArena {
                 }
             } else if (alive_teams == 0 && !BedWars.isShuttingDown()) {
                 Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> changeStatus(GameState.restarting), 10L);
-            } else if(!BedWars.isShuttingDown()) {
+            } else if (!BedWars.isShuttingDown()) {
                 //ReJoin feature
                 new ReJoin(p, this, team, cacheList);
             }
@@ -914,13 +933,12 @@ public class Arena implements IArena {
         for (Player on : getPlayers()) {
             Language language = Language.getPlayerLanguage(on);
             on.sendMessage(getMsg(language, p, Messages.COMMAND_LEAVE_MSG)
-                            .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
-                            .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
-                            .replace("%bw_playername%", p.getName())
-                            .replace("%bw_player%", p.getDisplayName()
-                            .replace("%bw_on%", String.valueOf(getPlayers().size()))
-                            .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                            )
+                    .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
+                    .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
+                    .replace("%bw_playername%", p.getName())
+                    .replace("%bw_player%", p.getDisplayName())
+                    .replace("%bw_on%", String.valueOf(getPlayers().size()))
+                    .replace("%bw_max%", String.valueOf(getMaxPlayers()))
             );
         }
         for (Player on : getSpectators()) {
@@ -929,10 +947,9 @@ public class Arena implements IArena {
                     .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                     .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                     .replace("%bw_playername%", p.getName())
-                    .replace("%bw_player%", p.getDisplayName()
+                    .replace("%bw_player%", p.getDisplayName())
                     .replace("%bw_on%", String.valueOf(getPlayers().size()))
-                    .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                    ));
+                    .replace("%bw_max%", String.valueOf(getMaxPlayers())));
 
         }
 
@@ -970,7 +987,7 @@ public class Arena implements IArena {
             p.removePotionEffect(pf.getType());
         }
 
-        if(!BedWars.isShuttingDown()) {
+        if (!BedWars.isShuttingDown()) {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
                 for (Player on : Bukkit.getOnlinePlayers()) {
                     if (on.equals(p)) continue;
@@ -987,7 +1004,7 @@ public class Arena implements IArena {
         }
 
         /* Check if party need to be left */
-        if (!skipPartyCheck){
+        if (!skipPartyCheck) {
             if (getPartyManager().hasParty(p)) {
                 if (getPartyManager().isOwner(p)) {
                     if (status != GameState.restarting) {
@@ -1063,7 +1080,7 @@ public class Arena implements IArena {
      *                       player is the owner.
      */
     public void removeSpectator(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
-        if(leaving.contains(p)) {
+        if (leaving.contains(p)) {
             return;
         } else {
             leaving.add(p);
@@ -1087,6 +1104,10 @@ public class Arena implements IArena {
             this.sendToMainLobby(p);
 
         }
+
+        // Clear shop holo's for leaving players.
+        ShopHolo.clearForPlayer(p);
+
         for (PotionEffect pf : p.getActivePotionEffects()) {
             p.removePotionEffect(pf.getType());
         }
@@ -1108,7 +1129,7 @@ public class Arena implements IArena {
         }
         playerLocation.remove(p);
 
-        if(!BedWars.isShuttingDown()) {
+        if (!BedWars.isShuttingDown()) {
             Bukkit.getScheduler().runTask(plugin, () -> {
                 for (Player on : Bukkit.getOnlinePlayers()) {
                     if (on.equals(p)) continue;
@@ -1125,7 +1146,7 @@ public class Arena implements IArena {
         }
 
         /* Check if party need to be left */
-        if (!skipPartyCheck){
+        if (!skipPartyCheck) {
             if (getPartyManager().hasParty(p)) {
                 if (!getPartyManager().isOwner(p)) {
                     getPartyManager().removeFromParty(p);
@@ -1250,7 +1271,7 @@ public class Arena implements IArena {
         if (getStartingTask() != null) getStartingTask().cancel();
         if (getPlayingTask() != null) getPlayingTask().cancel();
         if (getAnnouncementTask() != null) getAnnouncementTask().cancel();
-        if (null != moneyperMinuteTask){
+        if (null != moneyperMinuteTask) {
             moneyperMinuteTask.cancel();
         }
         if (null != perMinuteTask) {
@@ -1307,7 +1328,7 @@ public class Arena implements IArena {
      * @param p Target player
      * @return The arena where the player is in. Can be NULL.
      */
-    public static IArena getArenaByPlayer(Player p) {
+    public static @Nullable IArena getArenaByPlayer(Player p) {
         return arenaByPlayer.get(p);
     }
 
@@ -1431,9 +1452,20 @@ public class Arena implements IArena {
      * @param p          Target player
      * @param finalKills True if you want to get the Final Kills. False for regular kills.
      */
+    @Override
     public int getPlayerKills(Player p, boolean finalKills) {
         if (finalKills) return playerFinalKills.getOrDefault(p, 0);
         return playerKills.getOrDefault(p.getName(), 0);
+    }
+
+    /**
+     * Get a player total kills count.
+     *
+     * @param p          Target player
+     */
+    @Override
+    public int getPlayerTotalKills(Player p) {
+        return playerTotalKills.getOrDefault(p.getName(), 0);
     }
 
     /**
@@ -1466,7 +1498,13 @@ public class Arena implements IArena {
     @Override
     public void setGroup(String group) {
         this.group = group;
-        BoardManager.getInstance().registerArenaScoreboards(this);
+        scoreboards.forEach(Scoreboard::unregister);
+        registerScoreboards();
+    }
+
+    @Override
+    public void registerScoreboards() {
+        scoreboards = BoardManager.getInstance().registerArenaScoreboards(this);
     }
 
     public static void setArenaByPlayer(Player p, IArena arena) {
@@ -1546,7 +1584,7 @@ public class Arena implements IArena {
                 restartingTask.cancel();
         }
         restartingTask = null;
-        if (null != moneyperMinuteTask){
+        if (null != moneyperMinuteTask) {
             moneyperMinuteTask.cancel();
         }
         if (null != perMinuteTask) {
@@ -1569,22 +1607,28 @@ public class Arena implements IArena {
         } else if (status == GameState.restarting) {
             restartingTask = new GameRestartingTask(this);
         }
-        PlayerPlaceholder prefixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix%");
-        PlayerPlaceholder suffixPlaceholder = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix%");
+        PlayerPlaceholder prefixPlaceholderTab = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix_tab%");
+        PlayerPlaceholder suffixPlaceholderTab = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix_tab%");
+        PlayerPlaceholder prefixPlaceholderHead = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_prefix_head%");
+        PlayerPlaceholder suffixPlaceholderHead = (PlayerPlaceholder) TabAPI.getInstance().getPlaceholderManager().getPlaceholder("%bw_suffix_head%");
         players.forEach(c -> {
             BoardManager.getInstance().giveTabFeatures(c, this, false);
             TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
             assert tabPlayer != null;
-            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+            prefixPlaceholderTab.updateValue(tabPlayer, BoardManager.getInstance().getPrefixTab(tabPlayer));
+            suffixPlaceholderTab.updateValue(tabPlayer, BoardManager.getInstance().getSuffixTab(tabPlayer));
+            prefixPlaceholderHead.updateValue(tabPlayer, BoardManager.getInstance().getPrefixHead(tabPlayer));
+            suffixPlaceholderHead.updateValue(tabPlayer, BoardManager.getInstance().getSuffixHead(tabPlayer));
         });
 
         spectators.forEach(c -> {
             BoardManager.getInstance().giveTabFeatures(c, this, false);
             TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(c.getUniqueId());
             assert tabPlayer != null;
-            prefixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getPrefix(tabPlayer));
-            suffixPlaceholder.updateValue(tabPlayer, BoardManager.getInstance().getSuffix(tabPlayer));
+            prefixPlaceholderTab.updateValue(tabPlayer, BoardManager.getInstance().getPrefixTab(tabPlayer));
+            suffixPlaceholderTab.updateValue(tabPlayer, BoardManager.getInstance().getSuffixTab(tabPlayer));
+            prefixPlaceholderHead.updateValue(tabPlayer, BoardManager.getInstance().getPrefixHead(tabPlayer));
+            suffixPlaceholderHead.updateValue(tabPlayer, BoardManager.getInstance().getSuffixHead(tabPlayer));
         });
     }
 
@@ -1692,10 +1736,10 @@ public class Arena implements IArena {
      */
     public void addPlayerKill(Player p, boolean finalKill, Player victim) {
         if (p == null) return;
-        if (playerKills.containsKey(p.getName())) {
-            playerKills.replace(p.getName(), playerKills.get(p.getName()) + 1);
+        if (playerTotalKills.containsKey(p.getName())) {
+            playerTotalKills.replace(p.getName(), playerTotalKills.get(p.getName()) + 1);
         } else {
-            playerKills.put(p.getName(), 1);
+            playerTotalKills.put(p.getName(), 1);
         }
         if (finalKill) {
             if (playerFinalKills.containsKey(p)) {
@@ -1704,6 +1748,12 @@ public class Arena implements IArena {
                 playerFinalKills.put(p, 1);
             }
             playerFinalKillDeaths.put(victim, 1);
+        } else {
+            if (playerKills.containsKey(p.getName())) {
+                playerKills.replace(p.getName(), playerKills.get(p.getName()) + 1);
+            } else {
+                playerKills.put(p.getName(), 1);
+            }
         }
     }
 
@@ -1719,7 +1769,7 @@ public class Arena implements IArena {
     }
 
     /**
-     * This will give the lobby items to the player.
+     * This method gives the lobby items to the player.
      * Not used in serverType BUNGEE.
      * This will clear the inventory first.
      */
@@ -1727,79 +1777,127 @@ public class Arena implements IArena {
         if (!BedWars.config.getLobbyWorldName().equalsIgnoreCase(p.getWorld().getName())) return;
         p.getInventory().clear();
 
-        for (IPermanentItem lobbyItem: BedWars.getAPI().getItemUtil().getLobbyItems()) {
+        for (IPermanentItem lobbyItem : BedWars.getAPI().getItemUtil().getLobbyItems()) {
             ItemStack item = lobbyItem.getItem();
-            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
-            if (itemMeta != null){
-                String name;
-                List<String> lore;
 
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, lobbyItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", lobbyItem.getIdentifier());
+                item = head;
+            }
 
+            // Update the item's display name and lore based on the player's language.
+            ItemMeta itemMeta = item.getItemMeta();
+            if (itemMeta != null) {
+                String name = SupportPAPI.getSupportPAPI().replace(p,
+                        getMsg(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
+                List<String> lore = SupportPAPI.getSupportPAPI().replace(p,
+                        getList(p, Messages.GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
-
                 item.setItemMeta(itemMeta);
             }
+
             if (lobbyItem.getHandler().isVisible(p, null)) p.getInventory().setItem(lobbyItem.getSlot(), item);
         }
     }
 
     /**
-     * This will give the pre-game command Items.
+     * This method gives the pre-game command items.
      * This will clear the inventory first.
      */
     public void sendPreGameCommandItems(Player p) {
         p.getInventory().clear();
 
-        for (IPermanentItem preGameItem: BedWars.getAPI().getItemUtil().getPreGameItems()) {
+        for (IPermanentItem preGameItem : BedWars.getAPI().getItemUtil().getPreGameItems()) {
             ItemStack item = preGameItem.getItem();
-            ItemMeta itemMeta = preGameItem.getItem().getItemMeta();
-            if (itemMeta != null){
-                String name;
-                List<String> lore;
 
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, preGameItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", preGameItem.getIdentifier());
+                item = head;
+            }
 
+            // Update the item meta (display name and lore) based on the player's language.
+            ItemMeta itemMeta = item.getItemMeta();
+            if (itemMeta != null) {
+                String name = SupportPAPI.getSupportPAPI().replace(p,
+                        getMsg(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_NAME.replace("%path%", preGameItem.getIdentifier())));
+                List<String> lore = SupportPAPI.getSupportPAPI().replace(p,
+                        getList(p, Messages.GENERAL_CONFIGURATION_WAITING_ITEMS_LORE.replace("%path%", preGameItem.getIdentifier())));
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
-
                 item.setItemMeta(itemMeta);
             }
-            if (preGameItem.getHandler().isVisible(p, this))
-            p.getInventory().setItem(preGameItem.getSlot(), item);
+
+            if (preGameItem.getHandler().isVisible(p, this)) p.getInventory().setItem(preGameItem.getSlot(), item);
         }
     }
 
     /**
-     * This will give the spectator command Items.
+     * This method gives the spectator command items.
      * This will clear the inventory first.
      */
     public void sendSpectatorCommandItems(Player p) {
         p.getInventory().clear();
 
-        for (IPermanentItem lobbyItem: BedWars.getAPI().getItemUtil().getSpectatorItems()) {
-            ItemStack item = lobbyItem.getItem();
-            ItemMeta itemMeta = lobbyItem.getItem().getItemMeta();
-            if (itemMeta != null){
-                String name;
-                List<String> lore;
+        for (IPermanentItem spectatorItem : BedWars.getAPI().getItemUtil().getSpectatorItems()) {
+            ItemStack item = spectatorItem.getItem();
 
-                // Add correct name and lore for the player language
-                name = SupportPAPI.getSupportPAPI().replace(p, getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", lobbyItem.getIdentifier())));
-                lore = SupportPAPI.getSupportPAPI().replace(p, getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", lobbyItem.getIdentifier())));
+            if (BedWars.nms.isPlayerHead(item.getType().name(), item.getDurability())) {
+                ItemStack head = SkullTexture.getTexturedHead(p.getName());
+                SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+                ItemMeta origMeta = item.getItemMeta();
+                if (origMeta != null) {
+                    skullMeta.setDisplayName(origMeta.getDisplayName());
+                    skullMeta.setLore(origMeta.getLore());
+                    for (ItemFlag flag : origMeta.getItemFlags())
+                        skullMeta.addItemFlags(flag);
+                    for (var e : origMeta.getEnchants().entrySet())
+                        skullMeta.addEnchant(e.getKey(), e.getValue(), true);
+                }
+                head.setItemMeta(skullMeta);
+                head = BedWars.nms.addCustomData(head, spectatorItem.getIdentifier());
+                head = BedWars.nms.setTag(head, "ACTION", spectatorItem.getIdentifier());
+                item = head;
+            }
 
+            ItemMeta itemMeta = item.getItemMeta();
+            if (itemMeta != null) {
+                String name = SupportPAPI.getSupportPAPI().replace(p,
+                        getMsg(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_NAME.replace("%path%", spectatorItem.getIdentifier())));
+                List<String> lore = SupportPAPI.getSupportPAPI().replace(p,
+                        getList(p, Messages.GENERAL_CONFIGURATION_SPECTATOR_ITEMS_LORE.replace("%path%", spectatorItem.getIdentifier())));
                 itemMeta.setDisplayName(name);
                 itemMeta.setLore(lore);
-
                 item.setItemMeta(itemMeta);
             }
-            if (lobbyItem.getHandler().isVisible(p, this))
-                p.getInventory().setItem(lobbyItem.getSlot(), item);
+
+            if (spectatorItem.getHandler().isVisible(p, this)) p.getInventory().setItem(spectatorItem.getSlot(), item);
         }
     }
 
@@ -1869,7 +1967,7 @@ public class Arena implements IArena {
                     Player thirdPlayer = null;
                     StringBuilder winners = new StringBuilder();
 
-                    for(int i = 0; i < winner.getMembers().size(); i++){
+                    for (int i = 0; i < winner.getMembers().size(); i++) {
                         Player p = winner.getMembers().get(i);
                         //Send winning title to the winner
                         if (p.getWorld().equals(getWorld())) {
@@ -1877,13 +1975,13 @@ public class Arena implements IArena {
                         }
                         //Build the winner format message
                         if (!winners.toString().contains(p.getDisplayName())) {
-                            if(winner.getSize() > 1 && i+1 != winner.getMembers().size()){
+                            if (winner.getSize() > 1 && i + 1 != winner.getMembers().size()) {
                                 winners.append(getMsg(p, Messages.FORMATTING_EACH_WINNER)
                                         .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                                         .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                                         .replace("%bw_playername%", p.getName())
                                         .replace("%bw_player%", p.getDisplayName())).append("§7, ");
-                            }else{
+                            } else {
                                 winners.append(getMsg(p, Messages.FORMATTING_EACH_WINNER)
                                         .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                                         .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
@@ -1894,12 +1992,12 @@ public class Arena implements IArena {
                     }
 
                     int first = 0, second = 0, third = 0;
-                    if (!playerKills.isEmpty()) {
+                    if (!playerTotalKills.isEmpty()) {
 
                         LinkedHashMap<String, Integer> reverseSortedMap = new LinkedHashMap<>();
 
                         //Use Comparator.reverseOrder() for reverse ordering
-                        playerKills.entrySet()
+                        playerTotalKills.entrySet()
                                 .stream()
                                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                                 .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
@@ -2401,15 +2499,17 @@ public class Arena implements IArena {
                 despawnable.destroy();
             }
         }
-        for (ServerPlaceholder placeholder : serverPlaceholders){
+        for (ServerPlaceholder placeholder : serverPlaceholders) {
             TabAPI.getInstance().getPlaceholderManager().unregisterPlaceholder(placeholder);
         }
-        if (TabAPI.getInstance().getBossBarManager() != null){
-            for (BossBar bossBar : dragonBossbars){
+        if (TabAPI.getInstance().getBossBarManager() != null) {
+            for (BossBar bossBar : dragonBossbars) {
                 bossBar.getPlayers().forEach(bossBar::removePlayer);
             }
             dragonBossbars = null;
         }
+        scoreboards.forEach(Scoreboard::unregister);
+        scoreboards = null;
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
@@ -2433,6 +2533,7 @@ public class Arena implements IArena {
         respawnSessions = null;
         showTime = null;
         playerKills = null;
+        playerTotalKills = null;
         playerBedsDestroyed = null;
         playerFinalKills = null;
         playerDeaths = null;
@@ -2541,7 +2642,7 @@ public class Arena implements IArena {
     public void setAllowEnderDragonDestroy(boolean allowDestory) {
         this.enderDragonDestory = allowDestory;
     }
-  
+
     @Override
     public int getMagicMilkTime() {
         return magicMilkTime;
@@ -2559,43 +2660,43 @@ public class Arena implements IArena {
 
     @Override
     public boolean startReSpawnSession(Player player, int seconds) {
-        if (respawnSessions.get(player) == null) {
-            IArena arena = Arena.getArenaByPlayer(player);
-            if (arena == null) {
-                return false;
+        if (respawnSessions.get(player) != null) {
+            return false;
+        }
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena == null) {
+            return false;
+        }
+        if (!arena.isPlayer(player)) {
+            return false;
+        }
+        player.getInventory().clear();
+        if (seconds > 1) {
+            // hide to others
+            for (Player playing : arena.getPlayers()) {
+                if (playing.equals(player)) continue;
+                BedWars.nms.spigotHidePlayer(player, playing);
             }
-            if (!arena.isPlayer(player)) {
-                return false;
-            }
-            player.getInventory().clear();
-            if (seconds > 1) {
-                // hide to others
-                for (Player playing : arena.getPlayers()) {
-                    if (playing.equals(player)) continue;
-                    BedWars.nms.spigotHidePlayer(player, playing);
-                }
-                PaperSupport.teleportC(player, getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+            PaperSupport.teleportC(player, getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+            player.setAllowFlight(true);
+            player.setFlying(true);
+
+            respawnSessions.put(player, seconds);
+            Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
                 player.setAllowFlight(true);
                 player.setFlying(true);
+                player.setFireTicks(0);
 
-                respawnSessions.put(player, seconds);
-                Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
-                    player.setAllowFlight(true);
-                    player.setFlying(true);
-                    player.setFireTicks(0);
-
-                    nms.setCollide(player, this, false);
-                    for (Player invisible : getShowTime().keySet()) {
-                        BedWars.nms.hideArmor(invisible, player);
-                    }
-                }, 5L);
-            } else {
-                ITeam team = getTeam(player);
-                team.respawnMember(player);
-            }
-            return true;
+                nms.setCollide(player, this, false);
+                for (Player invisible : getShowTime().keySet()) {
+                    BedWars.nms.hideArmor(invisible, player);
+                }
+            }, 5L);
+        } else {
+            ITeam team = getTeam(player);
+            team.respawnMember(player);
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -2613,7 +2714,8 @@ public class Arena implements IArena {
             if (ar.getArenaName().equalsIgnoreCase(arenaName)) return false;
         }
 
-        if (Arena.getGamesBeforeRestart() != -1 && Arena.getArenas().size() >= Arena.getGamesBeforeRestart()) return false;
+        if (Arena.getGamesBeforeRestart() != -1 && Arena.getArenas().size() >= Arena.getGamesBeforeRestart())
+            return false;
 
         int activeClones = 0;
         for (IArena ar : Arena.getArenas()) {
@@ -2622,7 +2724,7 @@ public class Arena implements IArena {
                 if (ar.getStatus() == GameState.waiting || ar.getStatus() == GameState.starting) return false;
             }
             // count active clones
-            if (ar.getArenaName().equals(arenaName)){
+            if (ar.getArenaName().equals(arenaName)) {
                 activeClones++;
             }
         }
@@ -2658,7 +2760,6 @@ public class Arena implements IArena {
     public void abandonGame(Player player) {
         if (player == null) return;
 
-        //this.playerKills.remove(player.getName());
         this.playerBedsDestroyed.remove(player);
         this.playerFinalKills.remove(player);
         this.playerDeaths.remove(player);
@@ -2702,7 +2803,7 @@ public class Arena implements IArena {
     }
 
     @Override
-    public List<BossBar> getDragonBossbars(){
+    public List<BossBar> getDragonBossbars() {
         return dragonBossbars;
     }
 
@@ -2738,8 +2839,8 @@ public class Arena implements IArena {
      * Use only for 1.8 servers as they don't support BossBar packets
      */
     public void set1_8BossBarName(ITeam team, EnderDragon dragon) {
-        for (Player player : team.getArena().getPlayers()){
-            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
+        for (Player player : team.getArena().getPlayers()) {
+            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat() + team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
             dragon.setCustomName(name);
         }
     }
@@ -2753,12 +2854,12 @@ public class Arena implements IArena {
             BedWars.plugin.getLogger().warning("BossBar is disabled in TAB config! Please enable it there.\n Make sure to remove the ServerInfo default config if you want to use dragon bossbars");
             return;
         }
-        String dragonPlaceholderName = "%bw_"+team.getArena().getWorldName()+"_"+team.getName() + "+" + dragonNumber + "%";
-        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500,  () -> team.getDragons().get(dragonNumber).getHealth()/team.getDragons().get(dragonNumber).getMaxHealth()*100);
+        String dragonPlaceholderName = "%bw_" + team.getArena().getWorldName() + "_" + team.getName() + "+" + dragonNumber + "%";
+        ServerPlaceholder dragonPlaceholder = TabAPI.getInstance().getPlaceholderManager().registerServerPlaceholder(dragonPlaceholderName, 500, () -> String.valueOf(team.getDragons().get(dragonNumber).getHealth() / team.getDragons().get(dragonNumber).getMaxHealth() * 100));
         serverPlaceholders.add(dragonPlaceholder);
-        for (Player player : team.getArena().getPlayers()){
-            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat()+team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
-            BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar( name, dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
+        for (Player player : team.getArena().getPlayers()) {
+            String name = Language.getMsg(player, Messages.FORMATTING_BOSSBAR_DRAGON).replace("%bw_team%", team.getColor().chat() + team.getName()).replace("%bw_team_color%", String.valueOf(team.getColor().chat())).replace("%bw_team_name%", team.getDisplayName(getPlayerLanguage(player))).replace("%bw_team_letter%", String.valueOf(team.getName().length() != 0 ? team.getName().charAt(0) : ""));
+            BossBar bb = TabAPI.getInstance().getBossBarManager().createBossBar(name, dragonPlaceholderName, String.valueOf(team.getColor()), "PROGRESS");
             bb.addPlayer(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
             dragonBossbars.add(bb);
         }

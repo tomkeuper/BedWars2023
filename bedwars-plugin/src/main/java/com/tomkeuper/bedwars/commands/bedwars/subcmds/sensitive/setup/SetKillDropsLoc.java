@@ -42,8 +42,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.tomkeuper.bedwars.BedWars.mainCmd;
-import static com.tomkeuper.bedwars.commands.Misc.createArmorStand;
-import static com.tomkeuper.bedwars.commands.Misc.removeArmorStand;
 
 public class SetKillDropsLoc extends SubCommand {
 
@@ -85,12 +83,12 @@ public class SetKillDropsLoc extends SubCommand {
             }
             if (!foundTeam.isEmpty()) {
                 if (ss.getConfig().getYml().get("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC) != null) {
-                    removeArmorStand("Kill drops", ss.getConfig().getArenaLoc("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC), null);
+                    ss.removeBedHologram(foundTeam);
                 }
                 arena.set("Team." + foundTeam + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC, arena.stringLocationArenaFormat(p.getLocation()));
                 String team = ss.getTeamColor(foundTeam) + foundTeam;
                 p.sendMessage(ss.getPrefix() + "Kill drops set for team: " + team);
-                createArmorStand(ChatColor.GOLD + "Kill drops " + team, p.getLocation(), null);
+                ss.createKillDropsHologram(p, p.getLocation(), foundTeam);
                 com.tomkeuper.bedwars.BedWars.nms.sendTitle(p, " ", ChatColor.GREEN + "Kill drops set for team: " + team, 5, 40, 5);
                 Sounds.playSound(ConfigPath.SOUNDS_BOUGHT, p);
 

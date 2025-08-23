@@ -1,6 +1,6 @@
 plugins {
     id("bedwars.standard-conventions")
-    id("io.github.goooler.shadow")
+    id("com.gradleup.shadow")
 }
 
 tasks {
