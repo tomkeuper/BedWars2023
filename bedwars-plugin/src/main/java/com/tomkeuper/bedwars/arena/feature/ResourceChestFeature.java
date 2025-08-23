@@ -102,11 +102,17 @@ public class ResourceChestFeature implements Listener {
                 ? ((Chest) block.getState()).getBlockInventory()
                 : player.getEnderChest();
 
-        safeDeposit(player, hand, inventory);
+        PlayerItemDepositEvent event = new PlayerItemDepositEvent(player, arena, hand, inventory, block.getType());
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return;
 
-        if (hand.getType().name().contains("SWORD")) team.defaultSword(player, true);
+        safeDeposit(event.getPlayer(), event.getItem(), event.getTargetInventory());
 
-        callEvent(player, arena, hand.clone(), inventory, isEnderChest);
+        ITeam team2 = arena.getTeam(event.getPlayer());
+        if (team2 == null) return;
+
+        if (event.getItem().getType().name().contains("SWORD")) team2.defaultSword(player, true);
+
     }
 
     private void safeDeposit(Player player, ItemStack hand, Inventory inventory) {
@@ -134,7 +140,7 @@ public class ResourceChestFeature implements Listener {
                 player.getInventory().addItem(leftover);
     }
 
-    private void callEvent(Player player, IArena arena, ItemStack item, Inventory inventory, boolean isEnderChest) {
-        new PlayerItemDepositEvent(player, arena, item.clone(), inventory, isEnderChest);
-    }
+//    private void callEvent(Player player, IArena arena, ItemStack item, Inventory inventory, boolean isEnderChest) {
+//        new PlayerItemDepositEvent(player, arena, item, inventory, isEnderChest);
+//    }
 }
