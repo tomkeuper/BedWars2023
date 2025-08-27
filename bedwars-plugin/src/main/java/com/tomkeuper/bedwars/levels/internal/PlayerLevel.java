@@ -147,7 +147,7 @@ public class PlayerLevel {
      * Get PlayerLevel by player.
      */
     public static PlayerLevel getLevelByPlayer(UUID player) {
-        return levelByPlayer.computeIfAbsent(player, id -> new PlayerLevel(id, 1, 0));
+        return levelByPlayer.getOrDefault(player, new PlayerLevel(player, 1, 0));
     }
 
     /**
