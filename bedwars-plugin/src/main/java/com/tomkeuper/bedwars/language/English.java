@@ -87,6 +87,90 @@ public class English extends Language {
                 "&e/party accept <player> &7- &bAccept a party invite",
                 "&e/party disband &7- &bDisbands the party")
         );
+
+        yml.addDefault(Messages.COMMAND_MAP_CONSOLE_DENIED, "%bw_lang_prefix%&cThis command cannot be executed from the console.");
+        yml.addDefault(Messages.COMMAND_MAP_NOT_IN_GAME, "%bw_lang_prefix%&cYou are not in a Bed Wars game!");
+        yml.addDefault(Messages.COMMAND_MAP_DISPLAY, "%bw_lang_prefix%&aYou are currently playing on &e{map}.");
+        yml.addDefault(Messages.COMMAND_GMC_CONSOLE_DENIED, "%bw_lang_prefix%&cThis command cannot be executed from the console.");
+        yml.addDefault(Messages.COMMAND_GMC_NO_PERMISSION, "%bw_lang_prefix%&cYou do not have permission to use this command.");
+        yml.addDefault(Messages.COMMAND_GMC_DISABLED, "%bw_lang_prefix%&cYou cannot use this command while in a game.");
+        yml.addDefault(Messages.COMMAND_GMC_ENABLED, "%bw_lang_prefix%&aGame mode set to GMC.");
+        yml.addDefault(Messages.COMMAND_GMSP_CONSOLE_DENIED, "%bw_lang_prefix%&cThis command cannot be executed from the console.");
+        yml.addDefault(Messages.COMMAND_GMSP_DISABLED, "%bw_lang_prefix%&cYou cannot use this command while in a game.");
+        yml.addDefault(Messages.COMMAND_GMSP_NO_PERMISSION, "%bw_lang_prefix%&cYou do not have permission to use this command.");
+        yml.addDefault(Messages.COMMAND_GMSP_ENABLED, "%bw_lang_prefix%&aGame mode set to Spectator.");
+        yml.addDefault(Messages.COMMAND_GMS_CONSOLE_DENIED, "%bw_lang_prefix%&cThis command cannot be executed from the console.");
+        yml.addDefault(Messages.COMMAND_GMS_NO_PERMISSION, "%bw_lang_prefix%&cYou do not have permission to use this command.");
+        yml.addDefault(Messages.COMMAND_GMS_ENABLED, "%bw_lang_prefix%&aGame mode set to Survival.");
+        yml.addDefault(Messages.COMMAND_GMS_DISABLED, "%bw_lang_prefix%&cYou cannot use this command while in a game.");
+        // In English.java or similar language class
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cYou cannot deposit &f{item} &cin the resource chest!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cResource chest is full!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aYou deposited &f{amount} {item} &ain the {chest}!");
+
+        yml.addDefault(Messages.Help_Command_No_Perms, "§cYou do not have permission to use this command.");
+        yml.addDefault(Messages.COMMAND_SPECTATE_NO_PERMISSION, "%bw_lang_prefix%&cYou do not have permission to use this command.");
+
+        yml.addDefault(Messages.FLY_CONSOLE_ONLY, "&cThis command can only be used by players!");
+        yml.addDefault(Messages.FLY_PLAYER_NOT_FOUND, "&cPlayer not found or not online!");
+        yml.addDefault(Messages.FLY_INVALID_DURATION, "&cInvalid duration! Please enter a number.");
+        yml.addDefault(Messages.FLY_INVALID_SPEED, "&cInvalid speed! Please enter a number between 1-10.");
+        yml.addDefault(Messages.FLY_COOLDOWN, "&cYou must wait {time} seconds before using this command again!");
+        yml.addDefault(Messages.FLY_NOT_ALLOWED_IN_GAME, "&cYou cannot use fly while in a game!");
+        yml.addDefault(Messages.FLY_NO_PERMISSION_SPEED, "&cYou don't have permission to change fly speed!");
+        yml.addDefault(Messages.FLY_NO_PERMISSION_LIST, "&cYou don't have permission to list flying players!");
+        yml.addDefault(Messages.FLY_TARGET_NO_FLY, "&cThe target player is not flying!");
+        yml.addDefault(Messages.FLY_CONSOLE_ONLY, "&cThis command can only be used by players!");
+        yml.addDefault(Messages.FLY_PLAYER_NOT_FOUND, "&cPlayer not found or not online!");
+        yml.addDefault(Messages.FLY_INVALID_DURATION, "&cInvalid duration! Please enter a number.");
+        yml.addDefault(Messages.FLY_INVALID_SPEED, "&cInvalid speed! Please enter a number between 1-10.");
+        yml.addDefault(Messages.FLY_COOLDOWN, "&cYou must wait {time} seconds before using this command again!");
+        yml.addDefault(Messages.FLY_NOT_ALLOWED_IN_GAME, "&cYou cannot use fly while in a game!");
+        yml.addDefault(Messages.FLY_NO_PERMISSION_SPEED, "&cYou don't have permission to change fly speed!");
+        yml.addDefault(Messages.FLY_NO_PERMISSION_LIST, "&cYou don't have permission to list flying players!");
+        yml.addDefault(Messages.FLY_TARGET_NO_FLY, "&cThe target player is not flying!");
+
+        // Fly state messages
+        yml.addDefault(Messages.FLY_ENABLED, "&aFly mode enabled!");
+        yml.addDefault(Messages.FLY_DISABLED, "&cFly mode disabled!");
+        yml.addDefault(Messages.FLY_ENABLED_OTHER, "&a{player} enabled your fly mode!");
+        yml.addDefault(Messages.FLY_DISABLED_OTHER, "&c{player} disabled your fly mode!");
+        yml.addDefault(Messages.FLY_ENABLED_FOR, "&aEnabled fly mode for {player}!");
+        yml.addDefault(Messages.FLY_DISABLED_FOR, "&cDisabled fly mode for {player}!");
+        yml.addDefault(Messages.FLY_AUTO_DISABLED, "&cYour fly time has expired!");
+
+        // Fly duration messages
+        yml.addDefault(Messages.FLY_DURATION_LIMITED, "&eYour fly duration has been limited to {max} seconds!");
+        yml.addDefault(Messages.FLY_DURATION_WARNING, "&eYour fly will expire in {time} seconds!");
+
+        // Fly speed messages
+        yml.addDefault(Messages.FLY_SPEED_SET, "&aFly speed set to {speed}!");
+        yml.addDefault(Messages.FLY_SPEED_SET_OTHER, "&a{player} set your fly speed to {speed}!");
+        yml.addDefault(Messages.FLY_SPEED_SET_FOR, "&aSet fly speed to {speed} for {player}!");
+
+        // Fly list messages
+        yml.addDefault(Messages.FLY_FLYING_PLAYERS_HEADER, "&6&l» Flying Players «");
+        yml.addDefault(Messages.FLY_NO_FLYING_PLAYERS, "&eNo players are currently flying.");
+        yml.addDefault(Messages.FLY_PLAYER_ENTRY, "&7• &f{player} &7- {status}");
+        yml.addDefault(Messages.FLY_PLAYER_DURATION, " &8({time}s left)");
+        yml.addDefault(Messages.FLY_STATUS_FLYING, "&aFlying");
+        yml.addDefault(Messages.FLY_STATUS_CAN_FLY, "&eCan Fly");
+        yml.addDefault(Messages.FLY_TELEPORT_HOVER, "&eClick to teleport to {player}");
+
+        // Help messages
+        yml.addDefault(Messages.FLY_HELP_HEADER, "&6&l» Fly Command Help «");
+        yml.addDefault(Messages.FLY_HELP_FOOTER, "&7&m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        yml.addDefault(Messages.FLY_HELP_TOGGLE, "&e/bw fly &7- Toggle fly mode");
+        yml.addDefault(Messages.FLY_HELP_DURATION, "&e/bw fly <seconds> &7- Toggle fly with duration");
+        yml.addDefault(Messages.FLY_HELP_PLAYER, "&e/bw fly <player> &7- Toggle fly for another player");
+        yml.addDefault(Messages.FLY_HELP_PLAYER_DURATION, "&e/bw fly <player> <seconds> &7- Toggle fly for player with duration");
+        yml.addDefault(Messages.FLY_HELP_SPEED, "&e/bw fly speed <player> <1-10> &7- Set fly speed");
+        yml.addDefault(Messages.FLY_HELP_LIST, "&e/bw fly list &7- List all flying players");
+        yml.addDefault(Messages.FLY_HELP_HELP, "&e/bw fly help &7- Show this help menu");
+        yml.addDefault(Messages.BED_STATUS_UNKNOWN, "&7Bed: Unknown");
+        yml.addDefault(Messages.BED_STATUS_DESTROYED, "&cBed: Destroyed");
+        yml.addDefault(Messages.BED_STATUS_ALIVE, "&aBed: Alive");
+        yml.addDefault(Messages.FLY_ONLY_VIP, "%bw_lang_prefix%&4You must be a &a&lS+ &4to use this command.");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUsage: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eis not online!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eInvite sent to &7%bw_player%&6.");

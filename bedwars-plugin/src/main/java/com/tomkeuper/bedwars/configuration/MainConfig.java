@@ -53,8 +53,6 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_ANTI_DROP, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE, 50);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR, false);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED, false);
-        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED, Arrays.asList(BedWars.getForCurrentVersion("WOOD_SWORD", "WOODEN_SWORD", "WOODEN_SWORD"), "SHEARS", "COMPASS"));
         yml.addDefault(ConfigPath.GENERAL_CHAT_GLOBAL, yml.get("globalChat", false));
         yml.addDefault(ConfigPath.GENERAL_CHAT_FORMATTING, yml.get("formatChat", true));
         yml.addDefault("debug", false);
@@ -128,6 +126,22 @@ public class MainConfig extends ConfigManager {
         // tnt prime settings
         yml.addDefault(ConfigPath.GENERAL_TNT_AUTO_IGNITE, true);
         yml.addDefault(ConfigPath.GENERAL_TNT_FUSE_TICKS, 45);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_GEN_SPLIT, true);
+
+
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED,
+                Arrays.asList(BedWars.getForCurrentVersion("WOOD_SWORD", "WOODEN_SWORD", "WOODEN_SWORD"), "SHEARS", "COMPASS"));
+
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_ENABLED, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_TITLE, "&aResource Chest");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SUBTITLE, "&eLeft-click to deposit");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_Y_OFFSET, 1.2);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SPACING, 0.25);
+        yml.addDefault(ConfigPath.FLY_COMMAND_COOLDOWN, 30);
+        yml.addDefault(ConfigPath.FLY_COMMAND_ALLOW_IN_GAME, false);
+        yml.addDefault(ConfigPath.FLY_COMMAND_MAX_DURATION, 300);
+        yml.addDefault(ConfigPath.FLY_COMMAND_ENABLE_SOUNDS, true);
 
         // fireball category
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE, 3);

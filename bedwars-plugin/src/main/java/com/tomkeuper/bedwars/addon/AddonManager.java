@@ -74,7 +74,6 @@ public class AddonManager implements IAddonManager {
         if (unloadedAddons.contains(addon)) return;
         unloadedAddons.add(addon);
         loadedAddons.remove(addon);
-        addon.unload();
         if (Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin()))
             Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
     }
@@ -101,7 +100,6 @@ public class AddonManager implements IAddonManager {
             log("Unloading " + name + " by " + author);
             unloadedAddons.add(addon);
             loadedAddonsToRemove.add(addon);
-            addon.unload();
             if (Bukkit.getPluginManager().isPluginEnabled(addon.getPlugin())) {
                 Bukkit.getPluginManager().disablePlugin(addon.getPlugin());
             }

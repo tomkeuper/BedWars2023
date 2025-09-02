@@ -1,6 +1,6 @@
 /*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
+ * BedWars1058 - A bed wars mini-game.
+ * Copyright (C) 2021 Andrei Dascălu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: contact@fyreblox.com
+ * Contact e-mail: andrew.dascalu@gmail.com
  */
 
 package com.tomkeuper.bedwars.configuration;
+
 
 
 import com.tomkeuper.bedwars.BedWars;
@@ -33,6 +34,7 @@ import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.plugin;
 import static com.tomkeuper.bedwars.api.configuration.ConfigPath.*;
+
 
 public class Sounds {
 
@@ -55,6 +57,7 @@ public class Sounds {
         addDefSound("join-denied", BedWars.getForCurrentVersion("VILLAGER_NO", "ENTITY_VILLAGER_NO", "ENTITY_VILLAGER_NO"));
         addDefSound("join-allowed", BedWars.getForCurrentVersion("SLIME_WALK", "ENTITY_SLIME_JUMP", "ENTITY_SLIME_JUMP"));
         addDefSound("spectator-gui-click", BedWars.getForCurrentVersion("SLIME_WALK", "ENTITY_SLIME_JUMP", "ENTITY_SLIME_JUMP"));
+        addDefSound("ChestOpen", BedWars.getForCurrentVersion("CHEST_OPEN", "BLOCK_CHEST_OPEN", "BLOCK_CHEST_OPEN"));
         addDefSound(SOUNDS_COUNTDOWN_TICK, BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound(SOUNDS_COUNTDOWN_TICK_X + "5", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound(SOUNDS_COUNTDOWN_TICK_X + "4", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
@@ -62,6 +65,7 @@ public class Sounds {
         addDefSound(SOUNDS_COUNTDOWN_TICK_X + "2", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound(SOUNDS_COUNTDOWN_TICK_X + "1", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound(SOUND_GAME_START, BedWars.getForCurrentVersion("SLIME_ATTACK", "BLOCK_SLIME_FALL", "BLOCK_SLIME_BLOCK_FALL"));
+        addDefSound("Map", com.tomkeuper.bedwars.BedWars.getForCurrentVersion("LEVEL_UP", "ENTITY_PLAYER_LEVELUP", "ENTITY_PLAYER_LEVELUP"));
 
         addDefSound(SOUNDS_KILL, BedWars.getForCurrentVersion("ORB_PICKUP", "ENTITY_EXPERIENCE_ORB_PICKUP", "ENTITY_EXPERIENCE_ORB_PICKUP"));
 
@@ -86,6 +90,12 @@ public class Sounds {
         addDefSound("ender-pearl-landed", BedWars.getForCurrentVersion("ENDERMAN_TELEPORT", "ENTITY_ENDERMEN_TELEPORT", "ENTITY_ENDERMAN_TELEPORT"));
         addDefSound("pop-up-tower-build", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG","ENTITY_CHICKEN_EGG"));
         yml.options().copyDefaults(true);
+
+        // remove old paths
+        yml.set("bought", null);
+        yml.set("insufficient-money", null);
+        yml.set("player-kill", null);
+        yml.set("countdown", null);
         sounds.save();
     }
 
@@ -127,7 +137,7 @@ public class Sounds {
         return sounds;
     }
 
-    private static void addDefSound(String path, String value) {
+    public static void addDefSound(String path, String value) {
         // convert old paths
         if (getSounds().getYml().get(path) != null && getSounds().getYml().get(path + ".volume") == null) {
             String temp = getSounds().getYml().getString(path);
@@ -143,4 +153,24 @@ public class Sounds {
         final Sound sound = getSound(path);
         if (sound != null) location.getWorld().playSound(location, sound, x, y);
     }
+    public static void playFlyEnabled(Player player) {
+        playSound("FlyEnabled", player);
+    }
+
+    public static void playFlyDisabled(Player player) {
+        playSound("FlyDisabled", player);
+    }
+
+    public static void playFlyAdminAction(Player player) {
+        playSound("FlyAdminAction", player);
+    }
+
+    public static void playFlySpeedChange(Player player) {
+        playSound("FlySpeedChange", player);
+    }
+
+    public static void MapSound(Player player) {
+        playSound("MapSound", player);
+    }
+
 }

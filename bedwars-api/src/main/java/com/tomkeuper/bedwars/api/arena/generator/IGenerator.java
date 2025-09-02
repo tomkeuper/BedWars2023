@@ -216,6 +216,10 @@ public interface IGenerator {
      */
     void setType(GeneratorType type);
 
+    GeneratorSpeed getSpeed();
+
+    void setSpeed(GeneratorSpeed speed);
+
     /**
      * This only must be called by the arena instance when it restarts.
      * Do never call it unless you have a custom arena.

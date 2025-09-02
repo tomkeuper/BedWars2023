@@ -31,9 +31,13 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.ihologrammanager;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
-import com.tomkeuper.bedwars.arena.feature.ResourceChestFeature;
+import com.tomkeuper.bedwars.arena.Hologram.hologrammanager;
+import com.tomkeuper.bedwars.arena.feature.*;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.General.*;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.SetEventCommand;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -46,9 +50,6 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.ArenaManager;
 import com.tomkeuper.bedwars.arena.VoidChunkGenerator;
 import com.tomkeuper.bedwars.arena.despawnables.TargetListener;
-import com.tomkeuper.bedwars.arena.feature.AntiDropFeature;
-import com.tomkeuper.bedwars.arena.feature.GenSplitFeature;
-import com.tomkeuper.bedwars.arena.feature.SpoilPlayerTNTFeature;
 import com.tomkeuper.bedwars.arena.spectator.SpectatorListeners;
 import com.tomkeuper.bedwars.arena.tasks.OneTick;
 import com.tomkeuper.bedwars.arena.tasks.Refresh;
@@ -155,6 +156,8 @@ public class BedWars extends JavaPlugin {
     public static BedWars plugin;
     private BukkitAudiences adventure;
     public static VersionSupport nms;
+    public static IHologramManager hologramManager = new HologramManager();
+    public static InvsibltyConfig InvsibltyConfig;
 
     private static Party partyManager = new NoParty();
     private static IChat chat = new NoChat();
@@ -167,7 +170,8 @@ public class BedWars extends JavaPlugin {
 
     public static ArenaManager arenaManager = new ArenaManager();
     public static IAddonManager addonManager = new AddonManager();
-    public static IHologramManager hologramManager = new HologramManager();
+    public static StreamDataConfig StreamDataConfig;
+    public static hologrammanager hologrammanager;
 
     // BedWars Items;
     private static Collection<IPermanentItem> lobbyItems = new ArrayList<>();
@@ -196,6 +200,8 @@ public class BedWars extends JavaPlugin {
             serverSoftwareSupport = false;
             return;
         }
+        StreamDataConfig = new com.tomkeuper.bedwars.configuration.StreamDataConfig(this, "StreamDataConfig", this.getDataFolder().getPath());
+        InvsibltyConfig = new InvsibltyConfig(this, "invisibility", this.getDataFolder().getPath());
 
         try {
             Path downloadPath = Paths.get(getDataFolder().getPath() + File.separator + "libs");
@@ -322,6 +328,7 @@ public class BedWars extends JavaPlugin {
             plugin.getLogger().warning("");
             plugin.getLogger().warning("_________________________________________________________");
         }
+        hologrammanager = new hologrammanager();
 
         if (!this.handleWorldAdapter()) {
             api.setRestoreAdapter(new InternalAdapter(this));
@@ -381,10 +388,10 @@ public class BedWars extends JavaPlugin {
         // Register events
         registerEvents(new EnderPearlLanded(), new QuitAndTeleportListener(), new BreakPlace(), new DamageDeathMove(), new Inventory(), new Interact(), new RefreshGUI(), new HungerWeatherSpawn(), new CmdProcess(),
                 new FireballListener(), new EggBridge(), new SpectatorListeners(), new BaseListener(), new TargetListener(), new LangListener(), new Warnings(this), new ChatAFK(), new GameEndListener());
-
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE)) {
             registerEvents(new HealPoolListener());
         }
+        getServer().getPluginManager().registerEvents(new ArenaListener(this, InvsibltyConfig), this);
 
         if (getServerType() == ServerType.BUNGEE) {
             if (autoscale) {
@@ -685,8 +692,10 @@ public class BedWars extends JavaPlugin {
         // Halloween Special
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN)) HalloweenSpecial.init();
 
-        // Resource Chest
-        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED)) ResourceChestFeature.init();
+
+        if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED))
+            ResourceChestFeature.init();
+
 
         // Register features
         SpoilPlayerTNTFeature.init();
@@ -762,6 +771,32 @@ public class BedWars extends JavaPlugin {
         if (getServerType() != ServerType.BUNGEE && config.getBoolean(ConfigPath.GENERAL_ENABLE_PARTY_CMD)) {
             Bukkit.getLogger().info("Registering /party command..");
             nms.registerCommand("party", new PartyCommand("party"));
+        }
+        if (!nms.isBukkitCommandRegistered("start")) {
+            nms.registerCommand("start", new StartCommand("start"));
+        }
+        if (!nms.isBukkitCommandRegistered("Support")) {
+            nms.registerCommand("Support", new SupportCommand("Support"));
+        }
+        if (!nms.isBukkitCommandRegistered("setEvent")) {
+            nms.registerCommand("setEvent", new SetEventCommand("setEvent"));
+        }
+        if (!nms.isBukkitCommandRegistered("Spectator")) {
+            nms.registerCommand("Spectator", new SpectateCommand("Spectator"));
+        }
+        if (!nms.isBukkitCommandRegistered("Sp")) {
+            nms.registerCommand("Sp", new SpectateCommand("Sp"));
+        }
+        if (!nms.isBukkitCommandRegistered("Map")) {
+            nms.registerCommand("Map", new com.tomkeuper.bedwars.commands.bedwars.subcmds.General.MapCommand("Map"));
+        }
+
+        // Register streams and link account commands
+        if (!nms.isBukkitCommandRegistered("streams")) {
+            nms.registerCommand("streams", new StreamsCommand("streams"));
+        }
+        if (!nms.isBukkitCommandRegistered("linkaccount")) {
+            nms.registerCommand("linkaccount", new LinkAccountCommand("linkaccount"));
         }
     }
 
@@ -1253,7 +1288,9 @@ public class BedWars extends JavaPlugin {
     public static Map<String, IPermanentItemHandler> getItemHandlers() {
         return itemHandlers;
     }
-
+    public static ihologrammanager getmama() {
+        return hologrammanager;
+    }
     public BukkitAudiences adventure() {
         return this.adventure;
     }

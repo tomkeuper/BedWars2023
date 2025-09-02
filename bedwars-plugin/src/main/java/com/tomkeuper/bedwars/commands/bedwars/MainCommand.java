@@ -119,6 +119,10 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         if (JoinNPC.isCitizensSupport() && BedWars.getServerType() != ServerType.BUNGEE) {
             new NPC(this, "npc");
         }
+        new Fly(this, "fly");
+        new Gmsp(this, "gmsp");
+        new Gms(this, "gms");
+        new Gmc(this, "gmc");
         new CmdTpStaff(this, "tp");
         new SetKillDropsLoc(this, "setKillDrops");
     }

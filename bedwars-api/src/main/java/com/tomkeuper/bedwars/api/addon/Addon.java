@@ -58,5 +58,4 @@ public abstract class Addon {
     /**
      * Unload everything from the addon
      */
-    public abstract void unload();
 }

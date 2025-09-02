@@ -1,23 +1,3 @@
-/*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Contact e-mail: contact@fyreblox.com
- */
-
 package com.tomkeuper.bedwars.configuration;
 
 import com.tomkeuper.bedwars.BedWars;
@@ -25,6 +5,9 @@ import org.bukkit.entity.Player;
 
 public class Permissions {
     public static final String PERMISSION_FORCESTART = BedWars.mainCmd+".forcestart";
+    public static final String PERMISSION_START = BedWars.mainCmd+".start";
+    public static final String PERMISSION_ARENA_SETEVENT = BedWars.mainCmd+".arena.setEvent";
+
     public static final String PERMISSION_ALL = BedWars.mainCmd+".*";
     public static final String PERMISSION_COMMAND_BYPASS = BedWars.mainCmd+".cmd.bypass";
     public static final String PERMISSION_SHOUT_COMMAND = BedWars.mainCmd+".shout";
@@ -42,6 +25,9 @@ public class Permissions {
     public static final String PERMISSION_LEVEL = BedWars.mainCmd+".level";
     public static final String PERMISSION_CHAT_COLOR = BedWars.mainCmd+".chatcolor";
     public static final String PERMISSION_VIP = BedWars.mainCmd+".vip";
+    public static final String PERMISSION_GMC = BedWars.mainCmd + ".GMC";
+    public static final String PERMISSION_GMS = BedWars.mainCmd + ".GMS";
+
 
     /**
      * Check if player has one of the given permissions.
@@ -53,17 +39,5 @@ public class Permissions {
             }
         }
         return false;
-    }
-
-    /**
-     * Check if player has all given permissions.
-     */
-    public static boolean hasPermissions(Player player, String... permissions){
-        for (String permission : permissions){
-            if (!player.hasPermission(permission)){
-                return false;
-            }
-        }
-        return true;
     }
 }

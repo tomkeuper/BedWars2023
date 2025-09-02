@@ -160,6 +160,24 @@ public class PAPISupport extends PlaceholderExpansion {
                     return String.valueOf(stats.getBedsDestroyed());
                 case "gamesplayed":
                     return String.valueOf(stats.getGamesPlayed());
+                case "kdr": {
+                    if (stats.getDeaths() == 0 && stats.getKills() == 0) {
+                        return "N/D";
+                    }
+                    return String.valueOf(nextEventFormat.format((double) stats.getKills() / stats.getDeaths()));
+                }
+                case "fkdr": {
+                    if (stats.getFinalDeaths() == 0 && stats.getFinalKills() == 0) {
+                        return "N/D";
+                    }
+                    return String.valueOf(nextEventFormat.format((double) stats.getFinalKills() / stats.getFinalDeaths()));
+                }
+                case "wlr": {
+                    if (stats.getWins() == 0 && stats.getLosses() == 0) {
+                        return "N/D";
+                    }
+                    return String.valueOf(nextEventFormat.format((double) stats.getWins() / stats.getLosses()));
+                }
             }
         }
 
@@ -421,6 +439,7 @@ public class PAPISupport extends PlaceholderExpansion {
                 break;
         }
         return response;
+
     }
 
     private String getSpectatorLetter(Language lang) {

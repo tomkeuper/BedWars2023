@@ -58,7 +58,7 @@ public class UpgradesManager {
 
     private final HashMap<IArena, UpgradesIndex> customMenuForArena = new HashMap<>();
 
-    private final UpgradesConfig upgrades;
+    private static UpgradesConfig upgrades;
 
     public UpgradesManager() {
         upgrades = new UpgradesConfig("upgrades", plugin.getDataFolder().getPath());
@@ -509,7 +509,7 @@ public class UpgradesManager {
         }
     }
 
-    public UpgradesConfig getConfiguration() {
+    public static UpgradesConfig getConfiguration() {
         return upgrades;
     }
 

@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.events.player.PlayerAfkEvent;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
+import com.tomkeuper.bedwars.api.ihologrammanager;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -65,6 +66,10 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
+
+import static com.tomkeuper.bedwars.BedWars.hologramManager;
+import static com.tomkeuper.bedwars.BedWars.hologrammanager;
+
 
 public class API implements com.tomkeuper.bedwars.api.BedWars {
 
@@ -138,6 +143,14 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         public void loadArena(String worldName, @Nullable CommandSender sender) {
             new Arena(worldName, sender);
         }
+        public ihologrammanager getHologramManager() {
+            return hologrammanager;
+        }
+        @Override
+        public IHologramManager getHologramsUtil() {
+            return hologramManager;
+        }
+
 
         @SuppressWarnings("unused")
         @Override
@@ -343,9 +356,17 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         return BedWars.addonManager;
     }
 
+    /**
+     * Get holograms util.
+     */
     @Override
     public IHologramManager getHologramsUtil() {
-        return BedWars.hologramManager;
+        return hologramManager;
+    }
+
+    @Override
+    public ihologrammanager getmama() {
+        return hologrammanager;
     }
 
     @SuppressWarnings("unused")

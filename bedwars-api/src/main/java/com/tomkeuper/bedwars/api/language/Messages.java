@@ -41,7 +41,78 @@ public class Messages {
     public static String NEXT_EVENT_TITLE_ANNOUNCE_SUDDEN_DEATH = "next-event-sudden-death-title";
     public static String NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH = "next-event-sudden-death-sub-title";
     public static String NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH = "next-event-sudden-death-chat";
+    public static String Help_Command_No_Perms = "help-command-No_Perms";
+    public static String COMMAND_GMC_CONSOLE_DENIED = "cmd-gmc-console-denied";
+    public static String COMMAND_GMC_NO_PERMISSION = "cmd-gmc-no-permission";
+    public static String COMMAND_GMC_DISABLED = "cmd-gmc-disabled";
+    public static String COMMAND_GMC_ENABLED = "cmd-gmc-enabled";
+    public static String COMMAND_GMSP_CONSOLE_DENIED = "cmd-gmsp-console-denied";
+    public static String COMMAND_GMSP_NO_PERMISSION = "cmd-gmsp-no-permission";
+    public static String COMMAND_GMSP_DISABLED = "cmd-gmsp-disabled";
+    public static String COMMAND_GMSP_ENABLED = "cmd-gmsp-enabled";
+    public static String COMMAND_GMS_CONSOLE_DENIED = "cmd-gms-console-denied";
+    public static String COMMAND_GMS_NO_PERMISSION = "cmd-gms-no-permission";
+    public static String COMMAND_GMS_DISABLED = "cmd-gms-disabled";
+    public static String COMMAND_GMS_ENABLED = "cmd-gms-enabled";
+    public static String COMMAND_MAP_CONSOLE_DENIED = "cmd-map-console-denied";
+    public static String COMMAND_MAP_NOT_IN_GAME = "cmd-map-not-in-game";
+    public static String COMMAND_MAP_DISPLAY = "cmd-map-display";
+    public static final String FLY_ONLY_VIP = "fly-only-vip";
+    public static final String BED_STATUS_UNKNOWN = "bed-status-unknown";
+    public static final String BED_STATUS_DESTROYED = "bed-status-destroyed";
+    public static final String BED_STATUS_ALIVE = "bed-status-alive";
 
+    public static String RESOURCE_CHEST_BLOCKED_ITEM = "resource-chest-blocked-item";
+    public static String RESOURCE_CHEST_FULL = "resource-chest-full";
+    public static String RESOURCE_CHEST_DEPOSITED = "resource-chest-deposited";
+    // Fly Command Messages
+    public static String FLY_CONSOLE_ONLY = "fly-console-only";
+    public static String FLY_PLAYER_NOT_FOUND = "fly-player-not-found";
+    public static String FLY_COOLDOWN = "fly-cooldown";
+    public static String FLY_NOT_ALLOWED_IN_GAME = "fly-not-allowed-in-game";
+    public static String FLY_INVALID_DURATION = "fly-invalid-duration";
+    public static String FLY_INVALID_SPEED = "fly-invalid-speed";
+    public static String FLY_NO_PERMISSION_SPEED = "fly-no-permission-speed";
+    public static String FLY_NO_PERMISSION_LIST = "fly-no-permission-list";
+    public static String FLY_TARGET_NO_FLY = "fly-target-no-fly";
+
+    public static String FLY_ENABLED = "fly-enabled";
+    public static String FLY_DISABLED = "fly-disabled";
+    public static String FLY_ENABLED_OTHER = "fly-enabled-other";
+    public static String FLY_DISABLED_OTHER = "fly-disabled-other";
+    public static String FLY_ENABLED_FOR = "fly-enabled-for";
+    public static String FLY_DISABLED_FOR = "fly-disabled-for";
+    public static String FLY_DURATION_WARNING = "fly-duration-warning";
+    public static String FLY_DURATION_LIMITED = "fly-duration-limited";
+    public static String FLY_AUTO_DISABLED = "fly-auto-disabled";
+
+    public static String FLY_SPEED_SET = "fly-speed-set";
+    public static String FLY_SPEED_SET_OTHER = "fly-speed-set-other";
+    public static String FLY_SPEED_SET_FOR = "fly-speed-set-for";
+
+    public static String FLY_HELP_HEADER = "fly-help-header";
+    public static String FLY_HELP_TOGGLE = "fly-help-toggle";
+    public static String FLY_HELP_DURATION = "fly-help-duration";
+    public static String FLY_HELP_PLAYER = "fly-help-player";
+    public static String FLY_HELP_PLAYER_DURATION = "fly-help-player-duration";
+    public static String FLY_HELP_SPEED = "fly-help-speed";
+    public static String FLY_HELP_LIST = "fly-help-list";
+    public static String FLY_HELP_HELP = "fly-help-help";
+    public static String FLY_HELP_FOOTER = "fly-help-footer";
+
+    public static String FLY_FLYING_PLAYERS_HEADER = "fly-flying-players-header";
+    public static String FLY_STATUS_FLYING = "fly-status-flying";
+    public static String FLY_STATUS_CAN_FLY = "fly-status-can-fly";
+    public static String FLY_PLAYER_ENTRY = "fly-player-entry";
+    public static String FLY_PLAYER_DURATION = "fly-player-duration";
+    public static String FLY_TELEPORT_HOVER = "fly-teleport-hover";
+    public static String FLY_NO_FLYING_PLAYERS = "fly-no-flying-players";
+    public static String COMMAND_SPECTATE_NOT_IN_ARENA = "cmd-spectate-not-in-arena";
+    public static String COMMAND_SPECTATE_ALREADY_SPECTATOR = "cmd-spectate-already-spectator";
+    public static String COMMAND_SPECTATE_SUCCESS = "cmd-spectate-success";
+    public static String COMMAND_SPECTATE_NO_PERMISSION = "cmd-spectate-no-permission";
+    public static String COMMAND_SPECTATE_PLAYER_NOT_IN_ARENA = "command-spectate-player-not-in-arena";
+    public static String COMMAND_NOT_FOUND_PLAYER_MATCH = "command-not-found-player-match";
     /** General commands reply */
     public static String COMMAND_MAIN = "cmd-main-list";
     public static String COMMAND_LANG_LIST_HEADER = "cmd-lang-list-header";

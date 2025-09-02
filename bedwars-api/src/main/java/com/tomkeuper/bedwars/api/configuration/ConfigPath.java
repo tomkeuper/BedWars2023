@@ -28,9 +28,23 @@ public class ConfigPath {
     public static final String GENERATOR_IRON_DELAY = "iron.delay";
     public static final String GENERATOR_IRON_AMOUNT = "iron.amount";
     public static final String GENERATOR_IRON_SPAWN_LIMIT = "iron.spawn-limit";
+    public static final String GENERATOR_IRON_SLOW = "iron.slow";
+    public static final String GENERATOR_IRON_MEDIUM = "iron.medium";
+    public static final String GENERATOR_IRON_FAST = "iron.fast";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_ENABLED = "resource-chest.hologram.enabled";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_TITLE = "resource-chest.hologram.title";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SUBTITLE = "resource-chest.hologram.subtitle";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_Y_OFFSET = "resource-chest.hologram.y-offset";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SPACING = "resource-chest.hologram.spacing";
+    public static final String GENERAL_CONFIGURATION_ENABLE_GEN_SPLIT = "enable-gen-split";
 
-    public static final String GENERATOR_GOLD_DELAY = "gold.delay";
-    public static final String GENERATOR_GOLD_AMOUNT = "gold.amount";
+    public static final String GENERATOR_GOLD_SLOW = "gold.slow";
+    public static final String GENERATOR_GOLD_MEDIUM = "gold.medium";
+    public static final String GENERATOR_GOLD_FAST = "gold.fast";
+    public static final String FLY_COMMAND_COOLDOWN = "fly-command.cooldown";
+    public static final String FLY_COMMAND_ALLOW_IN_GAME = "fly-command.allow-in-game";
+    public static final String FLY_COMMAND_MAX_DURATION = "fly-command.max-duration";
+    public static final String FLY_COMMAND_ENABLE_SOUNDS = "fly-command.enable-sounds";
     public static final String GENERATOR_GOLD_SPAWN_LIMIT = "gold.spawn-limit";
 
     public static final String GENERATOR_DIAMOND_TIER_I_DELAY = "diamond.tierI.delay";

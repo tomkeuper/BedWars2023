@@ -83,6 +83,8 @@ public interface BedWars {
      * Get holograms util.
      */
     IHologramManager getHologramsUtil();
+    ihologrammanager getmama();
+
 
     interface IStats {
         /**
@@ -280,6 +282,8 @@ public interface BedWars {
          * @param sender    the player or console who triggered the load (can be null)
          */
         void loadArena(String worldName, @Nullable CommandSender sender);
+
+        IHologramManager getHologramsUtil();
 
         /**
          * Sets the number of games before the server restarts.
