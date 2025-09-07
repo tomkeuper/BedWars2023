@@ -5,27 +5,23 @@
 
 package com.tomkeuper.bedwars.commands.bedwars.subcmds.regular;
 
-import com.tomkeuper.bedwars.api.BedWars;
-import com.tomkeuper.bedwars.api.command.ParentCommand;
-import com.tomkeuper.bedwars.api.command.SubCommand;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
-import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import java.util.List;
 import org.bukkit.GameMode;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
-public class Gmc extends SubCommand {
-    public Gmc(ParentCommand parent, String name) {
-        super(parent, name);
-        this.showInList(true);
-        this.setDisplayInfo(MainCommand.createTC("§6 ▪ §7/" + MainCommand.getInstance().getName() + " gmc", "/" + this.getParent().getName() + " " + this.getSubCommandName(), "§fSwitch to Creative mode.\n§eClick to activate"));
+public class Gmc extends BukkitCommand {
+    public Gmc(String name) {
+        super(name);
     }
 
-    public boolean execute(String[] args, CommandSender sender) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(Language.getMsg((Player)null, Messages.COMMAND_GMC_CONSOLE_DENIED));
             return true;
@@ -45,16 +41,8 @@ public class Gmc extends SubCommand {
         }
     }
 
-    public List<String> getTabComplete() {
-        return null;
-    }
-
-    public boolean canSee(CommandSender sender, BedWars api) {
-        if (!(sender instanceof Player)) {
-            return false;
-        } else {
-            Player player = (Player)sender;
-            return !Arena.isInArena(player) && this.hasPermission(sender);
-        }
+    @Override
+    public boolean execute(CommandSender commandSender, String s, String[] strings) {
+        return onCommand(commandSender, null, s, strings);
     }
 }

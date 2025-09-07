@@ -35,7 +35,8 @@ dependencies {
     implementation("net.kyori:adventure-text-minimessage:4.23.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.23.0")
     implementation("net.kyori:adventure-platform-bukkit:4.4.0")
-
+    implementation("com.sun.mail:javax.mail:1.6.2")
+    implementation("javax.activation:activation:1.1.1")
     api(projects.bedwarsApi)
     api(projects.versionsupportCommon)
     api(projects.versionsupport18R3)

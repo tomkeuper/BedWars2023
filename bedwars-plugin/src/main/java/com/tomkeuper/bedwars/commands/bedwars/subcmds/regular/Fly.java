@@ -2,8 +2,6 @@ package com.tomkeuper.bedwars.commands.bedwars.subcmds.regular;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
-import com.tomkeuper.bedwars.api.command.ParentCommand;
-import com.tomkeuper.bedwars.api.command.SubCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
@@ -14,17 +12,20 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class Fly extends SubCommand {
+public class Fly extends BukkitCommand {
 
     // Cooldown management
     private static final Map<UUID, Long> flyCooldowns = new HashMap<>();
@@ -44,13 +45,14 @@ public class Fly extends SubCommand {
         }
     }
 
-    public Fly(ParentCommand parent, String name) {
-        super(parent, name);
-        setArenaSetupCommand(false);
+    public Fly(String name) {
+        super(name);
+        setDescription("Toggle flight mode for players");
+        setUsage("/fly [player] [duration] | /fly speed <player> <speed> | /fly help | /fly list");
+        setPermission("bw.fly.vip");
     }
 
-    @Override
-    public boolean execute(String[] args, CommandSender sender) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof ConsoleCommandSender) {
             // Fixed: Don't cast ConsoleCommandSender to Player
             // Use a default message or get message differently for console
@@ -124,6 +126,11 @@ public class Fly extends SubCommand {
 
         sendHelpMessage(player);
         return true;
+    }
+
+    @Override
+    public boolean execute(CommandSender commandSender, String s, String[] strings) {
+        return onCommand(commandSender, null, s, strings);
     }
 
     private boolean toggleFly(Player sender, Player target, int duration) {
@@ -349,11 +356,6 @@ public class Fly extends SubCommand {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    @Override
-    public List<String> getTabComplete() {
-        return List.of("help", "list", "speed");
     }
 
     // Clean up when plugin disables

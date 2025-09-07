@@ -37,6 +37,10 @@ import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.arena.Hologram.hologrammanager;
 import com.tomkeuper.bedwars.arena.feature.*;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.General.*;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Fly;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gmc;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gms;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gmsp;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.SetEventCommand;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
@@ -112,7 +116,6 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.*;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -120,9 +123,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -145,7 +146,7 @@ public class BedWars extends JavaPlugin {
     private static ServerType serverType = ServerType.MULTIARENA;
     public static boolean debug = true, autoscale = false, isPaper = false;
     public static int hologramUpdateDistance = 50; // DEFAULT DISTANCE (update distance measured in blocks)
-    public static String mainCmd = "bw", link = "https://polymart.org/resource/bedwars2023.5702";
+    public static String mainCmd = "bw";
     public static ConfigManager signs, generators;
     public static MainConfig config;
     public static ShopManager shop;
@@ -174,10 +175,10 @@ public class BedWars extends JavaPlugin {
     public static hologrammanager hologrammanager;
 
     // BedWars Items;
-    private static Collection<IPermanentItem> lobbyItems = new ArrayList<>();
-    private static Collection<IPermanentItem> spectatorItems = new ArrayList<>();
-    private static Collection<IPermanentItem> preGameItems = new ArrayList<>();
-    private static Map<String, IPermanentItemHandler> itemHandlers = new HashMap<>();
+    private static final Collection<IPermanentItem> lobbyItems = new ArrayList<>();
+    private static final Collection<IPermanentItem> spectatorItems = new ArrayList<>();
+    private static final Collection<IPermanentItem> preGameItems = new ArrayList<>();
+    private static final Map<String, IPermanentItemHandler> itemHandlers = new HashMap<>();
 
     //remote database
     private static IDatabase remoteDatabase;
@@ -227,7 +228,6 @@ public class BedWars extends JavaPlugin {
         plugin = this;
 
         /* Load version support */
-        //noinspection rawtypes
         switch (minecraftVersion) {
             case "1.20.4":
                 nmsVersion = "v1_20_R3";
@@ -790,6 +790,19 @@ public class BedWars extends JavaPlugin {
         if (!nms.isBukkitCommandRegistered("Map")) {
             nms.registerCommand("Map", new com.tomkeuper.bedwars.commands.bedwars.subcmds.General.MapCommand("Map"));
         }
+        if (!nms.isBukkitCommandRegistered("Fly")) {
+            nms.registerCommand("Fly", new Fly("Fly"));
+        }
+        if (!nms.isBukkitCommandRegistered("Gmc")) {
+            nms.registerCommand("Gmc", new Gmc("Gmc"));
+        }
+        if (!nms.isBukkitCommandRegistered("Gms")) {
+            nms.registerCommand("Gms", new Gms("Gms"));
+        }
+        if (!nms.isBukkitCommandRegistered("Gmsp")) {
+            nms.registerCommand("Gmsp", new Gmsp("Gmsp"));
+        }
+
 
         // Register streams and link account commands
         if (!nms.isBukkitCommandRegistered("streams")) {
