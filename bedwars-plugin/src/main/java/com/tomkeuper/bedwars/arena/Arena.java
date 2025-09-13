@@ -25,7 +25,6 @@ import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.NextEvent;
-import com.tomkeuper.bedwars.api.arena.generator.GeneratorSpeed;
 import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
@@ -346,6 +345,7 @@ public class Arena implements IArena {
             bwt.spawnGenerators();
         }
 
+        //Load diamond/ emerald generators
         Location location;
         for (String type : Arrays.asList("Diamond", "Emerald")) {
             if (yml.get("generator." + type) != null) {
@@ -355,7 +355,7 @@ public class Arena implements IArena {
                         plugin.getLogger().severe("Invalid location for " + type + " generator: " + s);
                         continue;
                     }
-                    oreGenerators.add(new OreGenerator(location, this, GeneratorType.valueOf(type.toUpperCase()), null, GeneratorSpeed.valueOf(yml.getString("generatorSpeed").toUpperCase())));
+                    oreGenerators.add(new OreGenerator(location, this, GeneratorType.valueOf(type.toUpperCase()), null, true));
                 }
             }
         }
