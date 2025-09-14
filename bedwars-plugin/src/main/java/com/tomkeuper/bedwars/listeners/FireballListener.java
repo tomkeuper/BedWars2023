@@ -53,6 +53,9 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+
+import static com.tomkeuper.bedwars.BedWars.config;
+
 public class FireballListener implements Listener {
 
     private final double fireballExplosionSize, fireballHorizontalSelf, fireballHorizontalOthers, fireballVerticalSelf, fireballVerticalOthers;
@@ -168,7 +171,7 @@ public class FireballListener implements Listener {
                 if (y < 0) {
                     y += 1.5;
                 }
-                if (y <= 0.5) {
+                if (y <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
                     y = fireballVerticalSelf * 1.5; // kb for not jumping
                 } else {
                     y = y * fireballVerticalSelf * 1.5; // kb for jumping
@@ -179,7 +182,7 @@ public class FireballListener implements Listener {
                 if (y < 0) {
                     y += 1.5;
                 }
-                if (y <= 0.5) {
+                if (y <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
                     y = fireballVerticalOthers * 1.5; // kb for not jumping
                 } else {
                     y = y * fireballVerticalOthers * 1.5; // kb for jumping
