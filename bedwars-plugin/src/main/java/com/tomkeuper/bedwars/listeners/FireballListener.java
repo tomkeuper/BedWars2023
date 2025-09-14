@@ -55,7 +55,7 @@ import org.bukkit.util.Vector;
 import java.util.*;
 public class FireballListener implements Listener {
 
-    private final double fireballExplosionSize, fireballHorizontal, fireballVertical;
+    private final double fireballExplosionSize, fireballHorizontalSelf, fireballHorizontalOthers, fireballVerticalSelf, fireballVerticalOthers;
     private final double damageSelf, damageEnemy, damageTeammates;
     private final double fireballSpeedMultiplier, fireballCooldown;
     private final boolean fireballMakeFire;
@@ -64,8 +64,10 @@ public class FireballListener implements Listener {
         YamlConfiguration config = BedWars.config.getYml();
         fireballExplosionSize = config.getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         fireballMakeFire = config.getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
-        fireballHorizontal = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL) * -1;
-        fireballVertical = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL);
+        fireballHorizontalSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_SELF) * -1;
+        fireballHorizontalOthers = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_OTHERS) * -1;
+        fireballVerticalSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL_SELF);
+        fireballVerticalOthers = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL_OTHERS);
         damageSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF);
         damageEnemy = config.getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY);
         damageTeammates = config.getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES);
@@ -157,15 +159,31 @@ public class FireballListener implements Listener {
 
             Vector playerVector = player.getLocation().toVector();
             Vector normalizedVector = vector.subtract(playerVector).normalize();
-            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
-            double y = normalizedVector.getY();
-            if (y < 0) {
-                y += 1.5;
-            }
-            if (y <= 0.5) {
-                y = fireballVertical * 1.5; // kb for not jumping
+            Vector horizontalVector;
+            double y;
+
+            if (entity.getUniqueId() == source.getUniqueId()) {
+                horizontalVector = normalizedVector.multiply(fireballHorizontalSelf);
+                y = normalizedVector.getY();
+                if (y < 0) {
+                    y += 1.5;
+                }
+                if (y <= 0.5) {
+                    y = fireballVerticalSelf * 1.5; // kb for not jumping
+                } else {
+                    y = y * fireballVerticalSelf * 1.5; // kb for jumping
+                }
             } else {
-                y = y * fireballVertical * 1.5; // kb for jumping
+                horizontalVector = normalizedVector.multiply(fireballHorizontalOthers);
+                y = normalizedVector.getY();
+                if (y < 0) {
+                    y += 1.5;
+                }
+                if (y <= 0.5) {
+                    y = fireballVerticalOthers * 1.5; // kb for not jumping
+                } else {
+                    y = y * fireballVerticalOthers * 1.5; // kb for jumping
+                }
             }
 
             try {
