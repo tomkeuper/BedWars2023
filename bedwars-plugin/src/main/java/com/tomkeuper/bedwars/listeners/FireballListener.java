@@ -34,7 +34,9 @@ import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -42,10 +44,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -219,6 +218,28 @@ public class FireballListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onFireballExplode(EntityExplodeEvent event) {
+        if (!(event.getEntity() instanceof Fireball)) {
+            return;
+        }
+
+        ProjectileSource projectileSource = ((Fireball) event.getEntity()).getShooter();
+        if (!(projectileSource instanceof Player)) {
+            return;
+        }
+
+        Player source = (Player) projectileSource;
+        IArena arena = Arena.getArenaByPlayer(source);
+
+        if (arena == null || arena.getStatus() != GameState.playing) {
+            return;
+        }
+
+        List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
+        event.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
     }
 
     private void damagePlayer(Player player, double damageTeammates) {

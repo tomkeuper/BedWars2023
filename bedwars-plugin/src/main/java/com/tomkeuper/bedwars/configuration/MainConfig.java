@@ -142,6 +142,7 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES, 0.0);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS, Arrays.asList("END_STONE"));
 
         // eggbridge category
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER, 4.0);

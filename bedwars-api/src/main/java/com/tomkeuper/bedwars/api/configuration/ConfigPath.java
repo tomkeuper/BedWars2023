@@ -263,6 +263,7 @@ public class ConfigPath {
     public static final String GENERAL_FIREBALL_DAMAGE_SELF = GENERAL_FIREBALL_DAMAGE_PATH + ".self";
     public static final String GENERAL_FIREBALL_DAMAGE_ENEMY = GENERAL_FIREBALL_DAMAGE_PATH + ".enemy";
     public static final String GENERAL_FIREBALL_DAMAGE_TEAMMATES = GENERAL_FIREBALL_DAMAGE_PATH + ".teammates";
+    public static final String GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS = GENERAL_FIREBALL_PATH + ".explosion-proof-blocks";
 
     public static final String GENERAL_EGGBRIDGE = "eggbridge-settings";
     public static final String GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER = GENERAL_EGGBRIDGE+".distance-from-player-to-start-building";
