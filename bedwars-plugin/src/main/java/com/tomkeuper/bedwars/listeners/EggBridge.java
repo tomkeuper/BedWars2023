@@ -22,21 +22,29 @@ package com.tomkeuper.bedwars.listeners;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.gameplay.EggBridgeThrowEvent;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.tasks.EggBridgeTask;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Egg;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.tomkeuper.bedwars.BedWars.config;
 
 @SuppressWarnings("WeakerAccess")
 public class EggBridge implements Listener {
@@ -59,6 +67,20 @@ public class EggBridge implements Listener {
                 IArena arena = Arena.getArenaByPlayer(shooter);
                 if (arena != null) {
                     if (arena.isPlayer(shooter)) {
+                        if (shooter.getLocation().getY() > arena.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y) - config.getInt(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARNING_DISTANCE)
+                                || shooter.getLocation().getY() < arena.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MIN_BUILD_Y) + config.getInt(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARNING_DISTANCE)) {
+                            if (config.getBoolean(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER)) {
+                                shooter.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cTúl közel vagy az építési limithez!"));
+                            }
+                            if (config.getBoolean(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE)) {
+                                if (shooter.getGameMode() != GameMode.CREATIVE) {
+                                    shooter.getInventory().addItem(new ItemStack(Material.EGG, 1));
+                                }
+                                event.setCancelled(true);
+                                return;
+                            }
+                        }
+
                         EggBridgeThrowEvent throwEvent = new EggBridgeThrowEvent(shooter, arena);
                         Bukkit.getPluginManager().callEvent(throwEvent);
                         if (event.isCancelled()) {

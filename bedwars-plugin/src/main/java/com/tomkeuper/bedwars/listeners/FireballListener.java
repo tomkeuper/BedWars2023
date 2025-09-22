@@ -34,7 +34,9 @@ import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
@@ -42,10 +44,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -53,9 +52,12 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+
+import static com.tomkeuper.bedwars.BedWars.config;
+
 public class FireballListener implements Listener {
 
-    private final double fireballExplosionSize, fireballHorizontal, fireballVertical;
+    private final double fireballExplosionSize, fireballHorizontalSelf, fireballHorizontalOthers, fireballVerticalSelf, fireballVerticalOthers;
     private final double damageSelf, damageEnemy, damageTeammates;
     private final double fireballSpeedMultiplier, fireballCooldown;
     private final boolean fireballMakeFire;
@@ -64,8 +66,10 @@ public class FireballListener implements Listener {
         YamlConfiguration config = BedWars.config.getYml();
         fireballExplosionSize = config.getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         fireballMakeFire = config.getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
-        fireballHorizontal = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL) * -1;
-        fireballVertical = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL);
+        fireballHorizontalSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_SELF) * -1;
+        fireballHorizontalOthers = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_OTHERS) * -1;
+        fireballVerticalSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL_SELF);
+        fireballVerticalOthers = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL_OTHERS);
         damageSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF);
         damageEnemy = config.getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY);
         damageTeammates = config.getDouble(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES);
@@ -157,15 +161,31 @@ public class FireballListener implements Listener {
 
             Vector playerVector = player.getLocation().toVector();
             Vector normalizedVector = vector.subtract(playerVector).normalize();
-            Vector horizontalVector = normalizedVector.multiply(fireballHorizontal);
-            double y = normalizedVector.getY();
-            if (y < 0) {
-                y += 1.5;
-            }
-            if (y <= 0.5) {
-                y = fireballVertical * 1.5; // kb for not jumping
+            Vector horizontalVector;
+            double y;
+
+            if (entity.getUniqueId() == source.getUniqueId()) {
+                horizontalVector = normalizedVector.multiply(fireballHorizontalSelf);
+                y = normalizedVector.getY();
+                if (y < 0) {
+                    y += 1.5;
+                }
+                if (y <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
+                    y = fireballVerticalSelf * 1.5; // kb for not jumping
+                } else {
+                    y = y * fireballVerticalSelf * 1.5; // kb for jumping
+                }
             } else {
-                y = y * fireballVertical * 1.5; // kb for jumping
+                horizontalVector = normalizedVector.multiply(fireballHorizontalOthers);
+                y = normalizedVector.getY();
+                if (y < 0) {
+                    y += 1.5;
+                }
+                if (y <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
+                    y = fireballVerticalOthers * 1.5; // kb for not jumping
+                } else {
+                    y = y * fireballVerticalOthers * 1.5; // kb for jumping
+                }
             }
 
             try {
@@ -198,6 +218,28 @@ public class FireballListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onFireballExplode(EntityExplodeEvent event) {
+        if (!(event.getEntity() instanceof Fireball)) {
+            return;
+        }
+
+        ProjectileSource projectileSource = ((Fireball) event.getEntity()).getShooter();
+        if (!(projectileSource instanceof Player)) {
+            return;
+        }
+
+        Player source = (Player) projectileSource;
+        IArena arena = Arena.getArenaByPlayer(source);
+
+        if (arena == null || arena.getStatus() != GameState.playing) {
+            return;
+        }
+
+        List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
+        event.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
     }
 
     private void damagePlayer(Player player, double damageTeammates) {

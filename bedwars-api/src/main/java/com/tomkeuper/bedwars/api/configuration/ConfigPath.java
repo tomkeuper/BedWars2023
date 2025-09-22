@@ -253,15 +253,26 @@ public class ConfigPath {
     public static final String GENERAL_FIREBALL_EXPLOSION_SIZE = GENERAL_FIREBALL_PATH + ".explosion-size";
     public static final String GENERAL_FIREBALL_SPEED_MULTIPLIER = GENERAL_FIREBALL_PATH + ".speed-multiplier";
     public static final String GENERAL_FIREBALL_MAKE_FIRE = GENERAL_FIREBALL_PATH + ".make-fire";
-    private static final String GENERAL_FIREBALL_KNOCKBACK_PATH = GENERAL_FIREBALL_PATH + ".knockback";
-    public static final String GENERAL_FIREBALL_KNOCKBACK_VERTICAL = GENERAL_FIREBALL_KNOCKBACK_PATH + ".vertical";
-    public static final String GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL = GENERAL_FIREBALL_KNOCKBACK_PATH + ".horizontal";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_VERTICAL_SELF = GENERAL_FIREBALL_PATH + ".knockback.vertical.self";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_VERTICAL_OTHERS = GENERAL_FIREBALL_PATH + ".knockback.vertical.others";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_SELF = GENERAL_FIREBALL_PATH + ".knockback.horizontal.self";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_OTHERS = GENERAL_FIREBALL_PATH + ".knockback.horizontal.others";
+    public static final String GENERAL_FIREBALL_JUMP_TOLERANCE = GENERAL_FIREBALL_PATH + ".jump-tolerance";
     public static final String GENERAL_FIREBALL_COOLDOWN = GENERAL_FIREBALL_PATH + ".cooldown";
     private static final String GENERAL_FIREBALL_DAMAGE_PATH = GENERAL_FIREBALL_PATH + ".damage";
     public static final String GENERAL_FIREBALL_DAMAGE_SELF = GENERAL_FIREBALL_DAMAGE_PATH + ".self";
     public static final String GENERAL_FIREBALL_DAMAGE_ENEMY = GENERAL_FIREBALL_DAMAGE_PATH + ".enemy";
     public static final String GENERAL_FIREBALL_DAMAGE_TEAMMATES = GENERAL_FIREBALL_DAMAGE_PATH + ".teammates";
+    public static final String GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS = GENERAL_FIREBALL_PATH + ".explosion-proof-blocks";
 
+    public static final String GENERAL_EGGBRIDGE = "eggbridge-settings";
+    public static final String GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER = GENERAL_EGGBRIDGE+".distance-from-player-to-start-building";
+    public static final String GENERAL_EGGBRIDGE_MAX_LENGTH = GENERAL_EGGBRIDGE+".max-length";
+    public static final String GENERAL_EGGBRIDGE_MAX_HEIGHT = GENERAL_EGGBRIDGE+".max-height";
+    public static final String GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT = GENERAL_EGGBRIDGE+".when-used-close-to-build-limit";
+    public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".close-distance-from-build-limit";
+    public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".send-warn-message";
+    public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".cancel-usage";
 
     public static final String GENERAL_CONFIGURATION_DATABASE_PATH = "database";
     public static final String GENERAL_CONFIGURATION_DATABASE_TYPE = GENERAL_CONFIGURATION_DATABASE_PATH + ".type";
