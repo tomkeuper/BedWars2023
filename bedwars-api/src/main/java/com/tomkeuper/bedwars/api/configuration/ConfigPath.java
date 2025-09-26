@@ -270,8 +270,8 @@ public class ConfigPath {
     public static final String GENERAL_EGGBRIDGE_MAX_LENGTH = GENERAL_EGGBRIDGE+".max-length";
     public static final String GENERAL_EGGBRIDGE_MAX_HEIGHT = GENERAL_EGGBRIDGE+".max-height";
     public static final String GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT = GENERAL_EGGBRIDGE+".when-used-close-to-build-limit";
-    public static final String GENERAL_EGGBRIDGE_MAX_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".close-distance-from-max-build-limit";
-    public static final String GENERAL_EGGBRIDGE_MIN_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".close-distance-from-min-build-limit";
+    public static final String GENERAL_EGGBRIDGE_MAX_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".distance-to-max-build-limit";
+    public static final String GENERAL_EGGBRIDGE_MIN_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".distance-to-min-build-limit";
     public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".send-warn-message";
     public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".cancel-usage";
 
