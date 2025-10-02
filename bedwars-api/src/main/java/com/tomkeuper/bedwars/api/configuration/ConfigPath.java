@@ -304,20 +304,24 @@ public class ConfigPath {
     public static final String SHOP_SPECIAL_TOWER_ENABLE = SHOP_SPECIALS_PATH + ".tower.enable";
     public static final String SHOP_SPECIAL_TOWER_MATERIAL = SHOP_SPECIALS_PATH + ".tower.material";
     public static final String SHOP_SPECIAL_SILVERFISH_ENABLE = SHOP_SPECIALS_PATH + ".silverfish.enable";
+    public static final String SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY = SHOP_SPECIALS_PATH + ".silverfish.remove-invisibility-on-attack";
     public static final String SHOP_SPECIAL_SILVERFISH_MATERIAL = SHOP_SPECIALS_PATH + ".silverfish.material";
     public static final String SHOP_SPECIAL_SILVERFISH_DATA = SHOP_SPECIALS_PATH + ".silverfish.data";
     public static final String SHOP_SPECIAL_SILVERFISH_HEALTH = SHOP_SPECIALS_PATH + ".silverfish.health";
     public static final String SHOP_SPECIAL_SILVERFISH_DAMAGE = SHOP_SPECIALS_PATH + ".silverfish.damage";
     public static final String SHOP_SPECIAL_SILVERFISH_SPEED = SHOP_SPECIALS_PATH + ".silverfish.speed";
     public static final String SHOP_SPECIAL_SILVERFISH_DESPAWN = SHOP_SPECIALS_PATH + ".silverfish.despawn";
+    public static final String SHOP_SPECIAL_SILVERFISH_PATH_FINDING_TICKS = SHOP_SPECIALS_PATH + ".silverfish.path-finding-ticks";
 
 
     public static final String SHOP_SPECIAL_IRON_GOLEM_ENABLE = SHOP_SPECIALS_PATH + ".iron-golem.enable";
+    public static final String SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY = SHOP_SPECIALS_PATH + ".iron-golem.remove-invisibility-on-attack";
     public static final String SHOP_SPECIAL_IRON_GOLEM_MATERIAL = SHOP_SPECIALS_PATH + ".iron-golem.material";
     public static final String SHOP_SPECIAL_IRON_GOLEM_DATA = SHOP_SPECIALS_PATH + ".iron-golem.data";
     public static final String SHOP_SPECIAL_IRON_GOLEM_HEALTH = SHOP_SPECIALS_PATH + ".iron-golem.health";
     public static final String SHOP_SPECIAL_IRON_GOLEM_DESPAWN = SHOP_SPECIALS_PATH + ".iron-golem.despawn";
     public static final String SHOP_SPECIAL_IRON_GOLEM_SPEED = SHOP_SPECIALS_PATH + ".iron-golem.speed";
+    public static final String SHOP_SPECIAL_IRON_GOLEM_PATH_FINDING_TICKS = SHOP_SPECIALS_PATH + ".iron-golem.path-finding-ticks";
 
     public static final String SHOP_SETTINGS_QUICK_BUY_CATEGORY_PATH = SHOP_SETTINGS_PATH + ".quick-buy-category";
     public static final String SHOP_SETTINGS_QUICK_BUY_BUTTON_MATERIAL = SHOP_SETTINGS_QUICK_BUY_CATEGORY_PATH + ".material";

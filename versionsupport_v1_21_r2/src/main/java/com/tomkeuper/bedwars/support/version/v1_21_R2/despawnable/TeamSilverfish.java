@@ -55,7 +55,7 @@ public class TeamSilverfish extends DespawnableProvider<Silverfish> {
     }
 
     @Override
-    public Silverfish spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, VersionSupport api) {
+    public Silverfish spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, VersionSupport api, int pathFindingTicks) {
         var bukkitEntity = (Silverfish) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.SILVERFISH);
         applyDefaultSettings(bukkitEntity, attr, team);
 
@@ -69,7 +69,7 @@ public class TeamSilverfish extends DespawnableProvider<Silverfish> {
         goalSelector.a(3, new PathfinderGoalRandomStroll(entity, 2D));
         goalSelector.a(4, new PathfinderGoalRandomLookaround(entity));
         targetSelector.a(1, new PathfinderGoalHurtByTarget(entity));
-        targetSelector.a(2, getTargetGoal(entity, team, api));
+        targetSelector.a(2, getTargetGoal(entity, team, api, pathFindingTicks));
 
         return bukkitEntity;
     }
