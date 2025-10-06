@@ -75,19 +75,23 @@ public class ShopManager extends ConfigManager implements IShopManager {
 
         //specials
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_ENABLE, true);
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY, false);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_MATERIAL, BedWars.getForCurrentVersion("SNOW_BALL", "SNOW_BALL", "SNOWBALL"));
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_DATA, 0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_HEALTH, 8.0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_DAMAGE, 4.0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_SPEED, 0.25);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_DESPAWN, 15);
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_SILVERFISH_PATH_FINDING_TICKS, 20);
 
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_ENABLE, true);
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY, false);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_MATERIAL, BedWars.getForCurrentVersion("MONSTER_EGG", "MONSTER_EGG", "HORSE_SPAWN_EGG"));
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DATA, 0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_HEALTH, 100.0);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DESPAWN, 240);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_SPEED, 0.25);
+        getYml().addDefault(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_PATH_FINDING_TICKS, 20);
 
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_TOWER_ENABLE, true);
         getYml().addDefault(ConfigPath.SHOP_SPECIAL_TOWER_MATERIAL, BedWars.getForCurrentVersion("CHEST", "CHEST", "CHEST"));

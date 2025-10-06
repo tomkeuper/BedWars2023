@@ -34,10 +34,12 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 public class IGolem extends EntityIronGolem {
     private ITeam team;
+    private int pathFindingTicks;
 
-    private IGolem(EntityTypes<? extends EntityIronGolem> entitytypes, World world, ITeam bedWarsTeam) {
+    private IGolem(EntityTypes<? extends EntityIronGolem> entitytypes, World world, ITeam bedWarsTeam, int pathFindingTicks) {
         super(entitytypes, world);
         this.team = bedWarsTeam;
+        this.pathFindingTicks = pathFindingTicks;
     }
 
     public IGolem(EntityTypes entityTypes, World world) {
@@ -51,21 +53,21 @@ public class IGolem extends EntityIronGolem {
         this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this));
         this.goalSelector.a(3, new PathfinderGoalRandomStroll(this, 1D));
         this.goalSelector.a(4, new PathfinderGoalRandomLookaround(this));
-        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, 20, true, false, player -> {
+        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget<>(this, EntityHuman.class, pathFindingTicks, true, false, player -> {
             return player.isAlive() && !team.wasMember(player.getUniqueID()) && !team.getArena().isReSpawning(player.getUniqueID())
                     && !team.getArena().isSpectator(player.getUniqueID());
         }));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, IGolem.class, 20, true, false, golem -> ((IGolem)golem).getTeam() != team));
-        this.targetSelector.a(4, new PathfinderGoalNearestAttackableTarget<>(this, Silverfish.class, 20, true, false, sf -> ((Silverfish)sf).getTeam() != team));
+        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget<>(this, IGolem.class, pathFindingTicks, true, false, golem -> ((IGolem)golem).getTeam() != team));
+        this.targetSelector.a(4, new PathfinderGoalNearestAttackableTarget<>(this, Silverfish.class, pathFindingTicks, true, false, sf -> ((Silverfish)sf).getTeam() != team));
     }
 
     public ITeam getTeam() {
         return team;
     }
 
-    public static LivingEntity spawn(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn) {
+    public static LivingEntity spawn(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, int pathFindingTicks) {
         WorldServer mcWorld = ((CraftWorld) loc.getWorld()).getHandle();
-        IGolem customEnt = new IGolem(EntityTypes.IRON_GOLEM, mcWorld, bedWarsTeam);
+        IGolem customEnt = new IGolem(EntityTypes.IRON_GOLEM, mcWorld, bedWarsTeam, pathFindingTicks);
         customEnt.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         ((CraftLivingEntity) customEnt.getBukkitEntity()).setRemoveWhenFarAway(false);
         customEnt.setCustomNameVisible(true);

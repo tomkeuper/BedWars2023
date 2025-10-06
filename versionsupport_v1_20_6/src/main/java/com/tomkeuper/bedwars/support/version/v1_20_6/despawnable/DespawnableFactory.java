@@ -40,8 +40,8 @@ public class DespawnableFactory {
         providers.add(new TeamSilverfish());
     }
 
-    public LivingEntity spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team){
+    public LivingEntity spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, int pathFindingTicks){
         return providers.stream().filter(provider -> provider.getType() == attr.type())
-                .findFirst().orElseThrow().spawn(attr, location,team, versionSupport);
+                .findFirst().orElseThrow().spawn(attr, location,team, versionSupport, pathFindingTicks);
     }
 }

@@ -49,10 +49,12 @@ import java.util.Objects;
 @SuppressWarnings("unchecked")
 public class IGolem extends EntityIronGolem {
     private ITeam team;
+    private int pathFindingTicks;
 
-    private IGolem(EntityTypes<? extends EntityIronGolem> entitytypes, World world, ITeam bedWarsTeam) {
+    private IGolem(EntityTypes<? extends EntityIronGolem> entitytypes, World world, ITeam bedWarsTeam, int pathFindingTicks) {
         super(entitytypes, world);
         this.team = bedWarsTeam;
+        this.pathFindingTicks = pathFindingTicks;
     }
 
     public IGolem(EntityTypes entityTypes, World world) {
@@ -68,18 +70,18 @@ public class IGolem extends EntityIronGolem {
         this.bP.a(3, new PathfinderGoalRandomStroll(this, 1D));
         this.bP.a(4, new PathfinderGoalRandomLookaround(this));
         this.bQ.a(2, new PathfinderGoalNearestAttackableTarget(
-                this, EntityHuman.class, 20, true, false,
+                this, EntityHuman.class, pathFindingTicks, true, false,
                 player -> ((EntityHuman)player).isAlive() &&
                         !team.wasMember(((EntityHuman)player).getUniqueID()) &&
                         !team.getArena().isReSpawning(((EntityHuman)player).getUniqueID())
                 && !team.getArena().isSpectator(((EntityHuman)player).getUniqueID()))
         );
         this.bQ.a(3, new PathfinderGoalNearestAttackableTarget(
-                this, IGolem.class, 20, true, false,
+                this, IGolem.class, pathFindingTicks, true, false,
                 golem -> ((IGolem)golem).getTeam() != team)
         );
         this.bQ.a(4, new PathfinderGoalNearestAttackableTarget(
-                this, Silverfish.class, 20, true, false,
+                this, Silverfish.class, pathFindingTicks, true, false,
                 sf -> ((Silverfish)sf).getTeam() != team)
         );
     }
@@ -88,9 +90,9 @@ public class IGolem extends EntityIronGolem {
         return team;
     }
 
-    public static LivingEntity spawn(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn) {
+    public static LivingEntity spawn(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, int pathFindingTicks) {
         WorldServer mcWorld = ((CraftWorld) Objects.requireNonNull(loc.getWorld())).getHandle();
-        IGolem customEnt = new IGolem(EntityTypes.P, mcWorld, bedWarsTeam);
+        IGolem customEnt = new IGolem(EntityTypes.P, mcWorld, bedWarsTeam, pathFindingTicks);
         customEnt.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         ((CraftLivingEntity) customEnt.getBukkitEntity()).setRemoveWhenFarAway(false);
         customEnt.setCustomNameVisible(true);
