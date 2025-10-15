@@ -121,7 +121,7 @@ public class ResourceChestFeature implements Listener {
 
         Map<Integer, ItemStack> leftovers = inventory.addItem(toStore);
 
-        int attempted = toStore.getAmount();
+        int attempted = hand.getAmount();
         int notInserted = leftovers.values().stream()
                 .mapToInt(ItemStack::getAmount)
                 .sum();
