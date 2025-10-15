@@ -132,16 +132,13 @@ public class ResourceChestFeature implements Listener {
             return;
         }
 
-        ItemStack toRemove = hand.clone();
-        toRemove.setAmount(inserted);
-        player.getInventory().removeItem(toRemove);
+        int newAmount = hand.getAmount() - inserted;
+        if (newAmount > 0) {
+            hand.setAmount(newAmount);
+            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), hand);
+        } else {
+            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
+        }
 
-        if (!leftovers.isEmpty())
-            for (ItemStack leftover : leftovers.values())
-                player.getInventory().addItem(leftover);
     }
-
-//    private void callEvent(Player player, IArena arena, ItemStack item, Inventory inventory, boolean isEnderChest) {
-//        new PlayerItemDepositEvent(player, arena, item, inventory, isEnderChest);
-//    }
 }
