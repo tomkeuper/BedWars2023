@@ -152,9 +152,7 @@ public final class v1_21_R5 extends VersionSupport {
         if(itemStack == null)
             return false;
 
-        return Tag.ITEMS_WOODEN_TOOL_MATERIALS.isTagged(itemStack.getType()) || Tag.ITEMS_IRON_TOOL_MATERIALS.isTagged(itemStack.getType())
-                || Tag.ITEMS_GOLD_TOOL_MATERIALS.isTagged(itemStack.getType()) || Tag.ITEMS_DIAMOND_TOOL_MATERIALS.isTagged(itemStack.getType())
-                || Tag.ITEMS_STONE_TOOL_MATERIALS.isTagged(itemStack.getType()) || Tag.ITEMS_NETHERITE_TOOL_MATERIALS.isTagged(itemStack.getType());
+        return itemStack.hasItemMeta();
     }
 
     @Override
@@ -238,9 +236,9 @@ public final class v1_21_R5 extends VersionSupport {
     }
 
     @Override
-    public void spawnSilverfish(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, double damage) {
+    public void spawnSilverfish(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, double damage, int pathFindingTicks) {
         var attr = new DespawnableAttributes(DespawnableType.SILVERFISH, speed, health, damage, despawn);
-        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
+        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam, pathFindingTicks);
 
         new Despawnable(
                 entity,
@@ -252,9 +250,9 @@ public final class v1_21_R5 extends VersionSupport {
     }
 
     @Override
-    public void spawnIronGolem(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn) {
+    public void spawnIronGolem(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, int pathFindingTicks) {
         var attr = new DespawnableAttributes(DespawnableType.IRON_GOLEM, speed, health, 4, despawn);
-        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam);
+        var entity = despawnableFactory.spawn(attr, loc, bedWarsTeam, pathFindingTicks);
         new Despawnable(
                 entity,
                 bedWarsTeam, despawn,

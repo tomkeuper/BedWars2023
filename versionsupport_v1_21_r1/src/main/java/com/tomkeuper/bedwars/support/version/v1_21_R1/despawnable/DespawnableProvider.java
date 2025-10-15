@@ -43,7 +43,7 @@ public abstract class DespawnableProvider<T> {
 
     abstract String getDisplayName(DespawnableAttributes attr, ITeam team);
 
-    abstract T spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, VersionSupport api);
+    abstract T spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, VersionSupport api, int pathFindingTicks);
 
     protected boolean notSameTeam(@NotNull Entity entity, ITeam team, @NotNull VersionSupport api) {
         var despawnable = api.getDespawnablesList().getOrDefault(entity.getBukkitEntity().getUniqueId(), null);
@@ -63,8 +63,8 @@ public abstract class DespawnableProvider<T> {
         entityLiving.bX.b().clear();
     }
 
-    protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api) {
-        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityLiving.class, 20, true, false,
+    protected PathfinderGoal getTargetGoal(EntityInsentient entity, ITeam team, VersionSupport api, int pathFindingTicks) {
+        return new PathfinderGoalNearestAttackableTarget<>(entity, EntityLiving.class, pathFindingTicks, true, false,
                 entityLiving -> {
                     if (entityLiving instanceof EntityHuman) {
                         return !((EntityHuman) entityLiving).getBukkitEntity().isDead() &&

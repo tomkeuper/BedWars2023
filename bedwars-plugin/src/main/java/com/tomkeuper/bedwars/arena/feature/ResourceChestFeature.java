@@ -90,10 +90,11 @@ public class ResourceChestFeature implements Listener {
         ItemStack hand = e.getItem();
         if (hand == null || hand.getType() == Material.AIR) return;
 
+        String customData = BedWars.nms.getCustomData(hand);
         // skip if item is in the blocked set or is a tool (axe/pickaxe/shears/woodSword)
         if (blocked.contains(hand.getType())
                 || BedWars.nms.isTool(hand)
-                || BedWars.nms.getCustomData(hand).equalsIgnoreCase("DEFAULT_ITEM")) {
+                || (customData != null && customData.equalsIgnoreCase("DEFAULT_ITEM"))) {
             return;
         }
 
@@ -120,7 +121,7 @@ public class ResourceChestFeature implements Listener {
 
         Map<Integer, ItemStack> leftovers = inventory.addItem(toStore);
 
-        int attempted = toStore.getAmount();
+        int attempted = hand.getAmount();
         int notInserted = leftovers.values().stream()
                 .mapToInt(ItemStack::getAmount)
                 .sum();
@@ -131,16 +132,13 @@ public class ResourceChestFeature implements Listener {
             return;
         }
 
-        ItemStack toRemove = hand.clone();
-        toRemove.setAmount(inserted);
-        player.getInventory().removeItem(toRemove);
+        int newAmount = hand.getAmount() - inserted;
+        if (newAmount > 0) {
+            hand.setAmount(newAmount);
+            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), hand);
+        } else {
+            player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
+        }
 
-        if (!leftovers.isEmpty())
-            for (ItemStack leftover : leftovers.values())
-                player.getInventory().addItem(leftover);
     }
-
-//    private void callEvent(Player player, IArena arena, ItemStack item, Inventory inventory, boolean isEnderChest) {
-//        new PlayerItemDepositEvent(player, arena, item, inventory, isEnderChest);
-//    }
 }

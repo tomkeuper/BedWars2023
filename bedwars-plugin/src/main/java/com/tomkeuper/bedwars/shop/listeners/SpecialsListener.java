@@ -59,9 +59,15 @@ public class SpecialsListener implements Listener {
                     e.setCancelled(true);
                     ITeam playerTeam = a.getTeam(p);
                     PlayerBedBugSpawnEvent event = new PlayerBedBugSpawnEvent(p, playerTeam, a);
-                    BedWars.nms.spawnSilverfish(p.getTargetBlock((Set<Material>) null, 5).getLocation().add(0, 1, 0), playerTeam, BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_SPEED),
-                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_HEALTH), BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_SILVERFISH_DESPAWN),
-                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_DAMAGE));
+                    BedWars.nms.spawnSilverfish(
+                            p.getTargetBlock((Set<Material>) null, 5).getLocation().add(0, 1, 0),
+                            playerTeam,
+                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_SPEED),
+                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_HEALTH),
+                            BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_SILVERFISH_DESPAWN),
+                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_DAMAGE),
+                            BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_SILVERFISH_PATH_FINDING_TICKS)
+                    );
                     Bukkit.getPluginManager().callEvent(event);
                     if (!BedWars.nms.isProjectile(i)) {
                         BedWars.nms.minusAmount(p, i, 1);
@@ -77,8 +83,14 @@ public class SpecialsListener implements Listener {
                     e.setCancelled(true);
                     ITeam playerTeam = a.getTeam(p);
                     PlayerDreamDefenderSpawnEvent event = new PlayerDreamDefenderSpawnEvent(p, playerTeam, a);
-                    BedWars.nms.spawnIronGolem(p.getTargetBlock((Set<Material>) null, 5).getLocation().add(0, 1, 0), playerTeam, BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_SPEED),
-                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_HEALTH), BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DESPAWN));
+                    BedWars.nms.spawnIronGolem(
+                            p.getTargetBlock((Set<Material>) null, 5).getLocation().add(0, 1, 0),
+                            playerTeam,
+                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_SPEED),
+                            BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_HEALTH),
+                            BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_DESPAWN),
+                            BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_PATH_FINDING_TICKS)
+                    );
                     Bukkit.getPluginManager().callEvent(event);
                     if (!BedWars.nms.isProjectile(i)) {
                         BedWars.nms.minusAmount(p, i, 1);
