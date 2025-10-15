@@ -148,7 +148,8 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER, 4.0);
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MAX_LENGTH, 27);
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MAX_HEIGHT, 9);
-        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARNING_DISTANCE, 2);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MAX_BUILD_LIMIT_WARNING_DISTANCE, 5);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MIN_BUILD_LIMIT_WARNING_DISTANCE, 3);
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER, false);
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE, false);
 

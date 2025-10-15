@@ -55,7 +55,7 @@ public class TeamIronGolem extends DespawnableProvider<IronGolem> {
         );
     }
 
-    public @NotNull IronGolem spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, VersionSupport api) {
+    public @NotNull IronGolem spawn(@NotNull DespawnableAttributes attr, @NotNull Location location, @NotNull ITeam team, VersionSupport api, int pathFindingTicks) {
 
         var bukkitEntity = (IronGolem) Objects.requireNonNull(location.getWorld()).spawnEntity(location, EntityType.IRON_GOLEM);
         applyDefaultSettings(bukkitEntity, attr, team);
@@ -71,7 +71,7 @@ public class TeamIronGolem extends DespawnableProvider<IronGolem> {
         goalSelector.a(3, new PathfinderGoalRandomStroll(entity, 1D));
         goalSelector.a(4, new PathfinderGoalRandomLookaround(entity));
         targetSelector.a(1, new PathfinderGoalHurtByTarget(entity));
-        targetSelector.a(2, getTargetGoal(entity, team, api));
+        targetSelector.a(2, getTargetGoal(entity, team, api, pathFindingTicks));
 
         return bukkitEntity;
     }
