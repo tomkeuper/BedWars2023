@@ -90,10 +90,11 @@ public class ResourceChestFeature implements Listener {
         ItemStack hand = e.getItem();
         if (hand == null || hand.getType() == Material.AIR) return;
 
+        String customData = BedWars.nms.getCustomData(hand);
         // skip if item is in the blocked set or is a tool (axe/pickaxe/shears/woodSword)
         if (blocked.contains(hand.getType())
                 || BedWars.nms.isTool(hand)
-                || BedWars.nms.getCustomData(hand).equalsIgnoreCase("DEFAULT_ITEM")) {
+                || (customData != null && customData.equalsIgnoreCase("DEFAULT_ITEM"))) {
             return;
         }
 
