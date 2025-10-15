@@ -152,9 +152,7 @@ public final class v1_21_R5 extends VersionSupport {
         if(itemStack == null)
             return false;
 
-        return Tag.ITEMS_WOODEN_TOOL_MATERIALS.isTagged(itemStack.getType()) || Tag.ITEMS_IRON_TOOL_MATERIALS.isTagged(itemStack.getType())
-                || Tag.ITEMS_GOLD_TOOL_MATERIALS.isTagged(itemStack.getType()) || Tag.ITEMS_DIAMOND_TOOL_MATERIALS.isTagged(itemStack.getType())
-                || Tag.ITEMS_STONE_TOOL_MATERIALS.isTagged(itemStack.getType()) || Tag.ITEMS_NETHERITE_TOOL_MATERIALS.isTagged(itemStack.getType());
+        return itemStack.hasItemMeta();
     }
 
     @Override
