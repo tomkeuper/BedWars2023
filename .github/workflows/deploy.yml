@@ -26,11 +26,11 @@ jobs:
           gradle-version: release-candidate
       - name: Package with Gradle
         run: |
-          gradle clean tag shadowJar -Prelease
+          ./gradlew clean tag shadowJar -Prelease
       - name: Set version
         id: set-version
         run: |
-          VERSION=$(gradle printTag | awk '/Generated Tag:/ {print $3}')
+          VERSION=$(./gradlew printTag | awk '/Generated Tag:/ {print $3}')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Publish Artifact
         uses: actions/upload-artifact@v4
@@ -94,7 +94,7 @@ jobs:
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
-        run: gradle clean publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
+        run: ./gradlew clean publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
   javadoc:
     name: Publish JavaDoc
     runs-on: ubuntu-latest
@@ -126,9 +126,9 @@ jobs:
         with:
           gradle-version: release-candidate
       - name: Install Packages
-        run: gradle clean publishToMavenLocal
+        run: ./gradlew clean publishToMavenLocal
       - name: Build JavaDoc
-        run: gradle javadoc
+        run: ./gradlew javadoc
       - name: Create key for Deploy
         run: |
           echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa
