@@ -2194,6 +2194,14 @@ public class Arena implements IArena {
             setNextEvent(NextEvent.ENDER_DRAGON);
         } else if (nextEvent == NextEvent.ENDER_DRAGON && getPlayingTask().getDragonSpawnCountdown() == 0) {
             setNextEvent(NextEvent.GAME_END);
+            if(players)
+                for (Player p : getPlayers()) {
+                    p.sendMassage(getMsg(p, Messages.GAME_END_NO_WINNERS));
+                }
+            if(spectators)
+                for (Player p : getSpectators()) {
+                    p.sendMassage(getMsg(p, Messages.GAME_END_NO_WINNERS));
+            }
         }
 
         debug("---");
