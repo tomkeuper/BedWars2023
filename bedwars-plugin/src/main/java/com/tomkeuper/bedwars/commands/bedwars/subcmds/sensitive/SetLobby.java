@@ -1,41 +1,27 @@
-/*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Contact e-mail: contact@fyreblox.com
- */
-
 package com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.command.SubCommand;
+import com.tomkeuper.bedwars.api.events.player.PlayerJoinMainLobbyEvent;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import net.md_5.bungee.api.chat.ClickEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.List;
 
-public class SetLobby extends SubCommand {
+public class SetLobby extends SubCommand implements Listener {
 
     public SetLobby(ParentCommand parent, String name) {
         super(parent, name);
@@ -45,6 +31,9 @@ public class SetLobby extends SubCommand {
         setDisplayInfo(Misc.msgHoverClick("§6 ▪ §7/"+ MainCommand.getInstance().getName()+" "+getSubCommandName()+ (BedWars.config.getLobbyWorldName().isEmpty() ? " §c(not set)" : " §a(set)"),
                 "§aSet the main lobby. §fThis is required but\n§fif you are going to use the server in §eBUNGEE §fmode\n§fthe lobby location will §enot §fbe used.\n§eType again to replace the old spawn location.",
                 "/"+getParent().getName()+" "+getSubCommandName(), ClickEvent.Action.RUN_COMMAND));
+
+        // Register this class as a listener
+        Bukkit.getPluginManager().registerEvents(this, BedWars.plugin);
     }
 
     @Override
@@ -60,6 +49,45 @@ public class SetLobby extends SubCommand {
         BedWars.config.reload();
         BedWars.setLobbyWorld(p.getLocation().getWorld().getName());
         return true;
+    }
+
+    @EventHandler
+    public void onPlayerJoinServer(PlayerJoinEvent e) {
+        Player player = e.getPlayer();
+
+        // Check if player is in lobby world
+        if (!isInLobby(player)) return;
+
+        // Call custom event
+        callLobbyJoinEvent(player);
+    }
+
+    @EventHandler
+    public void onPlayerTeleportToLobby(PlayerTeleportEvent e) {
+        Player player = e.getPlayer();
+
+        // Check if player is teleporting to lobby world
+        if (e.getTo() == null || e.getTo().getWorld() == null) return;
+        if (!e.getTo().getWorld().getName().equals(BedWars.getLobbyWorld())) return;
+
+        // Call custom event after a short delay
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+            if (isInLobby(player)) {
+                callLobbyJoinEvent(player);
+            }
+        }, 10L);
+    }
+
+    private boolean isInLobby(Player player) {
+        if (BedWars.getLobbyWorld().isEmpty()) return false;
+        if (player.getWorld() == null) return false;
+        return player.getWorld().getName().equals(BedWars.getLobbyWorld());
+    }
+
+    private void callLobbyJoinEvent(Player player) {
+        // Create and call the custom event
+        PlayerJoinMainLobbyEvent event = new PlayerJoinMainLobbyEvent(player);
+        Bukkit.getPluginManager().callEvent(event);
     }
 
     @Override

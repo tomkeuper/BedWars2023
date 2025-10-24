@@ -22,18 +22,42 @@ package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Getter
 @SuppressWarnings("unused")
 public class TeamAssignEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
+    /**
+     * -- GETTER --
+     *  Get the player
+     *
+     * @return the target player
+     */
     private Player player;
+    /**
+     * -- GETTER --
+     *  Get the team
+     *
+     * @return the team assigned to the player
+     */
     private ITeam team;
+    /**
+     * -- GETTER --
+     *  Get the arena
+     *
+     * @return arena
+     */
     private IArena arena;
+    /**
+     * -- GETTER --
+     *  Check if the assign was cancelled
+     */
     private boolean cancelled = false;
 
     /**
@@ -49,40 +73,6 @@ public class TeamAssignEvent extends Event {
         this.player = player;
         this.team = team;
         this.arena = arena;
-    }
-
-    /**
-     * Get the team
-     *
-     * @return the team assigned to the player
-     */
-    public ITeam getTeam() {
-        return team;
-    }
-
-    /**
-     * Get the player
-     *
-     * @return the target player
-     */
-    public Player getPlayer() {
-        return player;
-    }
-
-    /**
-     * Get the arena
-     *
-     * @return arena
-     */
-    public IArena getArena() {
-        return arena;
-    }
-
-    /**
-     * Check if the assign was cancelled
-     */
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     /**

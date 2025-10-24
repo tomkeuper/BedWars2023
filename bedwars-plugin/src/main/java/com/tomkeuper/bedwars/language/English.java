@@ -408,11 +408,21 @@ public class English extends Language {
         yml.addDefault(Messages.NEXT_EVENT_SUBTITLE_ANNOUNCE_SUDDEN_DEATH, "");
         yml.addDefault(Messages.NEXT_EVENT_CHAT_ANNOUNCE_SUDDEN_DEATH, "&cSUDDEN DEATH: &6&b%bw_dragons_amount% %bw_team_color%%bw_team_name% Dragon!");
         yml.addDefault(Messages.XP_REWARD_PER_MINUTE, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Play Time).");
-        yml.addDefault(Messages.XP_REWARD_WIN, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Game Win).");
         yml.addDefault(Messages.XP_REWARD_PER_TEAMMATE, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Team Support).");
+        yml.addDefault(Messages.XP_REWARD_WIN, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Game Win).");
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Bed Destroyed).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Regular Kill).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Final Kill).");
+
+// 🩸 New XP reward messages
+        yml.addDefault(Messages.XP_REWARD_FIRST_BLOOD, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (First Blood!).");
+        yml.addDefault(Messages.XP_REWARD_FIRST_BED, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (First Bed Destroyed!).");
+        yml.addDefault(Messages.XP_REWARD_VOID_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Void Kill).");
+        yml.addDefault(Messages.XP_REWARD_KILL_STREAK, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Kill Streak x%bw_streak%!).");
+        yml.addDefault(Messages.XP_REWARD_TEAM_ELIMINATED, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Team Eliminated).");
+        yml.addDefault(Messages.XP_REWARD_NO_DEATH, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (No Deaths!).");
+        yml.addDefault(Messages.XP_REWARD_FLAWLESS, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Flawless Victory!).");
+
         yml.addDefault(Messages.XP_REWARD_HALLOWEEN, "%bw_lang_prefix%&6+5 BedWars Experience Received (Halloween).");
         yml.addDefault(Messages.PLAYER_LEVEL_UP, Collections.singletonList("&aCongratulations! You have leveled up to %bw_level%."));
 

@@ -36,10 +36,7 @@ import com.tomkeuper.bedwars.api.entity.Despawnable;
 import com.tomkeuper.bedwars.api.events.gameplay.GameEndEvent;
 import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import com.tomkeuper.bedwars.api.events.gameplay.NextEventChangeEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerJoinArenaEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
-import com.tomkeuper.bedwars.api.events.player.PlayerReJoinEvent;
+import com.tomkeuper.bedwars.api.events.player.*;
 import com.tomkeuper.bedwars.api.events.server.ArenaDisableEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaEnableEvent;
 import com.tomkeuper.bedwars.api.events.server.ArenaRestartEvent;
@@ -533,20 +530,23 @@ public class Arena implements IArena {
             p.setAllowFlight(false);
             p.setHealth(p.getMaxHealth());
             for (Player on : players) {
-                Language language = Language.getPlayerLanguage(on);
                 if (ev.getMessage().equals("")) {
-                    on.sendMessage(getMsg(language, p, Messages.COMMAND_JOIN_PLAYER_JOIN_MSG)
+                    String msg = ""
                             .replace("%bw_v_prefix%", getChatSupport().getPrefix(p))
                             .replace("%bw_v_suffix%", getChatSupport().getSuffix(p))
                             .replace("%bw_playername%", p.getName())
                             .replace("%bw_player%", p.getDisplayName())
                             .replace("%bw_on%", String.valueOf(getPlayers().size()))
-                            .replace("%bw_max%", String.valueOf(getMaxPlayers()))
-                    );
+                            .replace("%bw_max%", String.valueOf(getMaxPlayers()));
+
                 } else {
-                    if (ev.getMessage() != null) on.sendMessage(ev.getMessage());
+                    if (ev.getMessage() != null) {
+                        on.sendMessage(ev.getMessage());
+                    }
                 }
             }
+             PlayerJoinLobbyEvent event = new PlayerJoinLobbyEvent(p, this.arenaName);
+            Bukkit.getPluginManager().callEvent(event);
             setArenaByPlayer(p, this);
 
             /* check if you can start the arena */

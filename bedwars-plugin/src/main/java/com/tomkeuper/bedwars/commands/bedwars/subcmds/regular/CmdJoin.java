@@ -25,11 +25,13 @@ import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.command.ParentCommand;
 import com.tomkeuper.bedwars.api.command.SubCommand;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.player.PlayerJoinLobbyEvent;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
@@ -76,13 +78,22 @@ public class CmdJoin extends SubCommand {
             return true;
         } else if (Arena.getArenaByName(args[0]) != null) {
             if (Arena.getArenaByName(args[0]).addPlayer(p, false)){
+                // Fire the event after player joins
+                PlayerJoinLobbyEvent event = new PlayerJoinLobbyEvent(p, args[0]);
+                Bukkit.getPluginManager().callEvent(event);
+
                 Sounds.playSound("join-allowed", p);
             } else {
                 Sounds.playSound("join-denied", p);
             }
             return true;
         } else if (Arena.getArenaByIdentifier(args[0]) != null) {
-            if (Arena.getArenaByIdentifier(args[0]).addPlayer(p, false)){
+            IArena arena = Arena.getArenaByIdentifier(args[0]);
+            if (arena.addPlayer(p, false)){
+                // Fire the event after player joins
+                PlayerJoinLobbyEvent event = new PlayerJoinLobbyEvent(p, arena.getArenaName());
+                Bukkit.getPluginManager().callEvent(event);
+
                 Sounds.playSound("join-allowed", p);
             } else {
                 Sounds.playSound("join-denied", p);
@@ -90,9 +101,9 @@ public class CmdJoin extends SubCommand {
             return true;
         }
         s.sendMessage(getMsg(p, Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND).replace("%bw_name%", args[0]));
+
         return true;
     }
-
     @Override
     public List<String> getTabComplete() {
         List<String> tab = new ArrayList<>(BedWars.config.getYml().getStringList(ConfigPath.GENERAL_CONFIGURATION_ARENA_GROUPS));

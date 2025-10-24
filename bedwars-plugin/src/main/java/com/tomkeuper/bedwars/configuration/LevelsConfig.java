@@ -40,6 +40,7 @@ public class LevelsConfig extends ConfigManager {
         levels.getYml().options().copyDefaults(true);
         if (levels.isFirstTime()) {
 
+            // === LEVEL FORMATS ===
             levels.getYml().addDefault("levels.1.name", "&7[{number}✩] ");
             levels.getYml().addDefault("levels.1.rankup-cost", 1000);
 
@@ -51,6 +52,7 @@ public class LevelsConfig extends ConfigManager {
 
             levels.getYml().addDefault("levels.4.name", "&7[{number}✩] ");
             levels.getYml().addDefault("levels.4.rankup-cost", 3500);
+
             levels.getYml().addDefault("levels.5-10.name", "&e[{number}✩] ");
             levels.getYml().addDefault("levels.5-10.rankup-cost", 5000);
 
@@ -58,6 +60,7 @@ public class LevelsConfig extends ConfigManager {
             levels.getYml().addDefault("levels.others.rankup-cost", 5000);
         }
 
+        // === XP REWARDS ===
         levels.getYml().addDefault("xp-rewards.per-minute", 10);
         levels.getYml().addDefault("xp-rewards.per-teammate", 5);
         levels.getYml().addDefault("xp-rewards.game-win", 100);
@@ -65,6 +68,21 @@ public class LevelsConfig extends ConfigManager {
         levels.getYml().addDefault("xp-rewards.regular-kill", 10);
         levels.getYml().addDefault("xp-rewards.final-kill", 15);
 
+        // === NEW ADVANCED REWARDS ===
+        levels.getYml().addDefault("xp-rewards.first-blood", 25);
+        levels.getYml().addDefault("xp-rewards.first-bed-destroyed", 20);
+        levels.getYml().addDefault("xp-rewards.no-death-win", 50);
+        levels.getYml().addDefault("xp-rewards.flawless-victory", 75);
+        levels.getYml().addDefault("xp-rewards.team-eliminated", 30);
+        levels.getYml().addDefault("xp-rewards.void-kill", 10);
+
+        // === KILL STREAK REWARDS (every 5 kills) ===
+        levels.getYml().addDefault("xp-rewards.kill-streak-5", 20);
+        levels.getYml().addDefault("xp-rewards.kill-streak-10", 40);
+        levels.getYml().addDefault("xp-rewards.kill-streak-15", 60);
+        levels.getYml().addDefault("xp-rewards.kill-streak-20", 100);
+
+        // === PROGRESS BAR SETTINGS ===
         levels.getYml().addDefault("progress-bar.symbol", "■");
         levels.getYml().addDefault("progress-bar.unlocked-color", "&b");
         levels.getYml().addDefault("progress-bar.locked-color", "&7");
@@ -97,7 +115,9 @@ public class LevelsConfig extends ConfigManager {
     }
 
     public static int getNextCost(int level) {
-        if (levels.getYml().get("levels." + level + ".rankup-cost") != null) return levels.getYml().getInt("levels." + level + ".rankup-cost");
+        if (levels.getYml().get("levels." + level + ".rankup-cost") != null)
+            return levels.getYml().getInt("levels." + level + ".rankup-cost");
+
         for (String key : levels.getYml().getConfigurationSection("levels").getKeys(false)) {
             if (key.contains("-")) {
                 String[] nrs = key.split("-");

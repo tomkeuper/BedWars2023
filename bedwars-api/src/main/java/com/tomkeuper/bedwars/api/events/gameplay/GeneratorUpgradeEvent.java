@@ -21,12 +21,18 @@
 package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
+import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Getter
 public class GeneratorUpgradeEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
+    /**
+     * -- GETTER --
+     *  Get generator
+     */
     private IGenerator generator;
 
     /**
@@ -34,13 +40,6 @@ public class GeneratorUpgradeEvent extends Event {
      */
     public GeneratorUpgradeEvent(IGenerator generator) {
         this.generator = generator;
-    }
-
-    /**
-     * Get generator
-     */
-    public IGenerator getGenerator() {
-        return generator;
     }
 
 

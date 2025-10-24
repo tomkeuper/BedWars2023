@@ -22,9 +22,11 @@ package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
+import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+@Getter
 public class GameStateChangeEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -41,18 +43,6 @@ public class GameStateChangeEvent extends Event {
         this.newState = newState;
     }
 
-
-    public IArena getArena() {
-        return arena;
-    }
-
-    public GameState getOldState() {
-        return oldState;
-    }
-
-    public GameState getNewState() {
-        return newState;
-    }
 
     public HandlerList getHandlers() {
         return HANDLERS;

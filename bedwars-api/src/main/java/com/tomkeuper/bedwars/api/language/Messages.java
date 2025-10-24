@@ -399,12 +399,21 @@ public class Messages {
     public static String GAME_END_THIRD_KILLER = "game-end-third-killer";
     public static String GAME_END_TOP_PLAYER_CHAT = "game-end-top-chat";
     public static String GAME_END_TEAM_WON_CHAT = "game-end-winner-team";
-    public static String XP_REWARD_WIN = "xp-reward-game-win";
-    public static String XP_REWARD_PER_TEAMMATE = "xp-reward-per-teammate";
-    public static String XP_REWARD_PER_MINUTE = "xp-reward-per-minute";
-    public static String XP_REWARD_BED_DESTROY = "xp-reward-bed-destroyed";
-    public static String XP_REWARD_REGULAR_KILL = "xp-reward-regular-kill";
-    public static String XP_REWARD_FINAL_KILL = "xp-reward-final-kill";
+    public static final String XP_REWARD_FIRST_BLOOD = "xp-reward-first-blood";
+    public static final String XP_REWARD_FIRST_BED = "xp-reward-first-bed";
+    public static final String XP_REWARD_VOID_KILL = "xp-reward-void-kill";
+    public static final String XP_REWARD_KILL_STREAK = "xp-reward-kill-streak";
+    public static final String XP_REWARD_TEAM_ELIMINATED = "xp-reward-team-eliminated";
+    public static final String XP_REWARD_NO_DEATH = "xp-reward-no-death";
+    public static final String XP_REWARD_FLAWLESS = "xp-reward-flawless";
+
+    // ⚔️ Existing XP reward keys
+    public static final String XP_REWARD_PER_MINUTE = "xp-reward-per-minute";
+    public static final String XP_REWARD_PER_TEAMMATE = "xp-reward-per-teammate";
+    public static final String XP_REWARD_WIN = "xp-reward-win";
+    public static final String XP_REWARD_BED_DESTROY = "xp-reward-bed-destroy";
+    public static final String XP_REWARD_REGULAR_KILL = "xp-reward-regular-kill";
+    public static final String XP_REWARD_FINAL_KILL = "xp-reward-final-kill";
     public static String XP_REWARD_HALLOWEEN = "xp-reward-halloween";
     public static String PLAYER_LEVEL_UP = "player-level-up";
 

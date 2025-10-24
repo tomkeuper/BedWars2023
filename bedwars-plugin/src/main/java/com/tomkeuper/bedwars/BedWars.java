@@ -415,7 +415,9 @@ public class BedWars extends JavaPlugin {
                 registerEvents(new JoinListenerShared());
             }
         }
-
+        getServer().getPluginManager().registerEvents(new PlayerLobbyJoin(), this);
+        getServer().getPluginManager().registerEvents(new MainLobbyJoinListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerDisconnectListener(), this);
         registerEvents(new WorldLoadListener());
 
         if (!(getServerType() == ServerType.BUNGEE && autoscale)) {

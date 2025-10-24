@@ -1,4 +1,3 @@
-
 package com.tomkeuper.bedwars.levels.internal;
 
 import com.tomkeuper.bedwars.BedWars;

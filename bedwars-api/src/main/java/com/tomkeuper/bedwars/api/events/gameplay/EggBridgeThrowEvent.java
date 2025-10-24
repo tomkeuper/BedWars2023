@@ -21,16 +21,32 @@
 package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class EggBridgeThrowEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
+    /**
+     * -- GETTER --
+     *  Get player
+     */
     private final Player player;
+    /**
+     * -- GETTER --
+     *  Get arena
+     */
     private final IArena arena;
+    /**
+     * -- GETTER --
+     *  Used to check if whether the event is cancelled
+     *
+     * @return whether the event is cancelled
+     */
     private boolean cancelled = false;
 
     /**
@@ -43,32 +59,10 @@ public class EggBridgeThrowEvent extends Event {
     }
 
     /**
-     * Get player
-     */
-    public Player getPlayer() {
-        return player;
-    }
-
-    /**
-     * Get arena
-     */
-    public IArena getArena() {
-        return arena;
-    }
-
-    /**
      * Used to cancel the event
      */
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
-    }
-
-    /**
-     * Used to check if whether the event is cancelled
-     * @return whether the event is cancelled
-     */
-    public boolean isCancelled() {
-        return cancelled;
     }
 
     @NotNull

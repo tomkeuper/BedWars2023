@@ -22,17 +22,31 @@ package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
+import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+@Getter
 public class EggBridgeBuildEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
+    /**
+     * -- GETTER --
+     *  Get the block's team color
+     */
     private final TeamColor teamColor;
+    /**
+     * -- GETTER --
+     *  Get the arena
+     */
     private final IArena arena;
+    /**
+     * -- GETTER --
+     *  Get the built block
+     */
     private final Block block;
 
     /**
@@ -43,27 +57,6 @@ public class EggBridgeBuildEvent extends Event {
         this.teamColor = teamColor;
         this.arena = arena;
         this.block = block;
-    }
-    
-    /**
-     * Get the arena
-     */
-    public IArena getArena() {
-        return arena;
-    }
-    
-    /**
-     * Get the built block
-     */
-    public Block getBlock() {
-        return block;
-    }
-    
-    /**
-     * Get the block's team color
-     */
-    public TeamColor getTeamColor() {
-        return teamColor;
     }
 
     @NotNull
