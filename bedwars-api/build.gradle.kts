@@ -21,7 +21,7 @@ tasks.javadoc {
 repositories{
     mavenCentral()
     mavenLocal()
-    maven("https://oss.sonatype.org/content/repositories/snapshots/") // bungecord-chat (dep of spigot-api (md-5:bungeecord-chat:1.8-SNAPSHOT))
+    maven("https://repo.papermc.io/repository/maven-public/") // bungeecord-chat (dep of spigot-api (md-5:bungeecord-chat:1.8-SNAPSHOT))
     maven("https://nexus.iridiumdevelopment.net/repository/maven-releases/") // IridiumColorAPI
     maven("https://jitpack.io") // TAB
     maven("https://repo.codemc.io/repository/nms/") // Spigot

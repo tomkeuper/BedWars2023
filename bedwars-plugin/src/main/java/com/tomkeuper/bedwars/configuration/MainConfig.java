@@ -147,13 +147,25 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE, 3);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_SPEED_MULTIPLIER, 10);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE, false);
-        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL, 1.0);
-        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL, 0.65);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_SELF, 1.0);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_OTHERS, 1.0);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL_SELF, 0.65);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_VERTICAL_OTHERS, 0.65);
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE, 0.5);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_COOLDOWN, 0.5);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES, 0.0);
-        //
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS, Arrays.asList("END_STONE"));
+
+        // eggbridge category
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER, 4.0);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MAX_LENGTH, 27);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MAX_HEIGHT, 9);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MAX_BUILD_LIMIT_WARNING_DISTANCE, 5);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MIN_BUILD_LIMIT_WARNING_DISTANCE, 3);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER, false);
+        yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE, false);
 
         // Database Configuration
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DATABASE_TYPE, "SQLite");

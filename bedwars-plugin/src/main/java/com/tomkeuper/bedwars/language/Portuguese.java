@@ -254,6 +254,7 @@ public class Portuguese extends Language {
         yml.addDefault(Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED, "&cVocê não pode abrir este baú porque esse time não foi eliminado!");
         yml.addDefault(Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN, "&cSua invisibilidade foi removida pois você tomou dano!");
         yml.addDefault(Messages.INTERACT_MAGIC_MILK_REMOVED, "&cOs efeitos do seu leite acabaram!");
+        yml.addDefault(Messages.EGGBRIDGE_BUILD_LIMIT_WARNING, "&cYou are too close to the build limit!");
         yml.addDefault(Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL, "%bw_player_color%%bw_player% &7caiu no void.");
         yml.addDefault(Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL, "%bw_player_color%%bw_player% &7caiu no void. &b&lKILL FINAL!");
         yml.addDefault(Messages.PLAYER_DIE_KNOCKED_IN_VOID_REGULAR_KILL, "%bw_player_color%%bw_player% &7foi jogado no void por %bw_killer_color%%bw_killer_name%&7.");

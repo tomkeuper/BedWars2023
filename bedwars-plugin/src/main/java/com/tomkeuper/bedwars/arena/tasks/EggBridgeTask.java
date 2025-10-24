@@ -37,6 +37,8 @@ import org.bukkit.entity.Egg;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import static com.tomkeuper.bedwars.BedWars.config;
+
 @SuppressWarnings("WeakerAccess")
 public class EggBridgeTask implements Runnable {
 
@@ -82,13 +84,13 @@ public class EggBridgeTask implements Runnable {
 
         if (getProjectile().isDead()
                 || !arena.isPlayer(getPlayer())
-                || getPlayer().getLocation().distance(getProjectile().getLocation()) > 27
-                || getPlayer().getLocation().getY() - getProjectile().getLocation().getY() > 9) {
+                || getPlayer().getLocation().distance(getProjectile().getLocation()) > config.getInt(ConfigPath.GENERAL_EGGBRIDGE_MAX_LENGTH)
+                || getPlayer().getLocation().getY() - getProjectile().getLocation().getY() > config.getInt(ConfigPath.GENERAL_EGGBRIDGE_MAX_HEIGHT)) {
             EggBridge.removeEgg(projectile);
             return;
         }
 
-        if (getPlayer().getLocation().distance(loc) > 4.0D) {
+        if (getPlayer().getLocation().distance(loc) > config.getDouble(ConfigPath.GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER)) {
 
             Block b2 = loc.clone().subtract(0.0D, 2.0D, 0.0D).getBlock();
             if (!Misc.isBuildProtected(b2.getLocation(), getArena())) {

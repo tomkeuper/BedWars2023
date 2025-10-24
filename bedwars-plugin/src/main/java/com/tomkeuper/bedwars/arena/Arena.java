@@ -472,8 +472,9 @@ public class Arena implements IArena {
                     p.sendMessage(getMsg(p, Messages.COMMAND_JOIN_DENIED_PARTY_TOO_BIG));
                     return false;
                 }
-                for (Player mem : getPartyManager().getMembers(p)) {
-                    if (mem == p) continue;
+                for (Player mem : new ArrayList<>(getPartyManager().getMembers(p))) {
+                    if (mem == p)
+                        continue;
                     IArena a = Arena.getArenaByPlayer(mem);
                     if (a != null) {
                         /*if (a.isPlayer(mem)) {
@@ -1644,7 +1645,7 @@ public class Arena implements IArena {
      */
     @Override
     public boolean isPlayer(Player p) {
-        return players.contains(p);
+        return players != null && players.contains(p);
     }
 
     /**

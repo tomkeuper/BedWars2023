@@ -353,6 +353,9 @@ public class Messages {
     public static String INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN = "interact-invisibility-removed-damaged";
     public static String INTERACT_MAGIC_MILK_REMOVED = "interact-magic-milk-removed";
 
+    /** Eggbridge related */
+    public static String EGGBRIDGE_BUILD_LIMIT_WARNING = "eggbridge-build-limit-warning";
+
     /** PvP related */
     public static String PLAYER_DIE_RESPAWN_TITLE = "player-respawn-title";
     public static String PLAYER_DIE_RESPAWN_SUBTITLE = "player-respawn-subtitle";

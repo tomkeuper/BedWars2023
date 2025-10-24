@@ -514,12 +514,14 @@ public class BedWarsTeam implements ITeam {
      * Equip a player with default armor
      */
     public void sendArmor(Player p) {
-        if (p.getInventory().getHelmet() == null) p.getInventory().setHelmet(createArmor(Material.LEATHER_HELMET));
-        if (p.getInventory().getChestplate() == null)
+        if (p.getInventory().getHelmet() == null || p.getInventory().getHelmet().getType() == Material.AIR)
+            p.getInventory().setHelmet(createArmor(Material.LEATHER_HELMET));
+        if (p.getInventory().getChestplate() == null || p.getInventory().getChestplate().getType() == Material.AIR)
             p.getInventory().setChestplate(createArmor(Material.LEATHER_CHESTPLATE));
-        if (p.getInventory().getLeggings() == null)
+        if (p.getInventory().getLeggings() == null || p.getInventory().getLeggings().getType() == Material.AIR)
             p.getInventory().setLeggings(createArmor(Material.LEATHER_LEGGINGS));
-        if (p.getInventory().getBoots() == null) p.getInventory().setBoots(createArmor(Material.LEATHER_BOOTS));
+        if (p.getInventory().getBoots() == null || p.getInventory().getBoots().getType() == Material.AIR)
+            p.getInventory().setBoots(createArmor(Material.LEATHER_BOOTS));
     }
 
     /**

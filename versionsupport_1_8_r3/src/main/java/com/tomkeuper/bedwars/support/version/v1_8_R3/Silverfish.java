@@ -40,7 +40,7 @@ public class Silverfish extends EntitySilverfish {
 
     private ITeam team;
 
-    public Silverfish(World world, ITeam bedWarsTeam) {
+    public Silverfish(World world, ITeam bedWarsTeam, int pathFindingTicks) {
         super(world);
         if (bedWarsTeam == null) return;
         try {
@@ -60,16 +60,16 @@ public class Silverfish extends EntitySilverfish {
         this.goalSelector.a(2, new PathfinderGoalMeleeAttack(this,1.9D, false));
         this.targetSelector.a(1, new PathfinderGoalHurtByTarget(this, true));
         this.goalSelector.a(3, new PathfinderGoalRandomStroll(this, 2D));
-        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget(this, EntityHuman.class, 20, true, false, player -> {
+        this.targetSelector.a(2, new PathfinderGoalNearestAttackableTarget(this, EntityHuman.class, pathFindingTicks, true, false, player -> {
             if (player == null) return false;
             return ((EntityHuman)player).isAlive() && !team.wasMember(((EntityHuman)player).getUniqueID()) && !team.getArena().isReSpawning(((EntityHuman)player).getUniqueID())
                     && !team.getArena().isSpectator(((EntityHuman)player).getUniqueID());
         }));
-        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget(this, IGolem.class, 20, true, false, golem -> {
+        this.targetSelector.a(3, new PathfinderGoalNearestAttackableTarget(this, IGolem.class, pathFindingTicks, true, false, golem -> {
             if (golem == null) return false;
             return ((IGolem)golem).getTeam() != team;
         }));
-        this.targetSelector.a(4, new PathfinderGoalNearestAttackableTarget(this, Silverfish.class, 20, true, false, sf -> {
+        this.targetSelector.a(4, new PathfinderGoalNearestAttackableTarget(this, Silverfish.class, pathFindingTicks, true, false, sf -> {
             if (sf == null) return false;
             return ((Silverfish)sf).getTeam() != team;
         }));
@@ -79,9 +79,9 @@ public class Silverfish extends EntitySilverfish {
         return team;
     }
 
-    public static LivingEntity spawn(Location loc, ITeam team, double speed, double health, int despawn, double damage) {
+    public static LivingEntity spawn(Location loc, ITeam team, double speed, double health, int despawn, double damage, int pathFindingTicks) {
         WorldServer mcWorld = ((CraftWorld)loc.getWorld()).getHandle();
-        Silverfish customEnt = new Silverfish(mcWorld, team);
+        Silverfish customEnt = new Silverfish(mcWorld, team, pathFindingTicks);
         customEnt.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         customEnt.getAttributeInstance(GenericAttributes.maxHealth).setValue(health);
         customEnt.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(speed);

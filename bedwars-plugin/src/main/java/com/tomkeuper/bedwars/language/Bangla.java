@@ -255,6 +255,7 @@ public class Bangla extends Language {
         yml.addDefault(Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED, "&cApni ei chest ti khulte parben na karon ei team ti eliminate hoini!");
         yml.addDefault(Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN, "&cApni ar invisible non karon apni damage niyechen!");
         yml.addDefault(Messages.INTERACT_MAGIC_MILK_REMOVED, "&cYour Magic Milk wore off!");
+        yml.addDefault(Messages.EGGBRIDGE_BUILD_LIMIT_WARNING, "&cYou are too close to the build limit!");
         yml.addDefault(Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL, "%bw_player_color%%bw_player% &7void e pore gelen.");
         yml.addDefault(Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL, "%bw_player_color%%bw_player% &7void e pore gelen. &b&lFINAL KILL!");
         yml.addDefault(Messages.PLAYER_DIE_KNOCKED_IN_VOID_REGULAR_KILL, "%bw_killer_color%%bw_killer_name%&7 %bw_player_color%%bw_player% &7ke void e falalen.");

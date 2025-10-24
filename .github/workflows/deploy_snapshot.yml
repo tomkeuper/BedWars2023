@@ -16,7 +16,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: 'development'
           fetch-depth: 0 # Fetch all history and tags
@@ -35,7 +35,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
       - name: Deploy Package
@@ -50,7 +50,7 @@ jobs:
       api-changed: ${{ steps.changed-files-specific.outputs.any_changed }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Get changed files in the api folder
         id: changed-files-specific
         uses: tj-actions/changed-files@v46
@@ -70,7 +70,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: 'development'
           fetch-depth: 0 # Fetch all history and tags
@@ -89,7 +89,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
       - name: Install Packages

@@ -268,15 +268,27 @@ public class ConfigPath {
     public static final String GENERAL_FIREBALL_EXPLOSION_SIZE = GENERAL_FIREBALL_PATH + ".explosion-size";
     public static final String GENERAL_FIREBALL_SPEED_MULTIPLIER = GENERAL_FIREBALL_PATH + ".speed-multiplier";
     public static final String GENERAL_FIREBALL_MAKE_FIRE = GENERAL_FIREBALL_PATH + ".make-fire";
-    private static final String GENERAL_FIREBALL_KNOCKBACK_PATH = GENERAL_FIREBALL_PATH + ".knockback";
-    public static final String GENERAL_FIREBALL_KNOCKBACK_VERTICAL = GENERAL_FIREBALL_KNOCKBACK_PATH + ".vertical";
-    public static final String GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL = GENERAL_FIREBALL_KNOCKBACK_PATH + ".horizontal";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_VERTICAL_SELF = GENERAL_FIREBALL_PATH + ".knockback.vertical.self";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_VERTICAL_OTHERS = GENERAL_FIREBALL_PATH + ".knockback.vertical.others";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_SELF = GENERAL_FIREBALL_PATH + ".knockback.horizontal.self";
+    public static final String GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_OTHERS = GENERAL_FIREBALL_PATH + ".knockback.horizontal.others";
+    public static final String GENERAL_FIREBALL_JUMP_TOLERANCE = GENERAL_FIREBALL_PATH + ".jump-tolerance";
     public static final String GENERAL_FIREBALL_COOLDOWN = GENERAL_FIREBALL_PATH + ".cooldown";
     private static final String GENERAL_FIREBALL_DAMAGE_PATH = GENERAL_FIREBALL_PATH + ".damage";
     public static final String GENERAL_FIREBALL_DAMAGE_SELF = GENERAL_FIREBALL_DAMAGE_PATH + ".self";
     public static final String GENERAL_FIREBALL_DAMAGE_ENEMY = GENERAL_FIREBALL_DAMAGE_PATH + ".enemy";
     public static final String GENERAL_FIREBALL_DAMAGE_TEAMMATES = GENERAL_FIREBALL_DAMAGE_PATH + ".teammates";
+    public static final String GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS = GENERAL_FIREBALL_PATH + ".explosion-proof-blocks";
 
+    public static final String GENERAL_EGGBRIDGE = "eggbridge-settings";
+    public static final String GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER = GENERAL_EGGBRIDGE+".distance-from-player-to-start-building";
+    public static final String GENERAL_EGGBRIDGE_MAX_LENGTH = GENERAL_EGGBRIDGE+".max-length";
+    public static final String GENERAL_EGGBRIDGE_MAX_HEIGHT = GENERAL_EGGBRIDGE+".max-height";
+    public static final String GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT = GENERAL_EGGBRIDGE+".when-used-close-to-build-limit";
+    public static final String GENERAL_EGGBRIDGE_MAX_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".distance-to-max-build-limit";
+    public static final String GENERAL_EGGBRIDGE_MIN_BUILD_LIMIT_WARNING_DISTANCE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".distance-to-min-build-limit";
+    public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".send-warn-message";
+    public static final String GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE = GENERAL_EGGBRIDGE_USED_CLOSE_TO_BUILD_LIMIT +".cancel-usage";
 
     public static final String GENERAL_CONFIGURATION_DATABASE_PATH = "database";
     public static final String GENERAL_CONFIGURATION_DATABASE_TYPE = GENERAL_CONFIGURATION_DATABASE_PATH + ".type";
@@ -307,19 +319,24 @@ public class ConfigPath {
     public static final String SHOP_SPECIAL_TOWER_ENABLE = SHOP_SPECIALS_PATH + ".tower.enable";
     public static final String SHOP_SPECIAL_TOWER_MATERIAL = SHOP_SPECIALS_PATH + ".tower.material";
     public static final String SHOP_SPECIAL_SILVERFISH_ENABLE = SHOP_SPECIALS_PATH + ".silverfish.enable";
+    public static final String SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY = SHOP_SPECIALS_PATH + ".silverfish.remove-invisibility-on-attack";
     public static final String SHOP_SPECIAL_SILVERFISH_MATERIAL = SHOP_SPECIALS_PATH + ".silverfish.material";
     public static final String SHOP_SPECIAL_SILVERFISH_DATA = SHOP_SPECIALS_PATH + ".silverfish.data";
     public static final String SHOP_SPECIAL_SILVERFISH_HEALTH = SHOP_SPECIALS_PATH + ".silverfish.health";
     public static final String SHOP_SPECIAL_SILVERFISH_DAMAGE = SHOP_SPECIALS_PATH + ".silverfish.damage";
     public static final String SHOP_SPECIAL_SILVERFISH_SPEED = SHOP_SPECIALS_PATH + ".silverfish.speed";
     public static final String SHOP_SPECIAL_SILVERFISH_DESPAWN = SHOP_SPECIALS_PATH + ".silverfish.despawn";
+    public static final String SHOP_SPECIAL_SILVERFISH_PATH_FINDING_TICKS = SHOP_SPECIALS_PATH + ".silverfish.path-finding-ticks";
+
 
     public static final String SHOP_SPECIAL_IRON_GOLEM_ENABLE = SHOP_SPECIALS_PATH + ".iron-golem.enable";
+    public static final String SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY = SHOP_SPECIALS_PATH + ".iron-golem.remove-invisibility-on-attack";
     public static final String SHOP_SPECIAL_IRON_GOLEM_MATERIAL = SHOP_SPECIALS_PATH + ".iron-golem.material";
     public static final String SHOP_SPECIAL_IRON_GOLEM_DATA = SHOP_SPECIALS_PATH + ".iron-golem.data";
     public static final String SHOP_SPECIAL_IRON_GOLEM_HEALTH = SHOP_SPECIALS_PATH + ".iron-golem.health";
     public static final String SHOP_SPECIAL_IRON_GOLEM_DESPAWN = SHOP_SPECIALS_PATH + ".iron-golem.despawn";
     public static final String SHOP_SPECIAL_IRON_GOLEM_SPEED = SHOP_SPECIALS_PATH + ".iron-golem.speed";
+    public static final String SHOP_SPECIAL_IRON_GOLEM_PATH_FINDING_TICKS = SHOP_SPECIALS_PATH + ".iron-golem.path-finding-ticks";
 
     public static final String SHOP_SETTINGS_QUICK_BUY_CATEGORY_PATH = SHOP_SETTINGS_PATH + ".quick-buy-category";
     public static final String SHOP_SETTINGS_QUICK_BUY_BUTTON_MATERIAL = SHOP_SETTINGS_QUICK_BUY_CATEGORY_PATH + ".material";

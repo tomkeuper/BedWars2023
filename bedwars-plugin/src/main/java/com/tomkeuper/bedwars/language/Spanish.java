@@ -185,6 +185,7 @@ public class Spanish extends Language {
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT_TO_VICTIM, "&f&lCAMA DESTRUIDA > &7Tu cama ha sido destruida por %bw_player_color%%bw_player%&7!");
         yml.addDefault(Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN, "&cYa no eres invisible porque has recibido daño!");
         yml.addDefault(Messages.INTERACT_MAGIC_MILK_REMOVED, "&cYour Magic Milk wore off!");
+        yml.addDefault(Messages.EGGBRIDGE_BUILD_LIMIT_WARNING, "&cYou are too close to the build limit!");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lEQUIPO ELIMINADO > El equipo %bw_team_color%%bw_team_name% &cha sido eliminado\n");
         yml.addDefault(Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL, "%bw_player_color%%bw_player% &7ha caído al vacio.");
         yml.addDefault(Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL, "%bw_player_color%%bw_player% &7ha caído al vacio. &b&lMUERTE FINAL!");
