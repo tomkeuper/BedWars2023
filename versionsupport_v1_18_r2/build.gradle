@@ -1,0 +1,22 @@
+dependencies {
+    compileOnly project(':bedwars-api')
+    implementation project(':versionsupport_common')
+    compileOnly('org.spigotmc:spigot:1.18.2-R0.1-SNAPSHOT') {
+        exclude group: 'commons-lang', module: 'commons-lang'
+    }
+    compileOnly 'org.apache.commons:commons-lang3:3.14.0'
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.release = 17
+}
+
+repositories {
+    // Important Repos
+    mavenCentral()
+    mavenLocal()
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+    maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // com.mojang (dep of Spigot)
+}
+
+description = 'versionsupport_v1_18_r2'

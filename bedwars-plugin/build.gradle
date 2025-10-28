@@ -1,0 +1,195 @@
+plugins {
+    id 'net.minecrell.plugin-yml.bukkit' version '0.5.3'
+    id 'dev.racci.slimjar' version '2.0.2'
+}
+
+// Ensure plugin is compiled for Java 21 to be compatible with 1.20.4+/1.21 support modules
+tasks.named('compileJava', JavaCompile) {
+    options.release = 21
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    // Important Repos
+    maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // PaperLib
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+    maven { url = uri('https://repo.codemc.io/repository/maven-public/') } // VipFeatures
+    maven { url = uri('https://simonsator.de/repo/') } // Party-and-Friends-MySQL-Edition-Spigot-API, Spigot-Party-API-For-RedisBungee
+    maven { url = uri('https://maven.citizensnpcs.co/repo') } // citizens-main
+    maven { url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/') } // placeholderapi
+    maven { url = uri('https://repo.cloudnetservice.eu/releases/') } // cloudnet-wrapper-jvm
+    maven { url = uri('https://nexus.iridiumdevelopment.net/repository/maven-releases/') } // IridiumColorAPI
+    maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // slimjar
+    maven { url = uri('https://repo.alessiodp.com/releases/') } // slimjar - dependencies
+    maven { url = uri('https://repo.rapture.pw/repository/maven-releases/') } // Flow-NBT
+    maven { url = uri('https://jitpack.io') } // Jitpack (RTag) & TAB
+}
+
+dependencies {
+    api 'io.papermc:paperlib:1.0.8'
+    api 'org.bstats:bstats-bukkit:3.0.2'
+    implementation 'com.iridium:IridiumColorAPI:1.0.9' // used by BedWars - API
+    implementation 'org.apache.commons:commons-lang3:3.14.0' // Used by IridiumColorAPI
+
+    implementation 'net.kyori:adventure-text-minimessage:4.23.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.23.0'
+    implementation 'net.kyori:adventure-platform-bukkit:4.4.0'
+
+    api project(':bedwars-api')
+    api project(':versionsupport_common')
+    api project(':versionsupport_1_8_r3')
+    api project(':versionsupport_1_12_r1')
+    api project(':versionsupport_v1_16_r3')
+    api project(':versionsupport_v1_17_r1')
+    api project(':versionsupport_v1_18_r2')
+    api project(':versionsupport_v1_19_r3')
+    api project(':versionsupport_v1_20_r4')
+    api project(':versionsupport_v1_20_6')
+    api project(':versionsupport_v1_21_r1')
+    api project(':versionsupport_v1_21_r2')
+    api project(':versionsupport_v1_21_r3')
+
+    api 'com.andrei1058.vipfeatures:vipfeatures-api:[1.0,)'
+    api('com.zaxxer:HikariCP:5.0.1') {
+        exclude group: 'slf4-j-api', module: 'slf4-j-api'
+    }
+    implementation 'org.slf4j:slf4j-simple:2.0.6'
+    slim 'com.h2database:h2:2.2.220'
+    api 'commons-io:commons-io:2.11.0' // for resetadapters
+    slim('mysql:mysql-connector-java:8.0.29') {
+        exclude group: 'com.google.protobuf', module: 'protobuf-java'
+    }
+
+    implementation 'dev.racci.slimjar:slimjar:2.0.2'
+    compileOnly 'de.simonsator:Party-and-Friends-MySQL-Edition-Spigot-API:1.5.4-RELEASE'
+    compileOnly('de.simonsator:Spigot-Party-API-For-RedisBungee:1.0.3-SNAPSHOT') {
+        exclude group: 'redis.clients', module: 'jedis'
+    }
+    compileOnly 'de.simonsator:DevelopmentPAFSpigot:1.0.67'
+    compileOnly 'com.alessiodp.parties:parties-api:3.2.9'
+    compileOnly('net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.bstats', module: 'bstats-bukkit'
+    }
+    compileOnly('net.milkbowl.vault:VaultAPI:1.7') {
+        exclude group: 'org.bukkit', module: 'bukkit'
+    }
+    compileOnly 'org.spigotmc:spigot:1.8.8-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'com.github.NEZNAMY:TAB-API:5.0.7'
+    compileOnly 'de.dytanic.cloudnet:cloudnet-wrapper-jvm:3.4.5-RELEASE'
+    slim 'redis.clients:jedis:5.0.2'
+    slim 'com.flowpowered:flow-nbt:2.0.2'
+    slim 'com.saicone.rtag:rtag:1.5.13'
+    slim 'com.saicone.rtag:rtag-block:1.5.13'
+    slim 'com.saicone.rtag:rtag-entity:1.5.13'
+    slim 'com.saicone.rtag:rtag-item:1.5.13'
+}
+
+bukkit {
+    name = 'BedWars2023'
+    main = 'com.tomkeuper.bedwars.BedWars'
+    apiVersion = '1.13'
+
+    author = 'Mr. Ceasar'
+    description = 'BedWars minigame by Mr Ceasar forked from BedWars1058'
+    version = "${project.version}"
+
+    load = 'STARTUP'
+    depend = ['TAB']
+    softDepend = [
+        'Vault',
+        'PlaceholderAPI',
+        'Citizens',
+        'Parties',
+        'SlimeWorldManager',
+        'VipFeatures',
+        'Enhanced-SlimeWorldManager',
+        'PartyAndFriends',
+        'Spigot-Party-API-PAF',
+    ]
+}
+
+// Ensure YAML files are copied and avoid duplicate resource issues
+tasks.named('processResources') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from('src/main/resources') {
+        include '**/*.yml'
+    }
+}
+
+// Projects to merge into the shaded jar
+def versions = [
+    ':versionsupport_common',
+    ':versionsupport_1_8_r3',
+    ':versionsupport_1_12_r1',
+    ':versionsupport_v1_16_r3',
+    ':versionsupport_v1_17_r1',
+    ':versionsupport_v1_18_r2',
+    ':versionsupport_v1_19_r3',
+    ':versionsupport_v1_20_r4',
+    ':versionsupport_v1_20_6',
+    ':versionsupport_v1_21_r1',
+    ':versionsupport_v1_21_r2',
+    ':versionsupport_v1_21_r3',
+    ':versionsupport_v1_21_r5',
+    ':resetadapter_slime',
+    ':resetadapter_slimepaper',
+    ':resetadapter_advancedslimepaper',
+    ':resetadapter_aswm'
+] as Set
+
+slimJar {
+    // relocations temporarily disabled to avoid shadow ASM remapping issue during migration
+}
+
+// Shade configuration and aggregation of platform modules
+tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) { shadow ->
+    mustRunAfter 'slimJar'
+    archiveFileName = "BedWars-${project.version}.jar"
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    versions.each { path ->
+        def vp = project(path)
+        dependsOn vp.tasks.named('shadowJar')
+        dependsOn vp.tasks.withType(Jar)
+        from({
+            def shadeTask = vp.tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar).get()
+            zipTree(shadeTask.archiveFile.get().asFile)
+        })
+    }
+
+    relocate 'io.papermc.lib', 'com.tomkeuper.bedwars.libs.paper'
+    relocate 'io.github.slimjar', 'com.tomkeuper.bedwars.libs.slimjar'
+    relocate 'org.slf4j', 'com.tomkeuper.bedwars.libs.slf4j'
+    relocate 'org.h2', 'com.tomkeuper.bedwars.libs.h2'
+    relocate 'org.bstats', 'com.tomkeuper.bedwars.libs.bstats'
+    relocate 'org.apache.commons.io', 'com.tomkeuper.bedwars.libs.apache.commons.io'
+    relocate 'org.apache.commons.lang', 'com.tomkeuper.bedwars.libs.apache.commons.lang'
+    relocate 'com.zaxxer.hikari', 'com.tomkeuper.bedwars.libs.hikari'
+    relocate 'com.andrei1058.vipfeatures.api', 'com.tomkeuper.bedwars.libs.vipfeatures'
+    relocate 'com.iridium.iridiumcolorapi', 'com.tomkeuper.bedwars.libs.color'
+    relocate 'net.kyori', 'com.tomkeuper.bedwars.libs.kyori'
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('shadowJar')
+}
+
+// Ensure ordering against other tasks
+tasks.named('slimJar') {
+    dependsOn 'compileTestJava', 'test'
+    mustRunAfter 'sourcesJar', 'generateTestEffectiveLombokConfig', 'processTestResources', 'delombok', 'javadocJar'
+}
+
+
+// Java 21 compatibility for dependency alignment with 1.20.4+/1.21 modules
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}

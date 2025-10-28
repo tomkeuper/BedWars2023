@@ -1,0 +1,27 @@
+dependencies {
+    compileOnly project(':bedwars-api')
+    implementation project(':versionsupport_common')
+    compileOnly('org.spigotmc:spigot:1.21.1-R0.1-SNAPSHOT') {
+        exclude group: 'commons-lang', module: 'commons-lang'
+    }
+    compileOnly 'com.saicone.rtag:rtag:1.5.13'
+    // Other modules
+    compileOnly 'com.saicone.rtag:rtag-block:1.5.13'
+    compileOnly 'com.saicone.rtag:rtag-entity:1.5.13'
+    compileOnly 'com.saicone.rtag:rtag-item:1.5.13'
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.release = 21
+}
+
+repositories {
+    // Important Repos
+    mavenCentral()
+    mavenLocal()
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+    maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // com.mojang (dep of Spigot)
+    maven { url = uri('https://jitpack.io') } // Jitpack (RTag)
+}
+
+description = 'versionsupport_v1_21_r1'

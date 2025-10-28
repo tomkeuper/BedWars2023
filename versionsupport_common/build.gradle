@@ -1,0 +1,23 @@
+dependencies {
+    compileOnly project(':bedwars-api')
+    compileOnly 'org.spigotmc:spigot:1.14.4-R0.1-SNAPSHOT'
+}
+
+// Target Java 11 so legacy modules (1.8/1.12) can depend on this project
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.release = 11
+}
+
+repositories {
+    // Important Repos
+    mavenCentral()
+    // mavenLocal() // was commented out in KTS
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+}
+
+description = 'versionsupport_common'
