@@ -26,36 +26,44 @@ import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@Getter
 public class NextEventChangeEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    /**
-     * -- GETTER --
-     *  Get the arena where happened.
-     *
-     * @return the arena where happened.
-     */
     private IArena arena;
-    /**
-     * -- GETTER --
-     *  Get the event that is coming.
-     *
-     * @return upcoming event.
-     */
-    private NextEvent newEvent, /**
-     * -- GETTER --
-     *  Get the event that happened in this moment.
-     *
-     * @return the event that just happened.
-     */
-            oldEvent;
+    private NextEvent newEvent, oldEvent;
 
     public NextEventChangeEvent(IArena arena, NextEvent newEvent, NextEvent oldEvent) {
         this.arena = arena;
         this.oldEvent = oldEvent;
         this.newEvent = newEvent;
+    }
+
+    /**
+     * Get the arena where happened.
+     *
+     * @return the arena where happened.
+     */
+    public IArena getArena() {
+        return arena;
+    }
+
+    /**
+     * Get the event that is coming.
+     *
+     * @return upcoming event.
+     */
+    public NextEvent getNewEvent() {
+        return newEvent;
+    }
+
+    /**
+     * Get the event that happened in this moment.
+     *
+     * @return the event that just happened.
+     */
+    public NextEvent getOldEvent() {
+        return oldEvent;
     }
 
     public HandlerList getHandlers() {

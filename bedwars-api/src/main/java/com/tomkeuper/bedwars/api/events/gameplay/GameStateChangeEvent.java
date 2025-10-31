@@ -1,6 +1,6 @@
 /*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
+ * BedWars1058 - A bed wars mini-game.
+ * Copyright (C) 2021 Andrei Dascălu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: contact@fyreblox.com
+ * Contact e-mail: andrew.dascalu@gmail.com
  */
 
 package com.tomkeuper.bedwars.api.events.gameplay;
 
+
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
-import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@Getter
 public class GameStateChangeEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -43,6 +42,18 @@ public class GameStateChangeEvent extends Event {
         this.newState = newState;
     }
 
+
+    public IArena getArena() {
+        return arena;
+    }
+
+    public GameState getOldState() {
+        return oldState;
+    }
+
+    public GameState getNewState() {
+        return newState;
+    }
 
     public HandlerList getHandlers() {
         return HANDLERS;

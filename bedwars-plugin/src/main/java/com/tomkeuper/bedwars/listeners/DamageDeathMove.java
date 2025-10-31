@@ -65,6 +65,8 @@ import org.bukkit.util.Vector;
 import java.text.DecimalFormat;
 import java.util.Map;
 
+import static com.tomkeuper.bedwars.BedWars.plugin;
+import static com.tomkeuper.bedwars.BedWars.shop;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class DamageDeathMove implements Listener {
@@ -253,13 +255,47 @@ public class DamageDeathMove implements Listener {
                             }
                         } else return;
                     }
-                } else if ((e.getDamager() instanceof Silverfish) || (e.getDamager() instanceof IronGolem)) {
+                } else if ((e.getDamager() instanceof Silverfish)) {
                     LastHit lh = LastHit.getLastHit(p);
                     if (lh != null) {
                         lh.setDamager(e.getDamager());
                         lh.setTime(System.currentTimeMillis());
                     } else {
                         new LastHit(p, e.getDamager(), System.currentTimeMillis());
+                    }
+
+                    if (a.getShowTime().containsKey(p) && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY)) {
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            for (Player on : a.getWorld().getPlayers()) {
+                                BedWars.nms.showArmor(p, on);
+                            }
+                            a.getShowTime().remove(p);
+                            p.removePotionEffect(PotionEffectType.INVISIBILITY);
+                            ITeam team = a.getTeam(p);
+                            p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
+                        });
+                    }
+                } else if (e.getDamager() instanceof IronGolem) {
+                    LastHit lh = LastHit.getLastHit(p);
+                    if (lh != null) {
+                        lh.setDamager(e.getDamager());
+                        lh.setTime(System.currentTimeMillis());
+                    } else {
+                        new LastHit(p, e.getDamager(), System.currentTimeMillis());
+                    }
+
+                    if (a.getShowTime().containsKey(p) && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY)) {
+                        Bukkit.getScheduler().runTask(plugin, () -> {
+                            for (Player on : a.getWorld().getPlayers()) {
+                                BedWars.nms.showArmor(p, on);
+                            }
+                            a.getShowTime().remove(p);
+                            p.removePotionEffect(PotionEffectType.INVISIBILITY);
+                            ITeam team = a.getTeam(p);
+                            p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                            Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
+                        });
                     }
                 }
                 if (damager != null) {
@@ -285,7 +321,7 @@ public class DamageDeathMove implements Listener {
                     // #274
                     // if player gets hit show him
                     if (a.getShowTime().containsKey(p)) {
-                        Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+                        Bukkit.getScheduler().runTask(plugin, () -> {
                             for (Player on : a.getWorld().getPlayers()) {
                                 BedWars.nms.showArmor(p, on);
                                 //BedWars.nms.showPlayer(p, on);
@@ -524,7 +560,7 @@ public class DamageDeathMove implements Listener {
 
         // send respawn packet
         // Needs a delay to prevent hit delay but after respawning (mainly caused by projectile hits)
-        Bukkit.getScheduler().runTask(BedWars.plugin, () -> victim.spigot().respawn());
+        Bukkit.getScheduler().runTask(plugin, () -> victim.spigot().respawn());
         a.addPlayerDeath(victim);
 
         // reset last damager
@@ -573,8 +609,8 @@ public class DamageDeathMove implements Listener {
         ITeam t = a.getTeam(player);
         if (t == null) {
             e.setRespawnLocation(a.getReSpawnLocation());
-            BedWars.plugin.getLogger().severe(e.getPlayer().getName() + " re-spawn error on " + a.getArenaName() + "[" + a.getWorldName() + "] because the team was NULL and he was not spectating!");
-            BedWars.plugin.getLogger().severe("This is caused by one of your plugins: remove or configure any re-spawn related plugins.");
+            plugin.getLogger().severe(e.getPlayer().getName() + " re-spawn error on " + a.getArenaName() + "[" + a.getWorldName() + "] because the team was NULL and he was not spectating!");
+            plugin.getLogger().severe("This is caused by one of your plugins: remove or configure any re-spawn related plugins.");
             a.removePlayer(player, false);
             a.removeSpectator(player, false);
             return;
@@ -589,7 +625,7 @@ public class DamageDeathMove implements Listener {
                 for (Player p : a.getWorld().getPlayers()) {
                     p.sendMessage(getMsg(p, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", t.getColor().chat().toString()).replace("%bw_team_name%", t.getDisplayName(Language.getPlayerLanguage(p))));
                 }
-                Bukkit.getScheduler().runTask(BedWars.plugin, a::checkWinner);
+                Bukkit.getScheduler().runTask(plugin, a::checkWinner); //Does not really need to be async but since intensive better safe than sorry
             }
         } else {
             //respawn session
@@ -783,9 +819,15 @@ public class DamageDeathMove implements Listener {
     @SuppressWarnings("unused")
     private static void spawnUtility(String s, Location loc, ITeam t, Player p) {
         if ("silverfish".equalsIgnoreCase(s)) {
-            BedWars.nms.spawnSilverfish(loc, t, BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_SPEED), BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_HEALTH),
+            BedWars.nms.spawnSilverfish(
+                    loc,
+                    t,
+                    BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_SPEED),
+                    BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_HEALTH),
                     BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_SILVERFISH_DESPAWN),
-                    BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_DAMAGE));
+                    BedWars.shop.getYml().getDouble(ConfigPath.SHOP_SPECIAL_SILVERFISH_DAMAGE),
+                    BedWars.shop.getInt(ConfigPath.SHOP_SPECIAL_SILVERFISH_PATH_FINDING_TICKS)
+            );
         }
     }
 }

@@ -27,7 +27,6 @@ import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 import java.util.List;

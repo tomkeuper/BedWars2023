@@ -437,6 +437,7 @@ public class BoardManager implements IScoreboardService {
             }
 
             setHeaderFooter(tabPlayer, arena);
+            setBelowNameHealth(tabPlayer);
 
             if (tabListFormatManager != null && BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_NAME_FORMATTING_ENABLED)){
                 tabListFormatManager.setPrefix(tabPlayer, "%bw_prefix_tab%");
@@ -751,6 +752,21 @@ public class BoardManager implements IScoreboardService {
         return st;
     }
 
+    /**
+     * Sets up the below-name health display for a player
+     * @param tabPlayer The TAB player instance
+     */
+    private void setBelowNameHealth(TabPlayer tabPlayer) {
+        if (scoreboardManager == null) return;
+
+        try {
+            // Enable below-name objective showing health with heart symbol
+            scoreboardManager.setScoreboardVisible(tabPlayer, true, true);
+        } catch (Exception e) {
+            BedWars.plugin.getLogger().warning("Failed to set below-name health for player: " + tabPlayer.getName());
+        }
+    }
+
     @NotNull
     private String getNextEventTime(Arena arena, Player player) {
         if (arena == null) return getNextEventDateFormat(player).format(new Date(0L));
@@ -794,7 +810,7 @@ public class BoardManager implements IScoreboardService {
     }
 
     private void setHeaderFooter(TabPlayer player, IArena arena) {
-        if (TabAPI.getInstance() == null || TabAPI.getInstance().getHeaderFooterManager() == null) return;
+        if (TabAPI.getInstance().getHeaderFooterManager() == null) return;
         if (isTabFormattingDisabled(arena)) {
             return;
         }

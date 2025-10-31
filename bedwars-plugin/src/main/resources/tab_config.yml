@@ -40,7 +40,7 @@ scoreboard-teams:
 belowname-objective:
   enabled: true
   value: '%health%'
-  title: '&cHealth'
+  title: '&c❤'  # Changed from '&cHealth' to heart symbol
   fancy-value: '&f%health%'
   fancy-value-default: NPC
   disable-condition: '%bw_arena_status%!=playing'

@@ -21,6 +21,7 @@
 package com.tomkeuper.bedwars.api.entity;
 
 import com.tomkeuper.bedwars.api.BedWars;
+import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -32,9 +33,7 @@ import java.util.Objects;
 public class GeneratorHolder {
     private final BedWars api;
 
-    @Getter
     private ArmorStand armorStand;
-    @Getter
     private ItemStack helmet;
 
     public GeneratorHolder(Location loc, ItemStack helmet) {
@@ -61,5 +60,13 @@ public class GeneratorHolder {
 
     public void destroy() {
         api.getVersionSupport().destroyPacketArmorStand(this);
+    }
+
+    public ArmorStand getArmorStand() {
+        return armorStand;
+    }
+
+    public ItemStack getHelmet() {
+        return helmet;
     }
 }

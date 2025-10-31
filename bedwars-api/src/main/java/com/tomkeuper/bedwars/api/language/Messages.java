@@ -314,7 +314,6 @@ public class Messages {
     public static String FORMAT_UPGRADE_COLOR_CAN_AFFORD = "format-upgrade-color-can-afford";
     public static String FORMAT_UPGRADE_COLOR_UNLOCKED = "format-upgrade-color-unlocked";
     public static String FORMAT_UPGRADE_TRAP_COST = "format-upgrade-trap-cost";
-
     /** Meaning/ Translations */
     public static String MEANING_FULL = "meaning-full";
     public static String MEANING_SHOUT = "meaning-shout";

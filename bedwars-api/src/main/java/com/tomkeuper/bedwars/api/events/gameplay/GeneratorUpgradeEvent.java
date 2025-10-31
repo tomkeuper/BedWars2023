@@ -25,14 +25,9 @@ import lombok.Getter;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-@Getter
 public class GeneratorUpgradeEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    /**
-     * -- GETTER --
-     *  Get generator
-     */
     private IGenerator generator;
 
     /**
@@ -40,6 +35,13 @@ public class GeneratorUpgradeEvent extends Event {
      */
     public GeneratorUpgradeEvent(IGenerator generator) {
         this.generator = generator;
+    }
+
+    /**
+     * Get generator
+     */
+    public IGenerator getGenerator() {
+        return generator;
     }
 
 
@@ -51,3 +53,4 @@ public class GeneratorUpgradeEvent extends Event {
         return HANDLERS;
     }
 }
+

@@ -102,4 +102,8 @@ public class ShopHolo {
         if (!shopHolo.containsKey(p)) shopHolo.put(p, new ArrayList<>());
         return shopHolo.get(p);
     }
+
+    public IHologram getHologram() {
+        return hologram;
+    }
 }

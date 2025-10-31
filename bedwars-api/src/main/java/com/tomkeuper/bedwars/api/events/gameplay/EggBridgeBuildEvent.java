@@ -1,6 +1,6 @@
 /*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
+ * BedWars1058 - A bed wars mini-game.
+ * Copyright (C) 2021 Andrei Dascălu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,43 +15,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: contact@fyreblox.com
+ * Contact e-mail: andrew.dascalu@gmail.com
  */
 
 package com.tomkeuper.bedwars.api.events.gameplay;
 
+
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
-import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
-@Getter
 public class EggBridgeBuildEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    /**
-     * -- GETTER --
-     *  Get the block's team color
-     */
-    private final TeamColor teamColor;
-    /**
-     * -- GETTER --
-     *  Get the arena
-     */
-    private final IArena arena;
-    /**
-     * -- GETTER --
-     *  Get the built block
-     */
-    private final Block block;
+    private TeamColor teamColor;
+    private IArena arena;
+    private Block block;
 
     /**
      * Called when the eggBridge is building another block
-     * Called when an egg bridge is building another block
      */
     public EggBridgeBuildEvent(TeamColor teamColor, IArena arena, Block block) {
         this.teamColor = teamColor;
@@ -59,11 +44,31 @@ public class EggBridgeBuildEvent extends Event {
         this.block = block;
     }
 
-    @NotNull
+    /**
+     * Get the arena
+     */
+    public IArena getArena() {
+        return arena;
+    }
+
+    /**
+     * Get the built block
+     */
+    public Block getBlock() {
+        return block;
+    }
+
+    /**
+     * Get the block's team color
+     */
+    public TeamColor getTeamColor() {
+        return teamColor;
+    }
+
     public HandlerList getHandlers() {
         return HANDLERS;
     }
-    
+
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

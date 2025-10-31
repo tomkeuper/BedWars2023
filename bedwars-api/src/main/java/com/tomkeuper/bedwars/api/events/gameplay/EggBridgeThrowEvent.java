@@ -1,6 +1,6 @@
 /*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
+ * BedWars1058 - A bed wars mini-game.
+ * Copyright (C) 2021 Andrei Dascălu
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,43 +15,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
- * Contact e-mail: contact@fyreblox.com
+ * Contact e-mail: andrew.dascalu@gmail.com
  */
 
 package com.tomkeuper.bedwars.api.events.gameplay;
 
 import com.tomkeuper.bedwars.api.arena.IArena;
-import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
-@Getter
 public class EggBridgeThrowEvent extends Event {
+
     private static final HandlerList HANDLERS = new HandlerList();
 
-    /**
-     * -- GETTER --
-     *  Get player
-     */
-    private final Player player;
-    /**
-     * -- GETTER --
-     *  Get arena
-     */
-    private final IArena arena;
-    /**
-     * -- GETTER --
-     *  Used to check if whether the event is cancelled
-     *
-     * @return whether the event is cancelled
-     */
+    private Player player;
+    private IArena arena;
     private boolean cancelled = false;
 
     /**
      * Called when a player throw an egg bridge and it starts building
-     * Called when a player throws an egg bridge
      */
     public EggBridgeThrowEvent(Player player, IArena arena) {
         this.player = player;
@@ -59,13 +42,27 @@ public class EggBridgeThrowEvent extends Event {
     }
 
     /**
-     * Used to cancel the event
+     * Get player
      */
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Get arena
+     */
+    public IArena getArena() {
+        return arena;
+    }
+
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
 
-    @NotNull
     public HandlerList getHandlers() {
         return HANDLERS;
     }

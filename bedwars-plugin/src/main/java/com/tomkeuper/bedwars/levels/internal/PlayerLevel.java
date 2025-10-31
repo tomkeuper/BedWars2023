@@ -1,10 +1,10 @@
 package com.tomkeuper.bedwars.levels.internal;
 
+
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.events.player.PlayerLevelUpEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerXpGainEvent;
 import com.tomkeuper.bedwars.configuration.LevelsConfig;
-import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -15,47 +15,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("WeakerAccess")
 public class PlayerLevel {
 
-    /**
-     * -- GETTER --
-     *  Get player uuid.
-     */
-    @Getter
     private UUID uuid;
-    /**
-     * -- GETTER --
-     *  Get player current level.
-     */
-    @Getter
     private int level;
-    /**
-     * -- GETTER --
-     *  Get the amount of xp required to level up.
-     */
-    @Getter
     private int nextLevelCost;
-    /**
-     * -- GETTER --
-     *  Get player current level display name.
-     */
-    @Getter
     private String levelName;
-    /**
-     * -- GETTER --
-     *  Get player xp.
-     */
-    @Getter
     private int currentXp;
     private String progressBar;
     private String requiredXp;
-    /**
-     * -- GETTER --
-     *  Get player xp already formatted.
-     *  Like: 1000 is 1k
-     */
-    @Getter
     private String formattedCurrentXp;
 
-    // keep trace if current level is different from the one in database
+    // keep trace if current level is different than the one in database
     private boolean modified = false;
 
     private static ConcurrentHashMap<UUID, PlayerLevel> levelByPlayer = new ConcurrentHashMap<>();
@@ -128,10 +97,45 @@ public class PlayerLevel {
     }
 
     /**
+     * Get player current level.
+     */
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * Get the amount of xp required to level up.
+     */
+    public int getNextLevelCost() {
+        return nextLevelCost;
+    }
+
+    /**
      * Get PlayerLevel by player.
      */
     public static PlayerLevel getLevelByPlayer(UUID player) {
         return levelByPlayer.getOrDefault(player, new PlayerLevel(player, 1, 0));
+    }
+
+    /**
+     * Get player uuid.
+     */
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    /**
+     * Get player current level display name.
+     */
+    public String getLevelName() {
+        return levelName;
+    }
+
+    /**
+     * Get player xp.
+     */
+    public int getCurrentXp() {
+        return currentXp;
     }
 
     /**
@@ -186,6 +190,14 @@ public class PlayerLevel {
     }
 
     /**
+     * Get player xp already formatted.
+     * Like: 1000 is 1k
+     */
+    public String getFormattedCurrentXp() {
+        return formattedCurrentXp;
+    }
+
+    /**
      * Used to upgrade player level.
      */
     public void upgradeLevel() {
@@ -230,7 +242,7 @@ public class PlayerLevel {
 
     public void updateDatabase() {
         if (modified) {
-            Bukkit.getScheduler().runTaskAsynchronously(BedWars.plugin, () -> BedWars.getRemoteDatabase().setLevelData(uuid, level, currentXp, LevelsConfig.getLevelName(level), nextLevelCost));
+            Bukkit.getScheduler().runTaskAsynchronously(com.tomkeuper.bedwars.BedWars.plugin, () -> com.tomkeuper.bedwars.BedWars.getRemoteDatabase().setLevelData(uuid, level, currentXp, LevelsConfig.getLevelName(level), nextLevelCost));
             modified = false;
         }
     }
