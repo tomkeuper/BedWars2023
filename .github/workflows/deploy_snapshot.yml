@@ -38,11 +38,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
+      - name: Ensure Gradle wrapper is executable
+        run: |
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Deploy Package
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
           REPO_PASS: ${{ secrets.REPO_PASS }}
-        run: gradle publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
+        run: ./gradlew publish --stacktrace -PdeployUsername="${REPO_USER}" -PdeployPassword="${REPO_PASS}"
   changed-files:
     runs-on: ubuntu-latest
     name: Check if api changed
@@ -92,10 +95,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
+      - name: Ensure Gradle wrapper is executable
+        run: |
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Install Packages
-        run: gradle clean publishToMavenLocal
+        run: ./gradlew clean publishToMavenLocal --no-daemon --stacktrace
       - name: Build JavaDoc
-        run: gradle javadoc
+        run: ./gradlew javadoc --no-daemon --stacktrace
       - name: Create key for Deploy
         run: |
           echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa

@@ -37,5 +37,14 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
+      - name: Ensure Gradle wrapper is executable
+        run: |
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Compiling snapshot with Gradle
-        run: gradle clean build
+        run: ./gradlew clean build --no-daemon --stacktrace
+      - name: Print generated release tag
+        id: print-tag
+        run: |
+         TAG=$(./gradlew printTag --no-daemon --stacktrace | awk '/Generated Tag:/ {print $3}')
+         echo "Generated Tag: $TAG"
+         echo "tag=$TAG" >> $GITHUB_OUTPUT

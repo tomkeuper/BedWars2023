@@ -1,0 +1,17 @@
+dependencies {
+    compileOnly project(':bedwars-api')
+    compileOnly 'org.spigotmc:spigot:1.14.4-R0.1-SNAPSHOT'
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.release = 11
+}
+
+repositories {
+    // Important Repos
+    mavenCentral()
+    // mavenLocal() // was commented out in KTS
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+}
+
+description = 'versionsupport_common'
