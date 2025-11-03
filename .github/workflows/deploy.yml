@@ -24,6 +24,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
+      - name: Ensure Gradle wrapper is executable
+        run: |
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Package with Gradle
         run: |
           ./gradlew clean tag shadowJar -Prelease
@@ -90,6 +93,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
+      - name: Ensure Gradle wrapper is executable
+        run: |
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Deploy Package
         env:
           REPO_USER: ${{ secrets.REPO_USER }}
@@ -125,10 +131,13 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
         with:
           gradle-version: release-candidate
+      - name: Ensure Gradle wrapper is executable
+        run: |
+          if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
       - name: Install Packages
-        run: ./gradlew clean publishToMavenLocal
+        run: ./gradlew clean publishToMavenLocal --no-daemon --stacktrace
       - name: Build JavaDoc
-        run: ./gradlew javadoc
+        run: ./gradlew javadoc --no-daemon --stacktrace
       - name: Create key for Deploy
         run: |
           echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa
