@@ -1,0 +1,8 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+dependencies {
+    implementation 'com.gradleup.shadow:shadow-gradle-plugin:9.1.0'
+    implementation 'io.freefair.gradle:lombok-plugin:8.6'
+}

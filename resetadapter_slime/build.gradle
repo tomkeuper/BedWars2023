@@ -1,0 +1,20 @@
+dependencies {
+    compileOnly project(':bedwars-api')
+    compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
+        exclude group: 'commons-lang', module: 'commons-lang'
+    }
+    compileOnly 'com.grinderwolf:slimeworldmanager-api:2.2.1'
+    compileOnly 'commons-io:commons-io:2.11.0'
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.release = 11
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+    maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // bungeecord-chat (dep of spigot-api)
+    maven { url = uri('https://repo.glaremasters.me/repository/concuncan/') } // slimeworldmanager-api
+}

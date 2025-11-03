@@ -1,0 +1,37 @@
+plugins {
+    id 'java-library'
+    id 'com.gradleup.shadow'
+    id 'io.freefair.lombok'
+}
+
+// Global dependencies
+dependencies {
+    compileOnly 'org.jetbrains:annotations:24.0.1'
+}
+
+// Global repositories for all subprojects using this convention
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+// Tasks configuration
+tasks.withType(Javadoc).configureEach {
+    // This saves a decent bit of processing power on slow machines
+    enabled = false
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    // Default to Java 17 bytecode to align with modern Paper/Spigot versions and dependent modules
+    options.release = 17
+    options.compilerArgs += ['-nowarn', '-Xlint:-unchecked', '-Xlint:-deprecation']
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}

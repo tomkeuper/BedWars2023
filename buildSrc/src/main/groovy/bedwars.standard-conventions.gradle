@@ -1,0 +1,10 @@
+plugins {
+    id 'bedwars.base-conventions'
+    id 'com.gradleup.shadow'
+    id 'maven-publish'
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
