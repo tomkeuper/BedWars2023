@@ -295,6 +295,7 @@ public class Indonesia extends Language {
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&lPERMAINAN SELESAI!");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&lKEMENANGAN!");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "%bw_lang_prefix%%bw_team_color%%bw_team_name% &atelah memenangkan permainan!");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&cTidak ada seorang pun yang memenangkan permainan ini!");
         yml.addDefault(Messages.FORMATTING_EACH_WINNER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_FIRST_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_SECOND_KILLER, "%bw_player%");

@@ -331,6 +331,7 @@ public class Messages {
     public static String GAME_END_THIRD_KILLER = "game-end-third-killer";
     public static String GAME_END_TOP_PLAYER_CHAT = "game-end-top-chat";
     public static String GAME_END_TEAM_WON_CHAT = "game-end-winner-team";
+    public static String GAME_END_NO_WINNERS = "game-end-no-winners";
     public static String XP_REWARD_WIN = "xp-reward-game-win";
     public static String XP_REWARD_PER_TEAMMATE = "xp-reward-per-teammate";
     public static String XP_REWARD_PER_MINUTE = "xp-reward-per-minute";

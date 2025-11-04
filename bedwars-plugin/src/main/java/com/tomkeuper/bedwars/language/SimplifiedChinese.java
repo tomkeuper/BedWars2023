@@ -296,6 +296,7 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&l游戏结束！");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&l胜利！");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "%bw_lang_prefix%%bw_team_color%%bw_team_name%&a赢得了这场游戏！");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&c比赛还没有人获胜！");
         yml.addDefault(Messages.FORMATTING_EACH_WINNER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_FIRST_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_SECOND_KILLER, "%bw_player%");
