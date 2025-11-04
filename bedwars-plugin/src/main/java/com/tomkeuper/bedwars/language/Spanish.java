@@ -221,6 +221,7 @@ public class Spanish extends Language {
                 "&c                          &l3rd Killer &7- %bw_third_format% - %bw_third_kills%", "",
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "%bw_lang_prefix%%bw_team_color%%bw_team_name% &aha ganado el juego!");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&cNadie ha ganado el juego!");
         yml.addDefault(Messages.MEANING_NOBODY, "Nadie");
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER1, "I");
         yml.addDefault(Messages.FORMATTING_GENERATOR_TIER2, "II");
