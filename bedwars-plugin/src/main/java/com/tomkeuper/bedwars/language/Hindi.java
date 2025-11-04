@@ -296,6 +296,7 @@ public class Hindi extends Language {
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&lGAME KHATAM HO GAYA!");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&lVIJAY!");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "%bw_lang_prefix%%bw_team_color%%bw_team_name% &ateam game jeete!");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&cKoee bhee khel nahin jeet paaya hai!");
         yml.addDefault(Messages.FORMATTING_EACH_WINNER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_FIRST_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_SECOND_KILLER, "%bw_player%");

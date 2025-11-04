@@ -297,6 +297,7 @@ public class Persian extends Language {
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&lBAZI TAMOOM SHOD!");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&lBORD!");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "%bw_lang_prefix%%bw_team_color%%bw_team_name% &abarande bazi shodan!");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&cCpehich kes bazi ra nabardeh est!");
         yml.addDefault(Messages.FORMATTING_EACH_WINNER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_FIRST_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_SECOND_KILLER, "%bw_player%");

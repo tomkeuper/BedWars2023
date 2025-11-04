@@ -198,7 +198,7 @@ public class ChatFormatting implements Listener {
         event.getRecipients().clear(); // Used for console message only.
     }
 
-    private static Component parseLegacyMini(String s) {
+    public static Component parseLegacyMini(String s) {
         s = s.replaceAll("§", "&");
         Component deserializedLegacy = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
         String miniSerializedLegacy = MiniMessage.miniMessage().serialize(deserializedLegacy).replace("\\<", "<");

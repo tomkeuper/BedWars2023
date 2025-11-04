@@ -296,6 +296,7 @@ public class Bangla extends Language {
         yml.addDefault(Messages.GAME_END_GAME_OVER_PLAYER_TITLE, "&c&lGAME SHES!");
         yml.addDefault(Messages.GAME_END_VICTORY_PLAYER_TITLE, "&6&lBIJOY!");
         yml.addDefault(Messages.GAME_END_TEAM_WON_CHAT, "%bw_lang_prefix%%bw_team_color%%bw_team_name% &ateam khela jitlen!");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&cNénten wénten pemenang galahé puniki!");
         yml.addDefault(Messages.FORMATTING_EACH_WINNER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_FIRST_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_SECOND_KILLER, "%bw_player%");
