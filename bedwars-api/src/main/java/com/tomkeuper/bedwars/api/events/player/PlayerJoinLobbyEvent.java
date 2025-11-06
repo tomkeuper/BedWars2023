@@ -6,22 +6,11 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-@Getter
 public class PlayerJoinLobbyEvent extends Event {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    /**
-     * -- GETTER --
-     *  Gets the player who joined the arena
-     *
-     */
     private final Player player;
-    /**
-     * -- GETTER --
-     *  Gets the name of the arena
-     *
-     */
     private final String arenaName;
 
     /**
@@ -42,5 +31,13 @@ public class PlayerJoinLobbyEvent extends Event {
 
     public static HandlerList getHandlerList() {
         return HANDLERS;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public String getArenaName() {
+        return arenaName;
     }
 }

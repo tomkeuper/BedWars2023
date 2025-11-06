@@ -28,9 +28,11 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.*;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.*;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.setup.*;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -60,7 +62,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
 
     public MainCommand(String name) {
         super(name);
-        setAliases(Arrays.asList("bedwars", "bedwars2023"));
+        setAliases(Arrays.asList("ArabPixel", "ArabPixel2023"));
         instance = this;
         new CmdJoin(this, "join");
         new CmdLeave(this, "leave");
@@ -133,15 +135,15 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
                     if (SetupSession.isInSetupSession(((Player) s).getUniqueId())) {
                         Bukkit.dispatchCommand(s, getName() + " cmds");
                     } else {
-                        s.sendMessage("");
-                        s.sendMessage("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Admin Commands");
-                        s.sendMessage("");
+                        BedWars.plugin.adventure().sender(s).sendMessage(Component.text(" "));
+                        BedWars.plugin.adventure().sender(s).sendMessage(ChatFormatting.parseLegacyMini("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Admin Commands"));
+                        BedWars.plugin.adventure().sender(s).sendMessage(Component.text(" "));
                         sendSubCommands(s);
                     }
                 } else {
-                    s.sendMessage("");
-                    s.sendMessage("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Console Commands");
-                    s.sendMessage("");
+                    BedWars.plugin.adventure().sender(s).sendMessage(Component.text(" "));
+                    BedWars.plugin.adventure().sender(s).sendMessage(ChatFormatting.parseLegacyMini("§8§l" + dot + " §6" + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + " §7- §c Console Commands"));
+                    BedWars.plugin.adventure().sender(s).sendMessage(Component.text(" "));
                     sendSubCommands(s);
                 }
             } else {
@@ -162,9 +164,11 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
 
         if (!commandFound) {
             if (s instanceof Player) {
-                s.sendMessage(getMsg((Player) s, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
+                BedWars.plugin.adventure().sender(s)
+                        .sendMessage(ChatFormatting.parseLegacyMini(getMsg((Player) s, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS)));
             } else {
-                s.sendMessage(Language.getDefaultLanguage().m(Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
+                BedWars.plugin.adventure().sender(s)
+                        .sendMessage(ChatFormatting.parseLegacyMini(Language.getDefaultLanguage().m(Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS)));
             }
         }
         return true;
@@ -203,7 +207,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
             for (int i = 0; i <= 20; i++) {
                 for (SubCommand sb : getSubCommands()) {
                     if (sb.getPriority() == i && sb.isShow() && sb.canSee(p, BedWars.getAPI())) {
-                        p.sendMessage(sb.getDisplayInfo().getText());
+                        BedWars.plugin.adventure().sender(p).sendMessage(ChatFormatting.parseLegacyMini(sb.getDisplayInfo().getText()));
                     }
                 }
             }

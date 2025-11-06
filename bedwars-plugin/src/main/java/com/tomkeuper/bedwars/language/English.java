@@ -217,11 +217,11 @@ public class English extends Language {
         yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_CHAT, "%bw_lang_prefix%&eThe game starts in &6%bw_time% &eseconds!");
         yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_TITLE, " ");
         yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE, "&a%bw_seconds%");
-        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-5", "&e❺");
-        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-4", "&e❹");
-        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-3", "&c❸");
-        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-2", "&c❷");
-        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-1", "&c❶");
+        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-5", "&e5");
+        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-4", "&e4");
+        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-3", "&c3");
+        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-2", "&c2");
+        yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_SUB_TITLE + "-1", "&c1");
         yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_CANCELLED_TITLE, " ");
         yml.addDefault(Messages.ARENA_STATUS_START_COUNTDOWN_CANCELLED_SUB_TITLE, "&cWaiting for more players..");
         yml.addDefault(Messages.ARENA_STATUS_START_PLAYER_TITLE, "&aGO");
@@ -233,6 +233,12 @@ public class English extends Language {
                 "&e&l   Iron, Gold, Emerald, and Diamond from generators",
                 "&e&l             to access powerful upgrades.", "",
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"));
+        yml.addDefault(Messages.ARENA_STATUS_START_PLAYER_XP, Arrays.asList(
+                "",
+                "§e§l⭐ GOOD LUCK BONUS! §e§l⭐",
+                "§7Type §a!GL §7in chat to receive §6+50 XP",
+                "§7(Once per game)",
+                ""));
         yml.addDefault(Messages.ARENA_JOIN_DENIED_SELECTOR, "%bw_lang_prefix%&cSorry but you can't join this arena at this moment. Use Right-Click to spectate!");
         yml.addDefault(Messages.ARENA_SPECTATE_DENIED_SELECTOR, "%bw_lang_prefix%&cSorry but you can't spectate this arena at this moment. Use Left-Click to join!");
         yml.addDefault(Messages.ARENA_JOIN_DENIED_NO_PROXY, "&cSorry but you must join an arena using BedWarsProxy. \n&eIf you want to setup an arena make sure to give yourself the bw.setup permission so you can join the server directly!");
@@ -385,6 +391,7 @@ public class English extends Language {
         yml.addDefault(Messages.GAME_END_FIRST_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_SECOND_KILLER, "%bw_player%");
         yml.addDefault(Messages.GAME_END_THIRD_KILLER, "%bw_player%");
+        yml.addDefault(Messages.GAME_END_NO_WINNERS, "&cNo winners this time!");
         yml.addDefault(Messages.GAME_END_TOP_PLAYER_CHAT, Arrays.asList(
                 "&a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬",
                 "&f                                   &lBedWars", "", "%bw_winner_format%", "", "",
@@ -414,14 +421,11 @@ public class English extends Language {
         yml.addDefault(Messages.XP_REWARD_BED_DESTROY, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Bed Destroyed).");
         yml.addDefault(Messages.XP_REWARD_REGULAR_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Regular Kill).");
         yml.addDefault(Messages.XP_REWARD_FINAL_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Final Kill).");
-
-// 🩸 New XP reward messages
         yml.addDefault(Messages.XP_REWARD_FIRST_BLOOD, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (First Blood!).");
         yml.addDefault(Messages.XP_REWARD_FIRST_BED, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (First Bed Destroyed!).");
         yml.addDefault(Messages.XP_REWARD_VOID_KILL, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Void Kill).");
         yml.addDefault(Messages.XP_REWARD_KILL_STREAK, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Kill Streak x%bw_streak%!).");
         yml.addDefault(Messages.XP_REWARD_TEAM_ELIMINATED, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Team Eliminated).");
-        yml.addDefault(Messages.XP_REWARD_NO_DEATH, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (No Deaths!).");
         yml.addDefault(Messages.XP_REWARD_FLAWLESS, "%bw_lang_prefix%&6+%bw_xp% BedWars Experience Received (Flawless Victory!).");
 
         yml.addDefault(Messages.XP_REWARD_HALLOWEEN, "%bw_lang_prefix%&6+5 BedWars Experience Received (Halloween).");
@@ -579,7 +583,45 @@ public class English extends Language {
         addContentMessages(yml, "sponge", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Sponge", Arrays.asList("&7Cost: %bw_cost% %bw_currency%", "", "&7Great for soaking up water.",
                 "", "%bw_quick_buy%", "%bw_buy_status%"));
         addContentMessages(yml, "tower", ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "%bw_color%Compact Pop-up Tower", Arrays.asList("&7Cost: %bw_cost% %bw_currency%", "", "&7Place a compact pop-up", "&7tower defense!", "", "%bw_quick_buy%", "%bw_buy_status%"));
-
+        addContentMessages(yml, "potato-bomb", ConfigPath.SHOP_PATH_CATEGORY_UTILITY,
+                "%bw_color%Potato Bomb",
+                Arrays.asList(
+                        "&7Cost: %bw_cost% %bw_currency%",
+                        "",
+                        "&7Tracks the nearest enemy player",
+                        "&7and deals continuous damage until",
+                        "&7they are eliminated!",
+                        "&e⚠ One purchase per match",
+                        "",
+                        "%bw_quick_buy%",
+                        "%bw_buy_status%"
+                ));
+        addContentMessages(yml, "slime-jump", ConfigPath.SHOP_PATH_CATEGORY_UTILITY,
+                "%bw_color%Slime Jump",
+                Arrays.asList(
+                        "&7Cost: %bw_cost% %bw_currency%",
+                        "",
+                        "&7Launch players instantly or",
+                        "&7slowly/high.",
+                        "&e⚠ One use only - disappears after use",
+                        "&eCurrent: %bw_tier%",
+                        "",
+                        "%bw_quick_buy%",
+                        "%bw_buy_status%"
+                ));
+        addContentMessages(yml, "time-freeze-egg", ConfigPath.SHOP_PATH_CATEGORY_UTILITY,
+                "%bw_color%Time Freeze Egg",
+                Arrays.asList(
+                        "&7Cost: %bw_cost% %bw_currency%",
+                        "",
+                        "&7Freezes all enemies in a 3x3",
+                        "&7area for 3 seconds. Except the",
+                        "&7one who threw it.",
+                        "&eDisables rushers or base protection",
+                        "",
+                        "%bw_quick_buy%",
+                        "%bw_buy_status%"
+                ));
         //
         yml.addDefault(Messages.MEANING_NO_TRAP, "No trap!");
         yml.addDefault(Messages.FORMAT_UPGRADE_TRAP_COST, "&7Cost: %bw_currency_color%%bw_cost% %bw_currency%");

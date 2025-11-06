@@ -35,6 +35,7 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.LegacyTeamAssigner;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.listeners.chat.ChatXP;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -173,6 +174,9 @@ public class GameStartingTask implements Runnable, StartingTask {
                 Sounds.playSound(ConfigPath.SOUND_GAME_START, p);
                 BedWars.nms.sendTitle(p, getMsg(p, Messages.ARENA_STATUS_START_PLAYER_TITLE), null, 0, 30, 10);
                 for (String tut : getList(p, Messages.ARENA_STATUS_START_PLAYER_TUTORIAL)) {
+                    p.sendMessage(SupportPAPI.getSupportPAPI().replace(p, tut));
+                }
+                for (String tut : getList(p, Messages.ARENA_STATUS_START_PLAYER_XP)) {
                     p.sendMessage(SupportPAPI.getSupportPAPI().replace(p, tut));
                 }
             }

@@ -2195,7 +2195,14 @@ public class Arena implements IArena {
         } else if (nextEvent == NextEvent.ENDER_DRAGON && getPlayingTask().getDragonSpawnCountdown() == 0) {
             setNextEvent(NextEvent.GAME_END);
         }
-
+        if(!getPlayers().isEmpty())
+            for (Player p : getPlayers()) {
+                p.sendMessage(getMsg(p, Messages.GAME_END_NO_WINNERS));
+            }
+        if(!getSpectators().isEmpty())
+            for (Player p : getSpectators()) {
+                p.sendMessage(getMsg(p, Messages.GAME_END_NO_WINNERS));
+            }
         debug("---");
 
         debug(nextEvent.toString());

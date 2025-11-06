@@ -29,9 +29,6 @@ public class LevelListeners implements Listener {
         instance = this;
     }
 
-    /* --------------------------------------------------------
-     * Player Join / Quit Events
-     * -------------------------------------------------------- */
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerJoin(PlayerJoinEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
@@ -65,10 +62,6 @@ public class LevelListeners implements Listener {
             if (pl != null) pl.updateDatabase();
         });
     }
-
-    /* --------------------------------------------------------
-     * Game End Event
-     * -------------------------------------------------------- */
     @EventHandler
     public void onGameEnd(GameEndEvent e) {
         IArena arena = e.getArena();
@@ -117,8 +110,6 @@ public class LevelListeners implements Listener {
             }
         }
 
-        // No-death bonus (no void deaths)
-
         // Flawless victory
         if (team != null && team.getMembersCache().size() == team.getMembers().size()) {
             int flawlessXP = LevelsConfig.levels.getInt("xp-rewards.flawless-victory");
@@ -148,9 +139,6 @@ public class LevelListeners implements Listener {
         }
     }
 
-    /* --------------------------------------------------------
-     * Bed Destroy Event
-     * -------------------------------------------------------- */
     @EventHandler
     public void onBedBreak(PlayerBedBreakEvent e) {
         Player player = e.getPlayer();
@@ -181,9 +169,6 @@ public class LevelListeners implements Listener {
         stats.bedsDestroyed++;
     }
 
-    /* --------------------------------------------------------
-     * Kill Event
-     * -------------------------------------------------------- */
     @EventHandler
     public void onKill(PlayerKillEvent e) {
         Player killer = e.getKiller();
@@ -236,7 +221,7 @@ public class LevelListeners implements Listener {
                         .addXp(streakXP, PlayerXpGainEvent.XpSource.KILL_STREAK);
                 killer.sendMessage(Language.getMsg(killer, "xp-reward-kill-streak")
                         .replace("{xp}", String.valueOf(streakXP))
-                        .replace("{streak}", String.valueOf(totalKills)));
+                        .replace("%bw_streak%", String.valueOf(totalKills)));
             }
         }
 
@@ -268,7 +253,6 @@ public class LevelListeners implements Listener {
     private static class PlayerGameStats {
         int regularKills = 0;
         int finalKills = 0;
-        int deaths = 0;
         int bedsDestroyed = 0;
     }
 }

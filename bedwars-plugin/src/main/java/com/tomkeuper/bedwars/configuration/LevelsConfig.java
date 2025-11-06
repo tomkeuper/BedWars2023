@@ -71,7 +71,6 @@ public class LevelsConfig extends ConfigManager {
         // === NEW ADVANCED REWARDS ===
         levels.getYml().addDefault("xp-rewards.first-blood", 25);
         levels.getYml().addDefault("xp-rewards.first-bed-destroyed", 20);
-        levels.getYml().addDefault("xp-rewards.no-death-win", 50);
         levels.getYml().addDefault("xp-rewards.flawless-victory", 75);
         levels.getYml().addDefault("xp-rewards.team-eliminated", 30);
         levels.getYml().addDefault("xp-rewards.void-kill", 10);

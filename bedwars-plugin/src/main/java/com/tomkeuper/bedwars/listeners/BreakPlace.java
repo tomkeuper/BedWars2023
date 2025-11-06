@@ -192,8 +192,12 @@ public class BreakPlace implements Listener {
 
                     PopUpTowerPlaceEvent event = new PopUpTowerPlaceEvent(p, loc, block, a1);
                     Bukkit.getPluginManager().callEvent(event);
-                    if (event.isCancelled()) return;
-
+                    if (event.isCancelled()) {
+                        e.setCancelled(true);
+                        return;
+                    }
+                    // Let vanilla placement consume the item, then immediately clear the placed block to avoid leftover chest
+                    e.getBlockPlaced().setType(Material.AIR);
                     double rotation = (p.getLocation().getYaw() - 90.0F) % 360.0F;
                     if (rotation < 0.0D) {
                         rotation += 360.0D;
@@ -246,11 +250,18 @@ public class BreakPlace implements Listener {
 
     @EventHandler
     public void onBlockDrop(ItemSpawnEvent event) {
-        //WHEAT_SEEDS AND BEDs
+        // Cancel drops for certain items we don't want in arenas (beds, seeds, sugar cane)
         IArena arena = Arena.getArenaByIdentifier(event.getEntity().getWorld().getName());
         if (arena == null) return;
         Material material = event.getEntity().getItemStack().getType();
-        if (nms.isBed(material) || material.toString().equalsIgnoreCase("SEEDS") || material.toString().equalsIgnoreCase("WHEAT_SEEDS")) {
+        String matName = material.toString();
+        if (
+                nms.isBed(material)
+                        || matName.equalsIgnoreCase("SEEDS")
+                        || matName.equalsIgnoreCase("WHEAT_SEEDS")
+                        || matName.equalsIgnoreCase("SUGAR_CANE")
+                        || matName.equalsIgnoreCase("SUGAR_CANE_BLOCK")
+        ) {
             event.setCancelled(true);
         }
     }

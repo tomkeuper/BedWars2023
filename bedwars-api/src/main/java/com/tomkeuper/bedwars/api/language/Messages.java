@@ -200,6 +200,10 @@ public class Messages {
     public static String ARENA_STATUS_RESTARTING_NAME = "arena-status-restarting";
     public static String ARENA_STATUS_START_PLAYER_TITLE = "arena-start-title";
     public static String ARENA_STATUS_START_PLAYER_TUTORIAL = "arena-start-tutorial";
+    public static String ARENA_STATUS_START_PLAYER_XP = "arena-start-xp";
+    public static String GAME_END_NO_WINNERS = "game-end-no-winners";
+
+
     public static String ARENA_STATUS_START_COUNTDOWN_CHAT = "arena-start-countdown";
     public static String ARENA_STATUS_START_COUNTDOWN_TITLE = "arena-start-countdown-title";
     public static String ARENA_STATUS_START_COUNTDOWN_SUB_TITLE = "arena-start-countdown-subtitle";

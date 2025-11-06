@@ -359,6 +359,25 @@ public class ShopManager extends ConfigManager implements IShopManager {
             addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "tower", "tier1", "tower", BedWars.getForCurrentVersion("CHEST", "CHEST", "CHEST"),
                     0, 1, "", "", "", false);
 
+            addCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "potato-bomb", 32, "tier1",
+                    BedWars.getForCurrentVersion("POTATO_ITEM", "POTATO_ITEM", "POTATO"), 0, 1, false, 4, "emerald", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "potato-bomb", "tier1", "potato", BedWars.getForCurrentVersion("POTATO_ITEM", "POTATO_ITEM", "POTATO"),
+                    0, 1, "", "", "Potato Bomb", false);
+
+            addCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "slime-jump", 33, "tier1",
+                    BedWars.getForCurrentVersion("SLIME_BLOCK", "SLIME_BLOCK", "SLIME_BLOCK"), 0, 1, false, 0, "iron", false, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "slime-jump", "tier1", "slime", BedWars.getForCurrentVersion("SLIME_BLOCK", "SLIME_BLOCK", "SLIME_BLOCK"),
+                    0, 1, "", "", "Slime Jump", false);
+
+            addCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "slime-jump", 33, "tier2",
+                    BedWars.getForCurrentVersion("SLIME_BLOCK", "SLIME_BLOCK", "SLIME_BLOCK"), 0, 1, true, 3, "gold", false, true);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "slime-jump", "tier2", "slime", BedWars.getForCurrentVersion("SLIME_BLOCK", "SLIME_BLOCK", "SLIME_BLOCK"),
+                    0, 1, "", "", "Slime Jump (Gold 3)", false);
+            addCategoryContentTier(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "time-freeze-egg", 34, "tier1",
+                    BedWars.getForCurrentVersion("EGG", "EGG", "EGG"), 0, 1, false, 8, "gold", false, false);
+            addBuyItem(ConfigPath.SHOP_PATH_CATEGORY_UTILITY, "time-freeze-egg", "tier1", "egg", BedWars.getForCurrentVersion("EGG", "EGG", "EGG"),
+                    0, 1, "", "", "Time Freeze Egg", false);
+
         }
 
         if (getYml().get(ConfigPath.SHOP_PATH_CATEGORY_ARMOR + ConfigPath.SHOP_CATEGORY_CONTENT_PATH + ".diamond-armor") != null) {

@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -56,13 +57,14 @@ public class CmdJoin extends SubCommand {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
         if (args.length < 1) {
-            s.sendMessage(getMsg(p, Messages.COMMAND_JOIN_USAGE));
+            BedWars.plugin.adventure().sender(s)
+                    .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_USAGE)));
             return true;
         }
         if (args[0].equalsIgnoreCase("random")){
             if (!Arena.joinRandomArena(p)){
-                s.sendMessage(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND));
-                Sounds.playSound("join-denied", p);
+                BedWars.plugin.adventure().sender(s)
+                        .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND)));                Sounds.playSound("join-denied", p);
             } else {
                 Sounds.playSound("join-allowed", p);
             }
@@ -70,8 +72,8 @@ public class CmdJoin extends SubCommand {
         }
         if (MainCommand.isArenaGroup(args[0]) || args[0].contains("+")) {
             if (!Arena.joinRandomFromGroup(p, args[0])) {
-                s.sendMessage(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND));
-                Sounds.playSound("join-denied", p);
+                BedWars.plugin.adventure().sender(s)
+                        .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND)));                Sounds.playSound("join-denied", p);
             } else {
                 Sounds.playSound("join-allowed", p);
             }
@@ -100,8 +102,8 @@ public class CmdJoin extends SubCommand {
             }
             return true;
         }
-        s.sendMessage(getMsg(p, Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND).replace("%bw_name%", args[0]));
-
+        BedWars.plugin.adventure().sender(s)
+                .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND).replace("%bw_name%", args[0])));
         return true;
     }
     @Override

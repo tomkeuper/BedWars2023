@@ -30,6 +30,7 @@ import com.tomkeuper.bedwars.api.party.Party;
 import com.tomkeuper.bedwars.api.stats.IPlayerStats;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
+import com.tomkeuper.bedwars.levels.internal.LevelListeners;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

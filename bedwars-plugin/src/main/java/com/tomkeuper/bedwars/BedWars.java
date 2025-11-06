@@ -31,19 +31,10 @@ import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.economy.IEconomy;
+import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.ihologrammanager;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
-import com.tomkeuper.bedwars.arena.Hologram.hologrammanager;
-import com.tomkeuper.bedwars.arena.feature.*;
-import com.tomkeuper.bedwars.commands.bedwars.subcmds.General.*;
-import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Fly;
-import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gmc;
-import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gms;
-import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gmsp;
-import com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.SetEventCommand;
-import com.tomkeuper.bedwars.handlers.items.LobbyItem;
-import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.levels.Level;
 import com.tomkeuper.bedwars.api.party.Party;
@@ -52,29 +43,47 @@ import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.ArenaManager;
+import com.tomkeuper.bedwars.arena.Hologram.hologrammanager;
 import com.tomkeuper.bedwars.arena.VoidChunkGenerator;
 import com.tomkeuper.bedwars.arena.despawnables.TargetListener;
+import com.tomkeuper.bedwars.arena.feature.AntiDropFeature;
+import com.tomkeuper.bedwars.arena.feature.GenSplitFeature;
+import com.tomkeuper.bedwars.arena.feature.ResourceChestFeature;
+import com.tomkeuper.bedwars.arena.feature.SpoilPlayerTNTFeature;
 import com.tomkeuper.bedwars.arena.spectator.SpectatorListeners;
 import com.tomkeuper.bedwars.arena.tasks.OneTick;
 import com.tomkeuper.bedwars.arena.tasks.Refresh;
 import com.tomkeuper.bedwars.arena.upgrades.BaseListener;
 import com.tomkeuper.bedwars.arena.upgrades.HealPoolListener;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.General.SpectateCommand;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.General.StartCommand;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.General.SupportCommand;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Fly;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gmc;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gms;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.Gmsp;
+import com.tomkeuper.bedwars.commands.bedwars.subcmds.sensitive.SetEventCommand;
 import com.tomkeuper.bedwars.commands.leave.LeaveCommand;
 import com.tomkeuper.bedwars.commands.party.PartyCommand;
+import com.tomkeuper.bedwars.commands.play.PlayComamnd;
 import com.tomkeuper.bedwars.commands.rejoin.RejoinCommand;
 import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.*;
+import com.tomkeuper.bedwars.connectionmanager.LoadedUsersCleaner;
+import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
+import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
 import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.halloween.HalloweenSpecial;
-import com.tomkeuper.bedwars.hologram.HologramManager;
+import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.handlers.items.PreGameItem;
 import com.tomkeuper.bedwars.handlers.items.SpectatorItem;
 import com.tomkeuper.bedwars.handlers.main.CommandItemHandler;
 import com.tomkeuper.bedwars.handlers.main.LeaveItemHandler;
 import com.tomkeuper.bedwars.handlers.main.StatsItemHandler;
+import com.tomkeuper.bedwars.hologram.HologramManager;
 import com.tomkeuper.bedwars.language.*;
 import com.tomkeuper.bedwars.levels.internal.InternalLevel;
 import com.tomkeuper.bedwars.levels.internal.LevelListeners;
@@ -83,15 +92,17 @@ import com.tomkeuper.bedwars.listeners.arenaselector.ArenaSelectorListener;
 import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.chat.ChatAFK;
 import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
+import com.tomkeuper.bedwars.listeners.chat.ChatXP;
 import com.tomkeuper.bedwars.listeners.joinhandler.*;
-import com.tomkeuper.bedwars.connectionmanager.LoadedUsersCleaner;
-import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
-import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
 import com.tomkeuper.bedwars.shop.OverrideShop;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
+import com.tomkeuper.bedwars.shop.custom.PotatoBombCleanupListener;
+import com.tomkeuper.bedwars.shop.custom.PotatoBombListener;
+import com.tomkeuper.bedwars.shop.custom.SlimeJump.SlimeJumpListener;
+import com.tomkeuper.bedwars.shop.custom.frezze.TimeFreezeEggListener;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.stats.StatsManager;
@@ -171,7 +182,6 @@ public class BedWars extends JavaPlugin {
 
     public static ArenaManager arenaManager = new ArenaManager();
     public static IAddonManager addonManager = new AddonManager();
-    public static StreamDataConfig StreamDataConfig;
     public static hologrammanager hologrammanager;
 
     // BedWars Items;
@@ -201,7 +211,6 @@ public class BedWars extends JavaPlugin {
             serverSoftwareSupport = false;
             return;
         }
-        StreamDataConfig = new com.tomkeuper.bedwars.configuration.StreamDataConfig(this, "StreamDataConfig", this.getDataFolder().getPath());
         InvsibltyConfig = new InvsibltyConfig(this, "invisibility", this.getDataFolder().getPath());
 
         try {
@@ -392,7 +401,11 @@ public class BedWars extends JavaPlugin {
             registerEvents(new HealPoolListener());
         }
         getServer().getPluginManager().registerEvents(new ArenaListener(this, InvsibltyConfig), this);
-
+        getServer().getPluginManager().registerEvents(new ChatXP(api), this);
+        getServer().getPluginManager().registerEvents(new PotatoBombListener(), BedWars.plugin);
+        getServer().getPluginManager().registerEvents(new PotatoBombCleanupListener(), BedWars.plugin);
+        getServer().getPluginManager().registerEvents(new SlimeJumpListener(), BedWars.plugin);
+        getServer().getPluginManager().registerEvents(new TimeFreezeEggListener(), BedWars.plugin);
         if (getServerType() == ServerType.BUNGEE) {
             if (autoscale) {
                 redisConnection = new RedisConnection();
@@ -760,6 +773,7 @@ public class BedWars extends JavaPlugin {
             this.getLogger().info("");
             this.getLogger().info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         }, 80L);
+
     }
 
     private void registerDelayedCommands() {
@@ -769,6 +783,9 @@ public class BedWars extends JavaPlugin {
         nms.registerCommand("rejoin", new RejoinCommand("rejoin"));
         if (!(nms.isBukkitCommandRegistered("leave") && getServerType() == ServerType.BUNGEE)) {
             nms.registerCommand("leave", new LeaveCommand("leave"));
+        }
+        if (!nms.isBukkitCommandRegistered("play")){
+            nms.registerCommand("play", new PlayComamnd("play"));
         }
         if (getServerType() != ServerType.BUNGEE && config.getBoolean(ConfigPath.GENERAL_ENABLE_PARTY_CMD)) {
             Bukkit.getLogger().info("Registering /party command..");
@@ -803,15 +820,6 @@ public class BedWars extends JavaPlugin {
         }
         if (!nms.isBukkitCommandRegistered("Gmsp")) {
             nms.registerCommand("Gmsp", new Gmsp("Gmsp"));
-        }
-
-
-        // Register streams and link account commands
-        if (!nms.isBukkitCommandRegistered("streams")) {
-            nms.registerCommand("streams", new StreamsCommand("streams"));
-        }
-        if (!nms.isBukkitCommandRegistered("linkaccount")) {
-            nms.registerCommand("linkaccount", new LinkAccountCommand("linkaccount"));
         }
     }
 
