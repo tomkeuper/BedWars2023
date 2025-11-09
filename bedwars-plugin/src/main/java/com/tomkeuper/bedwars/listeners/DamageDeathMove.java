@@ -688,22 +688,6 @@ public class DamageDeathMove implements Listener {
                     if (player.getLocation().getBlockY() <= a.getYKillHeight()) {
                         BedWars.nms.voidKill(player);
                     }
-                    for (ITeam team : a.getTeams()) {
-                        if (!(team instanceof BedWarsTeam)) continue;
-                        IBedHolo bedHolo = ((BedWarsTeam) team).getBedHologram(player);
-                        if (!player.getLocation().getWorld().equals(team.getBed().getWorld())) continue;
-                        if (player.getLocation().distance(team.getBed()) < 4) {
-                            if (team.isMember(player)) {
-                                if (bedHolo == null) continue;
-                                if (bedHolo.getHologram().isShowing()) bedHolo.getHologram().hide();
-                            }
-                        } else {
-                            if (team.isMember(player)) {
-                                if (bedHolo == null) continue;
-                                if (!bedHolo.getHologram().isShowing()) bedHolo.getHologram().show();
-                            }
-                        }
-                    }
                     if (e.getFrom() != e.getTo()) {
                         Arena.afkCheck.remove(player.getUniqueId());
                         BedWars.getAPI().getAFKUtil().setPlayerAFK(player, false);
