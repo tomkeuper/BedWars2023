@@ -478,20 +478,30 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
-        if (ShopHolo.getShopHolograms(p) != null) {
-            List<ITeam> teams = ShopHolo.getShopHolograms(p).stream().map(ShopHolo::getTeam).collect(Collectors.toList());
-            if (teams.contains(this)) {
-                ShopHolo h = ShopHolo.getShopHolograms(p).stream().filter(sh -> sh.getTeam().equals(this)).findFirst().orElse(null);
-                if (h != null) h.update();
-            } else {
+        boolean found = false;
+        for (Language lang : Language.getLanguages()) {
+            String iso = lang.getIso();
+            List<ShopHolo> holograms = arena.getShopHolograms(iso);
+            if (holograms == null) continue;
+            if (holograms.isEmpty()) continue;
+            for (ShopHolo h : holograms) {
+                if (h == null) continue;
+                if (h.getTeam().equals(this)) {
+                    h.update(p);
+                    found = true;
+                }
+            }
+
+            if (!found) {
                 nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
                 nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
             }
         }
 
         for (IGenerator gen : getArena().getOreGenerators()) {
-            IGenHolo h = gen.getPlayerHolograms().get(p);
-            if (h != null) h.update();
+            String iso = Language.getPlayerLanguage(p).getIso();
+            IGenHolo h = gen.getLanguageHolograms().get(iso);
+            if (h != null) h.update(p);
         }
         if (getBedHologram(p) != null) getBedHologram(p).show();
 

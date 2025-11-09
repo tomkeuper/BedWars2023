@@ -30,30 +30,65 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class Hologram implements IHologram {
-    private final Player p;
+
+    private final List<Player> players;
     private List<IHoloLine> lines;
     private final Location loc;
     private double gap = 0.25;
     private boolean showing = true;
 
     public Hologram(Player p, List<IHoloLine> lines, Location loc) {
-        this.p = p;
+        this.players = new ArrayList<>();
+        this.players.add(p);
         this.lines = lines;
         this.loc = loc;
     }
 
-    public Player getPlayer() {
-        return this.p;
-    }
-
     public Hologram(Player p, Location loc, List<String> lines) {
-        this.p = p;
+        this.players = new ArrayList<>();
+        this.players.add(p);
         this.loc = loc;
         this.lines = new ArrayList<>();
 
         for (String line : lines) {
             this.lines.add(new HoloLine(line, this));
         }
+    }
+
+    public Hologram(List<Player> players, List<String> lines, Location loc) {
+        this.players = players;
+        this.lines = new ArrayList<>();
+        this.loc = loc;
+
+        for (String line : lines) {
+            this.lines.add(new HoloLine(line, this));
+        }
+    }
+
+    public Hologram(List<Player> players, Location loc, List<IHoloLine> lines) {
+        this.players = players;
+        this.lines = lines;
+        this.loc = loc;
+    }
+
+    @Override
+    public List<Player> getPlayers() {
+        return this.players;
+    }
+
+    @Override
+    public void addPlayer(Player player) {
+        this.players.add(player);
+        update();
+    }
+
+    @Override
+    public void removePlayer(Player player) {
+        this.players.remove(player);
+        for (IHoloLine line : this.lines) {
+            line.remove(player);
+        }
+        update();
     }
 
     @Override
@@ -90,6 +125,13 @@ public class Hologram implements IHologram {
     public void update() {
         for (IHoloLine line : this.lines) {
             line.update();
+        }
+    }
+
+    @Override
+    public void update(Player player) {
+        for (IHoloLine line : this.lines) {
+            line.update(player);
         }
     }
 

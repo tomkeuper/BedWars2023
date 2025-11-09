@@ -586,21 +586,22 @@ public class DamageDeathMove implements Listener {
         }
 
         if (a.isSpectator(player)) {
+            String iso = Language.getPlayerLanguage(player).getIso();
             e.setRespawnLocation(a.getSpectatorLocation());
             for (IGenerator o : a.getOreGenerators()) {
                 GeneratorHolder holder = o.getHologramHolder();
                 o.updateHolograms(player);
-                if (holder != null) holder.update();
+                if (holder != null) holder.update(player);
             }
             for (ITeam t : a.getTeams()) {
                 for (IGenerator o : t.getGenerators()) {
                     GeneratorHolder holder = o.getHologramHolder();
                     o.updateHolograms(player);
-                    if (holder != null) holder.update();
+                    if (holder != null) holder.update(player);
                 }
             }
-            for (ShopHolo sh : ShopHolo.getShopHolograms(player)) {
-                sh.update();
+            for (ShopHolo sh : a.getShopHolograms(iso)) {
+                sh.update(player);
             }
 
             a.sendSpectatorCommandItems(player);
@@ -649,43 +650,6 @@ public class DamageDeathMove implements Listener {
             IArena a = Arena.getArenaByPlayer(player);
             if (e.getFrom().getChunk() != e.getTo().getChunk()) {
                 /* update armor-stands hidden by nms */
-                for (IGenerator o : a.getOreGenerators()) {
-                    if (o.getType() == GeneratorType.DIAMOND || o.getType() == GeneratorType.EMERALD) {
-                        if (!a.getWorld().getPlayers().contains(player))
-                            return; // prevent location check between different worlds
-                        IGenHolo h = o.getPlayerHolograms().get(player);
-                        if (h != null) {
-                            if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) h.update();
-                        }
-
-                        GeneratorHolder holder = o.getHologramHolder();
-                        if (holder != null) {
-                            if (holder.getArmorStand().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance)
-                                holder.update();
-                        }
-                    }
-                }
-
-                for (ITeam t : a.getTeams()) {
-                    for (IGenerator o : t.getGenerators()) {
-                        IGenHolo h = o.getPlayerHolograms().get(player);
-                        if (h != null) {
-                            if (o.getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance) h.update();
-                        }
-
-                        GeneratorHolder holder = o.getHologramHolder();
-                        if (holder != null) {
-                            if (holder.getArmorStand().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance)
-                                holder.update();
-                        }
-                    }
-                }
-
-                for (ShopHolo sh : ShopHolo.getShopHolograms(player)) {
-                    if (sh.getHologram().getLocation().distance(e.getTo()) > BedWars.hologramUpdateDistance)
-                        sh.update();
-                }
-
                 // hide armor for those with invisibility potions
                 if (!a.getShowTime().isEmpty()) {
                     // generic hide packets

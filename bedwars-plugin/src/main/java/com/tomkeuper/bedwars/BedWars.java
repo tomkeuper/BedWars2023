@@ -34,6 +34,7 @@ import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.arena.feature.ResourceChestFeature;
+import com.tomkeuper.bedwars.arena.tasks.HologramTask;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -454,6 +455,8 @@ public class BedWars extends JavaPlugin {
             //new OneTick().runTaskTimer(this, 120, 1);
             Bukkit.getScheduler().runTaskTimer(this, new OneTick(), 120, 1);
         }
+
+        Bukkit.getScheduler().runTaskLater(this, new HologramTask(), config.getInt(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_HOLOGRAM_UPDATE_RATE));
 
         /* Register NMS entities */
         nms.registerEntities();

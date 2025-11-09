@@ -25,6 +25,7 @@ import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.api.tasks.RestartingTask;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -38,6 +39,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameRestartingTask implements Runnable, RestartingTask {
 
@@ -87,7 +89,15 @@ public class GameRestartingTask implements Runnable, RestartingTask {
                 getArena().removeSpectator(on, BedWars.getServerType() == ServerType.BUNGEE, true);
             }
         } else if (restarting == 4) {
-            ShopHolo.clearForArena(getArena());
+            for (Language lang : Language.getLanguages()) {
+                List<ShopHolo> holos = getArena().getShopHolograms(lang.getIso());
+                for (ShopHolo holo : holos) {
+                    if (holo != null) {
+                        holo.clear();
+                    }
+                }
+            }
+
             for (Entity e : getArena().getWorld().getEntities()) {
                 if (e.getType() == EntityType.PLAYER) {
                     Player p = (Player) e;

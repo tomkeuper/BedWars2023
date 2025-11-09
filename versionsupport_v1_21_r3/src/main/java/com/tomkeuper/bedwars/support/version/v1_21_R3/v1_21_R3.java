@@ -34,6 +34,7 @@ import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
+import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
@@ -213,11 +214,7 @@ public final class v1_21_R3 extends VersionSupport {
             String[] nume = (getList(p, name1) == null || getList(p, name1).isEmpty() ? getList(p, name1.replace(name1.split("\\.")[2], "default")) : getList(p, name1)).toArray(new String[0]);
             IHologram h = createHologram(p, loc, nume);
 
-            new ShopHolo(h, loc, arena, team);
-        }
-
-        for (Player p : players) {
-            ShopHolo.getShopHolograms(p).forEach(ShopHolo::update);
+            new ShopHolo(h, arena, team).update();
         }
     }
 
@@ -753,31 +750,6 @@ public final class v1_21_R3 extends VersionSupport {
     }
 
     @Override
-    public void updatePacketArmorStand(GeneratorHolder generatorHolder) {
-        ArmorStand armorStand = generatorHolder.getArmorStand();
-        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
-        PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
-        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().au().c());
-        Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
-        PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
-
-        for (Player p : armorStand.getWorld().getPlayers()) {
-            sendPackets(p, spawn, metadata, equipment);
-        }
-    }
-
-    @Override
-    public void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, org.bukkit.inventory.ItemStack helmet) {
-        ArmorStand armorStand = generatorHolder.getArmorStand();
-        generatorHolder.setHelmet(helmet, false);
-        Pair<EnumItemSlot, ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(helmet));
-        PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
-        for (Player p : armorStand.getWorld().getPlayers()) {
-            sendPacket(p, equipment);
-        }
-    }
-
-    @Override
     public IHologram createHologram(Player p, Location location, String... lines) {
         List<String> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
@@ -794,6 +766,22 @@ public final class v1_21_R3 extends VersionSupport {
     }
 
     @Override
+    public IHologram createHologram(List<Player> players, Location location, String... lines) {
+        List<String> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
+        return new Hologram(players, linesList, location);
+    }
+
+    @Override
+    public IHologram createHologram(List<Player> players, Location location, IHoloLine... lines) {
+        List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
+        // holograms are reversed, correcting that here
+        Collections.reverse(linesList);
+        return new Hologram(players, location, linesList);
+    }
+
+    @Override
     public IHoloLine lineFromText(String text, @NotNull IHologram hologram) {
         return new HoloLine(text, hologram);
     }
@@ -804,24 +792,48 @@ public final class v1_21_R3 extends VersionSupport {
     }
 
     @Override
-    public void destroyPacketArmorStand(GeneratorHolder generatorHolder) {
+    public void updatePacketArmorStand(GeneratorHolder gh, List<Player> players) {
+        ArmorStand armorStand = gh.getArmorStand();
+        EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
+        PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().au().c());
+        Pair<EnumItemSlot, net.minecraft.world.item.ItemStack> equip = new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(gh.getHelmet()));
+        PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), Collections.singletonList(equip));
+
+        for (Player p : players) {
+            sendPackets(p, spawn, metadata, equipment);
+        }
+    }
+
+    @Override
+    public void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, org.bukkit.inventory.ItemStack helmet, List<Player> players) {
+        ArmorStand armorStand = generatorHolder.getArmorStand();
+        generatorHolder.setHelmet(helmet, false);
+        List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
+        items.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(helmet)));
+        PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), items);
+        for (Player p : players) {
+            sendPacket(p, equipment);
+        }
+    }
+
+    @Override
+    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, List<Player> players) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(armorStand.getEntityId());
-        for (Player p : armorStand.getWorld().getPlayers()) {
+        for (Player p : players) {
             sendPacket(p, destroy);
         }
     }
 
     @Override
-    public ArmorStand createPacketArmorStand(Location loc) {
-        if (loc.getWorld() == null) {
-            throw new RuntimeException("World of a location should not be null.");
-        }
+    public ArmorStand createPacketArmorStand(Location loc, List<Player> players) {
+        if (loc.getWorld() == null) throw new RuntimeException("World of a location should not be null.");
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
 
-        for (Player p : loc.getWorld().getPlayers()) {
+        for (Player p : players) {
             sendPacket(p, spawn);
         }
         return new CraftArmorStand((CraftServer) getPlugin().getServer(), nmsEntity);

@@ -501,19 +501,23 @@ public abstract class VersionSupport {
 
     public abstract void playVillagerEffect(Player player, Location location);
 
-    public abstract void updatePacketArmorStand(GeneratorHolder generatorHolder);
-
-    public abstract void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, ItemStack helmet);
-
     public abstract IHologram createHologram(Player p, Location location, String... lines);
 
     public abstract IHologram createHologram(Player p, Location location, IHoloLine... lines);
+
+    public abstract IHologram createHologram(List<Player> players, Location location, String... lines);
+
+    public abstract IHologram createHologram(List<Player> players, Location location, IHoloLine... lines);
 
     public abstract IHoloLine lineFromText(String text, @Nonnull IHologram hologram);
 
     public abstract IGeneratorAnimation createDefaultGeneratorAnimation(ArmorStand armorStand);
 
-    public abstract void destroyPacketArmorStand(GeneratorHolder generatorHolder);
+    public abstract void destroyPacketArmorStand(GeneratorHolder generatorHolder, List<Player> players);
 
-    public abstract ArmorStand createPacketArmorStand(@Nonnull Location loc);
+    public abstract ArmorStand createPacketArmorStand(@Nonnull Location loc, List<Player> players);
+
+    public abstract void updatePacketArmorStand(GeneratorHolder generatorHolder, List<Player> players);
+
+    public abstract void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, ItemStack helmet, List<Player> players);
 }
