@@ -519,5 +519,5 @@ public abstract class VersionSupport {
 
     public abstract void updatePacketArmorStand(GeneratorHolder generatorHolder, List<Player> players);
 
-    public abstract void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, ItemStack helmet, List<Player> players);
+    public abstract void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder);
 }

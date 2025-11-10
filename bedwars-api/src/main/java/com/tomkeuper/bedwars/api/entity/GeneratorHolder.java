@@ -58,16 +58,8 @@ public class GeneratorHolder {
 
     public void setHelmet(ItemStack helmet, boolean update) {
         this.helmet = helmet;
-        if (update) {
-            api.getVersionSupport().setGeneratorHolderHelmet(this, helmet, armorStand.getLocation().getWorld().getPlayers());
-        }
-    }
-
-    public void setHelmet(ItemStack helmet, boolean update, Player... players) {
-        this.helmet = helmet;
-        if (update) {
-            api.getVersionSupport().setGeneratorHolderHelmet(this, helmet, Arrays.asList(players));
-        }
+        updateEquipment();
+        if (update) update();
     }
 
     public void update() {
@@ -84,5 +76,9 @@ public class GeneratorHolder {
 
     public void destroy() {
         api.getVersionSupport().destroyPacketArmorStand(this, world.getPlayers());
+    }
+    
+    private void updateEquipment() {
+        api.getVersionSupport().updatePacketArmorStandEquipment(this);
     }
 }

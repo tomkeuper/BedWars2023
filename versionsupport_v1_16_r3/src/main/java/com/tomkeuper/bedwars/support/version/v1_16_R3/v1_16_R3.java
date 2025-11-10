@@ -43,6 +43,7 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -828,13 +829,13 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, org.bukkit.inventory.ItemStack helmet, List<Player> players) {
+    public void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
-        generatorHolder.setHelmet(helmet, false);
+        World world = armorStand.getWorld();
         List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(helmet)));
+        items.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(generatorHolder.getHelmet())));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), items);
-        for (Player p : players) {
+        for (Player p : world.getPlayers()) {
             ((CraftPlayer) p).getHandle().playerConnection.sendPacket(equipment);
         }
     }

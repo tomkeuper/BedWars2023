@@ -825,13 +825,13 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public void setGeneratorHolderHelmet(GeneratorHolder generatorHolder, org.bukkit.inventory.ItemStack helmet, List<Player> players) {
+    public void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
-        generatorHolder.setHelmet(helmet, false);
+        World world = armorStand.getWorld();
         List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
-        items.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(helmet)));
+        items.add(new Pair<>(EnumItemSlot.f, CraftItemStack.asNMSCopy(generatorHolder.getHelmet())));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), items);
-        for (Player p : players) {
+        for (Player p : world.getPlayers()) {
             sendPacket(p, equipment);
         }
     }
