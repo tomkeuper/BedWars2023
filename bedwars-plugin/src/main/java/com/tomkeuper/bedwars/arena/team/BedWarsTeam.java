@@ -581,6 +581,7 @@ public class BedWarsTeam implements ITeam {
             line.remove();
         }
 
+        @Override
         public void hide(Player player) {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             hidden = true;
