@@ -8,11 +8,9 @@ preRelease {
     }
 }
 
+
 autobump {
-    // Match explicit tags like [major]/[minor]/[patch] in a case-insensitive way
-    // Also support Conventional Commits: BREAKING CHANGE or "!" for major; feat for minor; fix/perf for patch
-    // Fallback to PATCH when nothing else matches by making patchPattern match anything
-    majorPattern = ~/(?i)(\[major\]|BREAKING CHANGE|!\:)/
-    minorPattern = ~/(?im)(\[minor\]|^feat(\(|:))/
-    patchPattern = ~/(?ism)(\[patch\]|^fix(\(|:)|^perf(\(|:)|^refactor(\(|:)|^chore(\(|:)|^docs(\(|:)|^style(\(|:)|^test(\(|:)|^build(\(|:)|^ci(\(|:)|^revert(\(|:)|^misc(\(|:)|.)/ 
+    majorPattern = ~/\[major\]/
+    minorPattern = ~/\[minor\]/
+    patchPattern = ~/\[patch\]/
 }
