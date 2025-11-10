@@ -91,9 +91,9 @@ public class GameRestartingTask implements Runnable, RestartingTask {
         } else if (restarting == 4) {
             for (Language lang : Language.getLanguages()) {
                 List<ShopHolo> holos = getArena().getShopHolograms(lang.getIso());
-                for (ShopHolo holo : holos) {
-                    if (holo != null) {
-                        holo.clear();
+                if (holos != null) {
+                    for (ShopHolo holo : holos) {
+                        if (holo != null) holo.clear();
                     }
                 }
             }
