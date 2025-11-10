@@ -970,10 +970,8 @@ public class Arena implements IArena {
 
         // Clear shop holo's for leaving players.
         String iso = Language.getPlayerLanguage(p).getIso();
-        List<ShopHolo> holos = shopHolosIso.get(iso);
-        for (ShopHolo holo : holos) {
-            holo.clearForPlayer(p);
-        }
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) holo.clearForPlayer(p);
 
         /**
          * Below is *only* executed if serverType != BUNGEE
@@ -1115,10 +1113,8 @@ public class Arena implements IArena {
 
         // Clear shop holo's for leaving players.
         String iso = Language.getPlayerLanguage(p).getIso();
-        List<ShopHolo> holos = shopHolosIso.get(iso);
-        for (ShopHolo holo : holos) {
-            holo.clearForPlayer(p);
-        }
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) holo.clearForPlayer(p);
 
         for (PotionEffect pf : p.getActivePotionEffects()) {
             p.removePotionEffect(pf.getType());
