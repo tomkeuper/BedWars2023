@@ -87,7 +87,6 @@ public class Hologram implements IHologram {
         for (IHoloLine line : this.lines) {
             line.remove(player);
         }
-        update();
     }
 
     @Override

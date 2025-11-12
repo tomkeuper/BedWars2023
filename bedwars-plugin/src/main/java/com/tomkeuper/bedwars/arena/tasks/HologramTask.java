@@ -32,7 +32,7 @@ public class HologramTask implements Runnable {
             if (world.getPlayers().isEmpty()) continue;
 
             for (Player p : world.getPlayers()) {
-                String iso = Language.getPlayerLanguage(p).getIso();    
+                String iso = Language.getPlayerLanguage(p).getIso();
                 Location pLoc = p.getLocation();
                 List<ShopHolo> shopHolos = a.getShopHolograms(iso);
                 for (ShopHolo shopHolo : shopHolos) {

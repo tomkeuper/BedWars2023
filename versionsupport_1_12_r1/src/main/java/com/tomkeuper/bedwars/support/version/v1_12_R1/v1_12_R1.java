@@ -830,8 +830,11 @@ public class v1_12_R1 extends VersionSupport {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         World world = armorStand.getWorld();
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(generatorHolder.getHelmet()));
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().getDataWatcher(), true);
         for (Player p : world.getPlayers()) {
-            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(equipment);
+            PlayerConnection pc = ((CraftPlayer) p).getHandle().playerConnection;
+            pc.sendPacket(equipment);
+            pc.sendPacket(metadata);
         }
     }
 

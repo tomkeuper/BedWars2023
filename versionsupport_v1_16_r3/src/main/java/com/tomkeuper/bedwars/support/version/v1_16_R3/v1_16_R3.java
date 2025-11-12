@@ -835,8 +835,11 @@ public class v1_16_R3 extends VersionSupport {
         List<Pair<EnumItemSlot, ItemStack>> items = new ArrayList<>();
         items.add(new Pair<>(EnumItemSlot.HEAD, CraftItemStack.asNMSCopy(generatorHolder.getHelmet())));
         PacketPlayOutEntityEquipment equipment = new PacketPlayOutEntityEquipment(armorStand.getEntityId(), items);
+        PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().getDataWatcher(), true);
         for (Player p : world.getPlayers()) {
-            ((CraftPlayer) p).getHandle().playerConnection.sendPacket(equipment);
+            PlayerConnection pc = ((CraftPlayer) p).getHandle().playerConnection;
+            pc.sendPacket(equipment);
+            pc.sendPacket(metadata);
         }
     }
 
