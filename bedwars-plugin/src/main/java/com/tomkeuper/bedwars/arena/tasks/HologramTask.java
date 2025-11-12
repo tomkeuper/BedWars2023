@@ -9,6 +9,7 @@ import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.IBedHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -39,22 +40,20 @@ public class HologramTask implements Runnable {
                     Location holoLoc = hologram.getLocation();
                     double distance = pLoc.distance(holoLoc);
                     if (distance <= BedWars.hologramUpdateDistance) continue;
-                    hologram.getLines().forEach(line -> line.reveal(p));
+                    shopHolo.update(p);
                 }
             }
 
             for (ITeam team : a.getTeams()) {
                 if (!(team instanceof BedWarsTeam)) continue;
-                for (Language lang : Language.getLanguages()) {
-                    String iso = lang.getIso();
+                for (Player p : world.getPlayers()) {
+                    String iso = Language.getPlayerLanguage(p).getIso();
                     IBedHolo bedHolo = ((BedWarsTeam) team).getBedHologram(iso);
                     Location bedLoc = bedHolo.getHologram().getLocation();
-                    for (Player p : world.getPlayers()) {
-                        Location pLoc = p.getLocation();
-                        double distance = pLoc.distance(bedLoc);
-                        if (distance <= BedWars.hologramUpdateDistance) continue;
-                        bedHolo.update(p);
-                    }
+                    Location pLoc = p.getLocation();
+                    double distance = pLoc.distance(bedLoc);
+                    if (distance <= BedWars.hologramUpdateDistance) continue;
+                    bedHolo.update(p);
                 }
             }
 
@@ -66,11 +65,12 @@ public class HologramTask implements Runnable {
                 for (Player p : world.getPlayers()) {
                     String iso = Language.getPlayerLanguage(p).getIso();
                     IGenHolo holo = generator.getLanguageHolograms().get(iso);
+                    GeneratorHolder holder = generator.getHologramHolder();
                     Location pLoc = p.getLocation();
                     double distance = pLoc.distance(genLoc);
                     if (distance <= BedWars.hologramUpdateDistance) continue;
                     holo.update(p);
-                    generator.getHologramHolder().update(p);
+                    holder.update(p);
                 }
             }
         }
