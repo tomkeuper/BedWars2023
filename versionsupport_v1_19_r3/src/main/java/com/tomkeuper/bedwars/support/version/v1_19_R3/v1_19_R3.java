@@ -41,6 +41,7 @@ import com.tomkeuper.bedwars.support.version.v1_19_R3.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_19_R3.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleParamRedstone;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.game.*;
@@ -48,6 +49,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.sounds.SoundCategory;
+import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
@@ -67,6 +70,7 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_19_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.*;
 import org.bukkit.craftbukkit.v1_19_R3.inventory.CraftItemStack;
@@ -174,6 +178,18 @@ public class v1_19_R3 extends VersionSupport {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         ((CraftPlayer) p).getHandle().b.a(packet);
 
+    }
+
+    @Override
+    public void fakeDamagePlayer(Player e) {
+        Location loc = e.getLocation();
+        SoundEffect hurtSound = CraftSound.getSoundEffect(Sound.ENTITY_PLAYER_HURT);
+        PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
+        Holder<SoundEffect> hurtSoundHolder = new Holder.a<>(hurtSound);
+        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSoundHolder, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F, 0);
+        PlayerConnection pc = ((CraftPlayer) e).getHandle().b;
+        pc.a(anim);
+        pc.a(sound);
     }
 
     @Override

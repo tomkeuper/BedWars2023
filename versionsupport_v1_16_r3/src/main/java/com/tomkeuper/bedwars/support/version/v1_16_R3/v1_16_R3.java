@@ -42,6 +42,7 @@ import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -50,6 +51,7 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.*;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
@@ -137,6 +139,17 @@ public class v1_16_R3 extends VersionSupport {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
 
+    }
+
+    @Override
+    public void fakeDamagePlayer(Player e) {
+        Location loc = e.getLocation();
+        SoundEffect hurtSound = CraftSound.getSoundEffect(Sound.ENTITY_PLAYER_HURT);
+        PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
+        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.PLAYERS, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
+        PlayerConnection pc = ((CraftPlayer) e).getHandle().playerConnection;
+        pc.sendPacket(anim);
+        pc.sendPacket(sound);
     }
 
     @Override

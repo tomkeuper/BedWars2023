@@ -105,6 +105,11 @@ public abstract class VersionSupport {
     public abstract void hideEntity(Entity e, Player p);
 
     /**
+     * Apply fake damage to a player (red flash and hurt sound)
+     */
+    public abstract void fakeDamagePlayer(Player e);
+
+    /**
      * Check if item-stack is armor
      */
     public abstract boolean isArmor(ItemStack itemStack);

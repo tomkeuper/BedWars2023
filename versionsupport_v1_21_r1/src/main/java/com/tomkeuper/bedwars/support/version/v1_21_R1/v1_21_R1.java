@@ -44,6 +44,7 @@ import com.tomkeuper.bedwars.support.version.v1_21_R1.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_21_R1.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleParamRedstone;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.Packet;
@@ -52,6 +53,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.sounds.SoundCategory;
+import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
@@ -70,6 +73,7 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_21_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R1.entity.*;
 import org.bukkit.craftbukkit.v1_21_R1.inventory.CraftItemStack;
@@ -139,6 +143,15 @@ public final class v1_21_R1 extends VersionSupport {
     public void hideEntity(Entity e, Player p) {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         sendPacket(p, packet);
+    }
+
+    @Override
+    public void fakeDamagePlayer(Player e) {
+        Location loc = e.getLocation();
+        Holder<SoundEffect> hurtSound = CraftSound.bukkitToMinecraftHolder(Sound.ENTITY_PLAYER_HURT);
+        PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
+        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F, 0);
+        sendPackets(e, anim, sound);
     }
 
     @Override

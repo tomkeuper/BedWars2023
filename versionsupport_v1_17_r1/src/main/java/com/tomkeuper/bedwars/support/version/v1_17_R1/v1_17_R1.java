@@ -51,6 +51,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
+import net.minecraft.sounds.SoundCategory;
+import net.minecraft.sounds.SoundEffect;
 import net.minecraft.util.datafix.DataConverterRegistry;
 import net.minecraft.util.datafix.fixes.DataConverterTypes;
 import net.minecraft.world.damagesource.DamageSource;
@@ -66,10 +68,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBase;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -78,6 +77,7 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_17_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_17_R1.CraftSound;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.*;
 import org.bukkit.craftbukkit.v1_17_R1.inventory.CraftItemStack;
@@ -163,6 +163,17 @@ public class v1_17_R1 extends VersionSupport {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         ((CraftPlayer) p).getHandle().b.sendPacket(packet);
 
+    }
+
+    @Override
+    public void fakeDamagePlayer(Player e) {
+        Location loc = e.getLocation();
+        SoundEffect hurtSound = CraftSound.getSoundEffect(Sound.ENTITY_PLAYER_HURT);
+        PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
+        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
+        PlayerConnection pc = ((CraftPlayer) e).getHandle().b;
+        pc.sendPacket(anim);
+        pc.sendPacket(sound);
     }
 
     @Override
