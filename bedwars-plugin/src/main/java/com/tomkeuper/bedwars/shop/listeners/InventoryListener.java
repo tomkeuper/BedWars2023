@@ -194,48 +194,6 @@ public class InventoryListener implements Listener {
         }
     }
 
-    private boolean checkShops(InventoryClickEvent e, Player p, IArena a, ShopCache shopCache, IPlayerQuickBuyCache cache, boolean overrides) {
-        for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
-            // Check if the shop name starts with the group name
-            if (overrides && !sc.getName().toLowerCase().startsWith(a.getGroup().toLowerCase())) continue;
-
-            if (ShopManager.shop.getQuickBuyButton().getSlot() == e.getSlot()) {
-                ShopManager.shop.open(p, cache, false);
-                return true;
-            }
-            if (e.getSlot() == sc.getSlot()) {
-                sc.open(p, ShopManager.shop, shopCache);
-                return true;
-            }
-            if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
-            for (ICategoryContent cc : sc.getCategoryContentList()) {
-                // If we don't check this, the shop will be displayed in all arenas
-                // Default category is already checked and thus does not need to be added here
-                if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
-                    if (checkSlot(e, p, shopCache, cache, cc, sc)) return true;
-                }
-            }
-            for (ICategoryContent cc : sc.getCategoryContentList()) {
-                if (checkSlot(e, p, shopCache, cache, cc, sc)) return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkSlot(InventoryClickEvent e, Player p, ShopCache shopCache, IPlayerQuickBuyCache cache, ICategoryContent cc, IShopCategory sc) {
-        if (cc.getSlot() == e.getSlot()) {
-            if (e.isShiftClick()) {
-                if (cache.hasCategoryContent(cc)) return true;
-                new QuickBuyAdd(p, cc);
-                return true;
-            }
-            if (cc.execute(p, shopCache, cc.getSlot())){
-                sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
-            }
-            return true;
-        }
-        return false;
-    }
 
     @EventHandler
     public void onUpgradableMove(InventoryClickEvent e) {

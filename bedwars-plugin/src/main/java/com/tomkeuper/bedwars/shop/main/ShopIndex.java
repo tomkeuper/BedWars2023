@@ -48,7 +48,6 @@ public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
 
     // Caches pre-resolved categories per arena to avoid runtime priority scans
     private final java.util.concurrent.ConcurrentHashMap<IArena, Map<Integer, IShopCategory>> resolvedBySlot = new java.util.concurrent.ConcurrentHashMap<>();
-    private final java.util.concurrent.ConcurrentHashMap<IArena, Map<String, Integer>> quickBuyPriorityByBase = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static List<UUID> indexViewers = new ArrayList<>();
 
@@ -177,7 +176,6 @@ public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
 
         Map<Integer, IShopCategory> chosenBySlot = new HashMap<>();
         Map<Integer, Integer> priorityBySlot = new HashMap<>();
-        Map<String, Integer> baseMaxPriority = new HashMap<>();
 
         for (IShopCategory sc : getCategoryList()) {
             String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
@@ -199,14 +197,9 @@ public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
                 chosenBySlot.put(slot, sc);
             }
 
-            // quick buy base category priority
-            String base = stripBaseCategory(n);
-            int existing = baseMaxPriority.getOrDefault(base, 0);
-            if (pr > existing) baseMaxPriority.put(base, pr);
         }
 
         resolvedBySlot.put(arena, chosenBySlot);
-        quickBuyPriorityByBase.put(arena, baseMaxPriority);
     }
 
     public Map<Integer, IShopCategory> getResolvedBySlot(IArena arena) {
@@ -214,26 +207,13 @@ public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
         return m == null ? java.util.Collections.emptyMap() : new HashMap<>(m);
     }
 
-    public Map<String, Integer> getQuickBuyPriority(IArena arena) {
-        Map<String, Integer> m = quickBuyPriorityByBase.get(arena);
-        return m == null ? java.util.Collections.emptyMap() : new HashMap<>(m);
-    }
-
     public void clearArenaCache(IArena arena) {
         if (arena == null) return;
         resolvedBySlot.remove(arena);
-        quickBuyPriorityByBase.remove(arena);
     }
 
     public void clearAllCaches() {
         resolvedBySlot.clear();
-        quickBuyPriorityByBase.clear();
-    }
-
-    private String stripBaseCategory(String name) {
-        if (name == null) return "";
-        int idx = name.indexOf('-');
-        return (idx >= 0 && idx + 1 < name.length()) ? name.substring(idx + 1) : name;
     }
 
     public static List<UUID> getIndexViewers() {
