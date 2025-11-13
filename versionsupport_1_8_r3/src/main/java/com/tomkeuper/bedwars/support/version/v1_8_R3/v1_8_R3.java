@@ -41,6 +41,7 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.CraftSound;
@@ -143,12 +144,15 @@ public class v1_8_R3 extends VersionSupport {
     @Override
     public void fakeDamagePlayer(Player e) {
         Location loc = e.getLocation();
+        World world = loc.getWorld();
         Sound hurtSound = Sound.HURT_FLESH;
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
         PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(hurtSound), loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
-        PlayerConnection pc = ((CraftPlayer) e).getHandle().playerConnection;
-        pc.sendPacket(anim);
-        pc.sendPacket(sound);
+       for (Player player : world.getPlayers()) {
+           PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+           connection.sendPacket(anim);
+           connection.sendPacket(sound);
+       }
     }
 
     @Override

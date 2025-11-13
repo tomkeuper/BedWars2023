@@ -147,7 +147,9 @@ public final class v1_21_R3 extends VersionSupport {
         Holder<SoundEffect> hurtSound = CraftSound.bukkitToMinecraftHolder(Sound.ENTITY_PLAYER_HURT);
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
         PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F, 0);
-        sendPackets(e, anim, sound);
+        for (Player p : e.getWorld().getPlayers()) {
+            sendPackets(p, anim, sound);
+        }
     }
 
     @Override

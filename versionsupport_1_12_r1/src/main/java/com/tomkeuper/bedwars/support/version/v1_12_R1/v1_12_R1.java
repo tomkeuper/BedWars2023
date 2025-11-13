@@ -158,9 +158,11 @@ public class v1_12_R1 extends VersionSupport {
         SoundEffect hurtSound = CraftSound.getSoundEffect(CraftSound.getSound(Sound.ENTITY_PLAYER_HURT));
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
         PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.PLAYERS, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
-        PlayerConnection pc = ((CraftPlayer) e).getHandle().playerConnection;
-        pc.sendPacket(anim);
-        pc.sendPacket(sound);
+        for (Player p : e.getWorld().getPlayers()) {
+            PlayerConnection pc = ((CraftPlayer) p).getHandle().playerConnection;
+            pc.sendPacket(anim);
+            pc.sendPacket(sound);
+        }
     }
 
     @Override

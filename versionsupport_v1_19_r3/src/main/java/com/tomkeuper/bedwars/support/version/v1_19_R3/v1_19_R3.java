@@ -187,9 +187,11 @@ public class v1_19_R3 extends VersionSupport {
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
         Holder<SoundEffect> hurtSoundHolder = new Holder.a<>(hurtSound);
         PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSoundHolder, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F, 0);
-        PlayerConnection pc = ((CraftPlayer) e).getHandle().b;
-        pc.a(anim);
-        pc.a(sound);
+        for (Player p : e.getWorld().getPlayers()) {
+            PlayerConnection pc = ((CraftPlayer) p).getHandle().b;
+            pc.a(anim);
+            pc.a(sound);
+        }
     }
 
     @Override
