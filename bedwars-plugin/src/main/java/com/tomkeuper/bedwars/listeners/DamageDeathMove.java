@@ -319,6 +319,7 @@ public class DamageDeathMove implements Listener {
                 }
 
                 BedWars.nms.fakeDamagePlayer(victim);
+                victim.setHealth(victim.getMaxHealth());
                 if (victimsTeamBedDestroyed) {
                     arena.addSpectator(player, true, null);
                     victimsTeam.getMembers().remove(player);
@@ -339,6 +340,7 @@ public class DamageDeathMove implements Listener {
                         arena.startReSpawnSession(player, respawnTime);
                     } else victimsTeam.respawnMember(player);
                 }
+
 
                 // send respawn packet
                 // Needs a delay to prevent hit delay but after respawning (mainly caused by projectile hits)
