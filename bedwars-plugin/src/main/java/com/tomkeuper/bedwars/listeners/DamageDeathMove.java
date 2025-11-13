@@ -202,7 +202,7 @@ public class DamageDeathMove implements Listener {
                             }
                         } else if (bedDestroyer != null) {
                             killer = bedDestroyer;
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+                            if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
                         }
                         if (killer == null)
                             message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
