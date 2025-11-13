@@ -116,7 +116,7 @@ public class BedWarsTeam implements ITeam {
 
     // Used for show/ hide bed hologram
     @Getter
-    private final HashMap<UUID, BedHolo> beds = new HashMap<>();
+    private final HashMap<String, BedHolo> beds = new HashMap<>();
 
     // Queued traps
     private final LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
@@ -165,13 +165,15 @@ public class BedWarsTeam implements ITeam {
         if (players == null) return;
         for (Player p : players) {
             if (p == null) continue;
+            String iso = Language.getPlayerLanguage(p).getIso();
             members.removeIf(player -> player.getUniqueId().equals(p.getUniqueId()));
             members.add(p);
 
             membersCache.removeIf(player -> player.getUniqueId().equals(p.getUniqueId()));
             membersCache.add(p);
-
-            new BedHolo(p, getArena());
+            BedHolo holo = beds.get(iso);
+            if (holo == null) holo = new BedHolo(iso, arena, this);
+            else holo.show();
         }
     }
 
@@ -478,22 +480,34 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
-        if (ShopHolo.getShopHolograms(p) != null) {
-            List<ITeam> teams = ShopHolo.getShopHolograms(p).stream().map(ShopHolo::getTeam).collect(Collectors.toList());
-            if (teams.contains(this)) {
-                ShopHolo h = ShopHolo.getShopHolograms(p).stream().filter(sh -> sh.getTeam().equals(this)).findFirst().orElse(null);
-                if (h != null) h.update();
-            } else {
+        boolean found = false;
+        for (Language lang : Language.getLanguages()) {
+            String iso = lang.getIso();
+            List<ShopHolo> holograms = arena.getShopHolograms(iso);
+            if (holograms == null) continue;
+            if (holograms.isEmpty()) continue;
+            for (ShopHolo h : holograms) {
+                if (h == null) continue;
+                if (h.getTeam().equals(this)) {
+                    h.update(p);
+                    found = true;
+                }
+            }
+
+            if (!found) {
                 nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
                 nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
             }
         }
 
         for (IGenerator gen : getArena().getOreGenerators()) {
-            IGenHolo h = gen.getPlayerHolograms().get(p);
-            if (h != null) h.update();
+            String iso = Language.getPlayerLanguage(p).getIso();
+            IGenHolo h = gen.getLanguageHolograms().get(iso);
+            if (h != null) h.update(p);
         }
-        if (getBedHologram(p) != null) getBedHologram(p).show();
+        String iso = Language.getPlayerLanguage(p).getIso();
+        IBedHolo bedHolo = getBedHologram(iso);
+        if (bedHolo != null) bedHolo.show(p);
 
         Sounds.playSound("player-re-spawn", p);
     }
@@ -529,33 +543,36 @@ public class BedWarsTeam implements ITeam {
      */
     @SuppressWarnings("WeakerAccess")
     public class BedHolo implements IBedHolo {
+
+        private final String iso;
+
+        private final ITeam team;
         private IHologram h;
         private IHoloLine line;
-        private final UUID p;
         @Getter
         private Arena arena;
         @Getter
         private boolean hidden = false;
 
-        public BedHolo(@NotNull Player p, Arena arena) {
-            this.p = p.getUniqueId();
+        public BedHolo(@NotNull String iso, Arena arena, ITeam team) {
+            this.iso = iso;
             this.arena = arena;
+            this.team = team;
             create();
         }
 
         public void create() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             // Note: Getting location after retrieving the block will make sure the hologram location will always be relative to the block instead of the actual config entry.
-            h = BedWars.hologramManager.createHologram(Bukkit.getPlayer(p), getBed().getBlock().getLocation().clone().add(0.5, -0.3, 0.5), "");
+            h = BedWars.hologramManager.createHologram(arena.getPlayers(), getBed().getBlock().getLocation().clone().add(0.5, -0.3, 0.5), "");
             line = h.getLine(0);
 
+            Language lang = Language.getLang(iso);
             if (isBedDestroyed()) {
-                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
+                line.setText(lang.m(Messages.BED_HOLOGRAM_DESTROYED));
                 bedDestroyed = true;
-            } else {
-                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
-            }
-            beds.put(p, this);
+            } else line.setText(lang.m(Messages.BED_HOLOGRAM_DEFEND));
+            beds.put(iso, this);
         }
 
         public void hide() {
@@ -564,21 +581,54 @@ public class BedWarsTeam implements ITeam {
             line.remove();
         }
 
+        @Override
+        public void hide(Player player) {
+            if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
+            hidden = true;
+            line.remove(player);
+        }
+
         public void destroy() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             h.remove();
-            beds.remove(p);
+            beds.remove(iso);
+        }
+
+        @Override
+        public void remove(Player player) {
+            if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
+            h.removePlayer(player);
         }
 
         public void show() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             hidden = false;
             line.reveal();
-            if (isBedDestroyed()) {
-                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DESTROYED));
-            } else {
-                line.setText(getMsg(Bukkit.getPlayer(p), Messages.BED_HOLOGRAM_DEFEND));
-            }
+
+            Language lang = Language.getLang(iso);
+            if (isBedDestroyed()) line.setText(lang.m(Messages.BED_HOLOGRAM_DESTROYED));
+            else line.setText(lang.m(Messages.BED_HOLOGRAM_DEFEND));
+        }
+
+        @Override
+        public void show(Player player) {
+            if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
+            hidden = false;
+            line.reveal(player);
+
+            Language lang = Language.getLang(iso);
+            if (isBedDestroyed()) line.setText(lang.m(Messages.BED_HOLOGRAM_DESTROYED));
+            else line.setText(lang.m(Messages.BED_HOLOGRAM_DEFEND));
+        }
+
+        @Override
+        public void update() {
+            h.update();
+        }
+
+        @Override
+        public void update(Player player) {
+            h.update(player);
         }
 
         public IHologram getHologram() {
@@ -586,7 +636,7 @@ public class BedWarsTeam implements ITeam {
         }
 
         public boolean isBedDestroyed()  {
-            return arena.getTeam(Bukkit.getPlayer(p)).isBedDestroyed();
+            return team.isBedDestroyed();
         }
 
     }
@@ -731,8 +781,8 @@ public class BedWarsTeam implements ITeam {
     }
 
     @Override
-    public BedHolo getBedHologram(@NotNull Player p) {
-        return beds.get(p.getUniqueId());
+    public BedHolo getBedHologram(@NotNull String iso) {
+        return beds.get(iso);
     }
 
     /**
@@ -811,7 +861,15 @@ public class BedWarsTeam implements ITeam {
 
     @Override
     public void destroyBedHolo(@NotNull Player player) {
-        if (getBeds().get(player.getUniqueId()) != null) getBeds().get(player.getUniqueId()).destroy();
+        String iso = Language.getPlayerLanguage(player).getIso();
+        IBedHolo bedHolo = getBedHologram(iso);
+        if (bedHolo != null) bedHolo.remove(player);
+    }
+
+    @Override
+    public void destroyBedHolo(String iso) {
+        IBedHolo bedHolo = getBedHologram(iso);
+        if (bedHolo != null) bedHolo.destroy();
     }
 
     @Override

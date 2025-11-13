@@ -184,6 +184,9 @@ public class Arena implements IArena {
     /* ARENA GENERATORS */
     private List<IGenerator> oreGenerators = new ArrayList<>();
 
+    /* SHOP HOLOGRAMS */
+    private HashMap<String, List<ShopHolo>> shopHolosIso = new HashMap<>();
+
     private PerMinuteTask perMinuteTask;
 
     private MoneyPerMinuteTask moneyperMinuteTask;
@@ -966,7 +969,9 @@ public class Arena implements IArena {
         }
 
         // Clear shop holo's for leaving players.
-        ShopHolo.clearForPlayer(p);
+        String iso = Language.getPlayerLanguage(p).getIso();
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) holo.clearForPlayer(p);
 
         /**
          * Below is *only* executed if serverType != BUNGEE
@@ -1107,7 +1112,9 @@ public class Arena implements IArena {
         }
 
         // Clear shop holo's for leaving players.
-        ShopHolo.clearForPlayer(p);
+        String iso = Language.getPlayerLanguage(p).getIso();
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) holo.clearForPlayer(p);
 
         for (PotionEffect pf : p.getActivePotionEffects()) {
             p.removePotionEffect(pf.getType());
@@ -2322,6 +2329,11 @@ public class Arena implements IArena {
      */
     public List<IGenerator> getOreGenerators() {
         return oreGenerators;
+    }
+
+    @Override
+    public List<ShopHolo> getShopHolograms(String iso) {
+        return shopHolosIso.get(iso);
     }
 
     /**

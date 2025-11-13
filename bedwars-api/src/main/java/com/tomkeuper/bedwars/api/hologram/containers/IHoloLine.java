@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars.api.hologram.containers;
 
+import org.bukkit.entity.Player;
+
 public interface IHoloLine {
 
     /**
@@ -39,6 +41,11 @@ public interface IHoloLine {
      */
     void update();
 
+    /**
+     * Update the hologram line for a player.
+     * @param player - the player
+     */
+    void update(Player player);
 
     /**
      * Check if the hologram line is destroyed.
@@ -72,10 +79,23 @@ public interface IHoloLine {
     void reveal();
 
     /**
+     * Reveals the hologram line for a player if the line has disappeared
+     * been removed by the server or another plugin
+     * @param player - the player
+     */
+    void reveal(Player player);
+
+    /**
      * Remove the hologram line but keeping the line object
      * in its bounded hologram
      */
     void remove();
+
+    /**
+     * Remove the hologram line for a player but keeping the line object
+     * @param player - the player
+     */
+    void remove(Player player);
 
     /**
      * Destroy the hologram line and also remove it

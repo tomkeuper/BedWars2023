@@ -32,6 +32,7 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_19_R3.util.CraftChatMessage;
+import org.bukkit.entity.Player;
 
 public class HoloLine implements IHoloLine {
     private String text;
@@ -43,10 +44,10 @@ public class HoloLine implements IHoloLine {
         this.text = text;
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
-        entity.b(CraftChatMessage.fromStringOrNull(text));
-        entity.n(true);
-        entity.j(true);
-        entity.ae = true;
+        entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
+        entity.n(true); // setCustomNameVisible
+        entity.j(true); // setInvisible
+        entity.ae = true; // noPhysics
         Location loc = hologram.getLocation();
         entity.p(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
 
@@ -54,10 +55,12 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
-        connection.a(packet);
-        connection.a(metadataPacket);
-        connection.a(teleportPacket);
+        for (var player : hologram.getPlayers()) {
+            PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+            pc.a(packet);
+            pc.a(metadataPacket);
+            pc.a(teleportPacket);
+        }
     }
 
     @Override
@@ -100,9 +103,26 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        PlayerConnection connection = ((CraftPlayer) hologram.getPlayer()).getHandle().b;
-        connection.a(metadataPacket);
-        connection.a(teleportPacket);
+        for (var player : hologram.getPlayers()) {
+            PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+            pc.a(metadataPacket);
+            pc.a(teleportPacket);
+        }
+    }
+
+    @Override
+    public void update(Player player) {
+        entity.b(CraftChatMessage.fromStringOrNull(text));
+        int position = hologram.getLines().indexOf(this);
+        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        if (isDestroyed()) return;
+
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.af(), entity.aj().c());
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+
+        PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+        pc.a(metadataPacket);
+        pc.a(teleportPacket);
     }
 
     @Override
@@ -110,16 +130,41 @@ public class HoloLine implements IHoloLine {
         destroyed = false;
 
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
+        for (var player : hologram.getPlayers()) {
+            PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+            pc.a(packet);
+        }
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
     }
 
     @Override
+    public void reveal(Player player) {
+        destroyed = false;
+
+        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
+        PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+        pc.a(packet);
+
+        if (!hologram.getLines().contains(this)) hologram.addLine(this);
+        hologram.update(player);
+    }
+
+    @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.af());
-        ((CraftPlayer) hologram.getPlayer()).getHandle().b.a(packet);
+        for (var player : hologram.getPlayers()) {
+            PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+            pc.a(packet);
+        }
+    }
+
+    @Override
+    public void remove(Player player) {
+        PlayerConnection pc = ((CraftPlayer) player).getHandle().b;
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.af());
+        pc.a(packet);
     }
 
     @Override
