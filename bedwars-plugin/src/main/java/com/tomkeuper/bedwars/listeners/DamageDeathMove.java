@@ -252,7 +252,7 @@ public class DamageDeathMove implements Listener {
                             }
                         } else if (bedDestroyer != null) {
                             killer = bedDestroyer;
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+                            if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
 
                             if (killer != null) {
                                 if (killer != victim) {
