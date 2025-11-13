@@ -21,9 +21,11 @@
 package com.tomkeuper.bedwars.api.arena;
 
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
+import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.ITeamAssigner;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.region.Region;
 import com.tomkeuper.bedwars.api.tasks.AnnouncementTask;
@@ -514,6 +516,14 @@ public interface IArena {
      * @return The list of ore generators.
      */
     List<IGenerator> getOreGenerators();
+
+    /**
+     * Get the shop holograms for a specific language ISO code.
+     *
+     * @param iso The ISO code of the language.
+     * @return The list of shop holograms for the specified language.
+     */
+    List<ShopHolo> getShopHolograms(String iso);
 
     /**
      * Get the list of next events to come in the arena.

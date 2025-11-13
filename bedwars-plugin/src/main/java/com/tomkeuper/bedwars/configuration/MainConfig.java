@@ -167,6 +167,7 @@ public class MainConfig extends ConfigManager {
         //
 
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_HOLOGRAM_UPDATE_RATE, 5);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_GENERATOR_SPLIT, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_PAPER_FEATURES, true);
