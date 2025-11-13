@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopManager;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -51,9 +52,8 @@ public class ShopCategory implements IShopCategory {
     public final List<ICategoryContent> categoryContentList = new ArrayList<>();
     public static List<UUID> categoryViewers = new ArrayList<>();
     public String name;
+    @Getter
     public static ShopCategory instance;
-    ShopCategory() {
-    }
 
     /**
      * Load a shop category from the given path
@@ -258,7 +258,4 @@ public class ShopCategory implements IShopCategory {
         return new ArrayList<>(categoryViewers);
     }
 
-    public static ShopCategory getInstance() {
-        return instance;
-    }
 }

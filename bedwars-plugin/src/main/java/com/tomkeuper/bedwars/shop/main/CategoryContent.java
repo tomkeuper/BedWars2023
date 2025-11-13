@@ -37,6 +37,8 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -53,15 +55,29 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 @SuppressWarnings("WeakerAccess")
 public class CategoryContent implements ICategoryContent {
 
+    @Getter
     private final List<IContentTier> contentTiers = new ArrayList<>();
     private final IShopCategory father;
     private int slot;
+    /**
+     * -- GETTER --
+     *  Check if category content was loaded
+     */
+    @Getter
+    @Setter
     private boolean loaded = false;
     private final String contentName;
     private String itemNamePath, itemLorePath;
+    @Getter
     private String identifier;
+    @Setter
+    @Getter
     private String categoryIdentifier;
-    private boolean permanent = false, downgradable = false, unbreakable = false;
+    @Getter
+    private boolean permanent = false;
+    @Getter
+    private boolean downgradable = false;
+    private boolean unbreakable = false;
     private byte weight = 0;
 
 
@@ -355,9 +371,6 @@ public class CategoryContent implements ICategoryContent {
     public static Material getCurrency(String currency) {
         Material material;
         switch (currency) {
-            default:
-                material = Material.IRON_INGOT;
-                break;
             case "gold":
                 material = Material.GOLD_INGOT;
                 break;
@@ -369,6 +382,9 @@ public class CategoryContent implements ICategoryContent {
                 break;
             case "vault":
                 material = Material.AIR;
+                break;
+            default:
+                material = Material.IRON_INGOT;
                 break;
         }
         return material;
@@ -477,42 +493,8 @@ public class CategoryContent implements ICategoryContent {
 
     }
 
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
-
-    /**
-     * Check if category content was loaded
-     */
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    public boolean isPermanent() {
-        return permanent;
-    }
-
-    public boolean isDowngradable() {
-        return downgradable;
-    }
-
     public boolean isUpgradable() {
         return getContentTiers().size() > 1;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public List<IContentTier> getContentTiers() {
-        return contentTiers;
-    }
-
-    public String getCategoryIdentifier() {
-        return categoryIdentifier;
-    }
-
-    public void setCategoryIdentifier(String categoryIdentifier) {
-        this.categoryIdentifier = categoryIdentifier;
-    }
 }

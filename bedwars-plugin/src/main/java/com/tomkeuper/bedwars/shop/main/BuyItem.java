@@ -26,6 +26,8 @@ import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
 import com.tomkeuper.bedwars.api.arena.team.TeamEnchant;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,14 +40,28 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+@Getter
 @SuppressWarnings("WeakerAccess")
 public class BuyItem implements IBuyItem {
 
+    @Setter
     private ItemStack itemStack;
+    @Setter
     private boolean autoEquip = false;
+    @Setter
     private boolean permanent = false;
+    @Setter
     private boolean unbreakable = false;
+    /**
+     * -- GETTER --
+     *  Check if object created properly
+     */
     private boolean loaded = false;
+    /**
+     * -- GETTER --
+     *  Get upgrade identifier.
+     *  Used to remove old tier items.
+     */
     private final String upgradeIdentifier;
 
     /**
@@ -175,13 +191,6 @@ public class BuyItem implements IBuyItem {
     }
 
     /**
-     * Check if object created properly
-     */
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    /**
      * Give to a player
      */
     public void give(Player player, IArena arena) {
@@ -306,43 +315,4 @@ public class BuyItem implements IBuyItem {
     }
 
 
-    /**
-     * Get upgrade identifier.
-     * Used to remove old tier items.
-     */
-    public String getUpgradeIdentifier() {
-        return upgradeIdentifier;
-    }
-
-    public ItemStack getItemStack() {
-        return itemStack;
-    }
-
-    public void setItemStack(ItemStack itemStack) {
-        this.itemStack = itemStack;
-    }
-
-    public boolean isAutoEquip() {
-        return autoEquip;
-    }
-
-    public void setAutoEquip(boolean autoEquip) {
-        this.autoEquip = autoEquip;
-    }
-
-    public boolean isPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public boolean isUnbreakable() {
-        return unbreakable;
-    }
-
-    public void setUnbreakable(boolean unbreakable) {
-        this.unbreakable = unbreakable;
-    }
 }

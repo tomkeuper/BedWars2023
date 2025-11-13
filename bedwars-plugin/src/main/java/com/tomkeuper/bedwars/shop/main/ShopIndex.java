@@ -29,6 +29,7 @@ import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -43,7 +44,17 @@ import java.util.UUID;
 @SuppressWarnings("WeakerAccess")
 public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
 
+    /**
+     * -- GETTER --
+     *  Get the shop's categories
+     */
+    @Getter
     private final List<IShopCategory> categoryList = new ArrayList<>();
+    /**
+     * -- GETTER --
+     *  Get the quick buy button
+     */
+    @Getter
     private final QuickBuyButton quickBuyButton;
 
     // Caches pre-resolved categories per arena to avoid runtime priority scans
@@ -150,20 +161,6 @@ public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
     public void addShopCategory(IShopCategory sc) {
         categoryList.add(sc);
         BedWars.debug("Adding shop category: " + sc.getName() + " at slot " + sc.getSlot());
-    }
-
-    /**
-     * Get the shop's categories
-     */
-    public List<IShopCategory> getCategoryList() {
-        return categoryList;
-    }
-
-    /**
-     * Get the quick buy button
-     */
-    public QuickBuyButton getQuickBuyButton() {
-        return quickBuyButton;
     }
 
     // ===== Pre-resolution API =====

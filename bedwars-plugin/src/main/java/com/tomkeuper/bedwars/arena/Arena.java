@@ -138,7 +138,6 @@ public class Arena implements IArena {
     private List<ITeam> teams = new ArrayList<>();
     private LinkedList<org.bukkit.util.Vector> placed = new LinkedList<>();
     private List<String> nextEvents = new ArrayList<>();
-    private List<String> shopOverrideCategories = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
@@ -329,7 +328,7 @@ public class Arena implements IArena {
         try {
             // Link the global ShopIndex; categories are pre-resolved per arena below
             this.linkedShop = ShopManager.shop;
-            if (this.linkedShop instanceof com.tomkeuper.bedwars.shop.main.ShopIndex) {
+            if (this.linkedShop != null) {
                 ((com.tomkeuper.bedwars.shop.main.ShopIndex) this.linkedShop).preResolveForArena(this);
             }
         } catch (Throwable ignored) {}
@@ -2458,14 +2457,6 @@ public class Arena implements IArena {
      */
     public List<String> getNextEvents() {
         return new ArrayList<>(nextEvents);
-    }
-
-    public List<String> getShopOverrideCategories() {
-        return shopOverrideCategories;
-    }
-
-    public void addShopOverrideCategory(String shopOverrideCategory) {
-        this.shopOverrideCategories.add(shopOverrideCategory);
     }
 
     /**

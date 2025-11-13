@@ -183,6 +183,7 @@ public class InventoryListener implements Listener {
             for (int i : PlayerQuickBuyCache.quickSlots) {
                 if (i == e.getSlot()) {
                     add = true;
+                    break;
                 }
             }
             if (!add) return;
@@ -286,7 +287,7 @@ public class InventoryListener implements Listener {
         if (identifier.equals("null")) return false;
         ICachedItem cachedItem = sc.getCachedItem(identifier);
         return cachedItem != null;
-        // the commented line bellow was blocking movement only if tiers amount > 1
+        // the commented line below was blocking movement only if tiers amount > 1
         // return sc.getCachedItem(identifier).getCc().getContentTiers().size() > 1;
     }
 }
