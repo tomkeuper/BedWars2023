@@ -30,14 +30,17 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.tasks.StartingTask;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.LegacyTeamAssigner;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.material.Bed;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
@@ -138,6 +141,10 @@ public class GameStartingTask implements Runnable, StartingTask {
                 getArena().setNextEvent(NextEvent.DIAMOND_GENERATOR_TIER_II);
             } else {
                 getArena().setNextEvent(NextEvent.EMERALD_GENERATOR_TIER_II);
+            }
+
+            for (IShopCategory categoryContent : arena.getLinkedShop().getCategoryList()) {
+                BedWars.debug("Pre-resolving shop category: " + categoryContent.getName() + " for arena: " + arena.getArenaName());
             }
 
             //Spawn shopkeepers

@@ -33,20 +33,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @SuppressWarnings("WeakerAccess")
-public class ShopIndex implements IShopIndex {
+public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
 
-    private int invSize = 54;
-    private String namePath, separatorNamePath, separatorLorePath;
-    private List<IShopCategory> categoryList = new ArrayList<>();
-    private QuickBuyButton quickBuyButton;
-    public ItemStack separatorSelected, separatorStandard;
+    private final List<IShopCategory> categoryList = new ArrayList<>();
+    private final QuickBuyButton quickBuyButton;
+
+    // Caches pre-resolved categories per arena to avoid runtime priority scans
+    private final java.util.concurrent.ConcurrentHashMap<IArena, Map<Integer, IShopCategory>> resolvedBySlot = new java.util.concurrent.ConcurrentHashMap<>();
+    private final java.util.concurrent.ConcurrentHashMap<IArena, Map<String, Integer>> quickBuyPriorityByBase = new java.util.concurrent.ConcurrentHashMap<>();
 
     public static List<UUID> indexViewers = new ArrayList<>();
 
@@ -62,12 +64,8 @@ public class ShopIndex implements IShopIndex {
      * @param separatorStandard ItemStack for standard separator
      */
     public ShopIndex(String namePath, QuickBuyButton quickBuyButton, String separatorNamePath, String separatorLorePath, ItemStack separatorSelected, ItemStack separatorStandard) {
-        this.namePath = namePath;
-        this.separatorLorePath = separatorLorePath;
-        this.separatorNamePath = separatorNamePath;
+        super(54, namePath, separatorNamePath, separatorLorePath, separatorSelected, separatorStandard);
         this.quickBuyButton = quickBuyButton;
-        this.separatorStandard = separatorStandard;
-        this.separatorSelected = separatorSelected;
     }
 
     /**
@@ -82,23 +80,37 @@ public class ShopIndex implements IShopIndex {
 
         if (quickBuyCache == null) return;
 
+        IArena arena = Arena.getArenaByPlayer(player);
+
         if (callEvent) {
-            ShopOpenEvent event = new ShopOpenEvent(player, Arena.getArenaByPlayer(player));
+            ShopOpenEvent event = new ShopOpenEvent(player, arena);
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
         }
 
-        Inventory inv = Bukkit.createInventory(null, invSize, Language.getMsg(player, getNamePath()));
+        // Ensure we have a pre-resolved mapping for this arena
+        if (arena != null && !resolvedBySlot.containsKey(arena)) {
+            preResolveForArena(arena);
+        }
+
+        Inventory inv = Bukkit.createInventory(null, getInvSize(), Language.getMsg(player, getNamePath()));
 
         inv.setItem(getQuickBuyButton().getSlot(), getQuickBuyButton().getItemStack(player));
 
-        IArena arena = Arena.getArenaByPlayer(player);
-        for (IShopCategory sc : getCategoryList()) {
-            // Check if the shop name starts with "default" or matches the arena group name
-            // If we don't check this, the shop will be displayed in all arenas
-            if (sc.getName().toLowerCase().startsWith("default") || sc.getName().toLowerCase().startsWith(arena.getGroup().toLowerCase())) {
-                inv.setItem(sc.getSlot(), sc.getItemStack(player));
+        Map<Integer, IShopCategory> chosenBySlot = (arena == null) ? null : resolvedBySlot.get(arena);
+        if (chosenBySlot == null) {
+            // Fallback: if arena is null or not pre-resolved, render defaults only
+            chosenBySlot = new HashMap<>();
+            for (IShopCategory sc : getCategoryList()) {
+                String n = sc.getName().toLowerCase();
+                if (n.startsWith("default-")) {
+                    chosenBySlot.put(sc.getSlot(), sc);
+                }
             }
+        }
+
+        for (Map.Entry<Integer, IShopCategory> eCat : chosenBySlot.entrySet()) {
+            inv.setItem(eCat.getKey(), eCat.getValue().getItemStack(player));
         }
 
         addSeparator(player, inv);
@@ -121,17 +133,7 @@ public class ShopIndex implements IShopIndex {
      */
     @Override
     public void addSeparator(Player player, Inventory inv) {
-        ItemStack i = separatorStandard.clone();
-        ItemMeta im = i.getItemMeta();
-        if (im != null) {
-            im.setDisplayName(Language.getMsg(player, separatorNamePath));
-            im.setLore(Language.getList(player, separatorLorePath));
-            i.setItemMeta(im);
-        }
-
-        for (int x = 9; x < 18; x++) {
-            inv.setItem(x, i);
-        }
+        super.addSeparator(player, inv);
     }
 
     /**
@@ -139,14 +141,7 @@ public class ShopIndex implements IShopIndex {
      */
     @Override
     public ItemStack getSelectedItem(Player player) {
-        ItemStack i = separatorSelected.clone();
-        ItemMeta im = i.getItemMeta();
-        if (im != null) {
-            im.setDisplayName(Language.getMsg(player, separatorNamePath));
-            im.setLore(Language.getList(player, separatorLorePath));
-            i.setItemMeta(im);
-        }
-        return i;
+        return super.getSelectedItem(player);
     }
 
     /**
@@ -155,23 +150,7 @@ public class ShopIndex implements IShopIndex {
     @Override
     public void addShopCategory(IShopCategory sc) {
         categoryList.add(sc);
-        BedWars.debug("Adding shop category: " + sc + " at slot " + sc.getSlot());
-    }
-
-    /**
-     * Get the inventory name path
-     */
-    @Override
-    public String getNamePath() {
-        return namePath;
-    }
-
-    /**
-     * Get the inventory size
-     */
-    @Override
-    public int getInvSize() {
-        return invSize;
+        BedWars.debug("Adding shop category: " + sc.getName() + " at slot " + sc.getSlot());
     }
 
     /**
@@ -186,6 +165,75 @@ public class ShopIndex implements IShopIndex {
      */
     public QuickBuyButton getQuickBuyButton() {
         return quickBuyButton;
+    }
+
+    // ===== Pre-resolution API =====
+    public void preResolveForArena(IArena arena) {
+        if (arena == null) return;
+        String arenaPrefixDisplay = arena.getDisplayName() == null ? "" : arena.getDisplayName().toLowerCase() + "-";
+        String arenaPrefixWorld = arena.getArenaName() == null ? "" : arena.getArenaName().toLowerCase() + "-";
+        String groupPrefix = arena.getGroup() == null ? "" : arena.getGroup().toLowerCase() + "-";
+        String defaultPrefix = "default-";
+
+        Map<Integer, IShopCategory> chosenBySlot = new HashMap<>();
+        Map<Integer, Integer> priorityBySlot = new HashMap<>();
+        Map<String, Integer> baseMaxPriority = new HashMap<>();
+
+        for (IShopCategory sc : getCategoryList()) {
+            String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
+            int pr = 0;
+            if ((!arenaPrefixDisplay.isEmpty() && n.startsWith(arenaPrefixDisplay)) || (!arenaPrefixWorld.isEmpty() && n.startsWith(arenaPrefixWorld))) {
+                pr = 3;
+            } else if (!groupPrefix.isEmpty() && n.startsWith(groupPrefix)) {
+                pr = 2;
+            } else if (n.startsWith(defaultPrefix)) {
+                pr = 1;
+            }
+            if (pr == 0) continue;
+
+            // slot resolution
+            int slot = sc.getSlot();
+            int currentPr = priorityBySlot.getOrDefault(slot, 0);
+            if (pr > currentPr) {
+                priorityBySlot.put(slot, pr);
+                chosenBySlot.put(slot, sc);
+            }
+
+            // quick buy base category priority
+            String base = stripBaseCategory(n);
+            int existing = baseMaxPriority.getOrDefault(base, 0);
+            if (pr > existing) baseMaxPriority.put(base, pr);
+        }
+
+        resolvedBySlot.put(arena, chosenBySlot);
+        quickBuyPriorityByBase.put(arena, baseMaxPriority);
+    }
+
+    public Map<Integer, IShopCategory> getResolvedBySlot(IArena arena) {
+        Map<Integer, IShopCategory> m = resolvedBySlot.get(arena);
+        return m == null ? java.util.Collections.emptyMap() : new HashMap<>(m);
+    }
+
+    public Map<String, Integer> getQuickBuyPriority(IArena arena) {
+        Map<String, Integer> m = quickBuyPriorityByBase.get(arena);
+        return m == null ? java.util.Collections.emptyMap() : new HashMap<>(m);
+    }
+
+    public void clearArenaCache(IArena arena) {
+        if (arena == null) return;
+        resolvedBySlot.remove(arena);
+        quickBuyPriorityByBase.remove(arena);
+    }
+
+    public void clearAllCaches() {
+        resolvedBySlot.clear();
+        quickBuyPriorityByBase.clear();
+    }
+
+    private String stripBaseCategory(String name) {
+        if (name == null) return "";
+        int idx = name.indexOf('-');
+        return (idx >= 0 && idx + 1 < name.length()) ? name.substring(idx + 1) : name;
     }
 
     public static List<UUID> getIndexViewers() {

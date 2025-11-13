@@ -52,4 +52,13 @@ public class QuickBuyElement implements IQuickBuyElement {
     public ICategoryContent getCategoryContent() {
         return categoryContent;
     }
+
+    /**
+     * Rebind this quick-buy element to a different content instance.
+     * Used to align with arena-resolved content without recreating the element.
+     */
+    public void setCategoryContent(ICategoryContent categoryContent) {
+        this.categoryContent = categoryContent;
+        this.loaded = categoryContent != null;
+    }
 }

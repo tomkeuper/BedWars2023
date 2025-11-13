@@ -125,6 +125,20 @@ public class ContentTier implements IContentTier {
             if (bi.isLoaded()) buyItemsList.add(bi);
         }
 
+        // Optional: inherit the tier-item as the actual granted item
+        boolean inherit = false;
+        try {
+            inherit = yml.getBoolean(path + ".inherit-buy-items", false);
+        } catch (Throwable ignored) {}
+        if (inherit && !buyItemsList.isEmpty()) {
+            for (IBuyItem bii : new ArrayList<>(buyItemsList)) {
+                if (bii instanceof BuyItem) {
+                    ((BuyItem) bii).setItemStack(itemStack.clone());
+                }
+            }
+            BedWars.debug("Applying inherit-buy-items at " + path + " amount=" + itemStack.getAmount());
+        }
+
         if (buyItemsList.isEmpty()) {
             Bukkit.getLogger().warning("Loaded 0 buy content for: " + path);
         }

@@ -105,8 +105,15 @@ import static com.tomkeuper.bedwars.BedWars.*;
 import static com.tomkeuper.bedwars.api.language.Language.*;
 import static com.tomkeuper.bedwars.arena.upgrades.BaseListener.isOnABase;
 
+import com.tomkeuper.bedwars.api.shop.IShopIndex;
+import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
+import com.tomkeuper.bedwars.shop.ShopManager;
+
 @SuppressWarnings("WeakerAccess")
 public class Arena implements IArena {
+
+    private IShopIndex linkedShop;
+    private UpgradesIndex linkedUpgrades;
 
     private static final HashMap<String, IArena> arenaByName = new HashMap<>();
     private static final HashMap<Player, IArena> arenaByPlayer = new HashMap<>();
@@ -317,6 +324,18 @@ public class Arena implements IArena {
         this.world = world;
         this.worldName = world.getName();
         getConfig().setName(worldName);
+
+        // Link per-arena shop and upgrades layouts
+        try {
+            // Link the global ShopIndex; categories are pre-resolved per arena below
+            this.linkedShop = ShopManager.shop;
+            if (this.linkedShop instanceof com.tomkeuper.bedwars.shop.main.ShopIndex) {
+                ((com.tomkeuper.bedwars.shop.main.ShopIndex) this.linkedShop).preResolveForArena(this);
+            }
+        } catch (Throwable ignored) {}
+        try {
+            this.linkedUpgrades = com.tomkeuper.bedwars.BedWars.getUpgradeManager().getMenuForArena(this);
+        } catch (Throwable ignored) {}
         world.getEntities().stream().filter(e -> e.getType() != EntityType.PLAYER)
                 .filter(e -> e.getType() != EntityType.PAINTING).filter(e -> e.getType() != EntityType.ITEM_FRAME)
                 .forEach(Entity::remove);
@@ -1399,6 +1418,26 @@ public class Arena implements IArena {
         return getConfig().getYml().getString(ConfigPath.ARENA_DISPLAY_NAME, (Character.toUpperCase(arenaName.charAt(0)) + arenaName.substring(1)).replace("_", " ").replace("-", " ")).trim().isEmpty() ?
                 (Character.toUpperCase(arenaName.charAt(0)) + arenaName.substring(1)).replace("_", " ").replace("-", " ")
                 : getConfig().getString(ConfigPath.ARENA_DISPLAY_NAME);
+    }
+
+    @Override
+    public @Nullable IShopIndex getLinkedShop() {
+        return linkedShop;
+    }
+
+    @Override
+    public void setLinkedShop(@Nullable IShopIndex shop) {
+        this.linkedShop = shop;
+    }
+
+    @Override
+    public @Nullable UpgradesIndex getLinkedUpgrades() {
+        return linkedUpgrades;
+    }
+
+    @Override
+    public void setLinkedUpgrades(@Nullable UpgradesIndex upgrades) {
+        this.linkedUpgrades = upgrades;
     }
 
     @Override

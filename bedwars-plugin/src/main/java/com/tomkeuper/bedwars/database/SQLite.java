@@ -498,6 +498,25 @@ public class SQLite implements IDatabase {
     }
 
     @Override
+    public java.util.List<java.util.UUID> listQuickBuyUUIDs() {
+        java.util.List<java.util.UUID> list = new java.util.ArrayList<>();
+        try {
+            checkConnection();
+            try (PreparedStatement ps = connection.prepareStatement("SELECT uuid FROM quick_buy_2;")) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String s = rs.getString("uuid");
+                        try { list.add(java.util.UUID.fromString(s)); } catch (Exception ignored) {}
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
     public HashMap<Integer, String> getQuickBuySlots(UUID uuid, int[] slot) {
         HashMap<Integer, String> results = new HashMap<>();
         if (slot.length == 0) {

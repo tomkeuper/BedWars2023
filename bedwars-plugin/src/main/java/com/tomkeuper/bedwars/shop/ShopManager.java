@@ -414,6 +414,50 @@ public class ShopManager extends ConfigManager implements IShopManager {
             ShopCategory sc = new ShopCategory(s, getYml(), "default-" + s); // Identify shop with default name + shop name
             if (sc.isLoaded()) shop.addShopCategory(sc);
         }
+
+        // Clear any previous caches and pre-resolve for already enabled arenas (if any)
+        try {
+            shop.clearAllCaches();
+        } catch (Throwable ignored) {}
+        try {
+            for (com.tomkeuper.bedwars.api.arena.IArena a : com.tomkeuper.bedwars.arena.Arena.getArenas()) {
+                shop.preResolveForArena(a);
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    /**
+     * Load override shop files (arena/group specific) directly, without OverrideShop helper.
+     */
+    public void loadOverrides() {
+        java.io.File dir = new java.io.File(BedWars.plugin.getDataFolder(), "/Shops");
+        if (!dir.exists()) return;
+        java.io.File[] files = dir.listFiles();
+        if (files == null) return;
+        for (java.io.File file : files) {
+            if (!file.isFile()) continue;
+            if (!file.getName().endsWith(".yml")) continue;
+            if (file.getName().equalsIgnoreCase("default-shop.yml")) continue;
+            String name = file.getName().replace(".yml", "");
+            org.bukkit.configuration.file.YamlConfiguration yml = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(file);
+            for (String s : yml.getConfigurationSection("").getKeys(false)) {
+                BedWars.debug("adding shop category: " + s);
+                if (s.equalsIgnoreCase(ConfigPath.SHOP_SETTINGS_PATH)) continue;
+                if (s.equals(ConfigPath.SHOP_QUICK_DEFAULTS_PATH)) continue;
+                if (s.equalsIgnoreCase(ConfigPath.SHOP_SPECIALS_PATH)) continue;
+                ShopCategory sc = new ShopCategory(s, yml, name + "-" + s);
+                if (sc.isLoaded()) shop.addShopCategory(sc);
+            }
+        }
+        // After loading overrides, clear caches and pre-resolve for enabled arenas
+        try {
+            shop.clearAllCaches();
+        } catch (Throwable ignored) {}
+        try {
+            for (com.tomkeuper.bedwars.api.arena.IArena a : com.tomkeuper.bedwars.arena.Arena.getArenas()) {
+                shop.preResolveForArena(a);
+            }
+        } catch (Throwable ignored) {}
     }
 
     /**

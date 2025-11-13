@@ -113,9 +113,15 @@ public class CategoryContent implements ICategoryContent {
 
         this.slot = yml.getInt(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_SLOT);
 
+        // Build a scoped identifier based on the full category name (default-/group-/arena-)
+        // Example: Swashbuckle-blocks-category.category-content.wool
+        String categoryFullName = (father != null && father.getName() != null) ? father.getName() : categoryName;
+        String scopedIdentifier = categoryFullName + ".category-content." + contentName;
+
         ContentTier ctt;
         for (String s : yml.getConfigurationSection(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS).getKeys(false)) {
-            ctt = new ContentTier(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + s, s, path, yml);
+            // Pass the scoped identifier down so BuyItem tags use the scoped id too
+            ctt = new ContentTier(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + s, s, scopedIdentifier, yml);
             /*if (ctt.isLoaded())*/
             contentTiers.add(ctt);
         }
@@ -133,8 +139,8 @@ public class CategoryContent implements ICategoryContent {
             }
         }
 
-        identifier = path;
-        categoryIdentifier = path;
+        identifier = scopedIdentifier;
+        categoryIdentifier = scopedIdentifier;
 
         loaded = true;
     }
@@ -226,7 +232,25 @@ public class CategoryContent implements ICategoryContent {
      */
     @Override
     public void giveItems(Player player, IShopCache shopCache, IArena arena) {
-        for (IBuyItem bi : contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1).getBuyItemsList()) {
+        int tierIndex = shopCache.getContentTier(getIdentifier()) - 1;
+        if (tierIndex < 0 || tierIndex >= contentTiers.size()) tierIndex = 0;
+        IContentTier tier = contentTiers.get(tierIndex);
+        java.util.List<com.tomkeuper.bedwars.api.arena.shop.IBuyItem> list = tier.getBuyItemsList();
+        if (list == null || list.isEmpty()) {
+            // Graceful fallback: no buy-items defined for this tier. Give the tier display item instead.
+            org.bukkit.inventory.ItemStack display = tier.getItemStack().clone();
+            BedWars.debug("[SHOP_FALLBACK] No buy-items for " + getIdentifier() + " tier=" + (tierIndex+1) + ". Granting tier-item: " + display.getType() + " x" + display.getAmount());
+            try {
+                if (arena != null && arena.getTeam(player) != null) {
+                    org.bukkit.inventory.ItemStack coloured = BedWars.nms.colourItem(display, arena.getTeam(player));
+                    if (coloured != null && coloured.getType() != org.bukkit.Material.AIR) display = coloured;
+                }
+            } catch (Throwable ignored) {}
+            player.getInventory().addItem(display);
+            player.updateInventory();
+            return;
+        }
+        for (IBuyItem bi : list) {
             bi.give(player, arena);
         }
     }

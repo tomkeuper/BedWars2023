@@ -78,10 +78,14 @@ public class ShopCategory implements IShopCategory {
             return;
         }
 
-        for (IShopCategory sc : ShopManager.shop.getCategoryList()){
-            if (sc.getSlot() == slot){
-                BedWars.plugin.getLogger().severe("Slot is already in use at: " + path);
-                return;
+        // Enforce unique slot only for default categories. Allow overrides to reuse slots so
+        // per-arena/group priority can replace defaults at render time.
+        if (this.name != null && this.name.toLowerCase().startsWith("default-")) {
+            for (IShopCategory sc : ShopManager.shop.getCategoryList()){
+                if (sc.getSlot() == slot){
+                    BedWars.plugin.getLogger().severe("Slot is already in use at: " + path);
+                    return;
+                }
             }
         }
 
@@ -117,7 +121,11 @@ public class ShopCategory implements IShopCategory {
         CategoryContent cc;
         for (String s : yml.getConfigurationSection(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_PATH).getKeys(false)) {
             cc = new CategoryContent(path + ConfigPath.SHOP_CATEGORY_CONTENT_PATH + "." + s, s, path, yml, this);
-            cc.setCategoryIdentifier("default-" + cc.getCategoryIdentifier());
+            // Prefix the content identifier with the full category name (default-, group-, or arena-specific)
+            String currId = cc.getCategoryIdentifier();
+            if (currId != null && currId.startsWith(path)) {
+                cc.setCategoryIdentifier(this.name + currId.substring(path.length()));
+            }
             if (cc.isLoaded()) {
                 categoryContentList.add(cc);
                 BedWars.debug("Adding CategoryContent: " + s + " to Shop Category: " + path);
@@ -126,26 +134,61 @@ public class ShopCategory implements IShopCategory {
         instance = this;
     }
 
+    /**
+     * Open this category for the player using the arena-linked shop index.
+     * This avoids passing a ShopIndex at call sites and uses pre-resolved data.
+     */
+    public void open(Player player, IShopCache shopCache){
+        IArena arena = Arena.getArenaByPlayer(player);
+        IShopIndex idxToUse = (arena != null && arena.getLinkedShop() != null) ? arena.getLinkedShop() : ShopManager.shop;
+        open(player, idxToUse, shopCache);
+    }
+
+    /**
+     * Deprecated: prefer {@link #open(Player, IShopCache)} which resolves the shop from the arena.
+     */
     public void open(Player player, IShopIndex index, IShopCache shopCache){
         BedWars.debug("opening ShopCategory: " + name + " for player: " + player.getName());
         if (player.getOpenInventory().getTopInventory() == null) return;
         ShopIndex.indexViewers.remove(player.getUniqueId());
 
-        Inventory inv = Bukkit.createInventory(null, index.getInvSize(), Language.getMsg(player, invNamePath));
-
-        inv.setItem(index.getQuickBuyButton().getSlot(), index.getQuickBuyButton().getItemStack(player));
-
         IArena arena = Arena.getArenaByPlayer(player);
+        // Prefer the arena-linked shop to ensure pre-resolved categories are used
+        IShopIndex idxToUse = (arena != null && arena.getLinkedShop() != null) ? arena.getLinkedShop() : index;
 
-        for (IShopCategory sc : index.getCategoryList()) {
-            // If we don't check this, the shop will be displayed in all arenas
-            if (sc.getName().startsWith("default") || sc.getName().startsWith(arena.getGroup().toLowerCase()))
-                inv.setItem(sc.getSlot(), sc.getItemStack(player));
+        Inventory inv = Bukkit.createInventory(null, idxToUse.getInvSize(), Language.getMsg(player, invNamePath));
+
+        inv.setItem(idxToUse.getQuickBuyButton().getSlot(), idxToUse.getQuickBuyButton().getItemStack(player));
+
+        // Render category buttons using pre-resolved mapping when available
+        if (arena != null && idxToUse instanceof ShopIndex) {
+            java.util.Map<Integer, IShopCategory> chosenBySlot = ((ShopIndex) idxToUse).getResolvedBySlot(arena);
+            if (chosenBySlot == null || chosenBySlot.isEmpty()) {
+                // Fallback: defaults only
+                for (IShopCategory sc : idxToUse.getCategoryList()) {
+                    String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
+                    if (n.startsWith("default-")) {
+                        inv.setItem(sc.getSlot(), sc.getItemStack(player));
+                    }
+                }
+            } else {
+                for (java.util.Map.Entry<Integer, IShopCategory> e : chosenBySlot.entrySet()) {
+                    inv.setItem(e.getKey(), e.getValue().getItemStack(player));
+                }
+            }
+        } else {
+            // No arena context: show defaults only to be safe
+            for (IShopCategory sc : idxToUse.getCategoryList()) {
+                String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
+                if (n.startsWith("default-")) {
+                    inv.setItem(sc.getSlot(), sc.getItemStack(player));
+                }
+            }
         }
 
-        index.addSeparator(player, inv);
+        idxToUse.addSeparator(player, inv);
 
-        inv.setItem(getSlot() + 9, index.getSelectedItem(player));
+        inv.setItem(getSlot() + 9, idxToUse.getSelectedItem(player));
 
         shopCache.setSelectedCategory(getSlot());
 

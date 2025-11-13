@@ -165,6 +165,7 @@ public class ShopCache implements IShopCache {
      */
     @Override
     public ICachedItem getCachedItem(String identifier) {
+        // Exact match only (scoped identifiers)
         for (CachedItem ci : cachedItems) {
             if (ci.getCc().getIdentifier().equals(identifier)) return ci;
         }

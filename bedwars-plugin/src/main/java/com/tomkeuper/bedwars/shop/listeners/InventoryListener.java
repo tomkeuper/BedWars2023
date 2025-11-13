@@ -73,25 +73,31 @@ public class InventoryListener implements Listener {
         if (ShopIndex.getIndexViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
-            // Check shop overrides categories (Will return if a shop has been found)
-            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
-                // Check if the shop name starts with the group name
-                if (sc.getName().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
-                    // Check if the clicked slot matches the current shop's slot
-                    if (e.getSlot() == sc.getSlot()) {
-                        sc.open(p, ShopManager.shop, shopCache);
+            // Use the arena-linked shop and its pre-resolved categories to handle clicks
+            com.tomkeuper.bedwars.api.shop.IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
+            if (idx instanceof ShopIndex) {
+                java.util.Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
+                IShopCategory clickedCategory = chosen.get(e.getSlot());
+                if (clickedCategory != null) {
+                    if (clickedCategory instanceof ShopCategory) {
+                        ((ShopCategory) clickedCategory).open(p, shopCache);
+                    } else {
+                        clickedCategory.open(p, idx, shopCache);
+                    }
+                    return;
+                }
+            } else {
+                // Fallback: check default categories only
+                for (IShopCategory sc : idx.getCategoryList()) {
+                    String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
+                    if (n.startsWith("default-") && e.getSlot() == sc.getSlot()) {
+                        sc.open(p, idx, shopCache);
                         return;
                     }
                 }
             }
 
-            // Check normal shop categories
-            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
-                if (e.getSlot() == sc.getSlot()) {
-                    sc.open(p, ShopManager.shop, shopCache);
-                    return;
-                }
-            }
+            // Quick Buy area clicks
             for (IQuickBuyElement element : cache.getElements()) {
                 if (element.getSlot() == e.getSlot()) {
                     if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
@@ -100,7 +106,8 @@ public class InventoryListener implements Listener {
                         return;
                     }
                     if (element.getCategoryContent().execute(p, shopCache, element.getSlot())) {
-                        ShopManager.shop.open(p, cache, false); // Reload the shop page. Needed to recalculate item purchasable
+                        // Reload the shop page. Needed to recalculate item purchasable
+                        (a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop).open(p, cache, false);
                     }
                     return;
                 }
@@ -112,10 +119,63 @@ public class InventoryListener implements Listener {
             if (e.getCurrentItem() == null) return;
             if (e.getCurrentItem().getType() == Material.AIR) return;
 
-            // Check overrides
-            if (checkShops(e, p, a, shopCache, cache, true)) return;
+            // Use arena-linked shop for buttons
+            com.tomkeuper.bedwars.api.shop.IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
 
-            checkShops(e, p, a, shopCache, cache, false);
+            // Quick Buy button at top bar → back to index
+            if (e.getSlot() == idx.getQuickBuyButton().getSlot()) {
+                idx.open(p, cache, false);
+                return;
+            }
+
+            // Category tabs click in the top bar
+            if (idx instanceof ShopIndex) {
+                java.util.Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
+                IShopCategory clickedCategory = chosen.get(e.getSlot());
+                if (clickedCategory != null) {
+                    if (clickedCategory instanceof ShopCategory) {
+                        ((ShopCategory) clickedCategory).open(p, shopCache);
+                    } else {
+                        clickedCategory.open(p, idx, shopCache);
+                    }
+                    return;
+                }
+            }
+
+            // Content clicks: only check the selected category’s contents
+            int selectedSlot = shopCache.getSelectedCategory();
+            IShopCategory selectedCategory = null;
+            if (idx instanceof ShopIndex) {
+                selectedCategory = ((ShopIndex) idx).getResolvedBySlot(a).get(selectedSlot);
+            }
+            if (selectedCategory == null) {
+                // Fallback: try default categories
+                for (IShopCategory sc : idx.getCategoryList()) {
+                    String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
+                    if (n.startsWith("default-") && sc.getSlot() == selectedSlot) {
+                        selectedCategory = sc;
+                        break;
+                    }
+                }
+            }
+            if (selectedCategory != null) {
+                for (ICategoryContent cc : selectedCategory.getCategoryContentList()) {
+                    if (cc.getSlot() == e.getSlot()) {
+                        if (e.isShiftClick()) {
+                            if (!cache.hasCategoryContent(cc)) new com.tomkeuper.bedwars.shop.quickbuy.QuickBuyAdd(p, cc);
+                            return;
+                        }
+                        if (cc.execute(p, shopCache, cc.getSlot())) {
+                            if (selectedCategory instanceof ShopCategory) {
+                                ((ShopCategory) selectedCategory).open(p, shopCache); // reload page after purchase
+                            } else {
+                                selectedCategory.open(p, idx, shopCache);
+                            }
+                        }
+                        return;
+                    }
+                }
+            }
 
         } else if (QuickBuyAdd.getQuickBuyAdds().containsKey(e.getWhoClicked().getUniqueId())) {
             e.setCancelled(true);
