@@ -512,6 +512,11 @@ public class CategoryContent implements ICategoryContent {
     }
 
     @Override
+    public void setCategoryIdentifier(String categoryIdentifier) {
+        this.categoryIdentifier = categoryIdentifier;
+    }
+
+    @Override
     public List<IContentTier> getContentTiers() {
         return contentTiers;
     }
