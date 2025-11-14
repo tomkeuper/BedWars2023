@@ -41,7 +41,6 @@ import net.minecraft.server.v1_12_R1.Item;
 import net.minecraft.server.v1_12_R1.*;
 import net.minecraft.server.v1_12_R1.SoundCategory;
 import org.bukkit.*;
-import org.bukkit.World;
 import org.bukkit.block.Bed;
 import org.bukkit.block.BlockState;
 import org.bukkit.command.Command;
