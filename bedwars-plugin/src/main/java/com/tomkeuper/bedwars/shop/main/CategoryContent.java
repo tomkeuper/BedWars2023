@@ -55,7 +55,6 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 @SuppressWarnings("WeakerAccess")
 public class CategoryContent implements ICategoryContent {
 
-    @Getter
     private final List<IContentTier> contentTiers = new ArrayList<>();
     private final IShopCategory father;
     private int slot;
@@ -68,14 +67,9 @@ public class CategoryContent implements ICategoryContent {
     private boolean loaded = false;
     private final String contentName;
     private String itemNamePath, itemLorePath;
-    @Getter
     private String identifier;
-    @Setter
-    @Getter
     private String categoryIdentifier;
-    @Getter
     private boolean permanent = false;
-    @Getter
     private boolean downgradable = false;
     private boolean unbreakable = false;
     private byte weight = 0;
@@ -289,6 +283,16 @@ public class CategoryContent implements ICategoryContent {
     }
 
     @Override
+    public boolean isPermanent() {
+        return permanent;
+    }
+
+    @Override
+    public boolean isDowngradable() {
+        return downgradable;
+    }
+
+    @Override
     public ItemStack getItemStack(Player player, IShopCache shopCache) {
         IContentTier ct;
         if (shopCache.getContentTier(identifier) == contentTiers.size()) ct = contentTiers.get(contentTiers.size() - 1);
@@ -495,6 +499,21 @@ public class CategoryContent implements ICategoryContent {
 
     public boolean isUpgradable() {
         return getContentTiers().size() > 1;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public String getCategoryIdentifier() {
+        return categoryIdentifier;
+    }
+
+    @Override
+    public List<IContentTier> getContentTiers() {
+        return contentTiers;
     }
 
 }
