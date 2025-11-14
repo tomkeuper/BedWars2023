@@ -146,13 +146,11 @@ public class v1_8_R3 extends VersionSupport {
     public void fakeDamagePlayer(Player e) {
         Location loc = e.getLocation();
         World world = loc.getWorld();
-        Sound hurtSound = Sound.HURT_FLESH;
+        world.playSound(loc, Sound.HURT_FLESH, 1.0f, 1.0f);
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
-        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(CraftSound.getSound(hurtSound), loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
        for (Player player : world.getPlayers()) {
            PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
            connection.sendPacket(anim);
-           connection.sendPacket(sound);
        }
     }
 
