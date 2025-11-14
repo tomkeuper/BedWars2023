@@ -322,9 +322,9 @@ public class DamageDeathMove implements Listener {
                 BedWars.nms.fakeDamagePlayer(victim);
                 victim.setHealth(victim.getMaxHealth());
                 if (victimsTeamBedDestroyed) {
-                    arena.addSpectator(player, true, null);
-                    victimsTeam.getMembers().remove(player);
-                    player.sendMessage(getMsg(player, Messages.PLAYER_DIE_ELIMINATED_CHAT));
+                    arena.addSpectator(victim, true, null);
+                    victimsTeam.getMembers().remove(victim);
+                    victim.sendMessage(getMsg(victim, Messages.PLAYER_DIE_ELIMINATED_CHAT));
                     if (victimsTeam.getMembers().isEmpty()) {
                         Bukkit.getPluginManager().callEvent(new TeamEliminatedEvent(arena, victimsTeam));
                         for (Player p : arena.getWorld().getPlayers()) {
