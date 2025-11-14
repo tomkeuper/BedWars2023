@@ -145,7 +145,7 @@ public class v1_8_R3 extends VersionSupport {
     @Override
     public void fakeDamagePlayer(Player e) {
         Location loc = e.getLocation();
-        World world = loc.getWorld();
+        World world = e.getWorld();
         world.playSound(loc, Sound.HURT_FLESH, 1.0f, 1.0f);
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
         for (Player player : world.getPlayers()) {

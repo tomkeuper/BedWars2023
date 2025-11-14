@@ -161,13 +161,12 @@ public class v1_18_R2 extends VersionSupport {
     @Override
     public void fakeDamagePlayer(Player e) {
         Location loc = e.getLocation();
-        SoundEffect hurtSound = CraftSound.getSoundEffect(Sound.ENTITY_PLAYER_HURT);
+        World world = e.getWorld();
+        world.playSound(loc, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
-        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
         for (Player p : e.getWorld().getPlayers()) {
             PlayerConnection pc = ((CraftPlayer) p).getHandle().b;
             pc.a(anim);
-            pc.a(sound);
         }
     }
 

@@ -33,7 +33,6 @@ import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
-import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
@@ -53,7 +52,6 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftSound;
 import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.*;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
@@ -146,13 +144,12 @@ public class v1_16_R3 extends VersionSupport {
     @Override
     public void fakeDamagePlayer(Player e) {
         Location loc = e.getLocation();
-        SoundEffect hurtSound = CraftSound.getSoundEffect(Sound.ENTITY_PLAYER_HURT);
+        World world = e.getWorld();
+        world.playSound(loc, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
-        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.PLAYERS, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F);
         for (Player p : e.getWorld().getPlayers()) {
             PlayerConnection pc = ((CraftPlayer) p).getHandle().playerConnection;
             pc.sendPacket(anim);
-            pc.sendPacket(sound);
         }
     }
 

@@ -34,7 +34,6 @@ import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
-import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
@@ -45,7 +44,6 @@ import com.tomkeuper.bedwars.support.version.v1_20_6.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_20_6.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleParamRedstone;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.protocol.Packet;
@@ -54,8 +52,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.network.PlayerConnection;
-import net.minecraft.sounds.SoundCategory;
-import net.minecraft.sounds.SoundEffect;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EnumItemSlot;
 import net.minecraft.world.entity.decoration.EntityArmorStand;
@@ -75,7 +71,6 @@ import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_20_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_20_R4.CraftSound;
 import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R4.entity.*;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
@@ -144,11 +139,11 @@ public final class v1_20_6 extends VersionSupport {
     @Override
     public void fakeDamagePlayer(Player e) {
         Location loc = e.getLocation();
-        Holder<SoundEffect> hurtSound = CraftSound.bukkitToMinecraftHolder(Sound.ENTITY_PLAYER_HURT);
+        World world = e.getWorld();
+        world.playSound(loc, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
         PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
-        PacketPlayOutNamedSoundEffect sound = new PacketPlayOutNamedSoundEffect(hurtSound, SoundCategory.h, loc.getX(), loc.getY(), loc.getZ(), 1.0F, 1.0F, 0);
         for (Player p : e.getWorld().getPlayers()) {
-            sendPackets(p, anim, sound);
+            sendPackets(p, anim);
         }
     }
 
