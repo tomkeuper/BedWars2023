@@ -26,11 +26,9 @@ import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
-import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
-import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
-import com.tomkeuper.bedwars.api.shop.IShopCache;
-import com.tomkeuper.bedwars.api.shop.IShopCategory;
+import com.tomkeuper.bedwars.api.shop.*;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -39,12 +37,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
 
@@ -88,14 +82,14 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         IArena arena = Arena.getArenaByPlayer(p);
 
         // Resolve the arena-linked shop index (no global scans)
-        com.tomkeuper.bedwars.api.shop.IShopIndex idx = (arena != null && arena.getLinkedShop() != null)
+        IShopIndex idx = (arena != null && arena.getLinkedShop() != null)
                 ? arena.getLinkedShop()
                 : BedWars.getAPI().getShopUtil().getShopManager().getShop();
 
         // Collect contents available in this arena only
-        java.util.List<ICategoryContent> arenaContents = new java.util.ArrayList<>();
-        if (arena != null && idx instanceof com.tomkeuper.bedwars.shop.main.ShopIndex) {
-            java.util.Map<Integer, IShopCategory> chosen = ((com.tomkeuper.bedwars.shop.main.ShopIndex) idx).getResolvedBySlot(arena);
+        List<ICategoryContent> arenaContents = new ArrayList<>();
+        if (arena != null && idx instanceof ShopIndex) {
+            Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(arena);
             for (IShopCategory sc : chosen.values()) {
                 arenaContents.addAll(sc.getCategoryContentList());
             }
@@ -110,7 +104,7 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         }
 
         // Map of slot -> element to render (no priority; keep first encountered)
-        java.util.Map<Integer, IQuickBuyElement> toRenderBySlot = new java.util.HashMap<>();
+        Map<Integer, IQuickBuyElement> toRenderBySlot = new HashMap<>();
 
         for (IQuickBuyElement qbe : elements) {
             ICategoryContent content = qbe.getCategoryContent();
@@ -141,7 +135,7 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         }
 
         // Render quick-buy elements that are available in this arena
-        for (java.util.Map.Entry<Integer, IQuickBuyElement> e : toRenderBySlot.entrySet()) {
+        for (Map.Entry<Integer, IQuickBuyElement> e : toRenderBySlot.entrySet()) {
             IQuickBuyElement qbe = e.getValue();
             ICategoryContent cc = qbe.getCategoryContent();
             if (cc != null) {
@@ -261,16 +255,4 @@ public class PlayerQuickBuyCache implements IPlayerQuickBuyCache {
         return instance;
     }
 
-    // Normalize an identifier by stripping the arena/group/default prefix from the base category
-    private static String normalizeIdentifier(String id) {
-        if (id == null) return "";
-        int idxMarker = id.indexOf(".category-content.");
-        if (idxMarker < 0) return id;
-        String cat = id.substring(0, idxMarker);
-        int dash = cat.indexOf('-');
-        if (dash >= 0) {
-            cat = cat.substring(dash + 1);
-        }
-        return cat + id.substring(idxMarker);
-    }
 }

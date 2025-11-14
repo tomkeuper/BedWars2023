@@ -251,15 +251,15 @@ public class CategoryContent implements ICategoryContent {
         int tierIndex = shopCache.getContentTier(getIdentifier()) - 1;
         if (tierIndex < 0 || tierIndex >= contentTiers.size()) tierIndex = 0;
         IContentTier tier = contentTiers.get(tierIndex);
-        java.util.List<com.tomkeuper.bedwars.api.arena.shop.IBuyItem> list = tier.getBuyItemsList();
+        java.util.List<IBuyItem> list = tier.getBuyItemsList();
         if (list == null || list.isEmpty()) {
             // Graceful fallback: no buy-items defined for this tier. Give the tier display item instead.
-            org.bukkit.inventory.ItemStack display = tier.getItemStack().clone();
+            ItemStack display = tier.getItemStack().clone();
             BedWars.debug("[SHOP_FALLBACK] No buy-items for " + getIdentifier() + " tier=" + (tierIndex+1) + ". Granting tier-item: " + display.getType() + " x" + display.getAmount());
             try {
                 if (arena != null && arena.getTeam(player) != null) {
-                    org.bukkit.inventory.ItemStack coloured = BedWars.nms.colourItem(display, arena.getTeam(player));
-                    if (coloured != null && coloured.getType() != org.bukkit.Material.AIR) display = coloured;
+                    ItemStack coloured = BedWars.nms.colourItem(display, arena.getTeam(player));
+                    if (coloured != null && coloured.getType() != Material.AIR) display = coloured;
                 }
             } catch (Throwable ignored) {}
             player.getInventory().addItem(display);

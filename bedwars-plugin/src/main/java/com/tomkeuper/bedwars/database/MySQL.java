@@ -30,10 +30,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static com.tomkeuper.bedwars.BedWars.config;
@@ -323,15 +320,15 @@ public class MySQL implements IDatabase {
     }
 
     @Override
-    public java.util.List<java.util.UUID> listQuickBuyUUIDs() {
-        java.util.List<java.util.UUID> list = new java.util.ArrayList<>();
+    public List<UUID> listQuickBuyUUIDs() {
+        List<java.util.UUID> list = new ArrayList<>();
         String sql = "SELECT uuid FROM quick_buy_2;";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 String s = rs.getString("uuid");
-                try { list.add(java.util.UUID.fromString(s)); } catch (Exception ignored) {}
+                try { list.add(UUID.fromString(s)); } catch (Exception ignored) {}
             }
         } catch (SQLException e) {
             e.printStackTrace();

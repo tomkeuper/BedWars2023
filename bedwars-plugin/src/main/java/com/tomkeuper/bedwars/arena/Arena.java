@@ -64,6 +64,7 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.money.internal.MoneyPerMinuteTask;
 import com.tomkeuper.bedwars.shop.ShopCache;
+import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -329,11 +330,11 @@ public class Arena implements IArena {
             // Link the global ShopIndex; categories are pre-resolved per arena below
             this.linkedShop = ShopManager.shop;
             if (this.linkedShop != null) {
-                ((com.tomkeuper.bedwars.shop.main.ShopIndex) this.linkedShop).preResolveForArena(this);
+                ((ShopIndex) this.linkedShop).preResolveForArena(this);
             }
         } catch (Throwable ignored) {}
         try {
-            this.linkedUpgrades = com.tomkeuper.bedwars.BedWars.getUpgradeManager().getMenuForArena(this);
+            this.linkedUpgrades = BedWars.getUpgradeManager().getMenuForArena(this);
         } catch (Throwable ignored) {}
         world.getEntities().stream().filter(e -> e.getType() != EntityType.PLAYER)
                 .filter(e -> e.getType() != EntityType.PAINTING).filter(e -> e.getType() != EntityType.ITEM_FRAME)

@@ -33,7 +33,7 @@ public class QuickBuyElement implements IQuickBuyElement {
 
 
     public QuickBuyElement(String path, int slot){
-        this.categoryContent = ShopCategory.getInstance().getCategoryContent(path, ShopManager.shop);
+        this.categoryContent = ShopCategory.resolveCategoryContent(path, ShopManager.shop);
         if (this.categoryContent != null) this.loaded = true;
         this.slot = slot;
     }
@@ -53,12 +53,9 @@ public class QuickBuyElement implements IQuickBuyElement {
         return categoryContent;
     }
 
-    /**
-     * Rebind this quick-buy element to a different content instance.
-     * Used to align with arena-resolved content without recreating the element.
-     */
-    public void setCategoryContent(ICategoryContent categoryContent) {
-        this.categoryContent = categoryContent;
-        this.loaded = categoryContent != null;
+    // Allow rebinding to the arena-resolved content instance at render time
+    public void setCategoryContent(ICategoryContent cc) {
+        this.categoryContent = cc;
+        if (cc != null) this.loaded = true;
     }
 }

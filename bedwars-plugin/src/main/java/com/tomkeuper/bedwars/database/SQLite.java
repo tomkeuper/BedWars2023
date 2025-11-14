@@ -30,10 +30,7 @@ import com.tomkeuper.bedwars.stats.PlayerStats;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class SQLite implements IDatabase {
 
@@ -498,8 +495,8 @@ public class SQLite implements IDatabase {
     }
 
     @Override
-    public java.util.List<java.util.UUID> listQuickBuyUUIDs() {
-        java.util.List<java.util.UUID> list = new java.util.ArrayList<>();
+    public List<UUID> listQuickBuyUUIDs() {
+        List<UUID> list = new ArrayList<>();
         try {
             checkConnection();
             try (PreparedStatement ps = connection.prepareStatement("SELECT uuid FROM quick_buy_2;")) {

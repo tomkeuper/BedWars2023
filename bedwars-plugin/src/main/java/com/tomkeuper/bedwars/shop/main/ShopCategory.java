@@ -41,6 +41,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ShopCategory implements IShopCategory {
@@ -52,8 +53,6 @@ public class ShopCategory implements IShopCategory {
     public final List<ICategoryContent> categoryContentList = new ArrayList<>();
     public static List<UUID> categoryViewers = new ArrayList<>();
     public String name;
-    @Getter
-    public static ShopCategory instance;
 
     /**
      * Load a shop category from the given path
@@ -131,7 +130,6 @@ public class ShopCategory implements IShopCategory {
                 BedWars.debug("Adding CategoryContent: " + s + " to Shop Category: " + path);
             }
         }
-        instance = this;
     }
 
     /**
@@ -162,7 +160,7 @@ public class ShopCategory implements IShopCategory {
 
         // Render category buttons using pre-resolved mapping when available
         if (arena != null && idxToUse instanceof ShopIndex) {
-            java.util.Map<Integer, IShopCategory> chosenBySlot = ((ShopIndex) idxToUse).getResolvedBySlot(arena);
+            Map<Integer, IShopCategory> chosenBySlot = ((ShopIndex) idxToUse).getResolvedBySlot(arena);
             if (chosenBySlot == null || chosenBySlot.isEmpty()) {
                 // Fallback: defaults only
                 for (IShopCategory sc : idxToUse.getCategoryList()) {
@@ -172,7 +170,7 @@ public class ShopCategory implements IShopCategory {
                     }
                 }
             } else {
-                for (java.util.Map.Entry<Integer, IShopCategory> e : chosenBySlot.entrySet()) {
+                for (Map.Entry<Integer, IShopCategory> e : chosenBySlot.entrySet()) {
                     inv.setItem(e.getKey(), e.getValue().getItemStack(player));
                 }
             }
@@ -249,12 +247,26 @@ public class ShopCategory implements IShopCategory {
         return null;
     }
 
+    /**
+     * Static helper to resolve a category content by its identifier within a given shop index.
+     * Uses the same logic as the instance method but avoids relying on a singleton instance.
+     */
+    public static ICategoryContent resolveCategoryContent(String identifier, IShopIndex shopIndex){
+        if (identifier == null || shopIndex == null) return null;
+        for (IShopCategory sc : shopIndex.getCategoryList()){
+            for (ICategoryContent cc : sc.getCategoryContentList()){
+                if (identifier.equals(cc.getIdentifier())) return cc;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String getName() {
         return name;
     }
 
-    public List<UUID> getCategoryViewers() {
+    public static List<UUID> getCategoryViewers() {
         return new ArrayList<>(categoryViewers);
     }
 

@@ -471,8 +471,8 @@ public class H2 implements IDatabase {
     }
 
     @Override
-    public java.util.List<java.util.UUID> listQuickBuyUUIDs() {
-        java.util.List<java.util.UUID> list = new java.util.ArrayList<>();
+    public List<UUID> listQuickBuyUUIDs() {
+        List<UUID> list = new ArrayList<>();
         try {
             checkConnection();
             try (PreparedStatement ps = connection.prepareStatement("SELECT UUID FROM QUICK_BUY;")) {

@@ -36,11 +36,9 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.LegacyTeamAssigner;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import com.tomkeuper.bedwars.shop.main.CategoryContent;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Bed;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;

@@ -23,10 +23,7 @@ package com.tomkeuper.bedwars.shop.listeners;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
-import com.tomkeuper.bedwars.api.shop.ICachedItem;
-import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
-import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
-import com.tomkeuper.bedwars.api.shop.IShopCategory;
+import com.tomkeuper.bedwars.api.shop.*;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
@@ -40,6 +37,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 import static org.bukkit.event.inventory.InventoryAction.HOTBAR_SWAP;
 import static org.bukkit.event.inventory.InventoryAction.MOVE_TO_OTHER_INVENTORY;
@@ -63,7 +62,7 @@ public class InventoryListener implements Listener {
         if (cache == null) return;
         if (shopCache == null) return;
 
-        if(ShopIndex.getIndexViewers().contains(p.getUniqueId()) || ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
+        if(ShopIndex.getIndexViewers().contains(p.getUniqueId()) || ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
             if (e.getClickedInventory() != null && e.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
                 e.setCancelled(true);
                 return;
@@ -74,9 +73,9 @@ public class InventoryListener implements Listener {
             e.setCancelled(true);
 
             // Use the arena-linked shop and its pre-resolved categories to handle clicks
-            com.tomkeuper.bedwars.api.shop.IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
+            IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
             if (idx instanceof ShopIndex) {
-                java.util.Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
+                Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
                 IShopCategory clickedCategory = chosen.get(e.getSlot());
                 if (clickedCategory != null) {
                     if (clickedCategory instanceof ShopCategory) {
@@ -112,7 +111,7 @@ public class InventoryListener implements Listener {
                     return;
                 }
             }
-        } else if (ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
+        } else if (ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
             // Check if item is null or air (don't process clicks on air)
@@ -120,7 +119,7 @@ public class InventoryListener implements Listener {
             if (e.getCurrentItem().getType() == Material.AIR) return;
 
             // Use arena-linked shop for buttons
-            com.tomkeuper.bedwars.api.shop.IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
+            IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
 
             // Quick Buy button at top bar → back to index
             if (e.getSlot() == idx.getQuickBuyButton().getSlot()) {
@@ -130,7 +129,7 @@ public class InventoryListener implements Listener {
 
             // Category tabs click in the top bar
             if (idx instanceof ShopIndex) {
-                java.util.Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
+                Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
                 IShopCategory clickedCategory = chosen.get(e.getSlot());
                 if (clickedCategory != null) {
                     if (clickedCategory instanceof ShopCategory) {
@@ -162,7 +161,7 @@ public class InventoryListener implements Listener {
                 for (ICategoryContent cc : selectedCategory.getCategoryContentList()) {
                     if (cc.getSlot() == e.getSlot()) {
                         if (e.isShiftClick()) {
-                            if (!cache.hasCategoryContent(cc)) new com.tomkeuper.bedwars.shop.quickbuy.QuickBuyAdd(p, cc);
+                            if (!cache.hasCategoryContent(cc)) new QuickBuyAdd(p, cc);
                             return;
                         }
                         if (cc.execute(p, shopCache, cc.getSlot())) {

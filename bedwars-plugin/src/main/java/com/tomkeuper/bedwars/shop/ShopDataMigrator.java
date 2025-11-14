@@ -22,6 +22,7 @@ package com.tomkeuper.bedwars.shop;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.database.IDatabase;
+import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 
 import java.util.*;
 
@@ -89,7 +90,7 @@ public final class ShopDataMigrator {
             int total = 0;
 
             for (UUID uuid : uuids) {
-                Map<Integer, String> slots = db.getQuickBuySlots(uuid, com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache.quickSlots);
+                Map<Integer, String> slots = db.getQuickBuySlots(uuid, PlayerQuickBuyCache.quickSlots);
                 if (slots == null || slots.isEmpty()) continue;
                 total += slots.size();
 
@@ -105,7 +106,7 @@ public final class ShopDataMigrator {
                 if (!updates.isEmpty()) {
                     try {
                         // Pass empty element list; adapter will perform UPDATE on existing rows
-                        db.pushQuickBuyChanges(updates, uuid, java.util.Collections.emptyList());
+                        db.pushQuickBuyChanges(updates, uuid, Collections.emptyList());
                         migrated += updates.size();
                     } catch (Throwable t) {
                         BedWars.plugin.getLogger().warning("Failed to persist Quick Buy migration for " + uuid + ": " + t.getMessage());
