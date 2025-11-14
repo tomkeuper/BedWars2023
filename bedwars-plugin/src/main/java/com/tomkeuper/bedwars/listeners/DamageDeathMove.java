@@ -159,10 +159,6 @@ public class DamageDeathMove implements Listener {
                 EntityDamageEvent damageEvent = victim.getLastDamageCause();
 
                 ITeam victimsTeam = arena.getTeam(victim);
-                if (arena.getStatus() != GameState.playing) {
-                    victim.spigot().respawn();
-                    return;
-                }
 
                 if (victimsTeam == null) {
                     victim.spigot().respawn();
