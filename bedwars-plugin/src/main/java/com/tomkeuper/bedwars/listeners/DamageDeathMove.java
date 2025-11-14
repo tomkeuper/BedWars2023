@@ -135,6 +135,11 @@ public class DamageDeathMove implements Listener {
 
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Player victim = (Player) e.getEntity();
+                // Re-verify health and alive status before processing death
+                if (victim.isDead() || victim.getHealth() >= 0.5) {
+                    // Player is no longer in a critical state, skip death logic
+                    return;
+                }
                 List<ItemStack> drops = new ArrayList<>(Arrays.asList(victim.getInventory().getContents()));
                 Player killer = ((Player) e.getEntity()).getKiller();
                 ITeam killersTeam = null;
@@ -154,10 +159,6 @@ public class DamageDeathMove implements Listener {
                 EntityDamageEvent damageEvent = victim.getLastDamageCause();
 
                 ITeam victimsTeam = arena.getTeam(victim);
-                if (arena.getStatus() != GameState.playing) {
-                    victim.spigot().respawn();
-                    return;
-                }
 
                 if (victimsTeam == null) {
                     victim.spigot().respawn();
@@ -181,7 +182,7 @@ public class DamageDeathMove implements Listener {
                             }
                         } else if (bedDestroyer != null) {
                             killer = bedDestroyer;
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+                            if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
                         }
                         if (killer == null)
                             message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
@@ -202,7 +203,7 @@ public class DamageDeathMove implements Listener {
                             }
                         } else if (bedDestroyer != null) {
                             killer = bedDestroyer;
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+                            if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
                         }
                         if (killer == null)
                             message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_VOID_FALL_FINAL_KILL : Messages.PLAYER_DIE_VOID_FALL_REGULAR_KILL;
@@ -252,7 +253,7 @@ public class DamageDeathMove implements Listener {
                             }
                         } else if (bedDestroyer != null) {
                             killer = bedDestroyer;
-                            if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
+                            if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
 
                             if (killer != null) {
                                 if (killer != victim) {
