@@ -89,6 +89,8 @@ public interface ICategoryContent {
      */
     String getCategoryIdentifier();
 
+    void setCategoryIdentifier(String categoryIdentifier);
+
     /**
      * Get the list of content tiers for the category content.
      *
