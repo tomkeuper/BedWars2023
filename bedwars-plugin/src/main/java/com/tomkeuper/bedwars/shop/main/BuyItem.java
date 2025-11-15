@@ -26,8 +26,6 @@ import com.tomkeuper.bedwars.api.arena.shop.IBuyItem;
 import com.tomkeuper.bedwars.api.arena.team.TeamEnchant;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.configuration.Sounds;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -39,29 +37,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-@Getter
 @SuppressWarnings("WeakerAccess")
 public class BuyItem implements IBuyItem {
 
-    @Setter
     private ItemStack itemStack;
-    @Setter
     private boolean autoEquip = false;
-    @Setter
     private boolean permanent = false;
-    @Setter
     private boolean unbreakable = false;
-    /**
-     * -- GETTER --
-     *  Check if object created properly
-     */
     private boolean loaded = false;
-    /**
-     * -- GETTER --
-     *  Get upgrade identifier.
-     *  Used to remove old tier items.
-     */
     private final String upgradeIdentifier;
 
     /**
@@ -190,6 +173,11 @@ public class BuyItem implements IBuyItem {
         loaded = true;
     }
 
+    @Override
+    public boolean isLoaded() {
+        return loaded;
+    }
+
     /**
      * Give to a player
      */
@@ -314,5 +302,48 @@ public class BuyItem implements IBuyItem {
         }
     }
 
+    @Override
+    public String getUpgradeIdentifier() {
+        return upgradeIdentifier;
+    }
 
+    @Override
+    public ItemStack getItemStack() {
+        return itemStack;
+    }
+
+    @Override
+    public void setItemStack(ItemStack itemStack) {
+        this.itemStack = itemStack;
+    }
+
+    @Override
+    public boolean isAutoEquip() {
+        return autoEquip;
+    }
+
+    @Override
+    public void setAutoEquip(boolean autoEquip) {
+        this.autoEquip = autoEquip;
+    }
+
+    @Override
+    public boolean isPermanent() {
+        return permanent;
+    }
+
+    @Override
+    public void setPermanent(boolean permanent) {
+        this.permanent = permanent;
+    }
+
+    @Override
+    public boolean isUnbreakable() {
+        return unbreakable;
+    }
+
+    @Override
+    public void setUnbreakable(boolean permanent) {
+        this.unbreakable = permanent;
+    }
 }
