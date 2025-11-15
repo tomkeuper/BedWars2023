@@ -130,16 +130,12 @@ public class DamageDeathMove implements Listener {
         }
 
         double finalHealth = player.getHealth() - e.getFinalDamage();
-        if (finalHealth < 0.5 && e.getEntity() instanceof Player) {
+        if (finalHealth < 0.5) {
             e.setCancelled(true);
 
             Bukkit.getScheduler().runTask(plugin, () -> {
                 Player victim = (Player) e.getEntity();
-                // Re-verify health and alive status before processing death
-                if (victim.isDead() || victim.getHealth() >= 0.5) {
-                    // Player is no longer in a critical state, skip death logic
-                    return;
-                }
+
                 List<ItemStack> drops = new ArrayList<>(Arrays.asList(victim.getInventory().getContents()));
                 Player killer = ((Player) e.getEntity()).getKiller();
                 ITeam killersTeam = null;
