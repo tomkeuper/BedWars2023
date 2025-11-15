@@ -242,6 +242,10 @@ public class CategoryContent implements ICategoryContent {
      */
     @Override
     public void giveItems(Player player, IShopCache shopCache, IArena arena) {
+        if (contentTiers == null || contentTiers.isEmpty()) {
+            // No content tiers defined; nothing to give.
+            return;
+        }
         int tierIndex = shopCache.getContentTier(getIdentifier()) - 1;
         if (tierIndex < 0 || tierIndex >= contentTiers.size()) tierIndex = 0;
         IContentTier tier = contentTiers.get(tierIndex);
