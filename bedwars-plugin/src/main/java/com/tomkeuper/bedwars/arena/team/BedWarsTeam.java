@@ -467,6 +467,9 @@ public class BedWarsTeam implements ITeam {
         }
         Bukkit.getPluginManager().callEvent(new PlayerReSpawnEvent(p, getArena(), this));
         nms.sendPlayerSpawnPackets(p, getArena());
+        for (Player aPlayer : arena.getWorld().getPlayers()) {
+            BedWars.nms.spigotShowPlayer(p, aPlayer);
+        }
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (getArena() != null) {

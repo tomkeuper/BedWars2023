@@ -73,6 +73,7 @@ public class PlayerDrops {
             dropItems(victim, inventory);
             return true;
         }
+
         if (cause.isFinalKill()) {
             // if is final kill drop items at generator
             if (victimsTeam != null) {

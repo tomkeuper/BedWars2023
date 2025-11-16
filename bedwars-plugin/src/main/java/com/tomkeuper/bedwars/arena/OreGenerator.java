@@ -297,12 +297,12 @@ public class OreGenerator implements IGenerator {
 
         @Override
         public void update() {
-            hologram.getLines().forEach(IHoloLine::reveal);
+            hologram.update();
         }
 
         @Override
         public void update(Player player) {
-            hologram.getLines().forEach(line -> line.reveal(player));
+            hologram.update(player);
         }
 
         @Override

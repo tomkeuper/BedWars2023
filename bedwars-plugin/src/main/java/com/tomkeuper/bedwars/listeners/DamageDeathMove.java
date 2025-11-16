@@ -174,13 +174,10 @@ public class DamageDeathMove implements Listener {
                         killer = bedDestroyer;
                         if (killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
                     }
-                    if (killer == null)
-                        message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
+                    if (killer == null) message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
                     else {
-                        if (killer != victim)
-                            message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITH_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITH_SOURCE_REGULAR_KILL;
-                        else
-                            message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
+                        if (killer != victim) message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITH_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITH_SOURCE_REGULAR_KILL;
+                        else message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_FINAL_KILL : Messages.PLAYER_DIE_EXPLOSION_WITHOUT_SOURCE_REGULAR;
                     }
                     cause = victimsTeamBedDestroyed ? PlayerKillEvent.PlayerKillCause.EXPLOSION_FINAL_KILL : PlayerKillEvent.PlayerKillCause.EXPLOSION;
 
@@ -392,9 +389,7 @@ public class DamageDeathMove implements Listener {
             if (!victim.equals(owner)) continue; // only the placer here
 
             // Fire a synthetic damage event so your existing listener runs
-            EntityDamageByEntityEvent fakeDamage =
-                    new EntityDamageByEntityEvent(tnt, victim,
-                            EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 4.0 /* base damage */);
+            EntityDamageByEntityEvent fakeDamage = new EntityDamageByEntityEvent(tnt, victim, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, 4.0 /* base damage */);
 
             Bukkit.getPluginManager().callEvent(fakeDamage);
 
@@ -648,6 +643,7 @@ public class DamageDeathMove implements Listener {
 
         if (Arena.isInArena(player)) {
             IArena a = Arena.getArenaByPlayer(player);
+            if (a == null) return;
             if (e.getFrom().getChunk() != e.getTo().getChunk()) {
                 /* update armor-stands hidden by nms */
                 // hide armor for those with invisibility potions
