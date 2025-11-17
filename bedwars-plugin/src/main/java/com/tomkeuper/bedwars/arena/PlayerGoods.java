@@ -142,6 +142,7 @@ class PlayerGoods {
      * restore player
      */
     void restore() {
+        BedWars.debug("Restoring PlayerGoods for player " + uuid.toString());
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) return;
         playerGoods.remove(player.getUniqueId());
