@@ -162,4 +162,12 @@ public interface IDatabase {
      * @param elementList  A list of quick buy elements.
      */
     void pushQuickBuyChanges(HashMap<Integer, String> updateSlots, UUID uuid, List<IQuickBuyElement> elementList);
+
+    /**
+     * List all players that have a Quick Buy row.
+     * Used for startup migrations.
+     *
+     * @return list of player UUIDs that have Quick Buy data.
+     */
+    List<UUID> listQuickBuyUUIDs();
 }

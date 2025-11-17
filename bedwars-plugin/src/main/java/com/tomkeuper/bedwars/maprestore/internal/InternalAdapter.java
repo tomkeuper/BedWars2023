@@ -108,13 +108,18 @@ public class InternalAdapter extends RestoreAdapter {
                     if (Arena.getGamesBeforeRestart() != -1) {
                         Arena.setGamesBeforeRestart(Arena.getGamesBeforeRestart() - 1);
                     }
-                    Bukkit.unloadWorld(a.getWorldName(), false);
-                    if (Arena.canAutoScale(a.getArenaName())) {
+                    boolean success = Bukkit.unloadWorld(a.getWorldName(), false);
+                    if (!success) {
+                        plugin.getLogger().warning("Failed to unload world: " + a.getWorldName());
+                    }                    if (Arena.canAutoScale(a.getArenaName())) {
                         Bukkit.getScheduler().runTaskLater(plugin, () -> new Arena(a.getArenaName(), null), 80L);
                     }
                 }
             } else {
-                Bukkit.unloadWorld(a.getWorldName(), false);
+                boolean success = Bukkit.unloadWorld(a.getWorldName(), false);
+                if (!success) {
+                    plugin.getLogger().warning("Failed to unload world: " + a.getWorldName());
+                }
                 Bukkit.getScheduler().runTaskLater(plugin, () -> new Arena(a.getArenaName(), null), 80L);
             }
             if (!a.getWorldName().equals(a.getArenaName())) {
@@ -126,10 +131,18 @@ public class InternalAdapter extends RestoreAdapter {
     @Override
     public void onDisable(IArena a) {
         if(BedWars.isShuttingDown()) {
-            Bukkit.unloadWorld(a.getWorldName(), false);
+            boolean success = Bukkit.unloadWorld(a.getWorldName(), false);
+            if (!success) {
+                plugin.getLogger().warning("Failed to unload world: " + a.getWorldName());
+            }
             return;
         }
-        Bukkit.getScheduler().runTask(getOwner(), () -> Bukkit.unloadWorld(a.getWorldName(), false));
+        Bukkit.getScheduler().runTask(getOwner(), () -> {
+            boolean success = Bukkit.unloadWorld(a.getWorldName(), false);
+            if (!success) {
+                plugin.getLogger().warning("Failed to unload world: " + a.getWorldName());
+            }
+        });
     }
 
     @Override

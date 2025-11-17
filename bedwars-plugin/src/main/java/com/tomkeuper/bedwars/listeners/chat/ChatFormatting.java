@@ -46,6 +46,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -212,7 +213,10 @@ public class ChatFormatting implements Listener {
         BedWars.plugin.adventure().sender(Bukkit.getConsoleSender())
                 .sendMessage(parsePHolders(format, msg, eventTriggerPlayer,null, team)
                         .replaceText(b -> b.match("%").replacement("%%"))); // Used for console message only.
-        for (Player player : recipients) {
+        // Create a copy to avoid ConcurrentModificationException
+        List<Player> recipientsCopy = new ArrayList<>(recipients);
+        for (Player player : recipientsCopy) {
+            if (player == null) continue;
             var adventurePlayer = BedWars.plugin.adventure().player(player);
             adventurePlayer.sendMessage(parsePHolders(format, msg, eventTriggerPlayer, player, team));
         }
