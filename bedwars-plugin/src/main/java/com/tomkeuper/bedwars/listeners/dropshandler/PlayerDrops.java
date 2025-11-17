@@ -79,16 +79,13 @@ public class PlayerDrops {
             if (victimsTeam != null) {
                 Location dropsLocation = new Location(victim.getWorld(), victimsTeam.getKillDropsLocation().getBlockX(), victimsTeam.getKillDropsLocation().getY(), victimsTeam.getKillDropsLocation().getZ());
                 victim.getEnderChest().forEach(item -> {
-                    if (item != null) {
-                        victim.getWorld().dropItemNaturally(dropsLocation, item);
-                    }
+                    if (item != null) victim.getWorld().dropItemNaturally(dropsLocation, item);
                 });
                 victim.getEnderChest().clear();
             }
         }
 
         // victim's inventory
-
         if (victimsTeam != null && !(victimsTeam.equals(killersTeam) && victim.equals(killer))) {
             // if final kill give items at kill drops location (team generator)
             if (victimsTeam.isBedDestroyed()) {
@@ -102,7 +99,6 @@ public class PlayerDrops {
                         killer.getWorld().dropItemNaturally(new Location(arena.getWorld(), v.getX(), v.getY(), v.getZ()), i);
                     }
                 }
-
             } else {
                 // add-to-inventory feature if receiver is not respawning
                 if (!arena.isPlayer(killer)) return true;
@@ -150,7 +146,6 @@ public class PlayerDrops {
                 }
                 materialDrops.clear();
             }
-
         }
         return true;
     }

@@ -116,7 +116,7 @@ public class BedWarsTeam implements ITeam {
 
     // Used for show/ hide bed hologram
     @Getter
-    private final HashMap<String, BedHolo> beds = new HashMap<>();
+    private final HashMap<String, IBedHolo> beds = new HashMap<>();
 
     // Queued traps
     private final LinkedList<EnemyBaseEnterTrap> enemyBaseEnterTraps = new LinkedList<>();
@@ -171,9 +171,12 @@ public class BedWarsTeam implements ITeam {
 
             membersCache.removeIf(player -> player.getUniqueId().equals(p.getUniqueId()));
             membersCache.add(p);
-            BedHolo holo = beds.get(iso);
+
+            IBedHolo holo = beds.get(iso);
             if (holo == null) holo = new BedHolo(iso, arena, this);
-            else holo.show();
+            else holo.show(p);
+
+            if (holo.getHologram() != null) holo.getHologram().addPlayer(p);
         }
     }
 
@@ -513,6 +516,18 @@ public class BedWarsTeam implements ITeam {
         if (bedHolo != null) bedHolo.show(p);
 
         Sounds.playSound("player-re-spawn", p);
+        for (Player worldPlayer : arena.getWorld().getPlayers()) {
+            if (worldPlayer == p) continue;
+            if (getArena().isReSpawning(worldPlayer)) continue;
+            if (getArena().getShowTime().get(worldPlayer) != null) continue;
+            if (getArena().isSpectator(worldPlayer)) continue;
+            BedWars.nms.spigotShowPlayer(worldPlayer, p);
+        }
+
+        for (Player worldPlayer : arena.getWorld().getPlayers()) {
+            if (worldPlayer == p) continue;
+            BedWars.nms.spigotShowPlayer(p, worldPlayer);
+        }
     }
 
     /**
@@ -571,6 +586,7 @@ public class BedWarsTeam implements ITeam {
             line = h.getLine(0);
 
             Language lang = Language.getLang(iso);
+            if (line == null) return;
             if (isBedDestroyed()) {
                 line.setText(lang.m(Messages.BED_HOLOGRAM_DESTROYED));
                 bedDestroyed = true;
@@ -784,7 +800,7 @@ public class BedWarsTeam implements ITeam {
     }
 
     @Override
-    public BedHolo getBedHologram(@NotNull String iso) {
+    public IBedHolo getBedHologram(@NotNull String iso) {
         return beds.get(iso);
     }
 
@@ -802,7 +818,7 @@ public class BedWarsTeam implements ITeam {
         } else {
             bed.getBlock().setType(Material.AIR);
         }
-        for (BedHolo bh : beds.values()) {
+        for (IBedHolo bh : beds.values()) {
             bh.hide();
             bh.show();
         }

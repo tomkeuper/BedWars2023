@@ -2842,16 +2842,17 @@ public class Arena implements IArena {
             if (loc == null) {
                 PaperSupport.teleportC(player, Bukkit.getWorlds().get(0).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 plugin.getLogger().log(Level.SEVERE, player.getName() + " was teleported to the main world because lobby location is not set!");
-            } else {
-                player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            }
+            } else player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
         } else if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (BedWars.getLobbyWorld().isEmpty()) {
                 PaperSupport.teleportC(player, Bukkit.getWorlds().get(0).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 plugin.getLogger().log(Level.SEVERE, player.getName() + " was teleported to the main world because lobby location is not set!");
-            } else {
-                PaperSupport.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
-            }
+            } else PaperSupport.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        }
+        World w = player.getWorld();
+        for (Player p : w.getPlayers()) {
+            BedWars.nms.spigotShowPlayer(player, p);
+            BedWars.nms.spigotShowPlayer(p, player);
         }
     }
 

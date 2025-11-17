@@ -13,7 +13,6 @@ import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.arena.Arena;
-import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -36,6 +35,7 @@ public class HologramTask implements Runnable {
                 Location pLoc = p.getLocation();
                 List<ShopHolo> shopHolos = a.getShopHolograms(iso);
                 for (ShopHolo shopHolo : shopHolos) {
+                    if (shopHolo == null) continue;
                     IHologram hologram = shopHolo.getHologram();
                     Location holoLoc = hologram.getLocation();
                     double distance = pLoc.distance(holoLoc);
@@ -45,15 +45,27 @@ public class HologramTask implements Runnable {
             }
 
             for (ITeam team : a.getTeams()) {
-                if (!(team instanceof BedWarsTeam)) continue;
                 for (Player p : world.getPlayers()) {
+                    boolean isMember = team.isMember(p);
                     String iso = Language.getPlayerLanguage(p).getIso();
-                    IBedHolo bedHolo = ((BedWarsTeam) team).getBedHologram(iso);
+                    IBedHolo bedHolo = team.getBedHologram(iso);
+                    if (bedHolo == null) continue;
                     Location bedLoc = bedHolo.getHologram().getLocation();
                     Location pLoc = p.getLocation();
                     double distance = pLoc.distance(bedLoc);
-                    if (distance <= BedWars.hologramUpdateDistance) continue;
-                    bedHolo.update(p);
+
+                    if (distance <= 4) {
+                        if (isMember) bedHolo.hide(p);
+                        continue;
+                    } else if (distance > 4 && distance <= 7 && distance < BedWars.hologramUpdateDistance) {
+                        if (isMember) bedHolo.show(p);
+                        continue;
+                    }
+
+                    if (distance >= BedWars.hologramUpdateDistance) {
+                        bedHolo.update(p);
+                        if (!isMember) bedHolo.remove(p);
+                    }
                 }
             }
 
@@ -65,6 +77,7 @@ public class HologramTask implements Runnable {
                 for (Player p : world.getPlayers()) {
                     String iso = Language.getPlayerLanguage(p).getIso();
                     IGenHolo holo = generator.getLanguageHolograms().get(iso);
+                    if (holo == null) continue;
                     GeneratorHolder holder = generator.getHologramHolder();
                     Location pLoc = p.getLocation();
                     double distance = pLoc.distance(genLoc);
