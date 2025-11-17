@@ -1595,6 +1595,7 @@ public class Arena implements IArena {
      * Change game status starting tasks.
      */
     public void changeStatus(GameState status) {
+        if (status == GameState.restarting && this.status == GameState.restarting) return;
         if (this.status != GameState.playing && status == GameState.playing) {
             startTime = Instant.now();
         }
