@@ -54,9 +54,28 @@ class PlayerGoods {
     }
 
     PlayerGoods(Player p, boolean prepare, boolean rejoin) {
+        BedWars.debug("Creating PlayerGoods for player " + p.getUniqueId() + " rejoin: " + rejoin + ".");
+        // Do not overwrite an existing snapshot
         if (hasGoods(p)) {
-            plugin.getLogger().severe(p.getName() + " is already having a PlayerGoods vault :|");
+            plugin.getLogger().severe("Skipping PlayerGoods creation for " + p.getName() + " because a snapshot already exists.");
             return;
+        }
+
+        // Rejoin/in-game safety: avoid snapshotting (and avoid touching inventories) during rejoin or in-game phases
+        try {
+            boolean isRejoin = ReJoin.exists(p);
+            com.tomkeuper.bedwars.api.arena.IArena currentArena = Arena.getArenaByPlayer(p);
+            boolean inGamePhase = false;
+            if (currentArena != null) {
+                inGamePhase = currentArena.getStatus() == com.tomkeuper.bedwars.api.arena.GameState.playing
+                        || currentArena.getStatus() == com.tomkeuper.bedwars.api.arena.GameState.starting;
+            }
+            if (isRejoin || inGamePhase) {
+                BedWars.debug("Skipping PlayerGoods creation for " + p.getName() + " due to rejoin/in-game detection.");
+                return;
+            }
+        } catch (Throwable t) {
+            // best-effort detection; on failure continue with normal snapshot
         }
         this.uuid = p.getUniqueId();
         this.level = p.getLevel();
@@ -117,6 +136,44 @@ class PlayerGoods {
             p.setAllowFlight(false);
             p.setFlying(false);
         }
+    }
+
+    /**
+     * Safely create a PlayerGoods snapshot when needed.
+     * - Returns existing snapshot if present.
+     * - Skips creation during rejoin or in-game phases.
+     * - Otherwise creates and returns a new snapshot.
+     */
+    static PlayerGoods createIfNeeded(Player p, boolean prepare) {
+        // If there's already a snapshot, return it as-is
+        PlayerGoods existing = getPlayerGoods(p);
+        if (existing != null) {
+            BedWars.debug("PlayerGoods already exists for " + p.getName() + ", returning existing snapshot.");
+            return existing;
+        }
+
+        // Rejoin/in-game detection
+        boolean skip;
+        try {
+            boolean isRejoin = ReJoin.exists(p);
+            com.tomkeuper.bedwars.api.arena.IArena currentArena = Arena.getArenaByPlayer(p);
+            boolean inGamePhase = false;
+            if (currentArena != null) {
+                inGamePhase = currentArena.getStatus() == com.tomkeuper.bedwars.api.arena.GameState.playing
+                        || currentArena.getStatus() == com.tomkeuper.bedwars.api.arena.GameState.starting;
+            }
+            skip = isRejoin || inGamePhase;
+        } catch (Throwable t) {
+            skip = false; // be conservative and allow snapshot if detection failed
+        }
+
+        if (skip) {
+            BedWars.debug("Skipping PlayerGoods snapshot creation for " + p.getName() + " (rejoin/in-game).");
+            return null;
+        }
+
+        // Safe to create a new snapshot
+        return new PlayerGoods(p, prepare);
     }
 
     /**

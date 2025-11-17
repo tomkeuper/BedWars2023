@@ -612,7 +612,7 @@ public class Arena implements IArena {
 
             /* save player inventory etc */
             if (getServerType() != ServerType.BUNGEE) {
-                new PlayerGoods(p, true);
+                PlayerGoods.createIfNeeded(p, true);
                 playerLocation.put(p, p.getLocation());
             }
             PaperSupport.teleportC(p, getWaitingLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
@@ -713,7 +713,7 @@ public class Arena implements IArena {
             if (!playerBefore) {
                 /* save player inv etc if isn't saved yet*/
                 if (getServerType() != ServerType.BUNGEE) {
-                    new PlayerGoods(p, true);
+                    PlayerGoods.createIfNeeded(p, true);
                     playerLocation.put(p, p.getLocation());
                 }
                 setArenaByPlayer(p, this);
