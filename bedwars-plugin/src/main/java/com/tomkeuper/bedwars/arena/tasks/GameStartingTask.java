@@ -30,6 +30,7 @@ import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.api.tasks.StartingTask;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
@@ -138,6 +139,10 @@ public class GameStartingTask implements Runnable, StartingTask {
                 getArena().setNextEvent(NextEvent.DIAMOND_GENERATOR_TIER_II);
             } else {
                 getArena().setNextEvent(NextEvent.EMERALD_GENERATOR_TIER_II);
+            }
+
+            for (IShopCategory categoryContent : arena.getLinkedShop().getCategoryList()) {
+                BedWars.debug("Pre-resolving shop category: " + categoryContent.getName() + " for arena: " + arena.getArenaName());
             }
 
             //Spawn shopkeepers

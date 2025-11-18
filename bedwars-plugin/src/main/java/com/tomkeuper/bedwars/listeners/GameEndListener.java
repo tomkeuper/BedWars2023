@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -43,6 +44,14 @@ public class GameEndListener implements Listener {
         // clear inventories
         for (UUID p : event.getAliveWinners()) {
             Bukkit.getPlayer(p).getInventory().clear();
+        }
+
+        // clear Ender Chests for everyone currently in the arena (players and spectators)
+        for (Player pl : event.getArena().getPlayers()) {
+            try { pl.getEnderChest().clear(); } catch (Throwable ignored) {}
+        }
+        for (Player pl : event.getArena().getSpectators()) {
+            try { pl.getEnderChest().clear(); } catch (Throwable ignored) {}
         }
 
         // clear dropped items

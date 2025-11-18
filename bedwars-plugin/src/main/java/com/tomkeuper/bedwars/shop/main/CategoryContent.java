@@ -37,6 +37,8 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -56,12 +58,20 @@ public class CategoryContent implements ICategoryContent {
     private final List<IContentTier> contentTiers = new ArrayList<>();
     private final IShopCategory father;
     private int slot;
+    /**
+     * -- GETTER --
+     *  Check if category content was loaded
+     */
+    @Getter
+    @Setter
     private boolean loaded = false;
     private final String contentName;
     private String itemNamePath, itemLorePath;
     private String identifier;
     private String categoryIdentifier;
-    private boolean permanent = false, downgradable = false, unbreakable = false;
+    private boolean permanent = false;
+    private boolean downgradable = false;
+    private boolean unbreakable = false;
     private byte weight = 0;
 
 
@@ -113,9 +123,15 @@ public class CategoryContent implements ICategoryContent {
 
         this.slot = yml.getInt(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_SLOT);
 
+        // Build a scoped identifier based on the full category name (default-/group-/arena-)
+        // Example: Swashbuckle-blocks-category.category-content.wool
+        String categoryFullName = (father != null && father.getName() != null) ? father.getName() : categoryName;
+        String scopedIdentifier = categoryFullName + ".category-content." + contentName;
+
         ContentTier ctt;
         for (String s : yml.getConfigurationSection(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS).getKeys(false)) {
-            ctt = new ContentTier(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + s, s, path, yml);
+            // Pass the scoped identifier down so BuyItem tags use the scoped id too
+            ctt = new ContentTier(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + s, s, scopedIdentifier, yml);
             /*if (ctt.isLoaded())*/
             contentTiers.add(ctt);
         }
@@ -133,8 +149,8 @@ public class CategoryContent implements ICategoryContent {
             }
         }
 
-        identifier = path;
-        categoryIdentifier = path;
+        identifier = scopedIdentifier;
+        categoryIdentifier = scopedIdentifier;
 
         loaded = true;
     }
@@ -226,7 +242,29 @@ public class CategoryContent implements ICategoryContent {
      */
     @Override
     public void giveItems(Player player, IShopCache shopCache, IArena arena) {
-        for (IBuyItem bi : contentTiers.get(shopCache.getContentTier(getIdentifier()) - 1).getBuyItemsList()) {
+        if (contentTiers == null || contentTiers.isEmpty()) {
+            // No content tiers defined; nothing to give.
+            return;
+        }
+        int tierIndex = shopCache.getContentTier(getIdentifier()) - 1;
+        if (tierIndex < 0 || tierIndex >= contentTiers.size()) tierIndex = 0;
+        IContentTier tier = contentTiers.get(tierIndex);
+        java.util.List<IBuyItem> list = tier.getBuyItemsList();
+        if (list == null || list.isEmpty()) {
+            // Graceful fallback: no buy-items defined for this tier. Give the tier display item instead.
+            ItemStack display = tier.getItemStack().clone();
+            BedWars.debug("[SHOP_FALLBACK] No buy-items for " + getIdentifier() + " tier=" + (tierIndex+1) + ". Granting tier-item: " + display.getType() + " x" + display.getAmount());
+            try {
+                if (arena != null && arena.getTeam(player) != null) {
+                    ItemStack coloured = BedWars.nms.colourItem(display, arena.getTeam(player));
+                    if (coloured != null && coloured.getType() != Material.AIR) display = coloured;
+                }
+            } catch (Throwable ignored) {}
+            player.getInventory().addItem(display);
+            player.updateInventory();
+            return;
+        }
+        for (IBuyItem bi : list) {
             bi.give(player, arena);
         }
     }
@@ -246,6 +284,16 @@ public class CategoryContent implements ICategoryContent {
     public boolean hasQuick(Player player) {
         IPlayerQuickBuyCache pqbc = PlayerQuickBuyCache.getInstance().getQuickBuyCache(player.getUniqueId());
         return pqbc != null && hasQuick(pqbc);
+    }
+
+    @Override
+    public boolean isPermanent() {
+        return permanent;
+    }
+
+    @Override
+    public boolean isDowngradable() {
+        return downgradable;
     }
 
     @Override
@@ -331,9 +379,6 @@ public class CategoryContent implements ICategoryContent {
     public static Material getCurrency(String currency) {
         Material material;
         switch (currency) {
-            default:
-                material = Material.IRON_INGOT;
-                break;
             case "gold":
                 material = Material.GOLD_INGOT;
                 break;
@@ -345,6 +390,9 @@ public class CategoryContent implements ICategoryContent {
                 break;
             case "vault":
                 material = Material.AIR;
+                break;
+            default:
+                material = Material.IRON_INGOT;
                 break;
         }
         return material;
@@ -453,42 +501,28 @@ public class CategoryContent implements ICategoryContent {
 
     }
 
-    public void setLoaded(boolean loaded) {
-        this.loaded = loaded;
-    }
-
-    /**
-     * Check if category content was loaded
-     */
-    public boolean isLoaded() {
-        return loaded;
-    }
-
-    public boolean isPermanent() {
-        return permanent;
-    }
-
-    public boolean isDowngradable() {
-        return downgradable;
-    }
-
     public boolean isUpgradable() {
         return getContentTiers().size() > 1;
     }
 
+    @Override
     public String getIdentifier() {
         return identifier;
     }
 
-    public List<IContentTier> getContentTiers() {
-        return contentTiers;
-    }
-
+    @Override
     public String getCategoryIdentifier() {
         return categoryIdentifier;
     }
 
+    @Override
     public void setCategoryIdentifier(String categoryIdentifier) {
         this.categoryIdentifier = categoryIdentifier;
     }
+
+    @Override
+    public List<IContentTier> getContentTiers() {
+        return contentTiers;
+    }
+
 }
