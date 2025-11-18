@@ -37,10 +37,8 @@ import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_8_R3.hologram.Hologram;
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Color;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -51,6 +49,7 @@ import org.bukkit.craftbukkit.v1_8_R3.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.v1_8_R3.util.UnsafeList;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -137,7 +136,6 @@ public class v1_8_R3 extends VersionSupport {
     public void hideEntity(org.bukkit.entity.Entity e, Player p) {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
-
     }
 
     @Override
@@ -915,6 +913,12 @@ public class v1_8_R3 extends VersionSupport {
             pc.sendPacket(equipment);
             pc.sendPacket(metadata);
         }
+    }
+
+    @Override
+    public void callPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newLevel, String deathMessage) {
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, drops, droppedExp, newLevel, deathMessage);
+        Bukkit.getPluginManager().callEvent(deathEvent);
     }
 
     @Override

@@ -76,6 +76,7 @@ import org.bukkit.craftbukkit.v1_20_R4.entity.*;
 import org.bukkit.craftbukkit.v1_20_R4.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_20_R4.util.CraftMagicNumbers;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -836,6 +837,12 @@ public final class v1_20_R4 extends VersionSupport {
         for (Player p : world.getPlayers()) {
             sendPackets(p, equipment, metadata);
         }
+    }
+
+    @Override
+    public void callPlayerDeathEvent(Player player, List<org.bukkit.inventory.ItemStack> drops, int droppedExp, int newLevel, String deathMessage) {
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, drops, droppedExp, newLevel, deathMessage);
+        Bukkit.getPluginManager().callEvent(deathEvent);
     }
 
     @Override

@@ -131,8 +131,10 @@ public class DamageDeathMove implements Listener {
         if (finalHealth < 0.5) {
             e.setCancelled(true);
 
-            PlayerDeathEvent event = new PlayerDeathEvent(player, new ArrayList<>(Arrays.asList(player.getInventory().getContents())),0 , 0, 0, 0, "");
-            Bukkit.getPluginManager().callEvent(event);
+            // Additional check to prevent multiple death events during re-spawn
+            if (arena.isReSpawning(player)) return;
+            List<ItemStack> drops = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
+            BedWars.nms.callPlayerDeathEvent(player, drops, 0, 0, "");
         }
     }
 
@@ -265,9 +267,7 @@ public class DamageDeathMove implements Listener {
                     if (lh != null) {
                         lh.setDamager(e.getDamager());
                         lh.setTime(System.currentTimeMillis());
-                    } else {
-                        new LastHit(p, e.getDamager(), System.currentTimeMillis());
-                    }
+                    } else new LastHit(p, e.getDamager(), System.currentTimeMillis());
 
                     if (a.getShowTime().containsKey(p) && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY)) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -286,9 +286,7 @@ public class DamageDeathMove implements Listener {
                     if (lh != null) {
                         lh.setDamager(e.getDamager());
                         lh.setTime(System.currentTimeMillis());
-                    } else {
-                        new LastHit(p, e.getDamager(), System.currentTimeMillis());
-                    }
+                    } else new LastHit(p, e.getDamager(), System.currentTimeMillis());
 
                     if (a.getShowTime().containsKey(p) && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY)) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
@@ -303,6 +301,7 @@ public class DamageDeathMove implements Listener {
                         });
                     }
                 }
+
                 if (damager != null) {
                     if (a.isSpectator(damager) || a.isReSpawning(damager.getUniqueId())) {
                         e.setCancelled(true);
@@ -405,6 +404,8 @@ public class DamageDeathMove implements Listener {
             victim.spigot().respawn();
             return;
         }
+
+        if (arena.isReSpawning(victim)) return;
 
         BedWars.nms.clearArrowsFromPlayerBody(victim);
 
@@ -511,20 +512,8 @@ public class DamageDeathMove implements Listener {
         if (killer != null) killersTeam = arena.getTeam(killer);
         if (killer != null && playerKillEvent.playSound()) Sounds.playSound(ConfigPath.SOUNDS_KILL, killer);
 
-        for (Player on : arena.getPlayers()) {
-            Language lang = Language.getPlayerLanguage(on);
-            on.sendMessage(playerKillEvent.getMessage().apply(on).
-                    replace("%bw_player_color%", victimsTeam.getColor().chat().toString())
-                    .replace("%bw_player%", victim.getDisplayName())
-                    .replace("%bw_playername%", victim.getName())
-                    .replace("%bw_team%", victimsTeam.getDisplayName(lang))
-                    .replace("%bw_killer_color%", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
-                    .replace("%bw_killer_playername%", killer == null ? "" : killer.getName())
-                    .replace("%bw_killer_name%", killer == null ? "" : killer.getDisplayName())
-                    .replace("%bw_killer_team_name%", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
-        }
 
-        for (Player on : arena.getSpectators()) {
+        for (Player on : arena.getWorld().getPlayers()) {
             Language lang = Language.getPlayerLanguage(on);
             on.sendMessage(playerKillEvent.getMessage().apply(on).
                     replace("%bw_player_color%", victimsTeam.getColor().chat().toString())
