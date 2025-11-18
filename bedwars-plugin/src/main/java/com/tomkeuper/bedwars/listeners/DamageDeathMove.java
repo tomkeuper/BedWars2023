@@ -131,7 +131,7 @@ public class DamageDeathMove implements Listener {
         if (finalHealth < 0.5) {
             e.setCancelled(true);
 
-            PlayerDeathEvent event = new PlayerDeathEvent(player, new ArrayList<>(Arrays.asList(player.getInventory().getContents())), 0, "");
+            PlayerDeathEvent event = new PlayerDeathEvent(player, new ArrayList<>(Arrays.asList(player.getInventory().getContents())),0 , 0, 0, 0, "");
             Bukkit.getPluginManager().callEvent(event);
         }
     }
@@ -696,11 +696,8 @@ public class DamageDeathMove implements Listener {
                 } else {
                     if (player.getLocation().getBlockY() <= 0) {
                         ITeam bwt = a.getTeam(player);
-                        if (bwt != null) {
-                            PaperSupport.teleportC(player, bwt.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        } else {
-                            PaperSupport.teleportC(player, a.getSpectatorLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
-                        }
+                        if (bwt != null) PaperSupport.teleportC(player, bwt.getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+                        else PaperSupport.teleportC(player, a.getSpectatorLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                     }
                 }
             }
