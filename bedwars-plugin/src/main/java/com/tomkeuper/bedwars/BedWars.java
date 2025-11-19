@@ -245,6 +245,9 @@ public class BedWars extends JavaPlugin {
             case "1.21.8":
                 nmsVersion = "v1_21_R5";
                 break;
+            case "1.21.10":
+                nmsVersion = "v1_21_R6";
+                break;
             default:
                 break;
         }
