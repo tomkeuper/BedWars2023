@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class HologramTask implements Runnable {
@@ -34,6 +35,7 @@ public class HologramTask implements Runnable {
                 String iso = Language.getPlayerLanguage(p).getIso();
                 Location pLoc = p.getLocation();
                 List<ShopHolo> shopHolos = a.getShopHolograms(iso);
+                if (shopHolos == null)  continue;
                 for (ShopHolo shopHolo : shopHolos) {
                     if (shopHolo == null) continue;
                     IHologram hologram = shopHolo.getHologram();
@@ -45,8 +47,7 @@ public class HologramTask implements Runnable {
             }
 
             for (ITeam team : a.getTeams()) {
-                for (Player p : world.getPlayers()) {
-                    boolean isMember = team.isMember(p);
+                for (Player p : team.getMembers()) {
                     String iso = Language.getPlayerLanguage(p).getIso();
                     IBedHolo bedHolo = team.getBedHologram(iso);
                     if (bedHolo == null) continue;
@@ -54,18 +55,10 @@ public class HologramTask implements Runnable {
                     Location pLoc = p.getLocation();
                     double distance = pLoc.distance(bedLoc);
 
-                    if (distance <= 4) {
-                        if (isMember) bedHolo.hide(p);
-                        continue;
-                    } else if (distance > 4 && distance <= 7 && distance < BedWars.hologramUpdateDistance) {
-                        if (isMember) bedHolo.show(p);
-                        continue;
-                    }
+                    if (distance <= 4) bedHolo.hide(p);
+                    else if (distance > 4 && distance <= 8) bedHolo.show(p);
 
-                    if (distance >= BedWars.hologramUpdateDistance) {
-                        bedHolo.update(p);
-                        if (!isMember) bedHolo.remove(p);
-                    }
+                    if (distance >= BedWars.hologramUpdateDistance) bedHolo.update(p);
                 }
             }
 

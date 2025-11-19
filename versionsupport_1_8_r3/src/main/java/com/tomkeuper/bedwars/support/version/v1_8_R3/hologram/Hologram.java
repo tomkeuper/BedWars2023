@@ -132,6 +132,7 @@ public class Hologram implements IHologram {
 
     @Override
     public void update(Player player) {
+        if (!this.players.contains(player)) return;
         for (IHoloLine line : this.lines) {
             line.update(player);
         }

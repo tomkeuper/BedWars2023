@@ -203,8 +203,8 @@ public class BedWarsTeam implements ITeam {
             nms.colorBed(this);
             nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), getArena().getPlayers(), getArena());
             nms.spawnShop(getArena().getConfig().getArenaLoc("Team." + getName() + ".Shop"), (getArena().getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", arena.getGroup())), getArena().getPlayers(), getArena());
-            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), getArena().getPlayers(), arena, this);
-            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP).replace("%group%", arena.getGroup()), getArena().getPlayers(), arena, this);
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), getArena().getPlayers(), this);
+            nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP).replace("%group%", arena.getGroup()), getArena().getPlayers(), this);
         }, 20L);
 
         Cuboid c1 = new Cuboid(getArena().getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), getArena().getConfig().getInt(ConfigPath.ARENA_UPGRADES_PROTECTION), true);
@@ -486,32 +486,19 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
-        boolean found = false;
-        for (Language lang : Language.getLanguages()) {
-            String iso = lang.getIso();
-            List<ShopHolo> holograms = arena.getShopHolograms(iso);
-            if (holograms == null) continue;
-            if (holograms.isEmpty()) continue;
-            for (ShopHolo h : holograms) {
-                if (h == null) continue;
-                if (h.getTeam().equals(this)) {
-                    h.update(p);
-                    found = true;
-                }
-            }
 
-            if (!found) {
-                nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Upgrade"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
-                nms.spawnShopHologram(arena.getConfig().getArenaLoc("Team." + getName() + ".Shop"), (arena.getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", arena.getGroup()) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", arena.getGroup())), Collections.singletonList(p), arena, this);
+        String iso = Language.getPlayerLanguage(p).getIso();
+        List<ShopHolo> shopHolos = getArena().getShopHolograms(iso);
+        if (shopHolos != null) {
+            for (ShopHolo holo : getArena().getShopHolograms(iso)) {
+                holo.update(p);
             }
         }
 
         for (IGenerator gen : getArena().getOreGenerators()) {
-            String iso = Language.getPlayerLanguage(p).getIso();
             IGenHolo h = gen.getLanguageHolograms().get(iso);
             if (h != null) h.update(p);
         }
-        String iso = Language.getPlayerLanguage(p).getIso();
         IBedHolo bedHolo = getBedHologram(iso);
         if (bedHolo != null) bedHolo.show(p);
 
@@ -572,7 +559,7 @@ public class BedWarsTeam implements ITeam {
         @Getter
         private boolean hidden = false;
 
-        public BedHolo(@NotNull String iso, Arena arena, ITeam team) {
+        public BedHolo(@NotNull String iso, @NotNull Arena arena, @NotNull ITeam team) {
             this.iso = iso;
             this.arena = arena;
             this.team = team;
@@ -582,7 +569,7 @@ public class BedWarsTeam implements ITeam {
         public void create() {
             if (!arena.getConfig().getBoolean(ConfigPath.ARENA_USE_BED_HOLO)) return;
             // Note: Getting location after retrieving the block will make sure the hologram location will always be relative to the block instead of the actual config entry.
-            h = BedWars.hologramManager.createHologram(arena.getPlayers(), getBed().getBlock().getLocation().clone().add(0.5, -0.3, 0.5), "");
+            h = BedWars.hologramManager.createHologram(team.getMembers(), getBed().getBlock().getLocation().clone().add(0.5, -0.3, 0.5), "");
             line = h.getLine(0);
 
             Language lang = Language.getLang(iso);

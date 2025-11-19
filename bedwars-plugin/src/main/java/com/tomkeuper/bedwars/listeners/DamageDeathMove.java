@@ -133,6 +133,7 @@ public class DamageDeathMove implements Listener {
 
             // Additional check to prevent multiple death events during re-spawn
             if (arena.isReSpawning(player)) return;
+            player.setLastDamageCause(e);
             List<ItemStack> drops = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
             BedWars.nms.callPlayerDeathEvent(player, drops, 0, 0, "");
         }
@@ -381,7 +382,7 @@ public class DamageDeathMove implements Listener {
 
         LastHit lh = LastHit.getLastHit(victim);
         List<ItemStack> drops = e.getDrops();
-        Player killer = (Player) (lh != null && lh.getDamager() instanceof Player ? lh.getDamager() : victim.getKiller());
+        Player killer = (Player) (lh != null && lh.getDamager() != null && lh.getDamager() instanceof Player ? lh.getDamager() : victim.getKiller());
 
         ITeam killersTeam = null;
 
@@ -413,6 +414,7 @@ public class DamageDeathMove implements Listener {
         boolean victimsTeamBedDestroyed = victimsTeam.isBedDestroyed();
         String message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_UNKNOWN_REASON_FINAL_KILL : Messages.PLAYER_DIE_UNKNOWN_REASON_REGULAR;
         PlayerKillEvent.PlayerKillCause cause = victimsTeamBedDestroyed ? PlayerKillEvent.PlayerKillCause.UNKNOWN_FINAL_KILL : PlayerKillEvent.PlayerKillCause.UNKNOWN;
+
 
         if (damageEvent != null) {
             if (damageEvent.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION ||
@@ -500,6 +502,7 @@ public class DamageDeathMove implements Listener {
                 }
             }
         }
+
         // End of death determine logic
 
         String finalMessage = message;

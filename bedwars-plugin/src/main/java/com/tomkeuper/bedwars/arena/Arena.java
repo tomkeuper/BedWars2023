@@ -789,8 +789,8 @@ public class Arena implements IArena {
             }
             for (ITeam t : getTeams()) {
                 if (!t.isShopSpawned()) continue;
-                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group)), Collections.singletonList(p), this, t);
-                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group)), Collections.singletonList(p), this, t);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group)), Collections.singletonList(p), t);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group)), Collections.singletonList(p), t);
                 for (IGenerator o : t.getGenerators()) {
                     o.updateHolograms(p);
                 }
@@ -2376,6 +2376,30 @@ public class Arena implements IArena {
         return shopHolosIso.get(iso);
     }
 
+    @Override
+    public void addShopHologram(String iso, ShopHolo shopHolo) {
+        shopHolosIso.putIfAbsent(iso, new ArrayList<>());
+        shopHolosIso.get(iso).add(shopHolo);
+    }
+
+    @Override
+    public void destroyShopHolograms(String iso) {
+        for (ShopHolo holo : shopHolosIso.get(iso)) {
+            if (holo == null) continue;
+            if (holo.getHologram() != null) continue;
+            holo.clear();
+        }
+        shopHolosIso.remove(iso);
+    }
+
+    @Override
+    public void destroyShopHolograms() {
+        for (String iso : shopHolosIso.keySet()) {
+            destroyShopHolograms(iso);
+        }
+        shopHolosIso.clear();
+    }
+
     /**
      * Add a player to the most filled arena.
      * Check if is the party owner first.
@@ -2578,6 +2602,7 @@ public class Arena implements IArena {
         for (ITeam bwt : teams) {
             bwt.destroyData();
         }
+        destroyShopHolograms();
         playerLocation.entrySet().removeIf(e -> Objects.requireNonNull(e.getValue().getWorld()).getName().equalsIgnoreCase(worldName));
         teams = null;
         placed = null;
@@ -2597,6 +2622,7 @@ public class Arena implements IArena {
         oreGenerators = null;
         perMinuteTask = null;
         moneyperMinuteTask = null;
+        shopHolosIso = null;
         fireballCooldowns.clear();
 
         // Cleanup remote data.

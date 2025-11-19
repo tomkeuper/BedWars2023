@@ -355,8 +355,8 @@ public class OreGenerator implements IGenerator {
     public void disable() {
         if (getType() == GeneratorType.DIAMOND || getType() == GeneratorType.EMERALD) {
             rotation.remove(this);
-            for (IGenHolo item : hologramLanguages.values()) {
-                item.destroy();
+            for (IGenHolo holo : hologramLanguages.values()) {
+                holo.destroy();
             }
             if (item != null) {
                 item.destroy();

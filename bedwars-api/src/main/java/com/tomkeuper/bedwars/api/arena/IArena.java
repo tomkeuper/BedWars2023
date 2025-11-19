@@ -539,6 +539,23 @@ public interface IArena {
     List<ShopHolo> getShopHolograms(String iso);
 
     /**
+     * Add a shop hologram to the arena for a specific language ISO code.
+     */
+    void addShopHologram(String iso, ShopHolo shopHolo);
+
+    /**
+     * Destroy all shop holograms in the arena.
+     *
+     * @param iso The ISO code of the language.
+     */
+    void destroyShopHolograms(String iso);
+
+    /**
+     * Destroy all shop holograms in the arena.
+     */
+    void destroyShopHolograms();
+
+    /**
      * Get the list of next events to come in the arena.
      * Note: The events are not ordered.
      *

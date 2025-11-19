@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.events.player.PlayerKillEvent;
 import com.tomkeuper.bedwars.api.exceptions.InvalidEffectException;
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
+import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
@@ -321,12 +322,20 @@ public class v1_8_R3 extends VersionSupport {
     }
 
     @Override
-    public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena, ITeam team) {
-        for (Player p : players) {
-            String[] nume = (getList(p, name1) == null || getList(p, name1).isEmpty() ? getList(p, name1.replace(name1.split("\\.")[2], "default")) : getList(p, name1)).toArray(new String[0]);
-            IHologram h = createHologram(p, loc, nume);
+    public void spawnShopHologram(Location loc, String name1, List<Player> players, ITeam team) {
+        HashMap<String, List<Player>> languagePlayers = new HashMap<>();
 
-            new ShopHolo(h, arena, team).update();
+        for (Player p : players) {
+            String iso = Language.getPlayerLanguage(p).getIso();
+            if (!languagePlayers.containsKey(iso)) languagePlayers.put(iso, new ArrayList<>());
+            languagePlayers.get(iso).add(p);
+        }
+
+        for (String iso : languagePlayers.keySet()) {
+            Language lang = Language.getLang(iso);
+            String[] text = (lang.l(name1) == null || lang.l(name1).isEmpty() ? lang.l(name1.replace(name1.split("\\.")[2], "default")) : lang.l(name1)).toArray(new String[0]);
+            IHologram h = createHologram(languagePlayers.get(iso), loc, text);
+            new ShopHolo(h, team, iso);
         }
     }
 
