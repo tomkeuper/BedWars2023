@@ -96,10 +96,6 @@ public class Hologram implements IHologram {
     @Override
     public void addLine(IHoloLine line) {
         this.lines.add(line);
-
-        if (line.getHologram() == null) {
-            line.setHologram(this);
-        }
     }
 
     @Override
@@ -227,7 +223,6 @@ public class Hologram implements IHologram {
             this.lines.add(index, new HoloLine(line, this));
             return;
         }
-
         this.lines.get(index).setText(line);
     }
 

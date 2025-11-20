@@ -802,7 +802,7 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, String... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, String... lines) {
         List<String> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
         Collections.reverse(linesList);
@@ -810,7 +810,7 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, IHoloLine... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, IHoloLine... lines) {
         List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
         Collections.reverse(linesList);
@@ -828,7 +828,7 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public void updatePacketArmorStand(GeneratorHolder gh, List<Player> players) {
+    public void updatePacketArmorStand(GeneratorHolder gh, Iterable<Player> players) {
         ArmorStand armorStand = gh.getArmorStand();
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
@@ -862,7 +862,7 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, List<Player> players) {
+    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(armorStand.getEntityId());
         for (Player p : players) {
@@ -871,7 +871,7 @@ public final class v1_21_R1 extends VersionSupport {
     }
 
     @Override
-    public ArmorStand createPacketArmorStand(Location loc, List<Player> players) {
+    public ArmorStand createPacketArmorStand(Location loc, Iterable<Player> players) {
         if (loc.getWorld() == null) throw new RuntimeException("World of a location should not be null.");
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());

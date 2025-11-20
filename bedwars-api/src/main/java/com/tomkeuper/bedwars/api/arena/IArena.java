@@ -104,7 +104,7 @@ public interface IArena {
      *
      * @return The list of spectators.
      */
-    Set<Player> getSpectators();
+    List<Player> getSpectators();
 
     /**
      * Get the team of a player.
@@ -154,7 +154,7 @@ public interface IArena {
      *
      * @return The set of players in the arena.
      */
-    Set<Player> getPlayers();
+    List<Player> getPlayers();
 
     /**
      * Get the maximum number of players allowed in the arena.

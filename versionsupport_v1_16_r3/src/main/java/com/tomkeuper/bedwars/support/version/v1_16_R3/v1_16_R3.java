@@ -806,7 +806,7 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, String... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, String... lines) {
         List<String> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
         Collections.reverse(linesList);
@@ -814,7 +814,7 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, IHoloLine... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, IHoloLine... lines) {
         List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
         Collections.reverse(linesList);
@@ -832,7 +832,7 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public void updatePacketArmorStand(GeneratorHolder gh, List<Player> players) {
+    public void updatePacketArmorStand(GeneratorHolder gh, Iterable<Player> players) {
         ArmorStand armorStand = gh.getArmorStand();
         PacketPlayOutSpawnEntityLiving spawn = new PacketPlayOutSpawnEntityLiving(((CraftArmorStand) armorStand).getHandle());
         PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(armorStand.getEntityId(), ((CraftArmorStand) armorStand).getHandle().getDataWatcher(), true);
@@ -870,7 +870,7 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, List<Player> players) {
+    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(armorStand.getEntityId());
         for (Player p : players) {
@@ -879,7 +879,7 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
-    public ArmorStand createPacketArmorStand(Location loc, List<Player> players) {
+    public ArmorStand createPacketArmorStand(Location loc, Iterable<Player> players) {
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.setLocation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
         PacketPlayOutSpawnEntityLiving spawn = new PacketPlayOutSpawnEntityLiving(nmsEntity);

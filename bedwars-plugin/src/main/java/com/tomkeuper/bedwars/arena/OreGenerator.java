@@ -49,6 +49,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @SuppressWarnings("WeakerAccess")
@@ -276,7 +277,7 @@ public class OreGenerator implements IGenerator {
         }
 
         @Override
-        public List<Player> getPlayers() {
+        public Set<Player> getPlayers() {
             return hologram.getPlayers();
         }
 

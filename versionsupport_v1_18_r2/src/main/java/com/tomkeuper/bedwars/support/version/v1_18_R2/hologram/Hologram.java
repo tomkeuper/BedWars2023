@@ -26,25 +26,27 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Hologram implements IHologram {
 
-    private final List<Player> players;
+    private final Set<Player> players;
     private List<IHoloLine> lines;
     private final Location loc;
     private double gap = 0.25;
     private boolean showing = true;
 
     public Hologram(Player p, List<IHoloLine> lines, Location loc) {
-        this.players = new ArrayList<>();
+        this.players = new HashSet<>();
         this.players.add(p);
         this.lines = lines;
         this.loc = loc;
     }
 
     public Hologram(Player p, Location loc, List<String> lines) {
-        this.players = new ArrayList<>();
+        this.players = new HashSet<>();
         this.players.add(p);
         this.loc = loc;
         this.lines = new ArrayList<>();
@@ -54,8 +56,9 @@ public class Hologram implements IHologram {
         }
     }
 
-    public Hologram(List<Player> players, List<String> lines, Location loc) {
-        this.players = players;
+    public Hologram(Iterable<Player> players, List<String> lines, Location loc) {
+        this.players = new HashSet<>();
+        for (Player p : players) this.players.add(p);
         this.lines = new ArrayList<>();
         this.loc = loc;
 
@@ -64,14 +67,15 @@ public class Hologram implements IHologram {
         }
     }
 
-    public Hologram(List<Player> players, Location loc, List<IHoloLine> lines) {
-        this.players = players;
+    public Hologram(Iterable<Player> players, Location loc, List<IHoloLine> lines) {
+        this.players = new HashSet<>();
+        for (Player p : players) this.players.add(p);
         this.lines = lines;
         this.loc = loc;
     }
 
     @Override
-    public List<Player> getPlayers() {
+    public Set<Player> getPlayers() {
         return this.players;
     }
 

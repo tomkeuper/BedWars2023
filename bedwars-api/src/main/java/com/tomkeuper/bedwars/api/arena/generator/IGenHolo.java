@@ -22,6 +22,7 @@ package com.tomkeuper.bedwars.api.arena.generator;
 
 import org.bukkit.entity.Player;
 import java.util.List;
+import java.util.Set;
 
 public interface IGenHolo {
 
@@ -43,7 +44,7 @@ public interface IGenHolo {
     /**
      * Get the player associated with this hologram.
      */
-    List<Player> getPlayers();
+    Set<Player> getPlayers();
 
     /**
      * Add a player to this hologram.
