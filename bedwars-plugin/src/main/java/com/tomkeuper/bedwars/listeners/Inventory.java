@@ -46,13 +46,9 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
-import static org.bukkit.event.inventory.InventoryAction.HOTBAR_SWAP;
-import static org.bukkit.event.inventory.InventoryAction.MOVE_TO_OTHER_INVENTORY;
 
 public class Inventory implements Listener {
 
