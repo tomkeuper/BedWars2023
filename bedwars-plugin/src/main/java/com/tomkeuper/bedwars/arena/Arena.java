@@ -117,8 +117,8 @@ public class Arena implements IArena {
     public static HashMap<UUID, Integer> magicMilk = new HashMap<>();
 
 
-    private List<Player> players = new ArrayList<>();
-    private List<Player> spectators = new ArrayList<>();
+    private Set<Player> players = new HashSet<>();
+    private Set<Player> spectators = new HashSet<>();
     private List<Block> signs = new ArrayList<>();
     private GameState status = GameState.restarting;
     private YamlConfiguration yml;
@@ -1384,7 +1384,7 @@ public class Arena implements IArena {
      * Get the players list
      */
     @Override
-    public List<Player> getPlayers() {
+    public Set<Player> getPlayers() {
         return players;
     }
 
@@ -1736,7 +1736,7 @@ public class Arena implements IArena {
      * Get a list of spectators for this arena.
      */
     @Override
-    public List<Player> getSpectators() {
+    public Set<Player> getSpectators() {
         return spectators;
     }
 

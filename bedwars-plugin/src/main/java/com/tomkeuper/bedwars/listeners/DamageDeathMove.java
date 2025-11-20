@@ -531,7 +531,7 @@ public class DamageDeathMove implements Listener {
             World w = victim.getWorld();
             for (ItemStack inventoryItem : drops) {
                 w.dropItemNaturally(victim.getLocation(), inventoryItem);
-            }
+            }            
             drops.clear();
         }
 
