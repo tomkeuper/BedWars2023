@@ -159,12 +159,12 @@ public abstract class VersionSupport {
     /**
      * Spawn shop NPC
      */
-    public abstract void spawnShop(Location loc, String name1, List<Player> players, IArena arena);
+    public abstract void spawnShop(Location loc, String name1, Iterable<Player> players, IArena arena);
 
     /**
      * Spawn shop hologram
      */
-    public abstract void spawnShopHologram(Location loc, String name1, List<Player> players, ITeam team);
+    public abstract void spawnShopHologram(Location loc, String name1, Iterable<Player> players, ITeam team);
 
     /**
      * Get item-stack damage amount

@@ -213,7 +213,7 @@ public final class v1_21_R5 extends VersionSupport {
     }
 
     @Override
-    public void spawnShop(Location loc, String name1, List<Player> players, IArena arena) {
+    public void spawnShop(Location loc, String name1, Iterable<Player> players, IArena arena) {
         Location l = loc.clone();
 
         if (l.getWorld() == null) return;
@@ -226,7 +226,7 @@ public final class v1_21_R5 extends VersionSupport {
     }
 
     @Override
-    public void spawnShopHologram(Location loc, String name1, List<Player> players, ITeam team) {
+    public void spawnShopHologram(Location loc, String name1, Iterable<Player> players, ITeam team) {
         HashMap<String, List<Player>> languagePlayers = new HashMap<>();
 
         for (Player p : players) {
