@@ -184,20 +184,34 @@ public class MySQL implements IDatabase {
             }
 
             if (!hasQuickBuy2) {
-                // No migration needed
+                // No migration needed - table doesn't exist
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Table 'quick_buy_2' does not exist.");
                 return true;
             }
 
+            BedWars.plugin.getLogger().info("Found 'quick_buy_2' table. Starting migration...");
+
             try (Statement statement = connection.createStatement()) {
-                // Drop old quick_buy table if it exists
-                statement.executeUpdate("DROP TABLE IF EXISTS quick_buy;");
+                // Check if old quick_buy exists
+                boolean hasOldQuickBuy = false;
+                try (ResultSet rs = connection.getMetaData().getTables(null, null, "quick_buy", null)) {
+                    hasOldQuickBuy = rs.next();
+                }
+
+                if (hasOldQuickBuy) {
+                    BedWars.plugin.getLogger().info("Dropping old 'quick_buy' table...");
+                    statement.executeUpdate("DROP TABLE IF EXISTS quick_buy;");
+                }
 
                 // Rename quick_buy_2 to quick_buy
+                BedWars.plugin.getLogger().info("Renaming 'quick_buy_2' to 'quick_buy'...");
                 statement.executeUpdate("RENAME TABLE quick_buy_2 TO quick_buy;");
 
+                BedWars.plugin.getLogger().info("Successfully renamed 'quick_buy_2' to 'quick_buy'.");
                 return true;
             }
         } catch (SQLException e) {
+            BedWars.plugin.getLogger().severe("Failed to migrate Quick Buy table: " + e.getMessage());
             e.printStackTrace();
             return false;
         }

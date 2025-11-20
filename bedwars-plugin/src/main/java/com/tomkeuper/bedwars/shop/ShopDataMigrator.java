@@ -36,7 +36,10 @@ public final class ShopDataMigrator {
                     BedWars.config.save();
                 }
             } catch (Throwable ignored) {}
-            if (!enabled) return;
+            if (!enabled) {
+                BedWars.plugin.getLogger().info("Shop migration is disabled in config (" + CFG_ENABLE + " = false)");
+                return;
+            }
 
             // Run table migration first (quick_buy_2 → quick_buy)
             migrateQuickBuyTable();
@@ -46,7 +49,10 @@ public final class ShopDataMigrator {
             try {
                 latest = BedWars.config.getYml().getInt(CFG_VERSION, 0);
             } catch (Throwable ignored) {}
-            if (latest >= EXPECTED_VERSION) return;
+            if (latest >= EXPECTED_VERSION) {
+                BedWars.plugin.getLogger().info("Shop migration not needed. Current version: " + latest + ", Expected version: " + EXPECTED_VERSION);
+                return;
+            }
 
             BedWars.plugin.getLogger().info("Starting legacy Quick Buy identifier migration...");
 
@@ -125,11 +131,15 @@ public final class ShopDataMigrator {
                 alreadyMigrated = BedWars.config.getYml().getBoolean(CFG_TABLE_MIGRATION, false);
             } catch (Throwable ignored) {}
 
-            if (alreadyMigrated) return;
+            if (alreadyMigrated) {
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Already migrated (" + CFG_TABLE_MIGRATION + " = true)");
+                return;
+            }
 
             IDatabase db = BedWars.getRemoteDatabase();
             if (!(db instanceof com.tomkeuper.bedwars.database.MySQL)) {
                 // Only MySQL needs this migration
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Database type: " + db.getClass().getSimpleName() + " (only MySQL requires migration)");
                 try {
                     BedWars.config.getYml().set(CFG_TABLE_MIGRATION, true);
                     BedWars.config.save();
