@@ -47,6 +47,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.tomkeuper.bedwars.BedWars.nms;
@@ -73,60 +74,15 @@ public class Inventory implements Listener {
     @EventHandler
     public void onCommandItemClick(InventoryClickEvent e) {
         //block moving from hotBar
-        if (e.getAction() == HOTBAR_SWAP && e.getClick() == ClickType.NUMBER_KEY) {
-            if (e.getHotbarButton() > -1) {
-                ItemStack i = e.getWhoClicked().getInventory().getItem(e.getHotbarButton());
-                if (i != null) {
-                    if (isCommandItem(i)) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
-            }
-        }
+        org.bukkit.inventory.Inventory inv = e.getInventory();
+        Player p = (Player) e.getWhoClicked();
+        ItemStack item = e.getCurrentItem();
 
-        //block moving cursor item outside
-        if (e.getCursor() != null) {
-            if (e.getCursor().getType() != Material.AIR) {
-                if (e.getClickedInventory() == null) {
-                    if (isCommandItem(e.getCursor())) {
-                        e.getWhoClicked().closeInventory();
-                        e.setCancelled(true);
-                    }
-                } else if (e.getClickedInventory().getType() != e.getWhoClicked().getInventory().getType()) {
-                    if (isCommandItem(e.getCursor())) {
-                        e.getWhoClicked().closeInventory();
-                        e.setCancelled(true);
-                    }
-                } else {
-                    if (isCommandItem(e.getCursor())) e.setCancelled(true);
-                }
-            }
-        }
+        if (item == null) return;
+        if (item.getType() == Material.AIR) return;
+        if (!isCommandItem(item)) return;
 
-        //block moving current item outside
-        if (e.getCurrentItem() != null) {
-            if (e.getCurrentItem().getType() != Material.AIR) {
-                if (e.getClickedInventory() == null) {
-                    if (isCommandItem(e.getCurrentItem())) {
-                        e.getWhoClicked().closeInventory();
-                        e.setCancelled(true);
-                    }
-                } else if (e.getClickedInventory().getType() != e.getWhoClicked().getInventory().getType()) {
-                    if (isCommandItem(e.getCurrentItem())) {
-                        e.getWhoClicked().closeInventory();
-                        e.setCancelled(true);
-                    }
-                } else {
-                    if (isCommandItem(e.getCurrentItem())) e.setCancelled(true);
-                }
-            }
-        }
-
-        //block moving with shift
-        if (e.getAction() == MOVE_TO_OTHER_INVENTORY) {
-            if (isCommandItem(e.getCurrentItem())) e.setCancelled(true);
-        }
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -330,11 +286,16 @@ public class Inventory implements Listener {
         if (i.getType() == Material.AIR) return false;
         if (nms.isCustomBedWarsItem(i)) {
             String[] customData = nms.getCustomData(i).split("_");
-            if (customData.length >= 2) {
-                return customData[0].equals("RUNCOMMAND");
-            }
+            if (isActionItem(i)) return true;
+            if (customData.length >= 2) return customData[0].equals("RUNCOMMAND");
         }
         return false;
+    }
+
+    private static boolean isActionItem(ItemStack i) {
+        if (i == null) return false;
+        if (i.getType() == Material.AIR) return false;
+        return nms.isCustomBedWarsItem(i) && nms.getTag(i, "ACTION") != null;
     }
 
     @EventHandler
