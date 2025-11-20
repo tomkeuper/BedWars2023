@@ -39,10 +39,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.time.Instant;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,7 +104,7 @@ public interface IArena {
      *
      * @return The list of spectators.
      */
-    List<Player> getSpectators();
+    Set<Player> getSpectators();
 
     /**
      * Get the team of a player.
@@ -153,11 +150,11 @@ public interface IArena {
     GameState getStatus();
 
     /**
-     * Get a list of players currently in the arena.
+     * Get a set of players currently in the arena.
      *
-     * @return The list of players in the arena.
+     * @return The set of players in the arena.
      */
-    List<Player> getPlayers();
+    Set<Player> getPlayers();
 
     /**
      * Get the maximum number of players allowed in the arena.

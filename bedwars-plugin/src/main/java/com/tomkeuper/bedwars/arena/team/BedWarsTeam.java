@@ -68,7 +68,7 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 public class BedWarsTeam implements ITeam {
 
     @Getter
-    private List<Player> members = new ArrayList<>();
+    private Set<Player> members = new HashSet<>();
 
     @Getter
     private TeamColor color;
