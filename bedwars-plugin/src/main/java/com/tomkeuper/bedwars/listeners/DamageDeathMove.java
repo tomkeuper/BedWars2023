@@ -170,7 +170,7 @@ public class DamageDeathMove implements Listener {
         damager.sendMessage(message);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onDamageByEntity(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
@@ -205,31 +205,64 @@ public class DamageDeathMove implements Listener {
                         if (tnt.getSource() instanceof Player) {
                             damager = (Player) tnt.getSource();
 
+                            // CRITICAL: Set damage FIRST before any calculations
                             if (damager == p) {
-                                if (tntDamageSelf > -1) e.setDamage(tntDamageSelf);
+                                if (tntDamageSelf > -1) {
+                                    e.setDamage(tntDamageSelf);
+                                }
 
+                                // Now calculate and apply velocity
                                 LivingEntity damaged = (LivingEntity) e.getEntity();
                                 Vector tntLocation = tnt.getLocation().toVector();
                                 tntLocation.setX(Math.floor(tntLocation.getX()) + 0.5);
                                 tntLocation.setZ(Math.floor(tntLocation.getZ()) + 0.5);
                                 Vector playerLocation = damaged.getLocation().toVector();
 
-                                // Calculate the direction vector from TNT to player
+                                // Calculate distance
                                 Vector directionToPlayer = playerLocation.clone().subtract(tntLocation);
-
-                                // Normalize the direction and scale by forgiveness factor proportionally
-                                double distanceMagnitude = directionToPlayer.length();
                                 double originalDistance = directionToPlayer.length();
-                                Vector forgivenessVector = directionToPlayer.clone().normalize().multiply(tntJumpHorizontalForgiveness / distanceMagnitude);
 
-                                Vector adjustedPlayerLocation = playerLocation.clone().add(forgivenessVector);
+                                Vector resultingForce;
 
-                                Vector distance = adjustedPlayerLocation.subtract(tntLocation);
-                                Vector direction = distance.clone().normalize();
-                                double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + originalDistance));
-                                Vector resultingForce = direction.clone().multiply(force);
-                                resultingForce.setY(resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant));
-                                damaged.setVelocity(resultingForce);
+                                // Check if player is standing directly in the center (very small horizontal distance)
+                                double horizontalDistanceSquared = Math.pow(directionToPlayer.getX(), 2) + Math.pow(directionToPlayer.getZ(), 2);
+
+                                if (horizontalDistanceSquared < 0.25) { // Less than 0.5 blocks horizontally from center
+                                    // Player is at center - apply strong upward force directly
+                                    double baseForce = (tnt.getYield() * tnt.getYield()) / tntJumpStrengthReductionConstant;
+                                    // Apply Y-axis reduction similar to normal calculation
+                                    double verticalForce = baseForce / (0.1 + tntJumpYAxisReductionConstant); // Use 0.1 as minimum distance
+                                    resultingForce = new Vector(0, verticalForce, 0);
+                                } else {
+                                    // Normal TNT jump calculation
+                                    originalDistance = Math.max(originalDistance, 0.1); // Minimum distance for safety
+
+                                    // Normalize the direction and scale by forgiveness factor proportionally
+                                    Vector forgivenessVector = directionToPlayer.clone().normalize()
+                                            .multiply(tntJumpHorizontalForgiveness / originalDistance);
+
+                                    Vector adjustedPlayerLocation = playerLocation.clone().add(forgivenessVector);
+                                    Vector distance = adjustedPlayerLocation.subtract(tntLocation);
+                                    Vector direction = distance.clone().normalize();
+
+                                    double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + originalDistance));
+                                    resultingForce = direction.clone().multiply(force);
+
+                                    // Calculate Y component with minimum upward force
+                                    double calculatedY = resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant);
+
+                                    // Ensure minimum upward velocity for horizontal knockback
+                                    double minimumY = force * 0.3; // At least 30% of the base force goes upward
+                                    resultingForce.setY(Math.max(calculatedY, minimumY));
+                                }
+
+                                // Apply velocity on next tick to ensure damage is processed first
+                                Vector finalForce = resultingForce;
+                                Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+                                    if (damaged.isValid() && !damaged.isDead()) {
+                                        damaged.setVelocity(finalForce);
+                                    }
+                                });
                             } else {
                                 ITeam currentTeam = a.getTeam(p);
                                 ITeam damagerTeam = a.getTeam(damager);
