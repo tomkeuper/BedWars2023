@@ -36,11 +36,14 @@ import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.LegacyTeamAssigner;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.config;
 import static com.tomkeuper.bedwars.api.language.Language.getList;
@@ -48,7 +51,18 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
 public class GameStartingTask implements Runnable, StartingTask {
 
+    /**
+     * -- GETTER --
+     *  Get countdown value
+     */
+    @Setter
+    @Getter
     private int countdown;
+    /**
+     * -- GETTER --
+     *  Get arena
+     */
+    @Getter
     private final IArena arena;
     private final BukkitTask task;
 
@@ -58,24 +72,6 @@ public class GameStartingTask implements Runnable, StartingTask {
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, this, 0, 20L);
     }
 
-
-    /**
-     * Get countdown value
-     */
-    public int getCountdown() {
-        return countdown;
-    }
-
-    public void setCountdown(int countdown) {
-        this.countdown = countdown;
-    }
-
-    /**
-     * Get arena
-     */
-    public IArena getArena() {
-        return arena;
-    }
 
     /**
      * Get task ID
