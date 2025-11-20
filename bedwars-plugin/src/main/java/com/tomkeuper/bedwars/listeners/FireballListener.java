@@ -279,5 +279,6 @@ public class FireballListener implements Listener {
             return;
         }
         e.setFire(fireballMakeFire);
+        e.setRadius(0f);
     }
 }
