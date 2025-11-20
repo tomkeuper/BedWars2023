@@ -471,25 +471,6 @@ public class H2 implements IDatabase {
     }
 
     @Override
-    public List<UUID> listQuickBuyUUIDs() {
-        List<UUID> list = new ArrayList<>();
-        try {
-            checkConnection();
-            try (PreparedStatement ps = connection.prepareStatement("SELECT UUID FROM QUICK_BUY;")) {
-                try (ResultSet rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        String s = rs.getString("UUID");
-                        try { list.add(java.util.UUID.fromString(s)); } catch (Exception ignored) {}
-                    }
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return list;
-    }
-
-    @Override
     public HashMap<Integer, String> getQuickBuySlots(UUID uuid, int[] slot) {
         HashMap<Integer, String> results = new HashMap<>();
         if (slot.length == 0) {

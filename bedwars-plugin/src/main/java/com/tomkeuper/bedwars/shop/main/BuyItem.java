@@ -37,6 +37,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
 @SuppressWarnings("WeakerAccess")
 public class BuyItem implements IBuyItem {
 
@@ -150,30 +151,19 @@ public class BuyItem implements IBuyItem {
         if (yml.get(path + ".auto-equip") != null) {
             autoEquip = yml.getBoolean(path + ".auto-equip");
         }
-        // Resolve content root from the current buy-item path (e.g., ...category-content.<name>.tiers.<tier>.buy-items.<item>)
-        String contentRoot = path;
-        int idx = contentRoot.indexOf(".tiers.");
-        if (idx > 0) {
-            contentRoot = contentRoot.substring(0, idx);
-        }
-        // Preferred: read flags relative to content root, with legacy fallback using the identifier path
-        if (yml.get(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT) != null) {
-            permanent = yml.getBoolean(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT);
-        } else if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT) != null) {
-            // Backward compatibility: old loaders used the (un)scoped identifier as a YAML path
+        if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT) != null) {
             permanent = yml.getBoolean(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT);
         }
-        if (yml.get(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE) != null) {
-            unbreakable = yml.getBoolean(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE);
-        } else if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE) != null) {
-            // Backward compatibility
+        if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE) != null) {
             unbreakable = yml.getBoolean(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE);
         }
 
         loaded = true;
     }
 
-    @Override
+    /**
+     * Check if object created properly
+     */
     public boolean isLoaded() {
         return loaded;
     }
@@ -231,39 +221,18 @@ public class BuyItem implements IBuyItem {
         } else {
 
             ItemMeta im = i.getItemMeta();
-            // Attempt to color the item based on team; if colouring fails, keep the original item
-            ItemStack original = i.clone();
-            ItemStack coloured = null;
-            try {
-                if (arena.getTeam(player) != null) {
-                    coloured = BedWars.nms.colourItem(i, arena.getTeam(player));
-                } else {
-                    BedWars.debug("Skipping colourItem for " + player.getName() + ": team is null");
-                }
-            } catch (Throwable t) {
-                BedWars.debug("colourItem error for " + player.getName() + ": " + t.getMessage());
-            }
-            if (coloured != null && coloured.getType() != Material.AIR) {
-                i = coloured;
-            } else {
-                BedWars.debug("colourItem returned null/AIR for " + player.getName() + ". Using original item: " + original.getType());
-                i = original;
-            }
+            i = BedWars.nms.colourItem(i, arena.getTeam(player));
             if (im != null) {
                 if (permanent) BedWars.nms.setUnbreakable(im);
                 if (unbreakable) BedWars.nms.setUnbreakable(im);
                 if (i.getType() == Material.BOW) {
                     if (permanent) BedWars.nms.setUnbreakable(im);
-                    if (arena.getTeam(player) != null) {
-                        for (TeamEnchant e : arena.getTeam(player).getBowsEnchantments()) {
-                            im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
-                        }
+                    for (TeamEnchant e : arena.getTeam(player).getBowsEnchantments()) {
+                        im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
                     }
                 } else if (BedWars.nms.isSword(i) || BedWars.nms.isAxe(i)) {
-                    if (arena.getTeam(player) != null) {
-                        for (TeamEnchant e : arena.getTeam(player).getSwordsEnchantments()) {
-                            im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
-                        }
+                    for (TeamEnchant e : arena.getTeam(player).getSwordsEnchantments()) {
+                        im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
                     }
                 }
                 i.setItemMeta(im);
@@ -273,11 +242,6 @@ public class BuyItem implements IBuyItem {
                 i = BedWars.nms.setShopUpgradeIdentifier(i, upgradeIdentifier);
             }
         }
-
-        // Extra debug info before adding to inventory
-        try {
-            BedWars.debug ("About to add item: type=" + i.getType() + ", amount=" + i.getAmount() + ", firstEmpty=" + player.getInventory().firstEmpty());
-        } catch (Throwable ignored) {}
 
         //Remove swords with lower damage
         if (BedWars.nms.isSword(i)) {
@@ -294,56 +258,48 @@ public class BuyItem implements IBuyItem {
             }
         }
         //
-        if (i != null && i.getType() != Material.AIR) {
-            player.getInventory().addItem(i);
-            player.updateInventory();
-        } else {
-            BedWars.debug("Attempted to give AIR/null item to " + player.getName() + " for upgrade: " + getUpgradeIdentifier());
-        }
+        player.getInventory().addItem(i);
+        player.updateInventory();
     }
 
-    @Override
+
+    /**
+     * Get upgrade identifier.
+     * Used to remove old tier items.
+     */
     public String getUpgradeIdentifier() {
         return upgradeIdentifier;
     }
 
-    @Override
     public ItemStack getItemStack() {
         return itemStack;
     }
 
-    @Override
     public void setItemStack(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
-    @Override
     public boolean isAutoEquip() {
         return autoEquip;
     }
 
-    @Override
     public void setAutoEquip(boolean autoEquip) {
         this.autoEquip = autoEquip;
     }
 
-    @Override
     public boolean isPermanent() {
         return permanent;
     }
 
-    @Override
     public void setPermanent(boolean permanent) {
         this.permanent = permanent;
     }
 
-    @Override
     public boolean isUnbreakable() {
         return unbreakable;
     }
 
-    @Override
-    public void setUnbreakable(boolean permanent) {
-        this.unbreakable = permanent;
+    public void setUnbreakable(boolean unbreakable) {
+        this.unbreakable = unbreakable;
     }
 }

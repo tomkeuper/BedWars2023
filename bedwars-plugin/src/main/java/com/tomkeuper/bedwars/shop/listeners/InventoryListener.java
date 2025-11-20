@@ -23,7 +23,10 @@ package com.tomkeuper.bedwars.shop.listeners;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
-import com.tomkeuper.bedwars.api.shop.*;
+import com.tomkeuper.bedwars.api.shop.ICachedItem;
+import com.tomkeuper.bedwars.api.shop.IPlayerQuickBuyCache;
+import com.tomkeuper.bedwars.api.shop.IQuickBuyElement;
+import com.tomkeuper.bedwars.api.shop.IShopCategory;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
@@ -37,8 +40,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 import static org.bukkit.event.inventory.InventoryAction.HOTBAR_SWAP;
 import static org.bukkit.event.inventory.InventoryAction.MOVE_TO_OTHER_INVENTORY;
@@ -62,7 +63,7 @@ public class InventoryListener implements Listener {
         if (cache == null) return;
         if (shopCache == null) return;
 
-        if(ShopIndex.getIndexViewers().contains(p.getUniqueId()) || ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
+        if(ShopIndex.getIndexViewers().contains(p.getUniqueId()) || ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
             if (e.getClickedInventory() != null && e.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
                 e.setCancelled(true);
                 return;
@@ -72,31 +73,25 @@ public class InventoryListener implements Listener {
         if (ShopIndex.getIndexViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
-            // Use the arena-linked shop and its pre-resolved categories to handle clicks
-            IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
-            if (idx instanceof ShopIndex) {
-                Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
-                IShopCategory clickedCategory = chosen.get(e.getSlot());
-                if (clickedCategory != null) {
-                    if (clickedCategory instanceof ShopCategory) {
-                        ((ShopCategory) clickedCategory).open(p, shopCache);
-                    } else {
-                        clickedCategory.open(p, idx, shopCache);
-                    }
-                    return;
-                }
-            } else {
-                // Fallback: check default categories only
-                for (IShopCategory sc : idx.getCategoryList()) {
-                    String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
-                    if (n.startsWith("default-") && e.getSlot() == sc.getSlot()) {
-                        sc.open(p, idx, shopCache);
+            // Check shop overrides categories (Will return if a shop has been found)
+            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
+                // Check if the shop name starts with the group name
+                if (sc.getName().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
+                    // Check if the clicked slot matches the current shop's slot
+                    if (e.getSlot() == sc.getSlot()) {
+                        sc.open(p, ShopManager.shop, shopCache);
                         return;
                     }
                 }
             }
 
-            // Quick Buy area clicks
+            // Check normal shop categories
+            for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
+                if (e.getSlot() == sc.getSlot()) {
+                    sc.open(p, ShopManager.shop, shopCache);
+                    return;
+                }
+            }
             for (IQuickBuyElement element : cache.getElements()) {
                 if (element.getSlot() == e.getSlot()) {
                     if (e.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY) {
@@ -105,76 +100,22 @@ public class InventoryListener implements Listener {
                         return;
                     }
                     if (element.getCategoryContent().execute(p, shopCache, element.getSlot())) {
-                        // Reload the shop page. Needed to recalculate item purchasable
-                        (a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop).open(p, cache, false);
+                        ShopManager.shop.open(p, cache, false); // Reload the shop page. Needed to recalculate item purchasable
                     }
                     return;
                 }
             }
-        } else if (ShopCategory.getCategoryViewers().contains(p.getUniqueId())) {
+        } else if (ShopCategory.getInstance().getCategoryViewers().contains(p.getUniqueId())) {
             e.setCancelled(true);
 
             // Check if item is null or air (don't process clicks on air)
             if (e.getCurrentItem() == null) return;
             if (e.getCurrentItem().getType() == Material.AIR) return;
 
-            // Use arena-linked shop for buttons
-            IShopIndex idx = a.getLinkedShop() != null ? a.getLinkedShop() : ShopManager.shop;
+            // Check overrides
+            if (checkShops(e, p, a, shopCache, cache, true)) return;
 
-            // Quick Buy button at top bar → back to index
-            if (e.getSlot() == idx.getQuickBuyButton().getSlot()) {
-                idx.open(p, cache, false);
-                return;
-            }
-
-            // Category tabs click in the top bar
-            if (idx instanceof ShopIndex) {
-                Map<Integer, IShopCategory> chosen = ((ShopIndex) idx).getResolvedBySlot(a);
-                IShopCategory clickedCategory = chosen.get(e.getSlot());
-                if (clickedCategory != null) {
-                    if (clickedCategory instanceof ShopCategory) {
-                        ((ShopCategory) clickedCategory).open(p, shopCache);
-                    } else {
-                        clickedCategory.open(p, idx, shopCache);
-                    }
-                    return;
-                }
-            }
-
-            // Content clicks: only check the selected category’s contents
-            int selectedSlot = shopCache.getSelectedCategory();
-            IShopCategory selectedCategory = null;
-            if (idx instanceof ShopIndex) {
-                selectedCategory = ((ShopIndex) idx).getResolvedBySlot(a).get(selectedSlot);
-            }
-            if (selectedCategory == null) {
-                // Fallback: try default categories
-                for (IShopCategory sc : idx.getCategoryList()) {
-                    String n = sc.getName() == null ? "" : sc.getName().toLowerCase();
-                    if (n.startsWith("default-") && sc.getSlot() == selectedSlot) {
-                        selectedCategory = sc;
-                        break;
-                    }
-                }
-            }
-            if (selectedCategory != null) {
-                for (ICategoryContent cc : selectedCategory.getCategoryContentList()) {
-                    if (cc.getSlot() == e.getSlot()) {
-                        if (e.isShiftClick()) {
-                            if (!cache.hasCategoryContent(cc)) new QuickBuyAdd(p, cc);
-                            return;
-                        }
-                        if (cc.execute(p, shopCache, cc.getSlot())) {
-                            if (selectedCategory instanceof ShopCategory) {
-                                ((ShopCategory) selectedCategory).open(p, shopCache); // reload page after purchase
-                            } else {
-                                selectedCategory.open(p, idx, shopCache);
-                            }
-                        }
-                        return;
-                    }
-                }
-            }
+            checkShops(e, p, a, shopCache, cache, false);
 
         } else if (QuickBuyAdd.getQuickBuyAdds().containsKey(e.getWhoClicked().getUniqueId())) {
             e.setCancelled(true);
@@ -182,7 +123,6 @@ public class InventoryListener implements Listener {
             for (int i : PlayerQuickBuyCache.quickSlots) {
                 if (i == e.getSlot()) {
                     add = true;
-                    break;
                 }
             }
             if (!add) return;
@@ -194,6 +134,48 @@ public class InventoryListener implements Listener {
         }
     }
 
+    private boolean checkShops(InventoryClickEvent e, Player p, IArena a, ShopCache shopCache, IPlayerQuickBuyCache cache, boolean overrides) {
+        for (IShopCategory sc : ShopManager.shop.getCategoryList()) {
+            // Check if the shop name starts with the group name
+            if (overrides && !sc.getName().toLowerCase().startsWith(a.getGroup().toLowerCase())) continue;
+
+            if (ShopManager.shop.getQuickBuyButton().getSlot() == e.getSlot()) {
+                ShopManager.shop.open(p, cache, false);
+                return true;
+            }
+            if (e.getSlot() == sc.getSlot()) {
+                sc.open(p, ShopManager.shop, shopCache);
+                return true;
+            }
+            if (sc.getSlot() != shopCache.getSelectedCategory()) continue;
+            for (ICategoryContent cc : sc.getCategoryContentList()) {
+                // If we don't check this, the shop will be displayed in all arenas
+                // Default category is already checked and thus does not need to be added here
+                if (cc.getCategoryIdentifier().toLowerCase().startsWith(a.getGroup().toLowerCase())) {
+                    if (checkSlot(e, p, shopCache, cache, cc, sc)) return true;
+                }
+            }
+            for (ICategoryContent cc : sc.getCategoryContentList()) {
+                if (checkSlot(e, p, shopCache, cache, cc, sc)) return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkSlot(InventoryClickEvent e, Player p, ShopCache shopCache, IPlayerQuickBuyCache cache, ICategoryContent cc, IShopCategory sc) {
+        if (cc.getSlot() == e.getSlot()) {
+            if (e.isShiftClick()) {
+                if (cache.hasCategoryContent(cc)) return true;
+                new QuickBuyAdd(p, cc);
+                return true;
+            }
+            if (cc.execute(p, shopCache, cc.getSlot())){
+                sc.open(p, ShopManager.shop, shopCache); // Reload the shop page. Needed to recalculate item purchasable
+            }
+            return true;
+        }
+        return false;
+    }
 
     @EventHandler
     public void onUpgradableMove(InventoryClickEvent e) {
@@ -286,7 +268,7 @@ public class InventoryListener implements Listener {
         if (identifier.equals("null")) return false;
         ICachedItem cachedItem = sc.getCachedItem(identifier);
         return cachedItem != null;
-        // the commented line below was blocking movement only if tiers amount > 1
+        // the commented line bellow was blocking movement only if tiers amount > 1
         // return sc.getCachedItem(identifier).getCc().getContentTiers().size() > 1;
     }
 }

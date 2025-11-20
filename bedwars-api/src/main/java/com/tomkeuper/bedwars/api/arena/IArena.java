@@ -27,12 +27,10 @@ import com.tomkeuper.bedwars.api.arena.team.ITeamAssigner;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.region.Region;
-import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.api.tasks.AnnouncementTask;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.api.tasks.RestartingTask;
 import com.tomkeuper.bedwars.api.tasks.StartingTask;
-import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import me.neznamy.tab.api.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -49,18 +47,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.Nullable;
 
 public interface IArena {
-
-    /**
-     * Linked shop layout for this arena. Implementations may resolve per-arena/group/default.
-     */
-    default @Nullable IShopIndex getLinkedShop() { return null; }
-    default void setLinkedShop(@Nullable IShopIndex shop) {}
-
-    /**
-     * Linked upgrades layout for this arena.
-     */
-    default @Nullable UpgradesIndex getLinkedUpgrades() { return null; }
-    default void setLinkedUpgrades(@Nullable UpgradesIndex upgrades) {}
 
     /**
      * Check if a player is spectating on this arena.

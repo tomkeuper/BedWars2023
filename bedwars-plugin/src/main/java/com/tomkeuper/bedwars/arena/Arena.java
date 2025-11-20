@@ -64,7 +64,6 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.money.internal.MoneyPerMinuteTask;
 import com.tomkeuper.bedwars.shop.ShopCache;
-import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -106,15 +105,8 @@ import static com.tomkeuper.bedwars.BedWars.*;
 import static com.tomkeuper.bedwars.api.language.Language.*;
 import static com.tomkeuper.bedwars.arena.upgrades.BaseListener.isOnABase;
 
-import com.tomkeuper.bedwars.api.shop.IShopIndex;
-import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
-import com.tomkeuper.bedwars.shop.ShopManager;
-
 @SuppressWarnings("WeakerAccess")
 public class Arena implements IArena {
-
-    private IShopIndex linkedShop;
-    private UpgradesIndex linkedUpgrades;
 
     private static final HashMap<String, IArena> arenaByName = new HashMap<>();
     private static final HashMap<Player, IArena> arenaByPlayer = new HashMap<>();
@@ -139,6 +131,7 @@ public class Arena implements IArena {
     private List<ITeam> teams = new ArrayList<>();
     private LinkedList<org.bukkit.util.Vector> placed = new LinkedList<>();
     private List<String> nextEvents = new ArrayList<>();
+    private List<String> shopOverrideCategories = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
@@ -327,18 +320,6 @@ public class Arena implements IArena {
         this.world = world;
         this.worldName = world.getName();
         getConfig().setName(worldName);
-
-        // Link per-arena shop and upgrades layouts
-        try {
-            // Link the global ShopIndex; categories are pre-resolved per arena below
-            this.linkedShop = ShopManager.shop;
-            if (this.linkedShop != null) {
-                ((ShopIndex) this.linkedShop).preResolveForArena(this);
-            }
-        } catch (Throwable ignored) {}
-        try {
-            this.linkedUpgrades = BedWars.getUpgradeManager().getMenuForArena(this);
-        } catch (Throwable ignored) {}
         world.getEntities().stream().filter(e -> e.getType() != EntityType.PLAYER)
                 .filter(e -> e.getType() != EntityType.PAINTING).filter(e -> e.getType() != EntityType.ITEM_FRAME)
                 .forEach(Entity::remove);
@@ -1428,26 +1409,6 @@ public class Arena implements IArena {
     }
 
     @Override
-    public @Nullable IShopIndex getLinkedShop() {
-        return linkedShop;
-    }
-
-    @Override
-    public void setLinkedShop(@Nullable IShopIndex shop) {
-        this.linkedShop = shop;
-    }
-
-    @Override
-    public @Nullable UpgradesIndex getLinkedUpgrades() {
-        return linkedUpgrades;
-    }
-
-    @Override
-    public void setLinkedUpgrades(@Nullable UpgradesIndex upgrades) {
-        this.linkedUpgrades = upgrades;
-    }
-
-    @Override
     public void setWorldName(String name) {
         this.worldName = name;
     }
@@ -2495,6 +2456,14 @@ public class Arena implements IArena {
      */
     public List<String> getNextEvents() {
         return new ArrayList<>(nextEvents);
+    }
+
+    public List<String> getShopOverrideCategories() {
+        return shopOverrideCategories;
+    }
+
+    public void addShopOverrideCategory(String shopOverrideCategory) {
+        this.shopOverrideCategories.add(shopOverrideCategory);
     }
 
     /**
