@@ -35,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -79,7 +80,7 @@ public interface ITeam {
     /**
      * Get alive team members.
      */
-    List<Player> getMembers();
+    Set<Player> getMembers();
 
     /**
      * Restore lost default sword.

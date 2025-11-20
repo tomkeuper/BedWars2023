@@ -162,29 +162,8 @@ public class GameStartingTask implements Runnable, StartingTask {
 
     //Spawn players
     private void spawnPlayers() {
-        System.out.println("Spawning players...");
-        List<Player> repeatedPlayers = new ArrayList<>();
-        List<Player> playersToReAdd = new ArrayList<>();
         for (ITeam bwt : getArena().getTeams()) {
-            for (Player p : bwt.getMembers()) {
-                if (repeatedPlayers.contains(p)) {
-                    playersToReAdd.add(p);
-                }
-                else repeatedPlayers.add(p);
-            }
-
-            for (Player p : playersToReAdd) {
-                bwt.getMembers().remove(p);
-                bwt.getMembers().add(p);
-            }
-        }
-
-        playersToReAdd.clear();
-        repeatedPlayers.clear();
-        for (ITeam bwt : getArena().getTeams()) {
-            System.out.println(bwt.getMembers());
             for (Player p : new ArrayList<>(bwt.getMembers())) {
-                System.out.println("Spawning player: " + p.getName());
                 BedWarsTeam.reSpawnInvulnerability.put(p.getUniqueId(), System.currentTimeMillis() + 2000L);
                 bwt.firstSpawn(p);
                 Sounds.playSound(ConfigPath.SOUND_GAME_START, p);
