@@ -80,7 +80,7 @@ public interface ITeam {
     /**
      * Get alive team members.
      */
-    Set<Player> getMembers();
+    List<Player> getMembers();
 
     /**
      * Restore lost default sword.

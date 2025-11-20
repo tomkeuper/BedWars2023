@@ -24,6 +24,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Set;
 
 public interface IHologram {
 
@@ -31,7 +32,7 @@ public interface IHologram {
      * Get the player this hologram is bounded to.
      * @return the player
      */
-    List<Player> getPlayers();
+    Set<Player> getPlayers();
 
     /**
      * Add a player to this hologram.
