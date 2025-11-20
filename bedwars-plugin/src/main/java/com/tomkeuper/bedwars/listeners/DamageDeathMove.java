@@ -171,6 +171,18 @@ public class DamageDeathMove implements Listener {
     }
 
     @EventHandler
+    public void fireballPrime(ExplosionPrimeEvent e) {
+        if (!(e.getEntity() instanceof TNTPrimed)) return;
+
+        TNTPrimed fireball = (TNTPrimed) e.getEntity();
+        Entity source = fireball.getSource();
+
+        if (!(source instanceof Player) || !Arena.isInArena((Player) source)) return;
+        e.setFire(false);
+        e.setRadius(0f);
+    }
+
+    @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
             Player p = (Player) e.getEntity();
@@ -359,6 +371,9 @@ public class DamageDeathMove implements Listener {
         LastHit lh = LastHit.getLastHit(victim);
         List<ItemStack> drops = e.getDrops();
         Player killer = (Player) (lh != null && lh.getDamager() != null && lh.getDamager() instanceof Player ? lh.getDamager() : victim.getKiller());
+        String name = lh != null && lh.getDamager() != null ? lh.getDamager().getName() : "No LastHit damager found";
+        String killerName = victim.getKiller() != null ? victim.getKiller().getName() : "No Bukkit killer found";
+        System.out.println("[DEBUG] onDeath called for " + victim.getName() + ". LastHit damager: " + name + ", Bukkit killer: " + killerName);
 
         ITeam killersTeam = null;
 
