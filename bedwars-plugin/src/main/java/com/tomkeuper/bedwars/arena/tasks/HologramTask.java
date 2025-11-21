@@ -32,6 +32,7 @@ public class HologramTask implements Runnable {
             if (world.getPlayers().isEmpty()) continue;
 
             for (Player p : world.getPlayers()) {
+                if (p == null || !p.isOnline()) continue;
                 String iso = Language.getPlayerLanguage(p).getIso();
                 Location pLoc = p.getLocation();
                 List<ShopHolo> shopHolos = a.getShopHolograms(iso);
@@ -48,6 +49,8 @@ public class HologramTask implements Runnable {
 
             for (ITeam team : a.getTeams()) {
                 for (Player p : team.getMembers()) {
+                    if (p == null || !p.isOnline()) continue;
+                    if (p.getWorld() != world) continue;
                     String iso = Language.getPlayerLanguage(p).getIso();
                     IBedHolo bedHolo = team.getBedHologram(iso);
                     if (bedHolo == null) continue;
@@ -68,6 +71,7 @@ public class HologramTask implements Runnable {
                 if (type != GeneratorType.EMERALD && type !=  GeneratorType.DIAMOND) continue;
                 Location genLoc = generator.getLocation();
                 for (Player p : world.getPlayers()) {
+                    if (p == null || !p.isOnline()) continue;
                     String iso = Language.getPlayerLanguage(p).getIso();
                     IGenHolo holo = generator.getLanguageHolograms().get(iso);
                     if (holo == null) continue;
