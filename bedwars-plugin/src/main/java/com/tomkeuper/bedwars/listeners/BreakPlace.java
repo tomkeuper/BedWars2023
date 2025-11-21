@@ -261,6 +261,8 @@ public class BreakPlace implements Listener {
                 || matName.equalsIgnoreCase("WHEAT_SEEDS")
                 || matName.equalsIgnoreCase("SUGAR_CANE")
                 || matName.equalsIgnoreCase("SUGAR_CANE_BLOCK")
+                || matName.equalsIgnoreCase("RED_MUSHROOM")
+                || matName.equalsIgnoreCase("BROWN_MUSHROOM")
         ) {
             event.setCancelled(true);
         }
