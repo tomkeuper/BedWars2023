@@ -1976,8 +1976,8 @@ public class Arena implements IArena {
                     Player thirdPlayer = null;
                     StringBuilder winners = new StringBuilder();
 
-                    for (int i = 0; i < winner.getMembers().size(); i++) {
-                        Player p = winner.getMembers().get(i);
+                    int i = 0;
+                    for (Player p : winner.getMembers()) {
                         //Send winning title to the winner
                         if (p.getWorld().equals(getWorld())) {
                             nms.sendTitle(p, getMsg(p, Messages.GAME_END_VICTORY_PLAYER_TITLE), null, 0, 70, 20);
@@ -1998,6 +1998,7 @@ public class Arena implements IArena {
                                         .replace("%bw_player%", p.getDisplayName()));
                             }
                         }
+                        i++;
                     }
 
                     int first = 0, second = 0, third = 0;

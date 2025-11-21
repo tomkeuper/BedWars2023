@@ -563,7 +563,6 @@ public class DamageDeathMove implements Listener {
         if (killer != null) killersTeam = arena.getTeam(killer);
         if (killer != null && playerKillEvent.playSound()) Sounds.playSound(ConfigPath.SOUNDS_KILL, killer);
 
-
         for (Player on : arena.getWorld().getPlayers()) {
             Language lang = Language.getPlayerLanguage(on);
             on.sendMessage(playerKillEvent.getMessage().apply(on).

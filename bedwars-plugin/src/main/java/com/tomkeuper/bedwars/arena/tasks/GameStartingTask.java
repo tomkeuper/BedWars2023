@@ -43,6 +43,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.config;
@@ -162,8 +163,23 @@ public class GameStartingTask implements Runnable, StartingTask {
 
     //Spawn players
     private void spawnPlayers() {
+        List<Player> checkedPlayers = new ArrayList<>();
+        HashMap<ITeam, Player> scheduledRemoval = new HashMap<>();
         for (ITeam bwt : getArena().getTeams()) {
-            for (Player p : new ArrayList<>(bwt.getMembers())) {
+            for (Player p : bwt.getMembers()) {
+                if (!checkedPlayers.contains(p)) checkedPlayers.add(p);
+                else scheduledRemoval.put(bwt, p);
+            }
+        }
+        // Remove duplicate players from teams and re-add them later
+        for (ITeam team : scheduledRemoval.keySet()) {
+            Player p = scheduledRemoval.get(team);
+            team.getMembers().remove(p);
+            team.getMembers().add(p);
+        }
+
+        for (ITeam bwt : getArena().getTeams()) {
+            for (Player p : bwt.getMembers()) {
                 BedWarsTeam.reSpawnInvulnerability.put(p.getUniqueId(), System.currentTimeMillis() + 2000L);
                 bwt.firstSpawn(p);
                 Sounds.playSound(ConfigPath.SOUND_GAME_START, p);

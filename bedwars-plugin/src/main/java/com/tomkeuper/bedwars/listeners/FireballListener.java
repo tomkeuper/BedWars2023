@@ -40,6 +40,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
@@ -201,10 +202,9 @@ public class FireballListener implements Listener {
             } else {
                 new LastHit(player, source, System.currentTimeMillis());
             }
+
             if (player.equals(source)) {
-                if (damageSelf > 0) {
-                    player.damage(damageSelf); // damage shooter
-                }
+                if (damageSelf > 0) player.damage(damageSelf); // damage shooter
             } else {
                 ITeam playerTeam = arena.getTeam(player);
                 ITeam sourceTeam = arena.getTeam(source);
@@ -236,8 +236,35 @@ public class FireballListener implements Listener {
             return;
         }
 
+        Location explosionLocation = event.getLocation();
+        World world = explosionLocation.getWorld();
+        if (world == null) return;
+
         List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
         event.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
+
+        int radius = (int) Math.ceil(fireballExplosionSize);
+        for (int x = -radius; x <= radius; x++) {
+            for (int y = -radius; y <= radius; y++) {
+                for (int z = -radius; z <= radius; z++) {
+                    Location blockLoc = explosionLocation.clone().add(x, y, z);
+                    double distance = blockLoc.distance(explosionLocation);
+                    
+                    // Only break blocks within the actual explosion radius
+                    if (distance <= fireballExplosionSize) {
+                        Block block = blockLoc.getBlock();
+                        
+                        // Don't break air or explosion-proof materials
+                        if (block.getType() != Material.AIR &&
+                            !explosionProofMaterials.contains(block.getType().toString())) {
+                            
+                            // Check if block can be broken (not protected by arena system)
+                            block.breakNaturally();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void damagePlayer(Player player, double damageTeammates) {

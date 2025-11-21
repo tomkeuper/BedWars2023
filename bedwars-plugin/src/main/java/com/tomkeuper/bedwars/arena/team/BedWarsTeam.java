@@ -67,7 +67,8 @@ import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 @SuppressWarnings("WeakerAccess")
 public class BedWarsTeam implements ITeam {
 
-    private Set<Player> members = new HashSet<>();
+    @Getter
+    private List<Player> members = new ArrayList<>();
 
     @Getter
     private TeamColor color;
@@ -155,10 +156,6 @@ public class BedWarsTeam implements ITeam {
 
     public int getSize() {
         return members.size();
-    }
-
-    public List<Player> getMembers() {
-        return new ArrayList<>(members);
     }
 
     /**
