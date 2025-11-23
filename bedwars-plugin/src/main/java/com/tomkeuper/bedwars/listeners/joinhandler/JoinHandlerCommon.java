@@ -21,6 +21,9 @@
 package com.tomkeuper.bedwars.listeners.joinhandler;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.addon.Addon;
+import com.tomkeuper.bedwars.api.addon.IAddonManager;
+import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.language.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,18 +33,40 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
+import java.util.StringJoiner;
+
 public class JoinHandlerCommon implements Listener {
 
-    // Used to show some details to andrei1058
     // No sensitive data
     protected static void displayCustomerDetails(Player player) {
         if (player == null) return;
-        //TODO IMPROVE, ADD MORE DETAILS
         if (player.getName().equalsIgnoreCase("MrCeasar")) {
             player.sendMessage("§8[§f" + BedWars.plugin.getName() + " v" + BedWars.plugin.getDescription().getVersion() + "§8]§7§m---------------------------");
             player.sendMessage("");
             player.sendMessage("§7User ID: §f%%__USER__%%");
             player.sendMessage("§7Download ID: §f%%__NONCE__%%");
+            player.sendMessage("");
+            player.sendMessage("§7ServerType: §f" + BedWars.getServerType());
+            player.sendMessage("§7AutoScale: §f" + BedWars.autoscale);
+            player.sendMessage("§7Restore Adapter: §f" + BedWars.getAPI().getRestoreAdapter().getDisplayName());
+            player.sendMessage("§7NMS version: §f" + BedWars.nms.getClass().getSimpleName());
+            StringJoiner addonString = new StringJoiner(", ");
+            addonString.setEmptyValue("None");
+            IAddonManager addonManager = BedWars.getAPI().getAddonsUtil();
+            for (Addon addon : addonManager.getAddons()) {
+                addonString.add(addon.getName());
+            }
+            player.sendMessage("§7Addon" + (addonManager.getAddons().isEmpty() || addonManager.getAddons().size() > 1 ? "s" : "") + " (" + addonManager.getAddons().size() + "): §f" + addonString);
+            StringJoiner arenaString = new StringJoiner(", ");
+            arenaString.setEmptyValue("None");
+            com.tomkeuper.bedwars.api.BedWars.ArenaUtil arenaUtil = BedWars.getAPI().getArenaUtil();
+            for (IArena arena : arenaUtil.getArenas()) {
+                arenaString.add(arena.getArenaName());
+            }
+
+            player.sendMessage("§7Arena" + (arenaUtil.getArenas().isEmpty() || arenaUtil.getArenas().size() > 1 ? "s" : "") + " (" + arenaUtil.getArenas().size() + "): §f" + arenaString);
+
+            player.sendMessage("§7TAB Version: §f" + Bukkit.getPluginManager().getPlugin("TAB").getDescription().getVersion());
             player.sendMessage("");
             player.sendMessage("§8[§f" + BedWars.plugin.getName() + "§8]§7§m---------------------------");
         }

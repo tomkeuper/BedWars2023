@@ -1,29 +1,14 @@
-/*
- * BedWars2023 - A bed wars mini-game.
- * Copyright (C) 2024 Tomas Keuper
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * Contact e-mail: contact@fyreblox.com
- */
 
 package com.tomkeuper.bedwars.shop;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.database.IDatabase;
+import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.*;
 
 /**
@@ -34,6 +19,7 @@ public final class ShopDataMigrator {
 
     private static final String CFG_ENABLE = "shop.migration.legacyIdMigrationOnStartup";
     private static final String CFG_VERSION = "shop.migration.latestVersion";
+    private static final String CFG_TABLE_MIGRATION = "shop.migration.quickBuyTableMigrated";
     private static final int EXPECTED_VERSION = 1; // bump when adding new migrations
 
     private ShopDataMigrator() {}
@@ -50,14 +36,23 @@ public final class ShopDataMigrator {
                     BedWars.config.save();
                 }
             } catch (Throwable ignored) {}
-            if (!enabled) return;
+            if (!enabled) {
+                BedWars.plugin.getLogger().info("Shop migration is disabled in config (" + CFG_ENABLE + " = false)");
+                return;
+            }
+
+            // Run table migration first (quick_buy_2 → quick_buy)
+            migrateQuickBuyTable();
 
             // Version stamp guard
             int latest = 0;
             try {
                 latest = BedWars.config.getYml().getInt(CFG_VERSION, 0);
             } catch (Throwable ignored) {}
-            if (latest >= EXPECTED_VERSION) return;
+            if (latest >= EXPECTED_VERSION) {
+                BedWars.plugin.getLogger().info("Shop migration not needed. Current version: " + latest + ", Expected version: " + EXPECTED_VERSION);
+                return;
+            }
 
             BedWars.plugin.getLogger().info("Starting legacy Quick Buy identifier migration...");
 
@@ -124,14 +119,70 @@ public final class ShopDataMigrator {
             BedWars.plugin.getLogger().warning("Unexpected error during Quick Buy migration: " + t.getMessage());
         }
     }
+    /**
+     * Migrates quick_buy_2 table to quick_buy table.
+     * This is a one-time operation.
+     */
+    private static void migrateQuickBuyTable() {
+        try {
+            // Check if already migrated
+            boolean alreadyMigrated = false;
+            try {
+                alreadyMigrated = BedWars.config.getYml().getBoolean(CFG_TABLE_MIGRATION, false);
+            } catch (Throwable ignored) {}
+
+            if (alreadyMigrated) {
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Already migrated (" + CFG_TABLE_MIGRATION + " = true)");
+                return;
+            }
+
+            IDatabase db = BedWars.getRemoteDatabase();
+            if (!(db instanceof com.tomkeuper.bedwars.database.MySQL)) {
+                // Only MySQL needs this migration
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Database type: " + db.getClass().getSimpleName() + " (only MySQL requires migration)");
+                try {
+                    BedWars.config.getYml().set(CFG_TABLE_MIGRATION, true);
+                    BedWars.config.save();
+                } catch (Throwable ignored) {}
+                return;
+            }
+
+            BedWars.plugin.getLogger().info("Checking for Quick Buy table migration (quick_buy_2 → quick_buy)...");
+
+            com.tomkeuper.bedwars.database.MySQL mysql = (com.tomkeuper.bedwars.database.MySQL) db;
+            if (mysql.migrateQuickBuyTable()) {
+                BedWars.plugin.getLogger().info("Quick Buy table migration completed successfully.");
+                try {
+                    BedWars.config.getYml().set(CFG_TABLE_MIGRATION, true);
+                    BedWars.config.save();
+                } catch (Throwable ignored) {}
+            } else {
+                BedWars.plugin.getLogger().warning("Quick Buy table migration failed. Check the logs for details.");
+            }
+        } catch (Throwable t) {
+            BedWars.plugin.getLogger().warning("Error during Quick Buy table migration: " + t.getMessage());
+            t.printStackTrace();
+        }
+    }
 
     private static String scopeDefaultIfLegacy(String id) {
-        // Legacy if there is no '-' before ".category-content."
+        // Legacy identifiers have only one hyphen in the category segment (e.g., "melee-category")
+        // New scoped identifiers have at least two hyphens (e.g., "default-melee-category" or "Swashbuckle-blocks-category").
         if (id == null) return "";
         int marker = id.indexOf(".category-content.");
         if (marker < 0) return id; // not a known pattern
         String cat = id.substring(0, marker);
-        if (cat.contains("-")) return id; // already scoped
+
+        // Already default-scoped
+        if (cat.startsWith("default-")) return id;
+
+        // Count hyphens in the category segment
+        int dashCount = 0;
+        for (int i = 0; i < cat.length(); i++) {
+            if (cat.charAt(i) == '-') dashCount++;
+        }
+        if (dashCount >= 2) return id; // already has a scope prefix
+
         // Make it default-scoped
         return "default-" + cat + id.substring(marker);
     }
