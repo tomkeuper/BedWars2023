@@ -33,14 +33,13 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
@@ -51,11 +50,14 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.tomkeuper.bedwars.BedWars.config;
 
 public class FireballListener implements Listener {
 
+
+    private final List<String> explosionProofMaterials;
     private final double fireballExplosionSize, fireballHorizontalSelf, fireballHorizontalOthers, fireballVerticalSelf, fireballVerticalOthers;
     private final double damageSelf, damageEnemy, damageTeammates;
     private final double fireballSpeedMultiplier, fireballCooldown;
@@ -63,6 +65,7 @@ public class FireballListener implements Listener {
 
     public FireballListener() {
         YamlConfiguration config = BedWars.config.getYml();
+        explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS).stream().map(Object::toString).collect(Collectors.toList());
         fireballExplosionSize = config.getDouble(ConfigPath.GENERAL_FIREBALL_EXPLOSION_SIZE);
         fireballMakeFire = config.getBoolean(ConfigPath.GENERAL_FIREBALL_MAKE_FIRE);
         fireballHorizontalSelf = config.getDouble(ConfigPath.GENERAL_FIREBALL_KNOCKBACK_HORIZONTAL_SELF) * -1;
@@ -134,7 +137,6 @@ public class FireballListener implements Listener {
 
             if (!Arena.isInArena(player) || arena.isSpectator(player) || arena.isReSpawning(player)) continue;
 
-
             UUID playerUUID = player.getUniqueId();
             long respawnInvulnerability = BedWarsTeam.reSpawnInvulnerability.getOrDefault(playerUUID, 0L);
 
@@ -142,24 +144,22 @@ public class FireballListener implements Listener {
             BedWarsTeam.reSpawnInvulnerability.remove(playerUUID);
 
             Vector playerVector = player.getLocation().toVector();
-            Vector normalizedVector = vector.subtract(playerVector).normalize();
+            Vector normalizedVector = playerVector.subtract(vector).normalize(); // FIXED: subtract vector from playerVector (not the opposite)
             Vector horizontalVector;
             double y;
 
             if (entity.getUniqueId() == source.getUniqueId()) {
-                horizontalVector = normalizedVector.multiply(fireballHorizontalSelf);
+                horizontalVector = normalizedVector.multiply(Math.abs(fireballHorizontalSelf)); // FIXED: Use absolute value
                 y = normalizedVector.getY();
-                if (y < 0) y += 1.5;
-                if (y <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
-                    y = fireballVerticalSelf * 1.5; // kb for not jumping
-                } else y = y * fireballVerticalSelf * 1.5; // kb for jumping
+                // FIXED: Removed the confusing y < 0 adjustment
+                if (Math.abs(y) <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) y = fireballVerticalSelf * 1.5; // kb for not jumping
+                else y = Math.abs(y) * fireballVerticalSelf * 1.5; // kb for jumping
             } else {
-                horizontalVector = normalizedVector.multiply(fireballHorizontalOthers);
+                horizontalVector = normalizedVector.multiply(Math.abs(fireballHorizontalOthers)); // FIXED: Use absolute value
                 y = normalizedVector.getY();
-                if (y < 0) y += 1.5;
-                if (y <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
-                    y = fireballVerticalOthers * 1.5; // kb for not jumping
-                } else y = y * fireballVerticalOthers * 1.5; // kb for jumping
+                // FIXED: Removed the confusing y < 0 adjustment
+                if (Math.abs(y) <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) y = fireballVerticalOthers * 1.5; // kb for not jumping
+                else y = Math.abs(y) * fireballVerticalOthers * 1.5; // kb for jumping
             }
 
             try {
@@ -190,7 +190,7 @@ public class FireballListener implements Listener {
 
         ProjectileSource projectileSource = ((Fireball) event.getEntity()).getShooter();
         if (!(projectileSource instanceof Player)) return;
-        
+
         Player source = (Player) projectileSource;
         IArena arena = Arena.getArenaByPlayer(source);
 
@@ -200,31 +200,7 @@ public class FireballListener implements Listener {
         World world = explosionLocation.getWorld();
         if (world == null) return;
 
-        List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
-        event.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
-
-        int radius = (int) Math.ceil(fireballExplosionSize);
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
-                    Location blockLoc = explosionLocation.clone().add(x, y, z);
-                    double distance = blockLoc.distance(explosionLocation);
-                    
-                    // Only break blocks within the actual explosion radius
-                    if (distance <= fireballExplosionSize) {
-                        Block block = blockLoc.getBlock();
-                        
-                        // Don't break air or explosion-proof materials
-                        if (block.getType() != Material.AIR &&
-                            !explosionProofMaterials.contains(block.getType().toString())) {
-                            
-                            // Check if block can be broken (not protected by arena system)
-                            block.breakNaturally();
-                        }
-                    }
-                }
-            }
-        }
+        event.blockList().removeIf( block -> explosionProofMaterials.contains(block.getType().toString()));
     }
 
     private void damagePlayer(Player player, double damageTeammates) {
@@ -259,6 +235,5 @@ public class FireballListener implements Listener {
         if (!(shooter instanceof Player) || !Arena.isInArena((Player) shooter))  return;
 
         e.setFire(fireballMakeFire);
-        e.setRadius(0f);
     }
 }

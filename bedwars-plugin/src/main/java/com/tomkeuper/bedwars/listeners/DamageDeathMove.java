@@ -121,6 +121,16 @@ public class DamageDeathMove implements Listener {
             return;
         }
 
+        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+            if (e instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
+                if (edbe.getDamager() instanceof Fireball) {
+                    e.setCancelled(true);
+                    return;
+                }
+            }
+        }
+
         // protection after re-spawn
         if (BedWarsTeam.reSpawnInvulnerability.containsKey(player.getUniqueId())) {
             if (BedWarsTeam.reSpawnInvulnerability.get(player.getUniqueId()) > System.currentTimeMillis()) e.setCancelled(true);
