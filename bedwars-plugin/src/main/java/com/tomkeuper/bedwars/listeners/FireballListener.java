@@ -143,22 +143,40 @@ public class FireballListener implements Listener {
             BedWarsTeam.reSpawnInvulnerability.remove(playerUUID);
 
             Vector playerVector = player.getLocation().toVector();
-            Vector normalizedVector = playerVector.subtract(vector).normalize(); // FIXED: subtract vector from playerVector (not the opposite)
+            Vector normalizedVector = playerVector.subtract(vector).normalize();
             Vector horizontalVector;
             double y;
 
             if (entity.getUniqueId() == source.getUniqueId()) {
-                horizontalVector = normalizedVector.multiply(Math.abs(fireballHorizontalSelf)); // FIXED: Use absolute value
+                horizontalVector = normalizedVector.multiply(Math.abs(fireballHorizontalSelf));
                 y = normalizedVector.getY();
-                // FIXED: Removed the confusing y < 0 adjustment
-                if (Math.abs(y) <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) y = fireballVerticalSelf * 1.5; // kb for not jumping
-                else y = Math.abs(y) * fireballVerticalSelf * 1.5; // kb for jumping
+
+                // FIXED: Check horizontal distance instead of just Y tolerance
+                double horizontalDistance = Math.sqrt(normalizedVector.getX() * normalizedVector.getX() +
+                        normalizedVector.getZ() * normalizedVector.getZ());
+
+                if (horizontalDistance <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
+                    // Mostly vertical explosion (including straight down)
+                    y = fireballVerticalSelf * 1.5;
+                } else {
+                    // Has horizontal component
+                    y = Math.abs(y) * fireballVerticalSelf * 1.5;
+                }
             } else {
-                horizontalVector = normalizedVector.multiply(Math.abs(fireballHorizontalOthers)); // FIXED: Use absolute value
+                horizontalVector = normalizedVector.multiply(Math.abs(fireballHorizontalOthers));
                 y = normalizedVector.getY();
-                // FIXED: Removed the confusing y < 0 adjustment
-                if (Math.abs(y) <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) y = fireballVerticalOthers * 1.5; // kb for not jumping
-                else y = Math.abs(y) * fireballVerticalOthers * 1.5; // kb for jumping
+
+                // FIXED: Check horizontal distance instead of just Y tolerance
+                double horizontalDistance = Math.sqrt(normalizedVector.getX() * normalizedVector.getX() +
+                        normalizedVector.getZ() * normalizedVector.getZ());
+
+                if (horizontalDistance <= config.getDouble(ConfigPath.GENERAL_FIREBALL_JUMP_TOLERANCE)) {
+                    // Mostly vertical explosion (including straight down)
+                    y = fireballVerticalOthers * 1.5;
+                } else {
+                    // Has horizontal component
+                    y = Math.abs(y) * fireballVerticalOthers * 1.5;
+                }
             }
 
             try {
