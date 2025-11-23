@@ -17,7 +17,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.bukkit.craftbukkit.libs.jline.internal.Log.debug;
