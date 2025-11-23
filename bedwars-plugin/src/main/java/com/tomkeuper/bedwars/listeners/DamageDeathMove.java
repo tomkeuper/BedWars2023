@@ -60,6 +60,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -143,24 +144,14 @@ public class DamageDeathMove implements Listener {
 
             // Additional check to prevent multiple death events during re-spawn
             if (arena.isReSpawning(player)) return;
-            
+
             // Update LastHit BEFORE death event if this is entity damage
             // This ensures the killing blow is properly attributed
             if (e instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
                 Entity damagerEntity = edbe.getDamager();
-                Player damagerPlayer = null;
-                
-                if (damagerEntity instanceof Player) {
-                    damagerPlayer = (Player) damagerEntity;
-                } else if (damagerEntity instanceof Projectile) {
-                    ProjectileSource shooter = ((Projectile) damagerEntity).getShooter();
-                    if (shooter instanceof Player) damagerPlayer = (Player) shooter;
-                } else if (damagerEntity instanceof TNTPrimed) {
-                    TNTPrimed tnt = (TNTPrimed) damagerEntity;
-                    if (tnt.getSource() instanceof Player) damagerPlayer = (Player) tnt.getSource();
-                }
-                
+                Player damagerPlayer = getPlayer(damagerEntity);
+
                 // Update LastHit for the killing blow
                 if (damagerPlayer != null && arena.isPlayer(damagerPlayer) && !arena.isReSpawning(damagerPlayer)) {
                     ITeam victimTeam = arena.getTeam(player);
@@ -186,11 +177,26 @@ public class DamageDeathMove implements Listener {
                     }
                 }
             }
-            
+
             player.setLastDamageCause(e);
             List<ItemStack> drops = new ArrayList<>(Arrays.asList(player.getInventory().getContents()));
             BedWars.nms.callPlayerDeathEvent(player, drops, 0, 0, "");
         }
+    }
+
+    private static @Nullable Player getPlayer(Entity damagerEntity) {
+        Player damagerPlayer = null;
+
+        if (damagerEntity instanceof Player) {
+            damagerPlayer = (Player) damagerEntity;
+        } else if (damagerEntity instanceof Projectile) {
+            ProjectileSource shooter = ((Projectile) damagerEntity).getShooter();
+            if (shooter instanceof Player) damagerPlayer = (Player) shooter;
+        } else if (damagerEntity instanceof TNTPrimed) {
+            TNTPrimed tnt = (TNTPrimed) damagerEntity;
+            if (tnt.getSource() instanceof Player) damagerPlayer = (Player) tnt.getSource();
+        }
+        return damagerPlayer;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
