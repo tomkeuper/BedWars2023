@@ -173,7 +173,7 @@ public class FireballListener implements Listener {
             } else  new LastHit(player, source, System.currentTimeMillis());
 
             if (player.equals(source)) {
-                if (damageSelf > 0) player.damage(damageSelf); // damage shooter
+                if (damageSelf > 0) player.damage(damageSelf);
             } else {
                 ITeam playerTeam = arena.getTeam(player);
                 ITeam sourceTeam = arena.getTeam(source);
