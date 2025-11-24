@@ -22,6 +22,7 @@ package com.tomkeuper.bedwars.api.configuration;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -38,6 +39,7 @@ public class ConfigManager {
     private File config;
     private String name;
     private boolean firstTime = false;
+    private boolean loadError = false;
 
     /**
      * Create a new configuration file.
@@ -68,8 +70,21 @@ public class ConfigManager {
             }
         }
 
-        yml = YamlConfiguration.loadConfiguration(config);
-        yml.options().copyDefaults(true);
+        // Try to load YAML safely and detect syntax errors
+        yml = new YamlConfiguration();
+        try {
+            yml.load(config);
+            yml.options().copyDefaults(true);
+        } catch (InvalidConfigurationException e) {
+            loadError = true;
+            plugin.getLogger().log(Level.SEVERE, "Failed to parse configuration file due to invalid YAML syntax: " + config.getPath());
+            plugin.getLogger().log(Level.SEVERE, e.getMessage());
+            // Do NOT overwrite the file later on save; keep loadError=true to block saving.
+        } catch (IOException e) {
+            // IO error while reading: log and prevent saving to avoid overwriting existing content
+            loadError = true;
+            plugin.getLogger().log(Level.SEVERE, "I/O error while reading configuration file: " + config.getPath(), e);
+        }
         this.name = name;
     }
 
@@ -77,7 +92,20 @@ public class ConfigManager {
      * Reload configuration.
      */
     public void reload() {
-        yml = YamlConfiguration.loadConfiguration(config);
+        loadError = false;
+        YamlConfiguration newYml = new YamlConfiguration();
+        try {
+            newYml.load(config);
+            newYml.options().copyDefaults(true);
+            this.yml = newYml;
+        } catch (InvalidConfigurationException e) {
+            loadError = true;
+            Bukkit.getLogger().log(Level.SEVERE, "Failed to parse configuration file on reload due to invalid YAML syntax: " + config.getPath());
+            Bukkit.getLogger().log(Level.SEVERE, e.getMessage());
+        } catch (IOException e) {
+            loadError = true;
+            Bukkit.getLogger().log(Level.SEVERE, "I/O error while reloading configuration file: " + config.getPath(), e);
+        }
     }
 
     /**
@@ -178,6 +206,11 @@ public class ConfigManager {
      * Save config changes to file
      */
     public void save() {
+        if (loadError) {
+            // Prevent accidental overwrite of a malformed/invalid file
+            Bukkit.getLogger().log(Level.SEVERE, "Skipping save for invalid configuration (would overwrite). Fix the YAML syntax in: " + config.getPath());
+            return;
+        }
         try {
             yml.save(config);
         } catch (IOException e) {
@@ -221,6 +254,14 @@ public class ConfigManager {
      */
     public String getString(String path) {
         return yml.getString(path);
+    }
+
+    /**
+     * Returns true if this configuration had errors while loading (invalid YAML or I/O issues).
+     * When true, the file will not be saved to avoid overwriting user content.
+     */
+    public boolean hasLoadError() {
+        return loadError;
     }
 
     /**
