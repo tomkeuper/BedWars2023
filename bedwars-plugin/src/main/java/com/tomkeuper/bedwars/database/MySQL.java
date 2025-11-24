@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.database;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.database.IDatabase;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -144,7 +145,8 @@ public class MySQL implements IDatabase {
                 statement.executeUpdate(sql);
             }
 
-            sql = "CREATE TABLE IF NOT EXISTS quick_buy_2 (uuid VARCHAR(36) PRIMARY KEY, " +
+            // Create quick_buy table (migration from quick_buy_2 happens in ShopDataMigrator before this)
+            sql = "CREATE TABLE IF NOT EXISTS quick_buy (uuid VARCHAR(36) PRIMARY KEY, " +
                     "slot_19 VARCHAR(200), slot_20 VARCHAR(200), slot_21 VARCHAR(200), slot_22 VARCHAR(200), slot_23 VARCHAR(200), slot_24 VARCHAR(200), slot_25 VARCHAR(200)," +
                     "slot_28 VARCHAR(200), slot_29 VARCHAR(200), slot_30 VARCHAR(200), slot_31 VARCHAR(200), slot_32 VARCHAR(200), slot_33 VARCHAR(200), slot_34 VARCHAR(200)," +
                     "slot_37 VARCHAR(200), slot_38 VARCHAR(200), slot_39 VARCHAR(200), slot_40 VARCHAR(200), slot_41 VARCHAR(200), slot_42 VARCHAR(200), slot_43 VARCHAR(200));";
@@ -164,6 +166,57 @@ public class MySQL implements IDatabase {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Migrate quick_buy_2 table to quick_buy.
+     * This will:
+     * 1. Check if quick_buy_2 exists
+     * 2. Drop old quick_buy if it exists
+     * 3. Rename quick_buy_2 to quick_buy
+     *
+     * @return true if migration was performed or not needed, false if an error occurred
+     */
+    public boolean migrateQuickBuyTable() {
+        try (Connection connection = dataSource.getConnection()) {
+            // Check if quick_buy_2 exists
+            boolean hasQuickBuy2 = false;
+            try (ResultSet rs = connection.getMetaData().getTables(null, null, "quick_buy_2", null)) {
+                hasQuickBuy2 = rs.next();
+            }
+
+            if (!hasQuickBuy2) {
+                // No migration needed - table doesn't exist
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Table 'quick_buy_2' does not exist.");
+                return true;
+            }
+
+            BedWars.plugin.getLogger().info("Found 'quick_buy_2' table. Starting migration...");
+
+            try (Statement statement = connection.createStatement()) {
+                // Check if old quick_buy exists
+                boolean hasOldQuickBuy = false;
+                try (ResultSet rs = connection.getMetaData().getTables(null, null, "quick_buy", null)) {
+                    hasOldQuickBuy = rs.next();
+                }
+
+                if (hasOldQuickBuy) {
+                    BedWars.plugin.getLogger().info("Dropping old 'quick_buy' table...");
+                    statement.executeUpdate("DROP TABLE IF EXISTS quick_buy;");
+                }
+
+                // Rename quick_buy_2 to quick_buy
+                BedWars.plugin.getLogger().info("Renaming 'quick_buy_2' to 'quick_buy'...");
+                statement.executeUpdate("RENAME TABLE quick_buy_2 TO quick_buy;");
+
+                BedWars.plugin.getLogger().info("Successfully renamed 'quick_buy_2' to 'quick_buy'.");
+                return true;
+            }
+        } catch (SQLException e) {
+            BedWars.plugin.getLogger().severe("Failed to migrate Quick Buy table: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -306,7 +359,7 @@ public class MySQL implements IDatabase {
 
     @Override
     public String getQuickBuySlots(UUID uuid, int slot) {
-        String sql = "SELECT slot_" + slot + " FROM quick_buy_2 WHERE uuid = ?;";
+        String sql = "SELECT slot_" + slot + " FROM quick_buy WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, uuid.toString());
@@ -323,13 +376,31 @@ public class MySQL implements IDatabase {
     }
 
     @Override
+
+    public List<UUID> listQuickBuyUUIDs() {
+        List<java.util.UUID> list = new ArrayList<>();
+        String sql = "SELECT uuid FROM quick_buy;";
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                String s = rs.getString("uuid");
+                try { list.add(UUID.fromString(s)); } catch (Exception ignored) {}
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
     public HashMap<Integer, String> getQuickBuySlots(UUID uuid, int[] slot) {
         HashMap<Integer, String> results = new HashMap<>();
         if (slot.length == 0) {
             return results;
         }
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM quick_buy_2 WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM quick_buy WHERE uuid = ?;")) {
                 ps.setString(1, uuid.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -350,7 +421,7 @@ public class MySQL implements IDatabase {
 
     @Override
     public boolean hasQuickBuy(UUID uuid) {
-        String sql = "SELECT uuid FROM quick_buy_2 WHERE uuid = ?;";
+        String sql = "SELECT uuid FROM quick_buy WHERE uuid = ?;";
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, uuid.toString());
@@ -531,7 +602,7 @@ public class MySQL implements IDatabase {
                 }
             }
         }
-        String sql = hasQuick ? "UPDATE quick_buy_2 SET " + columns + " WHERE uuid=?;" : "INSERT INTO quick_buy_2 (uuid," + columns + ") VALUES (?," + values + ");";
+        String sql = hasQuick ? "UPDATE quick_buy SET " + columns + " WHERE uuid=?;" : "INSERT INTO quick_buy (uuid," + columns + ") VALUES (?," + values + ");";
         try (Connection con = dataSource.getConnection()) {
             try (PreparedStatement ps = con.prepareStatement(sql)) {
                 int index = hasQuick ? 0 : 1;
