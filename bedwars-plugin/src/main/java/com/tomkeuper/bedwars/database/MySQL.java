@@ -374,7 +374,7 @@ public class MySQL implements IDatabase {
 
     @Override
     public List<UUID> listQuickBuyUUIDs() {
-        List<java.util.UUID> list = new ArrayList<>();
+        List<UUID> list = new ArrayList<>();
         String sql = "SELECT uuid FROM quick_buy;";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);
