@@ -3,12 +3,8 @@ package com.tomkeuper.bedwars.shop;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.database.IDatabase;
-import com.tomkeuper.bedwars.database.MySQL;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.*;
 
 /**

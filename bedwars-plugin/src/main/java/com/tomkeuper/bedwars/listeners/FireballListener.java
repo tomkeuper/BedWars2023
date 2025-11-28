@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -179,9 +180,14 @@ public class FireballListener implements Listener {
                 }
             }
 
-            try {
-                player.setVelocity(horizontalVector.setY(y));
-            } catch (IllegalArgumentException ignored) {}
+            // FIXED: Delay velocity application for newer versions to avoid being overridden
+            final Vector finalVelocity = horizontalVector.setY(y);
+            final Player finalPlayer = player;
+            Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+                try {
+                    finalPlayer.setVelocity(finalVelocity);
+                } catch (IllegalArgumentException ignored) {}
+            });
 
             LastHit lh = LastHit.getLastHit(player);
             if (lh != null) {
