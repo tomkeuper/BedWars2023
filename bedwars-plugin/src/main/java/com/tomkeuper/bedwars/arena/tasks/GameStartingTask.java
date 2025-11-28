@@ -137,6 +137,10 @@ public class GameStartingTask implements Runnable, StartingTask {
                 getArena().setNextEvent(NextEvent.EMERALD_GENERATOR_TIER_II);
             }
 
+            for (IShopCategory categoryContent : arena.getLinkedShop().getCategoryList()) {
+                BedWars.debug("Pre-resolving shop category: " + categoryContent.getName() + " for arena: " + arena.getArenaName());
+            }
+
             //Spawn shopkeepers
             for (ITeam bwt : getArena().getTeams()) {
                 bwt.spawnNPCs();
