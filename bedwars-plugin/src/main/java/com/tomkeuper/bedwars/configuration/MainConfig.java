@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Misc;
+import org.apache.logging.log4j.core.config.Loggers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -248,7 +249,10 @@ public class MainConfig extends ConfigManager {
                         if (lang.equalsIgnoreCase(yml.getString("language"))) {
                             whatLang = f.getName().replace("messages_", "").replace(".yml", "");
                         }
-                        if (Language.getLang(lang) == null) new Language(BedWars.plugin, lang);
+                        if (Language.getLang(lang) == null) {
+                            BedWars.debug("Loading language: " + lang);
+                            new Language(BedWars.plugin, lang);
+                        }
                     }
                 }
             }
