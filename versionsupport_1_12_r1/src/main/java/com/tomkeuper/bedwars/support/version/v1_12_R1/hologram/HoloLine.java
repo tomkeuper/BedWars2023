@@ -107,6 +107,7 @@ public class HoloLine implements IHoloLine {
 
     @Override
     public void update(Player player) {
+        if (!hologram.getPlayers().contains(player)) return;
         entity.setCustomName(text);
         Location loc = hologram.getLocation();
         int position = hologram.getLines().indexOf(this);

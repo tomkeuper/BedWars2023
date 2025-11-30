@@ -120,6 +120,7 @@ public class HoloLine implements IHoloLine {
 
     @Override
     public void update(Player player) {
+        if (!hologram.getPlayers().contains(player)) return;
         entity.b(CraftChatMessage.fromStringOrNull(text));
         int position = hologram.getLines().indexOf(this);
         entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());

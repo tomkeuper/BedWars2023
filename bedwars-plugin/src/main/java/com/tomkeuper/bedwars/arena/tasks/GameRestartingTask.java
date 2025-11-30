@@ -106,6 +106,9 @@ public class GameRestartingTask implements Runnable, RestartingTask {
                     if (getArena().isPlayer(p)) getArena().removePlayer(p, false);
                 }
             }
+
+            getArena().destroyShopHolograms();
+
             for (IGenerator eg : getArena().getOreGenerators()) {
                 eg.disable();
             }

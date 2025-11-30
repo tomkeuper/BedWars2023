@@ -49,6 +49,7 @@ import org.bukkit.util.Vector;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 @SuppressWarnings("WeakerAccess")
@@ -276,7 +277,7 @@ public class OreGenerator implements IGenerator {
         }
 
         @Override
-        public List<Player> getPlayers() {
+        public Set<Player> getPlayers() {
             return hologram.getPlayers();
         }
 
@@ -297,12 +298,12 @@ public class OreGenerator implements IGenerator {
 
         @Override
         public void update() {
-            hologram.getLines().forEach(IHoloLine::reveal);
+            hologram.update();
         }
 
         @Override
         public void update(Player player) {
-            hologram.getLines().forEach(line -> line.reveal(player));
+            hologram.update(player);
         }
 
         @Override
@@ -355,8 +356,8 @@ public class OreGenerator implements IGenerator {
     public void disable() {
         if (getType() == GeneratorType.DIAMOND || getType() == GeneratorType.EMERALD) {
             rotation.remove(this);
-            for (IGenHolo item : hologramLanguages.values()) {
-                item.destroy();
+            for (IGenHolo holo : hologramLanguages.values()) {
+                holo.destroy();
             }
             if (item != null) {
                 item.destroy();

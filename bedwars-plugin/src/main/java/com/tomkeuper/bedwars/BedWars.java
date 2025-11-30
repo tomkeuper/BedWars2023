@@ -452,10 +452,10 @@ public class BedWars extends JavaPlugin {
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN)) {
             //new OneTick().runTaskTimer(this, 120, 1);
-            Bukkit.getScheduler().runTaskTimer(this, new OneTick(), 120, 1);
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, new OneTick(), 120, 1);
         }
 
-        Bukkit.getScheduler().runTaskLater(this, new HologramTask(), config.getInt(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_HOLOGRAM_UPDATE_RATE));
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new HologramTask(), 20L, config.getInt(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_HOLOGRAM_UPDATE_RATE));
 
         /* Register NMS entities */
         nms.registerEntities();
