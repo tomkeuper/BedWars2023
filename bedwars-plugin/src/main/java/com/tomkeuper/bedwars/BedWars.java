@@ -201,6 +201,7 @@ public class BedWars extends JavaPlugin {
                     .downloadDirectoryPath(downloadPath)
                     .mirrorSelector((a, b) -> a)
                     .build();
+
         } catch (IOException | ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

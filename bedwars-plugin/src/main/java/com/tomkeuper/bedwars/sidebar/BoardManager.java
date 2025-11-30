@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.sidebar.IScoreboardService;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.levels.internal.PlayerLevel;
+import lombok.Getter;
 import me.neznamy.tab.api.TabAPI;
 import me.neznamy.tab.api.TabPlayer;
 import me.neznamy.tab.api.bossbar.BossBarManager;
@@ -48,8 +49,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
 
@@ -58,12 +60,22 @@ public class BoardManager implements IScoreboardService {
     private static TabListFormatManager tabListFormatManager;
     private static PlaceholderManager placeholderManager;
     private static NameTagManager nameTagManager;
+    @Getter
     private static BoardManager instance;
     private final HashMap<TabPlayer, Integer> tabPlayersPrefix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersSuffix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> headPlayersPrefix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> headPlayersSuffix = new HashMap<>();
     private final HashMap<TabPlayer, Integer> tabPlayersTitle = new HashMap<>();
+
+    public final Map<UUID, TabPlayer> tabPlayerCache = new ConcurrentHashMap<>();
+
+    public TabPlayer getTabPlayer(@NotNull Player player) {
+        return tabPlayerCache.computeIfAbsent(
+                player.getUniqueId(),
+                uuid -> TabAPI.getInstance().getPlayer(uuid)
+        );
+    }
 
     public static boolean init() {
         if (TabAPI.getInstance().getScoreboardManager() == null) return false;
@@ -335,11 +347,6 @@ public class BoardManager implements IScoreboardService {
             pm.registerPlayerPlaceholder("%bw_team_"+ i +"%", 50, player -> getTeamPlaceholder((Player) player.getPlayer(), finalI));
         }
     }
-
-    public static BoardManager getInstance() {
-        return instance;
-    }
-
     @Override
     public void giveTabFeatures(@NotNull Player player, @Nullable IArena arena, boolean delay) {
         Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
@@ -352,7 +359,7 @@ public class BoardManager implements IScoreboardService {
                 return;
             }
 
-            TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+            TabPlayer tabPlayer = getTabPlayer(player);
 
             if (nameTagManager == null) {
                 BedWars.plugin.getLogger().severe("An error occurred while giving Tab Features to player, TAB nameTagManager is null!");
@@ -471,12 +478,12 @@ public class BoardManager implements IScoreboardService {
 
     @Override
     public void remove(@NotNull Player player) {
-        if (Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())).isLoaded())
-            scoreboardManager.resetScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
+        if (Objects.requireNonNull(getTabPlayer(player)).isLoaded())
+            scoreboardManager.resetScoreboard(Objects.requireNonNull(getTabPlayer(player)));
     }
 
     public void cleanupPlayer(@NotNull Player player) {
-        TabPlayer tabPlayer = TabAPI.getInstance().getPlayer(player.getUniqueId());
+        TabPlayer tabPlayer = getTabPlayer(player);
         if (tabPlayer == null) return;
 
         // Reset all prefixes and suffixes
@@ -832,6 +839,6 @@ public class BoardManager implements IScoreboardService {
 
     @Override
     public @Nullable Scoreboard getScoreboard(@NotNull Player player) {
-        return scoreboardManager.getActiveScoreboard(Objects.requireNonNull(TabAPI.getInstance().getPlayer(player.getUniqueId())));
+        return scoreboardManager.getActiveScoreboard(Objects.requireNonNull(getTabPlayer(player)));
     }
 }
