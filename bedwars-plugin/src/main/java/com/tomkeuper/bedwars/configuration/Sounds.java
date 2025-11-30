@@ -24,18 +24,18 @@ package com.tomkeuper.bedwars.configuration;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.NextEvent;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 import static com.tomkeuper.bedwars.BedWars.plugin;
 import static com.tomkeuper.bedwars.api.configuration.ConfigPath.*;
 
 public class Sounds {
 
+    @Getter
     private static final ConfigManager sounds = new ConfigManager(plugin, "sounds", plugin.getDataFolder().getPath());
 
     /**
@@ -97,7 +97,7 @@ public class Sounds {
         }
     }
 
-    public static void playSound(String path, List<Player> players) {
+    public static void playSound(String path, Iterable<Player> players) {
         if(path.equalsIgnoreCase("none")) return;
         final Sound sound = getSound(path);
         int volume = getSounds().getInt(path + ".volume");
@@ -110,7 +110,7 @@ public class Sounds {
     /**
      * @return true if sound is valid and it was played.
      */
-    public static boolean playSound(Sound sound, List<Player> players) {
+    public static boolean playSound(Sound sound, Iterable<Player> players) {
         if (sound == null) return false;
         players.forEach(p -> p.playSound(p.getLocation(), sound, 1f, 1f));
         return true;
@@ -121,10 +121,6 @@ public class Sounds {
         float volume = (float) getSounds().getYml().getDouble(path + ".volume");
         float pitch = (float) getSounds().getYml().getDouble(path + ".pitch");
         if (sound != null) player.playSound(player.getLocation(), sound, volume, pitch);
-    }
-
-    public static ConfigManager getSounds() {
-        return sounds;
     }
 
     private static void addDefSound(String path, String value) {

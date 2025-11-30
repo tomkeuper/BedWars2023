@@ -47,7 +47,7 @@ public interface IHologramManager {
      * @param lines - the lines to create the hologram from
      * @return the hologram
      */
-    IHologram createHologram(List<Player> players, Location location, String... lines);
+    IHologram createHologram(Iterable<Player> players, Location location, String... lines);
 
     /**
      * Create a hologram with the given lines at the given location.

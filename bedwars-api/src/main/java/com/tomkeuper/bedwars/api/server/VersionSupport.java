@@ -105,6 +105,11 @@ public abstract class VersionSupport {
     public abstract void hideEntity(Entity e, Player p);
 
     /**
+     * Apply fake damage to a player (red flash and hurt sound)
+     */
+    public abstract void fakeDamagePlayer(Player e);
+
+    /**
      * Check if item-stack is armor
      */
     public abstract boolean isArmor(ItemStack itemStack);
@@ -154,12 +159,12 @@ public abstract class VersionSupport {
     /**
      * Spawn shop NPC
      */
-    public abstract void spawnShop(Location loc, String name1, List<Player> players, IArena arena);
+    public abstract void spawnShop(Location loc, String name1, Iterable<Player> players, IArena arena);
 
     /**
      * Spawn shop hologram
      */
-    public abstract void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena, ITeam team);
+    public abstract void spawnShopHologram(Location loc, String name1, Iterable<Player> players, ITeam team);
 
     /**
      * Get item-stack damage amount
@@ -505,19 +510,21 @@ public abstract class VersionSupport {
 
     public abstract IHologram createHologram(Player p, Location location, IHoloLine... lines);
 
-    public abstract IHologram createHologram(List<Player> players, Location location, String... lines);
+    public abstract IHologram createHologram(Iterable<Player> players, Location location, String... lines);
 
-    public abstract IHologram createHologram(List<Player> players, Location location, IHoloLine... lines);
+    public abstract IHologram createHologram(Iterable<Player> players, Location location, IHoloLine... lines);
 
     public abstract IHoloLine lineFromText(String text, @Nonnull IHologram hologram);
 
     public abstract IGeneratorAnimation createDefaultGeneratorAnimation(ArmorStand armorStand);
 
-    public abstract void destroyPacketArmorStand(GeneratorHolder generatorHolder, List<Player> players);
+    public abstract void destroyPacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players);
 
-    public abstract ArmorStand createPacketArmorStand(@Nonnull Location loc, List<Player> players);
+    public abstract ArmorStand createPacketArmorStand(@Nonnull Location loc, Iterable<Player> players);
 
-    public abstract void updatePacketArmorStand(GeneratorHolder generatorHolder, List<Player> players);
+    public abstract void updatePacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players);
 
     public abstract void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder);
+
+    public abstract void callPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newLevel, String deathMessage);
 }

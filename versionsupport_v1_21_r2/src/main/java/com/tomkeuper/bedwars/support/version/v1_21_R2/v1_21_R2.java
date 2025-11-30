@@ -75,7 +75,11 @@ import org.bukkit.craftbukkit.v1_21_R2.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R2.entity.*;
 import org.bukkit.craftbukkit.v1_21_R2.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_21_R2.util.CraftMagicNumbers;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
@@ -85,10 +89,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Level;
 
 import static com.tomkeuper.bedwars.api.language.Language.getList;
@@ -136,6 +137,17 @@ public final class v1_21_R2 extends VersionSupport {
     public void hideEntity(Entity e, Player p) {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         sendPacket(p, packet);
+    }
+
+    @Override
+    public void fakeDamagePlayer(Player e) {
+        Location loc = e.getLocation();
+        World world = e.getWorld();
+        world.playSound(loc, Sound.ENTITY_PLAYER_HURT, 1.0f, 1.0f);
+        PacketPlayOutAnimation anim = new PacketPlayOutAnimation(((CraftPlayer) e).getHandle(), 1);
+        for (Player p : e.getWorld().getPlayers()) {
+            sendPackets(p, anim);
+        }
     }
 
     @Override
@@ -196,7 +208,7 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public void spawnShop(Location loc, String name1, List<Player> players, IArena arena) {
+    public void spawnShop(Location loc, String name1, Iterable<Player> players, IArena arena) {
         Location l = loc.clone();
 
         if (l.getWorld() == null) return;
@@ -209,12 +221,20 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public void spawnShopHologram(Location loc, String name1, List<Player> players, IArena arena, ITeam team) {
-        for (Player p : players) {
-            String[] nume = (getList(p, name1) == null || getList(p, name1).isEmpty() ? getList(p, name1.replace(name1.split("\\.")[2], "default")) : getList(p, name1)).toArray(new String[0]);
-            IHologram h = createHologram(p, loc, nume);
+    public void spawnShopHologram(Location loc, String name1, Iterable<Player> players, ITeam team) {
+        HashMap<String, List<Player>> languagePlayers = new HashMap<>();
 
-            new ShopHolo(h, arena, team).update();
+        for (Player p : players) {
+            String iso = Language.getPlayerLanguage(p).getIso();
+            if (!languagePlayers.containsKey(iso)) languagePlayers.put(iso, new ArrayList<>());
+            languagePlayers.get(iso).add(p);
+        }
+
+        for (String iso : languagePlayers.keySet()) {
+            Language lang = Language.getLang(iso);
+            String[] text = (lang.l(name1) == null || lang.l(name1).isEmpty() ? lang.l(name1.replace(name1.split("\\.")[2], "default")) : lang.l(name1)).toArray(new String[0]);
+            IHologram h = createHologram(languagePlayers.get(iso), loc, text);
+            new ShopHolo(h, team, iso);
         }
     }
 
@@ -768,7 +788,7 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, String... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, String... lines) {
         List<String> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
         Collections.reverse(linesList);
@@ -776,7 +796,7 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, IHoloLine... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, IHoloLine... lines) {
         List<IHoloLine> linesList = new ArrayList<>(Arrays.asList(lines));
         // holograms are reversed, correcting that here
         Collections.reverse(linesList);
@@ -794,7 +814,7 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public void updatePacketArmorStand(GeneratorHolder gh, List<Player> players) {
+    public void updatePacketArmorStand(GeneratorHolder gh, Iterable<Player> players) {
         ArmorStand armorStand = gh.getArmorStand();
         EntityArmorStand nmsEntity = ((CraftArmorStand) armorStand).getHandle();
         PacketPlayOutSpawnEntity spawn = newPacketPlayOutSpawnEntity(nmsEntity);
@@ -821,7 +841,14 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, List<Player> players) {
+    public void callPlayerDeathEvent(Player player, List<org.bukkit.inventory.ItemStack> drops, int droppedExp, int newLevel, String deathMessage) {
+        DamageSource ds = DamageSource.builder(DamageType.GENERIC).build();
+        PlayerDeathEvent deathEvent = new PlayerDeathEvent(player, ds, drops, droppedExp, newLevel, deathMessage);
+        Bukkit.getPluginManager().callEvent(deathEvent);
+    }
+
+    @Override
+    public void destroyPacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(armorStand.getEntityId());
         for (Player p : players) {
@@ -830,7 +857,7 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
-    public ArmorStand createPacketArmorStand(Location loc, List<Player> players) {
+    public ArmorStand createPacketArmorStand(Location loc, Iterable<Player> players) {
         if (loc.getWorld() == null) throw new RuntimeException("World of a location should not be null.");
         EntityArmorStand nmsEntity = new EntityArmorStand(((CraftWorld) loc.getWorld()).getHandle(), loc.getX(), loc.getY(), loc.getZ());
         nmsEntity.a_(loc.getX(), loc.getY(), loc.getZ());

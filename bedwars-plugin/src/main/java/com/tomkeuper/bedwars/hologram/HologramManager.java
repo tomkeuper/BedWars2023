@@ -37,7 +37,7 @@ public class HologramManager implements IHologramManager {
     }
 
     @Override
-    public IHologram createHologram(List<Player> players, Location location, String... lines) {
+    public IHologram createHologram(Iterable<Player> players, Location location, String... lines) {
         return BedWars.nms.createHologram(players, location, lines);
     }
 

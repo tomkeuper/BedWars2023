@@ -23,6 +23,8 @@ package com.tomkeuper.bedwars.api.events.shop;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.shop.ICategoryContent;
 import com.tomkeuper.bedwars.api.shop.IShopCache;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -32,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents an event triggered when a player buys items from the shop.
  */
+@Getter
 public class ShopBuyEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -40,7 +43,11 @@ public class ShopBuyEvent extends Event implements Cancellable {
     private final IArena arena;
     private final ICategoryContent categoryContent;
     private final int slot;
+
+    @Setter
     private IShopCache shopCache;
+
+    @Setter
     private boolean cancelled = false;
 
     /**
@@ -59,59 +66,6 @@ public class ShopBuyEvent extends Event implements Cancellable {
         this.slot = slot;
     }
 
-    /**
-     * Gets the arena where the purchase occurred.
-     *
-     * @return The arena.
-     */
-    public IArena getArena() {
-        return arena;
-    }
-
-    /**
-     * Gets the player who made the purchase.
-     *
-     * @return The player.
-     */
-    public Player getBuyer() {
-        return buyer;
-    }
-
-    /**
-     * Gets the shop category content from which items were bought.
-     *
-     * @return The category content.
-     */
-    public ICategoryContent getCategoryContent() {
-        return categoryContent;
-    }
-
-    /**
-     * Gets the list of items bought by the player.
-     *
-     * @return The list of items.
-     */
-    public IShopCache getShopCache() {
-        return shopCache;
-    }
-
-    /**
-     * Sets the shop cache for the player
-     *
-     * @param shopCache The complete shop cache.
-     */
-    public void setShopCache(IShopCache shopCache) {
-        this.shopCache = shopCache;
-    }
-
-    /**
-     * Gets the slot where the purchase was made.
-     * @return The slot.
-     */
-    public int getSlot() {
-        return slot;
-    }
-
     @Override
     public @NotNull HandlerList getHandlers() {
         return HANDLERS;
@@ -124,23 +78,5 @@ public class ShopBuyEvent extends Event implements Cancellable {
      */
     public static HandlerList getHandlerList() {
         return HANDLERS;
-    }
-
-    /**
-     * Checks if the event is cancelled.
-     *
-     * @return True if the event is cancelled, otherwise false.
-     */
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
-    /**
-     * Sets whether the event is cancelled.
-     *
-     * @param cancelled True to cancel the event, otherwise false.
-     */
-    public void setCancelled(boolean cancelled) {
-        this.cancelled = cancelled;
     }
 }
