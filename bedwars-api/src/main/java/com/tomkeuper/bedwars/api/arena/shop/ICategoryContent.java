@@ -90,6 +90,13 @@ public interface ICategoryContent {
     String getCategoryIdentifier();
 
     /**
+     * Set the path name of the category content.
+     *
+     * @param categoryIdentifier The path name to set.
+     */
+    void setCategoryIdentifier(String categoryIdentifier);
+
+    /**
      * Get the list of content tiers for the category content.
      *
      * @return The list of content tiers.
