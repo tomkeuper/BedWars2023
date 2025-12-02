@@ -19,8 +19,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static org.bukkit.craftbukkit.libs.jline.internal.Log.debug;
-
 public class HologramTask implements Runnable {
 
     @Override
@@ -88,7 +86,7 @@ public class HologramTask implements Runnable {
                 }
             }
         } catch (Exception e) {
-            debug("An error occurred while updating holograms: " + e.getMessage());
+            BedWars.debug("An error occurred while updating holograms: " + e.getMessage());
         }
     }
 }
