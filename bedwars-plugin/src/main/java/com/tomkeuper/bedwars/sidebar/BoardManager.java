@@ -377,7 +377,7 @@ public class BoardManager implements IScoreboardService {
             // Set scoreboard name and temporary group based on arena status
             if (arenaStatus == null) {
                 if (BedWars.config.getBoolean(ConfigPath.SB_CONFIG_SIDEBAR_USE_LOBBY_SIDEBAR)) scoreboardName = "bw_lobby_" + playerLanguage.getIso();
-                tabPlayer.setTemporaryGroup("none"); // Clear temporary group to allow TAB to use permission-based groups
+                tabPlayer.setTemporaryGroup(null); // Clear temporary group to allow TAB to use permission-based groups
             } else {
                 String temporaryGroup = null;
                 switch (arenaStatus) {
@@ -390,7 +390,7 @@ public class BoardManager implements IScoreboardService {
                     case playing:
                     case restarting:
                         scoreboardName = "bw_" + arena.getGroup() + "_playing_" + playerLanguage.getIso();
-                        temporaryGroup = arena.getTeam(player) != null ? arena.getTeam(player).getName() : "";
+                        temporaryGroup = arena.getTeam(player) != null ? arena.getTeam(player).getName() : "default";
                         break;
                     default:
                         scoreboardName = "bw_lobby_" + playerLanguage.getIso();
