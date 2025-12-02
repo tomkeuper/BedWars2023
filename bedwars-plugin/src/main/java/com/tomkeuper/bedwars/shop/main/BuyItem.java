@@ -157,19 +157,12 @@ public class BuyItem implements IBuyItem {
             contentRoot = contentRoot.substring(0, idx);
         }
         // Preferred: read flags relative to content root, with legacy fallback using the identifier path
-        if (yml.get(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT) != null) {
-            permanent = yml.getBoolean(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT);
-        } else if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT) != null) {
-            // Backward compatibility: old loaders used the (un)scoped identifier as a YAML path
+        if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT) != null) {
             permanent = yml.getBoolean(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_PERMANENT);
         }
-        if (yml.get(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE) != null) {
-            unbreakable = yml.getBoolean(contentRoot + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE);
-        } else if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE) != null) {
-            // Backward compatibility
+        if (yml.get(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE) != null) {
             unbreakable = yml.getBoolean(upgradeIdentifier + "." + ConfigPath.SHOP_CATEGORY_CONTENT_IS_UNBREAKABLE);
         }
-
         loaded = true;
     }
 
@@ -198,7 +191,7 @@ public class BuyItem implements IBuyItem {
                 for (TeamEnchant e : arena.getTeam(player).getArmorsEnchantments()) {
                     im.addEnchant(e.getEnchantment(), e.getAmplifier(), true);
                 }
-                if (permanent) BedWars.nms.setUnbreakable(im);
+                if (permanent || unbreakable) BedWars.nms.setUnbreakable(im);
                 i.setItemMeta(im);
             }
 
@@ -250,8 +243,7 @@ public class BuyItem implements IBuyItem {
                 i = original;
             }
             if (im != null) {
-                if (permanent) BedWars.nms.setUnbreakable(im);
-                if (unbreakable) BedWars.nms.setUnbreakable(im);
+                if (permanent || unbreakable) BedWars.nms.setUnbreakable(im);
                 if (i.getType() == Material.BOW) {
                     if (permanent) BedWars.nms.setUnbreakable(im);
                     if (arena.getTeam(player) != null) {

@@ -131,7 +131,7 @@ public class CategoryContent implements ICategoryContent {
         ContentTier ctt;
         for (String s : yml.getConfigurationSection(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS).getKeys(false)) {
             // Pass the scoped identifier down so BuyItem tags use the scoped id too
-            ctt = new ContentTier(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + s, s, scopedIdentifier, yml);
+            ctt = new ContentTier(path + "." + ConfigPath.SHOP_CATEGORY_CONTENT_CONTENT_TIERS + "." + s, s, path, yml);
             /*if (ctt.isLoaded())*/
             contentTiers.add(ctt);
         }
@@ -149,7 +149,7 @@ public class CategoryContent implements ICategoryContent {
             }
         }
 
-        identifier = scopedIdentifier;
+        identifier = path;
         categoryIdentifier = scopedIdentifier;
 
         loaded = true;
