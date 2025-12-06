@@ -2587,6 +2587,7 @@ public class Arena implements IArena {
         }
         scoreboards.forEach(Scoreboard::unregister);
         scoreboards = null;
+        ShopManager.shop.clearArenaCache(this);
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
