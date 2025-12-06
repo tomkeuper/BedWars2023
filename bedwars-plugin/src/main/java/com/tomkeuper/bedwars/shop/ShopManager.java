@@ -98,32 +98,32 @@ public class ShopManager extends ConfigManager implements IShopManager {
 
         if (isFirstTime()) {
             //quick buy defaults
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element1.path", "default-blocks-category.category-content.wool");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element1.path", "blocks-category.category-content.wool");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element1.slot", 19);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element2.path", "default-melee-category.category-content.stone-sword");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element2.path", "melee-category.category-content.stone-sword");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element2.slot", 20);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element3.path", "default-armor-category.category-content.chainmail");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element3.path", "armor-category.category-content.chainmail");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element3.slot", 21);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element4.path", "default-ranged-category.category-content.bow1");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element4.path", "ranged-category.category-content.bow1");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element4.slot", 23);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element5.path", "default-potions-category.category-content.speed-potion");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element5.path", "potions-category.category-content.speed-potion");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element5.slot", 24);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element6.path", "default-utility-category.category-content.tnt");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element6.path", "utility-category.category-content.tnt");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element6.slot", 25);
 
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element7.path", "default-blocks-category.category-content.wood");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element7.path", "blocks-category.category-content.wood");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element7.slot", 28);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element8.path", "default-melee-category.category-content.iron-sword");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element8.path", "melee-category.category-content.iron-sword");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element8.slot", 29);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element9.path", "default-armor-category.category-content.iron-armor");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element9.path", "armor-category.category-content.iron-armor");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element9.slot", 30);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element10.path", "default-tools-category.category-content.shears");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element10.path", "tools-category.category-content.shears");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element10.slot", 31);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element11.path", "default-ranged-category.category-content.arrow");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element11.path", "ranged-category.category-content.arrow");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element11.slot", 32);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element12.path", "default-potions-category.category-content.jump-potion");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element12.path", "potions-category.category-content.jump-potion");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element12.slot", 33);
-            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element13.path", "default-utility-category.category-content.water-bucket");
+            getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element13.path", "utility-category.category-content.water-bucket");
             getYml().addDefault(ConfigPath.SHOP_QUICK_DEFAULTS_PATH + ".element13.slot", 34);
         }
 
