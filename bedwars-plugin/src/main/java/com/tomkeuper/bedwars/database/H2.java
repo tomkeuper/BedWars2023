@@ -91,6 +91,51 @@ public class H2 implements IDatabase {
         }
     }
 
+    public boolean migrateQuickBuyTable() {
+        try {
+            checkConnection();
+
+            // Detect source table name (try lowercase and uppercase variants)
+            String source = null;
+            DatabaseMetaData meta = connection.getMetaData();
+            try (ResultSet rs = meta.getTables(null, null, "quick_buy_2", null)) {
+                if (rs.next()) source = "quick_buy_2";
+            }
+            if (source == null) {
+                try (ResultSet rs = meta.getTables(null, null, "QUICK_BUY_2", null)) {
+                    if (rs.next()) source = "QUICK_BUY_2";
+                }
+            }
+
+            if (source == null) {
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Table 'quick_buy_2' does not exist.");
+                return true;
+            }
+            return false;
+//            BedWars.plugin.getLogger().info("Found '" + source + "' table. Starting migration...");
+//
+//            // Drop existing target if present (both name variants)
+//            try (Statement st = connection.createStatement()) {
+//                st.executeUpdate("DROP TABLE IF EXISTS quick_buy;");
+//                st.executeUpdate("DROP TABLE IF EXISTS QUICK_BUY;");
+//            }
+//
+//            // Rename the detected source to quick_buy (preserve case consistent with source if needed)
+//            String renameSql = "ALTER TABLE " + source + " RENAME TO " + (source.equals("QUICK_BUY_2") ? "QUICK_BUY" : "quick_buy") + ";";
+//            try (Statement st = connection.createStatement()) {
+//                st.executeUpdate(renameSql);
+//            }
+//
+//            BedWars.plugin.getLogger().info("Successfully renamed '" + source + "' to 'quick_buy'.");
+//            return true;
+        } catch (SQLException e) {
+            BedWars.plugin.getLogger().severe("Failed to migrate Quick Buy table: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     @Override
     public boolean hasStats(UUID uuid) {
         String sql = "SELECT UUID FROM GLOBAL_STATS WHERE UUID = ?;";

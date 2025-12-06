@@ -3,7 +3,9 @@ package com.tomkeuper.bedwars.shop;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.database.IDatabase;
+import com.tomkeuper.bedwars.database.H2;
 import com.tomkeuper.bedwars.database.MySQL;
+import com.tomkeuper.bedwars.database.SQLite;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
 
 import java.sql.Connection;
@@ -136,21 +138,27 @@ public final class ShopDataMigrator {
                 return;
             }
 
+            BedWars.plugin.getLogger().info("Checking for Quick Buy table migration (quick_buy_2 → quick_buy)...");
+
             IDatabase db = BedWars.getRemoteDatabase();
-            if (!(db instanceof com.tomkeuper.bedwars.database.MySQL)) {
-                // Only MySQL needs this migration
-                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Database type: " + db.getClass().getSimpleName() + " (only MySQL requires migration)");
-                try {
-                    BedWars.config.getYml().set(CFG_TABLE_MIGRATION, true);
-                    BedWars.config.save();
-                } catch (Throwable ignored) {}
+            if (db == null) {
+                BedWars.plugin.getLogger().warning("Database is not initialized. Skipping Quick Buy table migration.");
                 return;
             }
 
-            BedWars.plugin.getLogger().info("Checking for Quick Buy table migration (quick_buy_2 → quick_buy)...");
+            boolean migrated = false;
+            if (db instanceof MySQL) {
+                migrated = ((MySQL) db).migrateQuickBuyTable();
+            } else if (db instanceof SQLite) {
+                migrated = ((SQLite) db).migrateQuickBuyTable();
+            } else if (db instanceof H2) {
+                migrated = ((H2) db).migrateQuickBuyTable();
+            } else {
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Database type: " + db.getClass().getSimpleName() + " (no migration implemented)");
+                migrated = true;
+            }
 
-            com.tomkeuper.bedwars.database.MySQL mysql = (com.tomkeuper.bedwars.database.MySQL) db;
-            if (mysql.migrateQuickBuyTable()) {
+            if (migrated) {
                 BedWars.plugin.getLogger().info("Quick Buy table migration completed successfully.");
                 try {
                     BedWars.config.getYml().set(CFG_TABLE_MIGRATION, true);
