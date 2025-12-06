@@ -46,7 +46,7 @@ public class H2 implements IDatabase {
         }
         this.url = "jdbc:h2:" + BedWars.plugin.getDataFolder().getAbsolutePath() + File.separator + "Cache"+ File.separator + "player_data.h2" + ";TRACE_LEVEL_FILE=0";
         try {
-            Class.forName("com.tomkeuper.bedwars.libs.h2.Driver");
+            Class.forName("org.h2.Driver");
             DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
             if (e instanceof ClassNotFoundException) {
