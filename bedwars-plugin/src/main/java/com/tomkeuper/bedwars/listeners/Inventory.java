@@ -35,6 +35,7 @@ import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.commands.bedwars.subcmds.regular.CmdLeave;
 import com.tomkeuper.bedwars.shop.main.ShopCategory;
 import com.tomkeuper.bedwars.shop.main.ShopIndex;
+import com.tomkeuper.bedwars.shop.quickbuy.QuickBuyAdd;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -166,6 +167,10 @@ public class Inventory implements Listener {
 
         // Check if player is watching quick buy menu
         if (ShopIndex.indexViewers.contains(player.getUniqueId())) {
+            return;
+        }
+
+        if (QuickBuyAdd.quickBuyAdds.containsKey(player.getUniqueId())) {
             return;
         }
 
