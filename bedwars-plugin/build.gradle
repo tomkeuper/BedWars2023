@@ -158,7 +158,7 @@ tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.Shadow
     relocate 'com.andrei1058.vipfeatures.api', 'com.tomkeuper.bedwars.libs.vipfeatures'
     relocate 'com.iridium.iridiumcolorapi', 'com.tomkeuper.bedwars.libs.color'
     relocate 'com.flowpowered.nbt', 'com.tomkeuper.bedwars.libs.flowpowered.nbt'
-    relocate 'com.infernalsuite.asp', 'com.tomkeuper.bedwars.libs.asp'
+    relocate 'com.infernalsuite.asp.loaders', 'com.tomkeuper.bedwars.libs.asp-loaders'
 }
 
 tasks.named('build') {
