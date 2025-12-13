@@ -43,3 +43,5 @@ enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 
 // Include missing module for v1_21_r5
 include ':versionsupport_v1_21_r5'
+include ':versionsupport_v1_21_r6'
+
