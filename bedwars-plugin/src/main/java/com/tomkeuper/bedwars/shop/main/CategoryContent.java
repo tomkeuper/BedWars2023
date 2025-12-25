@@ -334,14 +334,13 @@ public class CategoryContent implements ICategoryContent {
 
             for (String s : Language.getList(player, itemLorePath)) {
                 if (s.contains("%bw_quick_buy%")) {
-                    if (!hasQuick) {
+                    if (hasQuick) {
+                        if (ShopIndex.getIndexViewers().contains(player.getUniqueId())) {
+                            s = getMsg(player, Messages.SHOP_LORE_QUICK_REMOVE);
+                        } else continue;
+                    } else {
                         s = getMsg(player, Messages.SHOP_LORE_QUICK_ADD);
-                        continue;
                     }
-
-                    if (ShopIndex.getIndexViewers().contains(player.getUniqueId())) {
-                        s = getMsg(player, Messages.SHOP_LORE_QUICK_REMOVE);
-                    } else continue;
                 }
                 s = s.replace("%bw_tier%", tier).replace("%bw_color%", color).replace("%bw_cost%", cColor + String.valueOf(ct.getPrice()))
                         .replace("%bw_currency%", cColor + translatedCurrency).replace("%bw_buy_status%", buyStatus);
