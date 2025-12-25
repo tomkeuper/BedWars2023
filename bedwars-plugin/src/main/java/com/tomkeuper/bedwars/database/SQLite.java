@@ -30,10 +30,7 @@ import com.tomkeuper.bedwars.stats.PlayerStats;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class SQLite implements IDatabase {
 
@@ -90,7 +87,7 @@ public class SQLite implements IDatabase {
                 statement.executeUpdate(sql);
             }
             try (Statement st = connection.createStatement()) {
-                sql = "CREATE TABLE IF NOT EXISTS quick_buy_2 (uuid VARCHAR(36) PRIMARY KEY, " +
+                sql = "CREATE TABLE IF NOT EXISTS quick_buy (uuid VARCHAR(36) PRIMARY KEY, " +
                         "slot_19 VARCHAR(200), slot_20 VARCHAR(200), slot_21 VARCHAR(200), slot_22 VARCHAR(200), slot_23 VARCHAR(200), slot_24 VARCHAR(200), slot_25 VARCHAR(200)," +
                         "slot_28 VARCHAR(200), slot_29 VARCHAR(200), slot_30 VARCHAR(200), slot_31 VARCHAR(200), slot_32 VARCHAR(200), slot_33 VARCHAR(200), slot_34 VARCHAR(200)," +
                         "slot_37 VARCHAR(200), slot_38 VARCHAR(200), slot_39 VARCHAR(200), slot_40 VARCHAR(200), slot_41 VARCHAR(200), slot_42 VARCHAR(200), slot_43 VARCHAR(200));";
@@ -110,6 +107,50 @@ public class SQLite implements IDatabase {
             e.printStackTrace();
         }
     }
+
+
+    public boolean migrateQuickBuyTable() {
+        try {
+            checkConnection();
+
+            // Detect source table name (SQLite is case-insensitive but preserve created name)
+            String source = null;
+            DatabaseMetaData meta = connection.getMetaData();
+            try (ResultSet rs = meta.getTables(null, null, "quick_buy_2", null)) {
+                if (rs.next()) source = "quick_buy_2";
+            }
+            if (source == null) {
+                try (ResultSet rs = meta.getTables(null, null, "QUICK_BUY_2", null)) {
+                    if (rs.next()) source = "QUICK_BUY_2";
+                }
+            }
+
+            if (source == null) {
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Table 'quick_buy_2' does not exist.");
+                return true;
+            }
+
+            BedWars.plugin.getLogger().info("Found '" + source + "' table. Starting migration...");
+
+            try (Statement statement = connection.createStatement()) {
+                // Drop old quick_buy if exists (both cases)
+                statement.executeUpdate("DROP TABLE IF EXISTS quick_buy;");
+                statement.executeUpdate("DROP TABLE IF EXISTS QUICK_BUY;");
+
+                // Rename quick_buy_2 -> quick_buy
+                String renameSql = "ALTER TABLE " + source + " RENAME TO " + (source.equals("QUICK_BUY_2") ? "QUICK_BUY" : "quick_buy") + ";";
+                statement.executeUpdate(renameSql);
+            }
+
+            BedWars.plugin.getLogger().info("Successfully renamed '" + source + "' to 'quick_buy'.");
+            return true;
+        } catch (SQLException e) {
+            BedWars.plugin.getLogger().severe("Failed to migrate Quick Buy table: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     @Override
     public boolean hasStats(UUID uuid) {
@@ -284,7 +325,7 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement ps = connection.prepareStatement("SELECT slot_" + slot + " FROM quick_buy_2 WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT slot_" + slot + " FROM quick_buy WHERE uuid = ?;")) {
                 ps.setString(1, p.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
@@ -304,7 +345,7 @@ public class SQLite implements IDatabase {
             checkConnection();
 
             try (Statement statement = connection.createStatement()) {
-                try (ResultSet rs = statement.executeQuery("SELECT uuid FROM quick_buy_2 WHERE uuid = '" + uuid.toString() + "';")) {
+                try (ResultSet rs = statement.executeQuery("SELECT uuid FROM quick_buy WHERE uuid = '" + uuid.toString() + "';")) {
                     if (rs.next()) {
                         rs.close();
                         return true;
@@ -478,7 +519,7 @@ public class SQLite implements IDatabase {
                 }
             }
         }
-        String sql = hasQuick ? "UPDATE quick_buy_2 SET " + columns + " WHERE uuid=?;" : "INSERT INTO quick_buy_2 (uuid," + columns + ") VALUES (?," + values + ");";
+        String sql = hasQuick ? "UPDATE quick_buy SET " + columns + " WHERE uuid=?;" : "INSERT INTO quick_buy (uuid," + columns + ") VALUES (?," + values + ");";
         try {
             checkConnection();
 
@@ -498,6 +539,25 @@ public class SQLite implements IDatabase {
     }
 
     @Override
+    public List<UUID> listQuickBuyUUIDs() {
+        List<UUID> list = new ArrayList<>();
+        try {
+            checkConnection();
+            try (PreparedStatement ps = connection.prepareStatement("SELECT uuid FROM quick_buy;")) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String s = rs.getString("uuid");
+                        try { list.add(java.util.UUID.fromString(s)); } catch (Exception ignored) {}
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
     public HashMap<Integer, String> getQuickBuySlots(UUID uuid, int[] slot) {
         HashMap<Integer, String> results = new HashMap<>();
         if (slot.length == 0) {
@@ -506,7 +566,7 @@ public class SQLite implements IDatabase {
         try {
             checkConnection();
 
-            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM quick_buy_2 WHERE uuid = ?;")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM quick_buy WHERE uuid = ?;")) {
                 ps.setString(1, uuid.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {

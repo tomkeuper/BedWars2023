@@ -261,8 +261,25 @@ public class BreakPlace implements Listener {
                 || matName.equalsIgnoreCase("WHEAT_SEEDS")
                 || matName.equalsIgnoreCase("SUGAR_CANE")
                 || matName.equalsIgnoreCase("SUGAR_CANE_BLOCK")
+                || matName.equalsIgnoreCase("RED_MUSHROOM")
+                || matName.equalsIgnoreCase("BROWN_MUSHROOM")
         ) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onWaterFlow(BlockFromToEvent event) {
+        // Cancel water flow if it tries to break a block into a protected region
+        IArena arena = Arena.getArenaByIdentifier(event.getBlock().getWorld().getName());
+        if (arena == null) return;
+        if (!event.getBlock().getType().toString().equalsIgnoreCase("WATER")) return;
+        if (event.getToBlock().isEmpty()) return;
+        for (Region region : arena.getRegionsList()) {
+            if (region.isInRegion(event.getToBlock().getLocation()) && region.isProtected()) {
+                event.setCancelled(true);
+                return;
+            }
         }
     }
 

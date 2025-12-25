@@ -21,6 +21,8 @@
 package com.tomkeuper.bedwars.api.arena.generator;
 
 import org.bukkit.entity.Player;
+import java.util.List;
+import java.util.Set;
 
 public interface IGenHolo {
 
@@ -42,7 +44,17 @@ public interface IGenHolo {
     /**
      * Get the player associated with this hologram.
      */
-    Player getPlayer();
+    Set<Player> getPlayers();
+
+    /**
+     * Add a player to this hologram.
+     */
+    void addPlayer(Player player);
+
+    /**
+     * Remove a player from this hologram.
+     */
+    void removePlayer(Player player);
 
     /**
      * Get the generator associated with this hologram.
@@ -53,6 +65,11 @@ public interface IGenHolo {
      * Update the hologram.
      */
     void update();
+
+    /**
+     * Update the hologram for a player.
+     */
+    void update(Player player);
 
     /**
      * This must be called when disabling the generator {@link IGenerator#disable()}

@@ -49,48 +49,54 @@ public class PlayerDrops {
      * @return true if event drops must be cleared.
      */
     public static boolean handlePlayerDrops(IArena arena, Player victim, Player killer, ITeam victimsTeam, ITeam killersTeam, PlayerKillEvent.PlayerKillCause cause, List<ItemStack> inventory) {
-        if (arena.getConfig().getBoolean(ConfigPath.ARENA_NORMAL_DEATH_DROPS)) return false;
+        BedWars.debug("PlayerDrops - Handling player drops for victim: " + victim.getName() + ", killer: " + (killer != null ? killer.getName() : "null") + ", cause: " + cause);
+        if (arena.getConfig().getBoolean(ConfigPath.ARENA_NORMAL_DEATH_DROPS)) {
+            BedWars.debug("PlayerDrops - Normal death drops enabled, skipping custom drop handling.");
+            return false;
+        }
 
-        if (cause == PlayerKillEvent.PlayerKillCause.PLAYER_PUSH || cause == PlayerKillEvent.PlayerKillCause.PLAYER_PUSH_FINAL) {
+        if ((cause == PlayerKillEvent.PlayerKillCause.PLAYER_PUSH || cause == PlayerKillEvent.PlayerKillCause.PLAYER_PUSH_FINAL) && killer == null) {
             // if died by fall damage drop items at location
-            dropItems(victim, inventory);
+            BedWars.debug("PlayerDrops - Death by player push but killer is null, dropping items at location.");
             return true;
         }
 
         if (killer == null) {
             // Death without an attacker drops items on the floor
-            dropItems(victim, inventory);
+            BedWars.debug("PlayerDrops - Death without an attacker, dropping items at location.");
             return true;
         }
 
         if (cause.isDespawnable()) {
             // If killed by an ironGolem or silverFish drop on floor
-            dropItems(victim, inventory);
+            BedWars.debug("PlayerDrops - Death by despawnable entity, dropping items at location.");
             return true;
         }
         if (cause.isPvpLogOut()) {
             // if is pvp log out drop at disconnect location
-            dropItems(victim, inventory);
+            BedWars.debug("PlayerDrops - Death by PvP logout, dropping items at location.");
             return true;
         }
+
         if (cause.isFinalKill()) {
+            BedWars.debug("PlayerDrops - Final kill, dropping ender chest items at team generator.");
             // if is final kill drop items at generator
             if (victimsTeam != null) {
-                Location dropsLocation = new Location(victim.getWorld(), victimsTeam.getKillDropsLocation().getBlockX(), victimsTeam.getKillDropsLocation().getY(), victimsTeam.getKillDropsLocation().getZ());
+                Vector killDropsLocation = victimsTeam.getKillDropsLocation();
+                Location dropsLocation = new Location(victim.getWorld(), killDropsLocation.getBlockX(), killDropsLocation.getY(), killDropsLocation.getZ());
                 victim.getEnderChest().forEach(item -> {
-                    if (item != null) {
-                        victim.getWorld().dropItemNaturally(dropsLocation, item);
-                    }
+                    if (item != null) victim.getWorld().dropItemNaturally(dropsLocation, item);
                 });
                 victim.getEnderChest().clear();
             }
         }
 
         // victim's inventory
-
         if (victimsTeam != null && !(victimsTeam.equals(killersTeam) && victim.equals(killer))) {
+            BedWars.debug("PlayerDrops - Handling victim's inventory drops.");
             // if final kill give items at kill drops location (team generator)
             if (victimsTeam.isBedDestroyed()) {
+                BedWars.debug("PlayerDrops - Victim's bed is destroyed, dropping items at team generator.");
                 for (ItemStack i : inventory) {
                     if (i == null) continue;
                     if (i.getType() == Material.AIR) continue;
@@ -101,11 +107,17 @@ public class PlayerDrops {
                         killer.getWorld().dropItemNaturally(new Location(arena.getWorld(), v.getX(), v.getY(), v.getZ()), i);
                     }
                 }
-
             } else {
                 // add-to-inventory feature if receiver is not respawning
-                if (!arena.isPlayer(killer)) return true;
-                if (arena.isReSpawning(killer)) return true;
+                if (!arena.isPlayer(killer)) {
+                    BedWars.debug("PlayerDrops - Killer is not in arena.");
+                    return true;
+                }
+                if (arena.isReSpawning(killer)) {
+                    BedWars.debug("PlayerDrops - Killer is respawning.");
+                    return true;
+                }
+                BedWars.debug("PlayerDrops - Adding eligible items to killer's inventory.");
                 Map<Material, Integer> materialDrops = new HashMap<>();
                 for (ItemStack i : inventory) {
                     if (i == null) continue;
@@ -116,14 +128,12 @@ public class PlayerDrops {
                         killer.getInventory().addItem(i);
 
                         // count items
-                        if (materialDrops.containsKey(i.getType())) {
-                            materialDrops.replace(i.getType(), materialDrops.get(i.getType()) + i.getAmount());
-                        } else {
-                            materialDrops.put(i.getType(), i.getAmount());
-                        }
+                        if (materialDrops.containsKey(i.getType())) materialDrops.replace(i.getType(), materialDrops.get(i.getType()) + i.getAmount());
+                        else materialDrops.put(i.getType(), i.getAmount());
                     }
                 }
 
+                // send messages to killer
                 for (Map.Entry<Material, Integer> entry : materialDrops.entrySet()) {
                     String msg = "";
                     int amount = entry.getValue();
@@ -149,7 +159,6 @@ public class PlayerDrops {
                 }
                 materialDrops.clear();
             }
-
         }
         return true;
     }

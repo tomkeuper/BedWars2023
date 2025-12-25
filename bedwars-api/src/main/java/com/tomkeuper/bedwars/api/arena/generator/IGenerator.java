@@ -35,9 +35,9 @@ import java.util.List;
 public interface IGenerator {
 
     /**
-     * Get holograms associated to players and generators
+     * Get holograms associated to languages for this generator.
      */
-    HashMap<Player, IGenHolo> getPlayerHolograms();
+    HashMap<String, IGenHolo> getLanguageHolograms();
 
     /**
      * Disable a generator and remove the holograms.

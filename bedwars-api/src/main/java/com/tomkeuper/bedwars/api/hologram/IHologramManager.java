@@ -25,6 +25,8 @@ import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public interface IHologramManager {
 
     /**
@@ -36,6 +38,16 @@ public interface IHologramManager {
      * @return the hologram
      */
     IHologram createHologram(Player p, Location location, String... lines);
+
+    /**
+     * Create a hologram with the given lines at the given location.
+     *
+     * @param players - the player to create the hologram for
+     * @param location - the location to create the hologram at
+     * @param lines - the lines to create the hologram from
+     * @return the hologram
+     */
+    IHologram createHologram(Iterable<Player> players, Location location, String... lines);
 
     /**
      * Create a hologram with the given lines at the given location.

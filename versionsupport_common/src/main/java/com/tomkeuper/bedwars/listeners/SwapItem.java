@@ -38,6 +38,8 @@ public class SwapItem implements Listener {
                 e.setCancelled(true);
         } else if (api.getArenaUtil().isSpectating(e.getPlayer())) {
             e.setCancelled(true);
+        } else if (e.getPlayer().getWorld().getName().equals(api.getLobbyWorld())) {
+            e.setCancelled(true);
         }
     }
 }

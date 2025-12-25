@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Misc;
+import org.apache.logging.log4j.core.config.Loggers;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -142,7 +143,7 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_SELF, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_ENEMY, 2.0);
         yml.addDefault(ConfigPath.GENERAL_FIREBALL_DAMAGE_TEAMMATES, 0.0);
-        yml.addDefault(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS, Arrays.asList("END_STONE"));
+        yml.addDefault(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS, Arrays.asList(BedWars.getForCurrentVersion("ENDER_STONE", "END_STONE", "END_STONE"), "OBSIDIAN"));
 
         // eggbridge category
         yml.addDefault(ConfigPath.GENERAL_EGGBRIDGE_MIN_DISTANCE_FROM_PLAYER, 4.0);
@@ -167,6 +168,7 @@ public class MainConfig extends ConfigManager {
         //
 
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_HOLOGRAM_UPDATE_RATE, 5);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_SPOIL_TNT_PLAYERS, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_GENERATOR_SPLIT, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_PAPER_FEATURES, true);
@@ -247,7 +249,10 @@ public class MainConfig extends ConfigManager {
                         if (lang.equalsIgnoreCase(yml.getString("language"))) {
                             whatLang = f.getName().replace("messages_", "").replace(".yml", "");
                         }
-                        if (Language.getLang(lang) == null) new Language(BedWars.plugin, lang);
+                        if (Language.getLang(lang) == null) {
+                            BedWars.debug("Loading language: " + lang);
+                            new Language(BedWars.plugin, lang);
+                        }
                     }
                 }
             }

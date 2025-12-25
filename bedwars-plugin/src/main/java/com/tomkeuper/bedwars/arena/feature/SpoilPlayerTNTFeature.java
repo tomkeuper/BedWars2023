@@ -122,11 +122,20 @@ public class SpoilPlayerTNTFeature {
             IArena arena = Arena.getArenaByPlayer(player);
             if (arena == null || !arena.isPlayer(player) || arena.isSpectator(player) || player.isDead()) return;
 
+            boolean hasTNT = false;
+            for (ItemStack item : player.getInventory().getContents()) {
+                if (item == null) continue;
+                if (item.getType() == Material.TNT) {
+                    hasTNT = true;
+                    break;
+                }
+            }
+
             if (instance.playersWithTnt.contains(player)) {
-                if (player.getInventory().contains(Material.TNT)) return;
+                if (hasTNT) return;
                 instance.playersWithTnt.remove(player);
             } else {
-                if (!player.getInventory().contains(Material.TNT)) return;
+                if (!hasTNT) return;
                 instance.playersWithTnt.add(player);
             }
         }

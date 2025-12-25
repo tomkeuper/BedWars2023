@@ -29,10 +29,12 @@ import me.neznamy.tab.api.bossbar.BossBar;
 import me.neznamy.tab.api.placeholder.PlayerPlaceholder;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Objects;
 
 public class BoardListener implements Listener {
+
     @EventHandler
     public void onArenaLeave(PlayerLeaveArenaEvent event){
         IArena arena = Arena.getArenaByPlayer(event.getPlayer());
@@ -60,5 +62,10 @@ public class BoardListener implements Listener {
     @EventHandler
     public void onDisconnect(PlayerLeaveArenaEvent event) {
         BoardManager.getInstance().cleanupPlayer(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event){
+        BoardManager.getInstance().tabPlayerCache.remove(event.getPlayer().getUniqueId());
     }
 }

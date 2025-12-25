@@ -30,11 +30,11 @@ dependencies {
     api 'io.papermc:paperlib:1.0.8'
     api 'org.bstats:bstats-bukkit:3.0.2'
     implementation 'com.iridium:IridiumColorAPI:1.0.9' // used by BedWars - API
-    implementation 'org.apache.commons:commons-lang3:3.14.0' // Used by IridiumColorAPI
+    slim 'org.apache.commons:commons-lang3:3.14.0' // Used by IridiumColorAPI
 
-    implementation 'net.kyori:adventure-text-minimessage:4.23.0'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.23.0'
-    implementation 'net.kyori:adventure-platform-bukkit:4.4.0'
+    slim 'net.kyori:adventure-text-minimessage:4.23.0'
+    slim 'net.kyori:adventure-text-serializer-legacy:4.23.0'
+    slim 'net.kyori:adventure-platform-bukkit:4.4.0'
 
     api project(':bedwars-api')
     api project(':versionsupport_common')
@@ -152,14 +152,13 @@ tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.Shadow
     relocate 'io.papermc.lib', 'com.tomkeuper.bedwars.libs.paper'
     relocate 'io.github.slimjar', 'com.tomkeuper.bedwars.libs.slimjar'
     relocate 'org.slf4j', 'com.tomkeuper.bedwars.libs.slf4j'
-    relocate 'org.h2', 'com.tomkeuper.bedwars.libs.h2'
     relocate 'org.bstats', 'com.tomkeuper.bedwars.libs.bstats'
     relocate 'org.apache.commons.io', 'com.tomkeuper.bedwars.libs.apache.commons.io'
-    relocate 'org.apache.commons.lang', 'com.tomkeuper.bedwars.libs.apache.commons.lang'
     relocate 'com.zaxxer.hikari', 'com.tomkeuper.bedwars.libs.hikari'
     relocate 'com.andrei1058.vipfeatures.api', 'com.tomkeuper.bedwars.libs.vipfeatures'
     relocate 'com.iridium.iridiumcolorapi', 'com.tomkeuper.bedwars.libs.color'
-    relocate 'net.kyori', 'com.tomkeuper.bedwars.libs.kyori'
+    relocate 'com.flowpowered.nbt', 'com.tomkeuper.bedwars.libs.flowpowered.nbt'
+    relocate 'com.infernalsuite.asp.loaders', 'com.tomkeuper.bedwars.libs.asp-loaders'
 }
 
 tasks.named('build') {

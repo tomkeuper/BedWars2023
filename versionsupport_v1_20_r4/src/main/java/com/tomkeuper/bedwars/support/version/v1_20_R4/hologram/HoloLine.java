@@ -31,6 +31,7 @@ import net.minecraft.world.entity.decoration.EntityArmorStand;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_20_R4.CraftWorld;
 import org.bukkit.craftbukkit.v1_20_R4.util.CraftChatMessage;
+import org.bukkit.entity.Player;
 
 public class HoloLine implements IHoloLine {
     private String text;
@@ -42,10 +43,10 @@ public class HoloLine implements IHoloLine {
         this.text = text;
         this.hologram = hologram;
         entity = new EntityArmorStand(((CraftWorld) hologram.getLocation().getWorld()).getHandle(), 0, 0, 0);
-        entity.b(CraftChatMessage.fromStringOrNull(text));
-        entity.o(true);
-        entity.k(true);
-        entity.ag = true;
+        entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
+        entity.o(true); // setCustomNameVisible
+        entity.k(true); // setInvisible
+        entity.ag = true; // noPhysics
         Location loc = hologram.getLocation();
         entity.p(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
 
@@ -53,7 +54,9 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_20_R4.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
+        for (var player : hologram.getPlayers()) {
+            v1_20_R4.sendPackets(player, packet, metadataPacket, teleportPacket);
+        }
     }
 
     @Override
@@ -96,7 +99,23 @@ public class HoloLine implements IHoloLine {
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c());
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
 
-        v1_20_R4.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
+        for (var player : hologram.getPlayers()) {
+            v1_20_R4.sendPackets(player, metadataPacket, teleportPacket);
+        }
+    }
+
+    @Override
+    public void update(Player player) {
+        if (!hologram.getPlayers().contains(player)) return;
+        entity.b(CraftChatMessage.fromStringOrNull(text));
+        int position = hologram.getLines().indexOf(this);
+        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        if (isDestroyed()) return;
+
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.al(), entity.ap().c());
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity);
+
+        v1_20_R4.sendPackets(player, metadataPacket, teleportPacket);
     }
 
     @Override
@@ -104,16 +123,37 @@ public class HoloLine implements IHoloLine {
         destroyed = false;
 
         PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
-        v1_20_R4.sendPacket(hologram.getPlayer(), packet);
+        for (var player : hologram.getPlayers()) {
+            v1_20_R4.sendPacket(player, packet);
+        }
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
     }
 
     @Override
+    public void reveal(Player player) {
+        destroyed = false;
+
+        PacketPlayOutSpawnEntity packet = new PacketPlayOutSpawnEntity(entity);
+        v1_20_R4.sendPacket(player, packet);
+
+        if (!hologram.getLines().contains(this)) hologram.addLine(this);
+        hologram.update(player);
+    }
+
+    @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.al());
-        v1_20_R4.sendPacket(hologram.getPlayer(), packet);
+        for (var player : hologram.getPlayers()) {
+            v1_20_R4.sendPacket(player, packet);
+        }
+    }
+
+    @Override
+    public void remove(Player player) {
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.al());
+        v1_20_R4.sendPacket(player, packet);
     }
 
     @Override

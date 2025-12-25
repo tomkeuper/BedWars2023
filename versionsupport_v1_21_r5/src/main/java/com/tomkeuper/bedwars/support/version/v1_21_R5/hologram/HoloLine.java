@@ -34,6 +34,7 @@ import net.minecraft.world.phys.Vec3D;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R5.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R5.util.CraftChatMessage;
+import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -63,7 +64,9 @@ public class HoloLine implements IHoloLine {
         final Set<Relative> set = new HashSet<>();
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(), positionMoveRotation, set, false);
 
-        v1_21_R5.sendPackets(hologram.getPlayer(), packet, metadataPacket, teleportPacket);
+        for (var player : hologram.getPlayers()) {
+            v1_21_R5.sendPackets(player, packet, metadataPacket, teleportPacket);
+        }
     }
 
     @Override
@@ -100,7 +103,7 @@ public class HoloLine implements IHoloLine {
     public void update() {
         entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
         int position = hologram.getLines().indexOf(this);
-        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ()); //
+        entity.o(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ()); //setPosRaw
         if (isDestroyed()) return;
 
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c()); // getId(), getEntityData()
@@ -110,7 +113,27 @@ public class HoloLine implements IHoloLine {
         final Set<Relative> set = new HashSet<>();
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(), positionMoveRotation, set, false); // getId()
 
-        v1_21_R5.sendPackets(hologram.getPlayer(), metadataPacket, teleportPacket);
+        for (var player : hologram.getPlayers()) {
+            v1_21_R5.sendPackets(player, metadataPacket, teleportPacket);
+        }
+    }
+
+    @Override
+    public void update(Player player) {
+        if (!hologram.getPlayers().contains(player)) return;
+        entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
+        int position = hologram.getLines().indexOf(this);
+        entity.o(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ()); //setPosRaw
+        if (isDestroyed()) return;
+
+        PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c()); // getId(), getEntityData()
+
+        final var delta = new Vec3D(0,0,0);
+        final var positionMoveRotation = new PositionMoveRotation(entity.dw(), delta, 0, entity.dR()); // trackingPosition(), , , getXRot()
+        final Set<Relative> set = new HashSet<>();
+        PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(entity.ar(), positionMoveRotation, set, false); // getId()
+
+        v1_21_R5.sendPackets(player, metadataPacket, teleportPacket);
     }
 
     @Override
@@ -118,16 +141,34 @@ public class HoloLine implements IHoloLine {
         destroyed = false;
 
         PacketPlayOutSpawnEntity packet = v1_21_R5.newPacketPlayOutSpawnEntity(entity);
-        v1_21_R5.sendPacket(hologram.getPlayer(), packet);
+        for (var player : hologram.getPlayers()) {
+            v1_21_R5.sendPacket(player, packet);
+        }
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
         hologram.update();
     }
 
     @Override
+    public void reveal(Player player) {
+        destroyed = false;
+
+        PacketPlayOutSpawnEntity packet = v1_21_R5.newPacketPlayOutSpawnEntity(entity);
+        v1_21_R5.sendPacket(player, packet);
+    }
+
+    @Override
     public void remove() {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.ar());
-        v1_21_R5.sendPacket(hologram.getPlayer(), packet);
+        for (var player : hologram.getPlayers()) {
+            v1_21_R5.sendPacket(player, packet);
+        }
+    }
+
+    @Override
+    public void remove(Player player) {
+        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(entity.ar());
+        v1_21_R5.sendPacket(player, packet);
     }
 
     @Override

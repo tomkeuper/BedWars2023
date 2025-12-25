@@ -46,7 +46,7 @@ public class H2 implements IDatabase {
         }
         this.url = "jdbc:h2:" + BedWars.plugin.getDataFolder().getAbsolutePath() + File.separator + "Cache"+ File.separator + "player_data.h2" + ";TRACE_LEVEL_FILE=0";
         try {
-            Class.forName("com.tomkeuper.bedwars.libs.h2.Driver");
+            Class.forName("org.h2.Driver");
             DriverManager.getConnection(url);
         } catch (SQLException | ClassNotFoundException e) {
             if (e instanceof ClassNotFoundException) {
@@ -90,6 +90,51 @@ public class H2 implements IDatabase {
             e.printStackTrace();
         }
     }
+
+    public boolean migrateQuickBuyTable() {
+        try {
+            checkConnection();
+
+            // Detect source table name (try lowercase and uppercase variants)
+            String source = null;
+            DatabaseMetaData meta = connection.getMetaData();
+            try (ResultSet rs = meta.getTables(null, null, "quick_buy_2", null)) {
+                if (rs.next()) source = "quick_buy_2";
+            }
+            if (source == null) {
+                try (ResultSet rs = meta.getTables(null, null, "QUICK_BUY_2", null)) {
+                    if (rs.next()) source = "QUICK_BUY_2";
+                }
+            }
+
+            if (source == null) {
+                BedWars.plugin.getLogger().info("Quick Buy table migration not needed. Table 'quick_buy_2' does not exist.");
+                return true;
+            }
+            return false;
+//            BedWars.plugin.getLogger().info("Found '" + source + "' table. Starting migration...");
+//
+//            // Drop existing target if present (both name variants)
+//            try (Statement st = connection.createStatement()) {
+//                st.executeUpdate("DROP TABLE IF EXISTS quick_buy;");
+//                st.executeUpdate("DROP TABLE IF EXISTS QUICK_BUY;");
+//            }
+//
+//            // Rename the detected source to quick_buy (preserve case consistent with source if needed)
+//            String renameSql = "ALTER TABLE " + source + " RENAME TO " + (source.equals("QUICK_BUY_2") ? "QUICK_BUY" : "quick_buy") + ";";
+//            try (Statement st = connection.createStatement()) {
+//                st.executeUpdate(renameSql);
+//            }
+//
+//            BedWars.plugin.getLogger().info("Successfully renamed '" + source + "' to 'quick_buy'.");
+//            return true;
+        } catch (SQLException e) {
+            BedWars.plugin.getLogger().severe("Failed to migrate Quick Buy table: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     @Override
     public boolean hasStats(UUID uuid) {
@@ -468,6 +513,25 @@ public class H2 implements IDatabase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<UUID> listQuickBuyUUIDs() {
+        List<UUID> list = new ArrayList<>();
+        try {
+            checkConnection();
+            try (PreparedStatement ps = connection.prepareStatement("SELECT UUID FROM QUICK_BUY;")) {
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String s = rs.getString("UUID");
+                        try { list.add(java.util.UUID.fromString(s)); } catch (Exception ignored) {}
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     @Override

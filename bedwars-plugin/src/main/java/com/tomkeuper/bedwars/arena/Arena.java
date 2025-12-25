@@ -64,6 +64,7 @@ import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.money.internal.MoneyPerMinuteTask;
 import com.tomkeuper.bedwars.shop.ShopCache;
+import com.tomkeuper.bedwars.shop.main.ShopIndex;
 import com.tomkeuper.bedwars.sidebar.BoardManager;
 import com.tomkeuper.bedwars.support.citizens.JoinNPC;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
@@ -105,8 +106,15 @@ import static com.tomkeuper.bedwars.BedWars.*;
 import static com.tomkeuper.bedwars.api.language.Language.*;
 import static com.tomkeuper.bedwars.arena.upgrades.BaseListener.isOnABase;
 
+import com.tomkeuper.bedwars.api.shop.IShopIndex;
+import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
+import com.tomkeuper.bedwars.shop.ShopManager;
+
 @SuppressWarnings("WeakerAccess")
 public class Arena implements IArena {
+
+    private IShopIndex linkedShop;
+    private UpgradesIndex linkedUpgrades;
 
     private static final HashMap<String, IArena> arenaByName = new HashMap<>();
     private static final HashMap<Player, IArena> arenaByPlayer = new HashMap<>();
@@ -131,7 +139,6 @@ public class Arena implements IArena {
     private List<ITeam> teams = new ArrayList<>();
     private LinkedList<org.bukkit.util.Vector> placed = new LinkedList<>();
     private List<String> nextEvents = new ArrayList<>();
-    private List<String> shopOverrideCategories = new ArrayList<>();
     private List<Region> regionsList = new ArrayList<>();
     private List<ServerPlaceholder> serverPlaceholders = new ArrayList<>();
     private List<BossBar> dragonBossbars = new ArrayList<>();
@@ -183,6 +190,9 @@ public class Arena implements IArena {
 
     /* ARENA GENERATORS */
     private List<IGenerator> oreGenerators = new ArrayList<>();
+
+    /* SHOP HOLOGRAMS */
+    private HashMap<String, List<ShopHolo>> shopHolosIso = new HashMap<>();
 
     private PerMinuteTask perMinuteTask;
 
@@ -317,6 +327,18 @@ public class Arena implements IArena {
         this.world = world;
         this.worldName = world.getName();
         getConfig().setName(worldName);
+
+        // Link per-arena shop and upgrades layouts
+        try {
+            // Link the global ShopIndex; categories are pre-resolved per arena below
+            this.linkedShop = ShopManager.shop;
+            if (this.linkedShop != null) {
+                ((ShopIndex) this.linkedShop).preResolveForArena(this);
+            }
+        } catch (Throwable ignored) {}
+        try {
+            this.linkedUpgrades = BedWars.getUpgradeManager().getMenuForArena(this);
+        } catch (Throwable ignored) {}
         world.getEntities().stream().filter(e -> e.getType() != EntityType.PLAYER)
                 .filter(e -> e.getType() != EntityType.PAINTING).filter(e -> e.getType() != EntityType.ITEM_FRAME)
                 .forEach(Entity::remove);
@@ -590,7 +612,7 @@ public class Arena implements IArena {
 
             /* save player inventory etc */
             if (getServerType() != ServerType.BUNGEE) {
-                new PlayerGoods(p, true);
+                PlayerGoods.createIfNeeded(p, true);
                 playerLocation.put(p, p.getLocation());
             }
             PaperSupport.teleportC(p, getWaitingLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
@@ -691,7 +713,7 @@ public class Arena implements IArena {
             if (!playerBefore) {
                 /* save player inv etc if isn't saved yet*/
                 if (getServerType() != ServerType.BUNGEE) {
-                    new PlayerGoods(p, true);
+                    PlayerGoods.createIfNeeded(p, true);
                     playerLocation.put(p, p.getLocation());
                 }
                 setArenaByPlayer(p, this);
@@ -767,8 +789,8 @@ public class Arena implements IArena {
             }
             for (ITeam t : getTeams()) {
                 if (!t.isShopSpawned()) continue;
-                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group)), Collections.singletonList(p), this, t);
-                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group)), Collections.singletonList(p), this, t);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Upgrade"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_UPGRADES.replace("%group%", group) : Messages.NPC_NAME_SOLO_UPGRADES.replace("%group%", group)), Collections.singletonList(p), t);
+                nms.spawnShopHologram(getConfig().getArenaLoc("Team." + t.getName() + ".Shop"), (getMaxInTeam() > 1 ? Messages.NPC_NAME_TEAM_SHOP.replace("%group%", group) : Messages.NPC_NAME_SOLO_SHOP.replace("%group%", group)), Collections.singletonList(p), t);
                 for (IGenerator o : t.getGenerators()) {
                     o.updateHolograms(p);
                 }
@@ -966,7 +988,9 @@ public class Arena implements IArena {
         }
 
         // Clear shop holo's for leaving players.
-        ShopHolo.clearForPlayer(p);
+        String iso = Language.getPlayerLanguage(p).getIso();
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) holo.clearForPlayer(p);
 
         /**
          * Below is *only* executed if serverType != BUNGEE
@@ -1107,7 +1131,9 @@ public class Arena implements IArena {
         }
 
         // Clear shop holo's for leaving players.
-        ShopHolo.clearForPlayer(p);
+        String iso = Language.getPlayerLanguage(p).getIso();
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) holo.clearForPlayer(p);
 
         for (PotionEffect pf : p.getActivePotionEffects()) {
             p.removePotionEffect(pf.getType());
@@ -1402,6 +1428,26 @@ public class Arena implements IArena {
     }
 
     @Override
+    public @Nullable IShopIndex getLinkedShop() {
+        return linkedShop;
+    }
+
+    @Override
+    public void setLinkedShop(@Nullable IShopIndex shop) {
+        this.linkedShop = shop;
+    }
+
+    @Override
+    public @Nullable UpgradesIndex getLinkedUpgrades() {
+        return linkedUpgrades;
+    }
+
+    @Override
+    public void setLinkedUpgrades(@Nullable UpgradesIndex upgrades) {
+        this.linkedUpgrades = upgrades;
+    }
+
+    @Override
     public void setWorldName(String name) {
         this.worldName = name;
     }
@@ -1549,6 +1595,7 @@ public class Arena implements IArena {
      * Change game status starting tasks.
      */
     public void changeStatus(GameState status) {
+        if (status == GameState.restarting && this.status == GameState.restarting) return;
         if (this.status != GameState.playing && status == GameState.playing) {
             startTime = Instant.now();
         }
@@ -2324,6 +2371,35 @@ public class Arena implements IArena {
         return oreGenerators;
     }
 
+    @Override
+    public List<ShopHolo> getShopHolograms(String iso) {
+        return shopHolosIso.get(iso);
+    }
+
+    @Override
+    public void addShopHologram(String iso, ShopHolo shopHolo) {
+        shopHolosIso.putIfAbsent(iso, new ArrayList<>());
+        shopHolosIso.get(iso).add(shopHolo);
+    }
+
+    @Override
+    public void destroyShopHolograms(String iso) {
+        for (ShopHolo holo : shopHolosIso.get(iso)) {
+            if (holo == null) continue;
+            if (holo.getHologram() != null) continue;
+            holo.clear();
+        }
+        shopHolosIso.remove(iso);
+    }
+
+    @Override
+    public void destroyShopHolograms() {
+        for (String iso : shopHolosIso.keySet()) {
+            destroyShopHolograms(iso);
+        }
+        shopHolosIso.clear();
+    }
+
     /**
      * Add a player to the most filled arena.
      * Check if is the party owner first.
@@ -2421,14 +2497,6 @@ public class Arena implements IArena {
         return new ArrayList<>(nextEvents);
     }
 
-    public List<String> getShopOverrideCategories() {
-        return shopOverrideCategories;
-    }
-
-    public void addShopOverrideCategory(String shopOverrideCategory) {
-        this.shopOverrideCategories.add(shopOverrideCategory);
-    }
-
     /**
      * Get player deaths.
      */
@@ -2519,6 +2587,7 @@ public class Arena implements IArena {
         }
         scoreboards.forEach(Scoreboard::unregister);
         scoreboards = null;
+        ShopManager.shop.clearArenaCache(this);
         arenaByName.remove(arenaName);
         arenaByPlayer.entrySet().removeIf(entry -> entry.getValue() == this);
         players = null;
@@ -2534,6 +2603,7 @@ public class Arena implements IArena {
         for (ITeam bwt : teams) {
             bwt.destroyData();
         }
+        destroyShopHolograms();
         playerLocation.entrySet().removeIf(e -> Objects.requireNonNull(e.getValue().getWorld()).getName().equalsIgnoreCase(worldName));
         teams = null;
         placed = null;
@@ -2553,6 +2623,7 @@ public class Arena implements IArena {
         oreGenerators = null;
         perMinuteTask = null;
         moneyperMinuteTask = null;
+        shopHolosIso = null;
         fireballCooldowns.clear();
 
         // Cleanup remote data.
@@ -2830,16 +2901,17 @@ public class Arena implements IArena {
             if (loc == null) {
                 PaperSupport.teleportC(player, Bukkit.getWorlds().get(0).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 plugin.getLogger().log(Level.SEVERE, player.getName() + " was teleported to the main world because lobby location is not set!");
-            } else {
-                player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
-            }
+            } else player.teleport(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
         } else if (BedWars.getServerType() == ServerType.MULTIARENA) {
             if (BedWars.getLobbyWorld().isEmpty()) {
                 PaperSupport.teleportC(player, Bukkit.getWorlds().get(0).getSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                 plugin.getLogger().log(Level.SEVERE, player.getName() + " was teleported to the main world because lobby location is not set!");
-            } else {
-                PaperSupport.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
-            }
+            } else PaperSupport.teleportC(player, config.getConfigLoc("lobbyLoc"), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        }
+        World w = player.getWorld();
+        for (Player p : w.getPlayers()) {
+            BedWars.nms.spigotShowPlayer(player, p);
+            BedWars.nms.spigotShowPlayer(p, player);
         }
     }
 

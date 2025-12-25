@@ -34,6 +34,7 @@ import com.tomkeuper.bedwars.api.economy.IEconomy;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItem;
 import com.tomkeuper.bedwars.api.items.handlers.IPermanentItemHandler;
 import com.tomkeuper.bedwars.arena.feature.ResourceChestFeature;
+import com.tomkeuper.bedwars.arena.tasks.HologramTask;
 import com.tomkeuper.bedwars.handlers.items.LobbyItem;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
 import com.tomkeuper.bedwars.api.language.Language;
@@ -84,7 +85,6 @@ import com.tomkeuper.bedwars.connectionmanager.redis.RedisArenaListeners;
 import com.tomkeuper.bedwars.connectionmanager.redis.RedisConnection;
 import com.tomkeuper.bedwars.maprestore.internal.InternalAdapter;
 import com.tomkeuper.bedwars.money.internal.MoneyListeners;
-import com.tomkeuper.bedwars.shop.OverrideShop;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.ShopManager;
 import com.tomkeuper.bedwars.shop.quickbuy.PlayerQuickBuyCache;
@@ -201,6 +201,7 @@ public class BedWars extends JavaPlugin {
                     .downloadDirectoryPath(downloadPath)
                     .mirrorSelector((a, b) -> a)
                     .build();
+
         } catch (IOException | ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -452,8 +453,10 @@ public class BedWars extends JavaPlugin {
 
         if (config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_ROTATE_GEN)) {
             //new OneTick().runTaskTimer(this, 120, 1);
-            Bukkit.getScheduler().runTaskTimer(this, new OneTick(), 120, 1);
+            Bukkit.getScheduler().runTaskTimerAsynchronously(this, new OneTick(), 120, 1);
         }
+
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, new HologramTask(), 20L, config.getInt(ConfigPath.GENERAL_CONFIGURATION_PERFORMANCE_HOLOGRAM_UPDATE_RATE));
 
         /* Register NMS entities */
         nms.registerEntities();
@@ -573,22 +576,10 @@ public class BedWars extends JavaPlugin {
         shop.loadShop();
 
         /* Load shop overrides */
-        File dir = new File(BedWars.plugin.getDataFolder(), "/Shops");
-        if (dir.exists()) {
-            List<File> files = new ArrayList<>();
-            File[] fls = dir.listFiles();
-            for (File fl : Objects.requireNonNull(fls)) {
-                if (fl.isFile()) {
-                    if (fl.getName().endsWith(".yml")) {
-                        files.add(fl);
-                    }
-                }
-            }
-            for (File file : files) {
-                if (file.getName().equalsIgnoreCase("default-shop.yml")) continue;
-                new OverrideShop(shop, file.getName().replace(".yml", ""));
-            }
-        }
+        shop.loadOverrides();
+
+        // Startup migration: convert legacy Quick Buy identifiers to scoped format
+        com.tomkeuper.bedwars.shop.ShopDataMigrator.runIfNeeded();
 
         registerItemHandlers(new StatsItemHandler("stats", this, api), new CommandItemHandler("command", this, api), new LeaveItemHandler("leave", this, api));
 

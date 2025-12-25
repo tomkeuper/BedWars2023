@@ -33,7 +33,7 @@ public class QuickBuyElement implements IQuickBuyElement {
 
 
     public QuickBuyElement(String path, int slot){
-        this.categoryContent = ShopCategory.getInstance().getCategoryContent(path, ShopManager.shop);
+        this.categoryContent = ShopCategory.resolveCategoryContent(path, ShopManager.shop);
         if (this.categoryContent != null) this.loaded = true;
         this.slot = slot;
     }
@@ -51,5 +51,11 @@ public class QuickBuyElement implements IQuickBuyElement {
     @Override
     public ICategoryContent getCategoryContent() {
         return categoryContent;
+    }
+
+    // Allow rebinding to the arena-resolved content instance at render time
+    public void setCategoryContent(ICategoryContent cc) {
+        this.categoryContent = cc;
+        if (cc != null) this.loaded = true;
     }
 }

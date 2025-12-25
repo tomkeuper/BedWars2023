@@ -21,15 +21,18 @@
 package com.tomkeuper.bedwars.api.arena;
 
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
+import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.arena.team.ITeamAssigner;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.region.Region;
+import com.tomkeuper.bedwars.api.shop.IShopIndex;
 import com.tomkeuper.bedwars.api.tasks.AnnouncementTask;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.api.tasks.RestartingTask;
 import com.tomkeuper.bedwars.api.tasks.StartingTask;
+import com.tomkeuper.bedwars.api.upgrades.UpgradesIndex;
 import me.neznamy.tab.api.bossbar.BossBar;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -46,6 +49,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jetbrains.annotations.Nullable;
 
 public interface IArena {
+
+    /**
+     * Linked shop layout for this arena. Implementations may resolve per-arena/group/default.
+     */
+    default @Nullable IShopIndex getLinkedShop() { return null; }
+    default void setLinkedShop(@Nullable IShopIndex shop) {}
+
+    /**
+     * Linked upgrades layout for this arena.
+     */
+    default @Nullable UpgradesIndex getLinkedUpgrades() { return null; }
+    default void setLinkedUpgrades(@Nullable UpgradesIndex upgrades) {}
 
     /**
      * Check if a player is spectating on this arena.
@@ -514,6 +529,31 @@ public interface IArena {
      * @return The list of ore generators.
      */
     List<IGenerator> getOreGenerators();
+
+    /**
+     * Get the shop holograms for a specific language ISO code.
+     *
+     * @param iso The ISO code of the language.
+     * @return The list of shop holograms for the specified language.
+     */
+    List<ShopHolo> getShopHolograms(String iso);
+
+    /**
+     * Add a shop hologram to the arena for a specific language ISO code.
+     */
+    void addShopHologram(String iso, ShopHolo shopHolo);
+
+    /**
+     * Destroy all shop holograms in the arena.
+     *
+     * @param iso The ISO code of the language.
+     */
+    void destroyShopHolograms(String iso);
+
+    /**
+     * Destroy all shop holograms in the arena.
+     */
+    void destroyShopHolograms();
 
     /**
      * Get the list of next events to come in the arena.

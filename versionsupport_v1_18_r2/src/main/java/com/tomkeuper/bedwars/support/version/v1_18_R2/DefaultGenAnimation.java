@@ -80,7 +80,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         PacketPlayOutEntityTeleport teleportPacket = new PacketPlayOutEntityTeleport(armorStand);
         PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook moveLookPacket = new PacketPlayOutEntity.PacketPlayOutRelEntityMoveLook(armorStand.ae(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
-        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+        for (Player p : loc.getWorld().getPlayers()) {
             sendPackets(p, teleportPacket, moveLookPacket);
         }
         tickCount++;
