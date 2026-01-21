@@ -601,6 +601,7 @@ public class DamageDeathMove implements Listener {
         if (PlayerDrops.handlePlayerDrops(arena, victim, killer, victimsTeam, killersTeam, cause, drops)) {
             BedWars.debug("PlayerDeathEvent: Drops handled by PlayerDrops module.");
             drops.clear();
+            e.setDroppedExp(0);
         }
         else {
             BedWars.debug("PlayerDeathEvent: Dropping default inventory items.");
