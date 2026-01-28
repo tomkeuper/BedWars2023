@@ -22,7 +22,6 @@ repositories {
     maven { url = uri('https://nexus.iridiumdevelopment.net/repository/maven-releases/') } // IridiumColorAPI
     maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // slimjar
     maven { url = uri('https://repo.alessiodp.com/releases/') } // slimjar - dependencies
-    maven { url = uri('https://repo.rapture.pw/repository/maven-releases/') } // Flow-NBT
     maven { url = uri('https://jitpack.io') } // Jitpack (RTag) & TAB
 }
 
