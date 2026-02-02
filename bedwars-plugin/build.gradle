@@ -24,7 +24,7 @@ repositories {
     maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // slimjar
     maven { url = uri('https://repo.alessiodp.com/releases/') } // slimjar - dependencies
     maven { url = uri('https://jitpack.io') } // Jitpack (RTag) & TAB
-    maven { url = uri('http://repo.andrei1058.com/releases/') } // VipFeatures
+    maven { url = uri('https://repo.titanvale.net/#/releases/com/flowpowered/flow-nbt/2.0.2') } // Flow NBT
 }
 
 dependencies {
@@ -136,7 +136,6 @@ slimJar {
 
 // Shade configuration and aggregation of platform modules
 tasks.named('shadowJar', com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar) { shadow ->
-    mustRunAfter 'slimJar'
     archiveFileName = "BedWars-${project.version}.jar"
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -168,6 +167,7 @@ tasks.named('build') {
 
 // Ensure ordering against other tasks
 tasks.named('slimJar') {
+    dependsOn 'jar'
     dependsOn 'compileTestJava', 'test'
     mustRunAfter 'sourcesJar', 'generateTestEffectiveLombokConfig', 'processTestResources', 'delombok', 'javadocJar'
 }
