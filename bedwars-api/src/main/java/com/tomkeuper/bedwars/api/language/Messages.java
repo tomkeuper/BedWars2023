@@ -410,7 +410,9 @@ public class Messages {
     public static final String SHOP_QUICK_BUY_LORE = SHOP_PATH + ".quick-buy-item-lore";
     public static final String SHOP_QUICK_EMPTY_NAME = SHOP_PATH + ".quick-buy-empty-item-name";
     public static final String SHOP_QUICK_EMPTY_LORE = SHOP_PATH + ".quick-buy-empty-item-lore";
-
+    public static String RESOURCE_CHEST_BLOCKED_ITEM = "resource-chest-blocked-item";
+    public static String RESOURCE_CHEST_FULL = "resource-chest-full";
+    public static String RESOURCE_CHEST_DEPOSITED = "resource-chest-deposited";
     public static final String SHOP_CATEGORY_INVENTORY_NAME = SHOP_PATH + ".%category%.inventory-name";
     public static final String SHOP_CATEGORY_ITEM_NAME = SHOP_PATH + ".%category%.category-item-name";
     public static final String SHOP_CATEGORY_ITEM_LORE = SHOP_PATH + ".%category%.category-item-lore";

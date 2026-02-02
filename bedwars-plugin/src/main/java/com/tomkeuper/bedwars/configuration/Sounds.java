@@ -123,7 +123,7 @@ public class Sounds {
         if (sound != null) player.playSound(player.getLocation(), sound, volume, pitch);
     }
 
-    private static void addDefSound(String path, String value) {
+    public static void addDefSound(String path, String value) {
         // convert old paths
         if (getSounds().getYml().get(path) != null && getSounds().getYml().get(path + ".volume") == null) {
             String temp = getSounds().getYml().getString(path);
