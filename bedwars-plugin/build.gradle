@@ -1,6 +1,6 @@
 plugins {
     id 'net.minecrell.plugin-yml.bukkit' version '0.5.3'
-    id 'dev.racci.slimjar' version '2.0.2'
+    id 'dev.racci.slimjar' version '1.5.2'
 }
 
 // Ensure plugin is compiled for Java 21 to be compatible with 1.20.4+/1.21 support modules
@@ -12,6 +12,7 @@ repositories {
     mavenCentral()
     mavenLocal()
     // Important Repos
+    maven { url = uri('https://mvnrepository.com/artifact/com.flowpowered/flow-nbt/') } // Maven
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // PaperLib
     maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
     maven { url = uri('https://repo.codemc.io/repository/maven-public/') } // VipFeatures
@@ -23,6 +24,7 @@ repositories {
     maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // slimjar
     maven { url = uri('https://repo.alessiodp.com/releases/') } // slimjar - dependencies
     maven { url = uri('https://jitpack.io') } // Jitpack (RTag) & TAB
+    maven { url = uri('http://repo.andrei1058.com/releases/') } // VipFeatures
 }
 
 dependencies {

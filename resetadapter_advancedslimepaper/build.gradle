@@ -18,6 +18,7 @@ tasks.named('compileJava', JavaCompile) {
 repositories {
     mavenCentral()
     mavenLocal()
+    maven { url = uri('https://mvnrepository.com/artifact/com.flowpowered/flow-nbt/') } // Maven
     maven { url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/') } // Spigot
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // bungeecord-chat (dep of spigot-api)
     maven { url = uri('https://repo.infernalsuite.com/repository/maven-releases/') } // ASP:api
