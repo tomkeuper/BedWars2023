@@ -55,6 +55,8 @@ public class Sounds {
         addDefSound("join-denied", BedWars.getForCurrentVersion("VILLAGER_NO", "ENTITY_VILLAGER_NO", "ENTITY_VILLAGER_NO"));
         addDefSound("join-allowed", BedWars.getForCurrentVersion("SLIME_WALK", "ENTITY_SLIME_JUMP", "ENTITY_SLIME_JUMP"));
         addDefSound("spectator-gui-click", BedWars.getForCurrentVersion("SLIME_WALK", "ENTITY_SLIME_JUMP", "ENTITY_SLIME_JUMP"));
+        // kill sound is played when player kills another player, but also when player dies by void or fall damage, so it is not only for kills
+        addDefSound("kill-sound", BedWars.getForCurrentVersion("LEVEL_UP", "ENTITY_PLAYER_LEVELUP", "ENTITY_PLAYER_LEVELUP"));
         addDefSound(SOUNDS_COUNTDOWN_TICK, BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound(SOUNDS_COUNTDOWN_TICK_X + "5", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
         addDefSound(SOUNDS_COUNTDOWN_TICK_X + "4", BedWars.getForCurrentVersion("CHICKEN_EGG_POP", "ENTITY_CHICKEN_EGG", "ENTITY_CHICKEN_EGG"));
@@ -100,8 +102,8 @@ public class Sounds {
     public static void playSound(String path, Iterable<Player> players) {
         if(path.equalsIgnoreCase("none")) return;
         final Sound sound = getSound(path);
-        int volume = getSounds().getInt(path + ".volume");
-        int pitch = getSounds().getInt(path + ".pitch");
+        float volume = (float) getSounds().getYml().getDouble(path + ".volume");
+        float pitch = (float) getSounds().getYml().getDouble(path + ".pitch");
         if (sound != null) {
             players.forEach(p -> p.playSound(p.getLocation(), sound, volume, pitch));
         }

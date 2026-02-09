@@ -20,6 +20,8 @@
 
 package com.tomkeuper.bedwars.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -63,10 +65,8 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static com.tomkeuper.bedwars.BedWars.plugin;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -79,7 +79,12 @@ public class DamageDeathMove implements Listener {
     private final double tntDamageSelf;
     private final double tntDamageTeammates;
     private final double tntDamageOthers;
-
+    private final boolean tntJumpTakeFallDamage;
+    private final double tntJumpVelocityMultiplier;
+    private final double tntJumpYMultiplier;
+    private final Cache<UUID, Long> tntJumping = CacheBuilder.newBuilder()
+            .expireAfterWrite(10, TimeUnit.SECONDS)
+            .build();
     public DamageDeathMove() {
         this.tntJumpStrengthReductionConstant = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION);
         this.tntJumpYAxisReductionConstant = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION);
@@ -87,6 +92,9 @@ public class DamageDeathMove implements Listener {
         this.tntDamageSelf = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_SELF);
         this.tntDamageTeammates = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES);
         this.tntDamageOthers = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
+        this.tntJumpTakeFallDamage = BedWars.config.getYml().getBoolean(ConfigPath.GENERAL_TNT_JUMP_TAKE_FALL_DAMAGE);
+        this.tntJumpVelocityMultiplier = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_VELOCITY_MULTIPLIER);
+        this.tntJumpYMultiplier = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_MULTIPLIER);
     }
 
     @EventHandler
@@ -121,17 +129,15 @@ public class DamageDeathMove implements Listener {
             e.setCancelled(true);
             return;
         }
-
-        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
-            if (e instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
-                if (edbe.getDamager() instanceof Fireball) {
+        // update LastHit for void damage and other non-entity causes
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            if (tntJumping.getIfPresent(player.getUniqueId()) != null) {
+                if (!tntJumpTakeFallDamage) {
                     e.setCancelled(true);
-                    return;
                 }
+                tntJumping.invalidate(player.getUniqueId());
             }
         }
-
         // protection after re-spawn
         if (BedWarsTeam.reSpawnInvulnerability.containsKey(player.getUniqueId())) {
             if (BedWarsTeam.reSpawnInvulnerability.get(player.getUniqueId()) > System.currentTimeMillis()) e.setCancelled(true);
@@ -264,8 +270,9 @@ public class DamageDeathMove implements Listener {
             double horizontalDistanceSquared = Math.pow(directionToPlayer.getX(), 2) + Math.pow(directionToPlayer.getZ(), 2);
 
             if (horizontalDistanceSquared < 0.25) {
-                double baseForce = (tnt.getYield() * tnt.getYield()) / tntJumpStrengthReductionConstant;
-                double verticalForce = baseForce / (0.1 + tntJumpYAxisReductionConstant);
+                // If player is very close to TNT center, apply a strong vertical boost instead of horizontal knockback
+                double baseForce = ((tnt.getYield() * tnt.getYield()) / tntJumpStrengthReductionConstant) * tntJumpVelocityMultiplier;
+                double verticalForce = (baseForce / (0.1 + tntJumpYAxisReductionConstant)) * tntJumpYMultiplier;
                 resultingForce = new Vector(0, verticalForce, 0);
             } else {
                 originalDistance = Math.max(originalDistance, 0.1);
@@ -278,11 +285,13 @@ public class DamageDeathMove implements Listener {
                 double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + originalDistance));
                 resultingForce = direction.clone().multiply(force);
 
-                double calculatedY = resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant);
-                double minimumY = force * 0.3;
+                // Apply TNT jump velocity multiplier
+                double calculatedY = (resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant)) * tntJumpYMultiplier;
+                double minimumY = (force * 0.3) * tntJumpYMultiplier; // Ensure a minimum vertical boost
                 resultingForce.setY(Math.max(calculatedY, minimumY));
             }
-
+            // Mark player as TNT jumping for fall damage handling
+            tntJumping.put(p.getUniqueId(), System.currentTimeMillis());
             Vector finalForce = resultingForce;
             Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
                 if (damaged.isValid() && !damaged.isDead()) {

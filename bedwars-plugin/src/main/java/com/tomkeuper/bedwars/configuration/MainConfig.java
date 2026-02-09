@@ -31,6 +31,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.units.qual.C;
 
 import java.io.File;
 import java.io.IOException;
@@ -128,7 +129,9 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_SELF, 1);
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES, 5);
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS, 10);
-
+        yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_TAKE_FALL_DAMAGE, true);
+        yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_VELOCITY_MULTIPLIER, 1.0);
+        yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_Y_MULTIPLIER, 1.0);
         // tnd block blast resistance
         yml.addDefault(ConfigPath.GENERAL_TNT_PROTECTION_END_STONE_BLAST, 12f);
         yml.addDefault(ConfigPath.GENERAL_TNT_PROTECTION_GLASS_BLAST, 300f);

@@ -144,6 +144,7 @@ public class BedWars extends JavaPlugin {
     public static String mainCmd = "bw", link = "https://polymart.org/resource/bedwars2023.5702";
     public static ConfigManager signs, generators;
     public static MainConfig config;
+    public static InvisConfig invisConfig;
     public static ShopManager shop;
     private static UpgradesManager upgradesManager;
     public static PlayerQuickBuyCache playerQuickBuyCache;
@@ -292,6 +293,7 @@ public class BedWars extends JavaPlugin {
         new Turkish();
 
         config = new MainConfig(this, "config");
+        invisConfig = new InvisConfig(this, "invisConfig");
         hologramUpdateDistance = config.getInt(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE);
 
         generators = new GeneratorsConfig(this, "generators", this.getDataFolder().getPath());

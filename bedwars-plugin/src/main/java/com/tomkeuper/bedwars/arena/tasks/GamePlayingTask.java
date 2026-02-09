@@ -31,6 +31,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.tasks.PlayingTask;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.configuration.Sounds;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -221,7 +222,15 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                         e.getKey().setAllowFlight(false);
                         e.getKey().setFlying(false);
                     }
+
                 } else {
+                    if (e.getValue() %10 == 0 || e.getValue() <= 5) {
+                        if (e.getValue() <= 5) {
+                            Sounds.playSound(ConfigPath.SOUNDS_COUNTDOWN_TICK_X + e.getValue(), e.getKey());
+                        } else {
+                            Sounds.playSound(ConfigPath.SOUNDS_COUNTDOWN_TICK, e.getKey());
+                        }
+                    }
                     BedWars.nms.sendTitle(e.getKey(), getMsg(e.getKey(), Messages.PLAYER_DIE_RESPAWN_TITLE).replace("%bw_time%",
                             String.valueOf(e.getValue())), getMsg(e.getKey(), Messages.PLAYER_DIE_RESPAWN_SUBTITLE).replace("%bw_time%",
                             String.valueOf(e.getValue())), 0, 30, 10);
