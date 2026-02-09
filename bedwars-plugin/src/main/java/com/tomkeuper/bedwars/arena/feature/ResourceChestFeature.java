@@ -35,11 +35,9 @@ public class ResourceChestFeature implements Listener {
 
     private static ResourceChestFeature instance;
     private final Set<Material> blockedItems;
-    // We use these maps to keep track of holograms and which team owns each chest
     private final Map<IArena, List<IHologram>> arenaHolograms = new HashMap<>();
     private final Map<IArena, Map<Location, ITeam>> teamChests = new HashMap<>();
     private final IHologramManager hologramManager;
-    // Some old material names changed in newer Minecraft versions
     private static final Map<String, String> OLD_MATERIAL_NAMES = new HashMap<>();
 
     private ResourceChestFeature() {
@@ -90,17 +88,14 @@ public class ResourceChestFeature implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onLeftClickChest(PlayerInteractEvent e) {
-        // Check if the player is in an arena
         IArena arena = Arena.getArenaByPlayer(e.getPlayer());
         if (arena == null) return;
 
-        // We only care about left clicks
         if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock == null) return;
 
-        // Check if they clicked a chest or ender chest
         boolean normalChest = clickedBlock.getType() == Material.CHEST;
         boolean enderChest = clickedBlock.getType() == Material.ENDER_CHEST;
         if (!normalChest && !enderChest) return;
@@ -109,7 +104,6 @@ public class ResourceChestFeature implements Listener {
         ITeam playerTeam = arena.getTeam(player);
         if (playerTeam == null) return;
 
-        // If it's a team chest, make sure the player is allowed to use it
         if (normalChest && !canUseThisChest(arena, player, clickedBlock.getLocation())) {
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_BLOCKED_ITEM)
                     .replace("{item}", "this team chest");
@@ -118,16 +112,13 @@ public class ResourceChestFeature implements Listener {
             return;
         }
 
-        // If holograms are on, make sure there's one above this chest
         if (BedWars.config.getBoolean("resource-chest.hologram.enabled")) {
             makeHologramIfNeeded(arena, clickedBlock.getLocation());
         }
 
-        // Get what the player is holding
         ItemStack itemInHand = e.getItem();
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return;
 
-        // Check if this item can be deposited
         if (blockedItems.contains(itemInHand.getType())
                 || BedWars.nms.isTool(itemInHand)
                 || BedWars.nms.getCustomData(itemInHand).equalsIgnoreCase("DEFAULT_ITEM")) {
@@ -138,33 +129,27 @@ public class ResourceChestFeature implements Listener {
             return;
         }
 
-        // Get the chest's inventory (or ender chest)
         Inventory chestInventory = normalChest
                 ? ((Chest) clickedBlock.getState()).getBlockInventory()
                 : player.getEnderChest();
 
-        // Check if there's any space left
         if (chestInventory.firstEmpty() == -1) {
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_FULL);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
             return;
         }
 
-        // Try to put the items in the chest
         int howManyDeposited = tryDepositItems(player, itemInHand, chestInventory);
 
         if (howManyDeposited > 0) {
-            // If it's a normal chest, remember that this team owns it now
             if (normalChest) {
                 markChestAsOwned(arena, clickedBlock.getLocation(), playerTeam);
             }
 
-            // If they deposited a sword, give them the default one back
             if (itemInHand.getType().name().contains("SWORD")) {
                 playerTeam.defaultSword(player, true);
             }
 
-            // Tell the player it worked
             String chestType = enderChest ? "ender chest" : "team chest";
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_DEPOSITED)
                     .replace("{amount}", String.valueOf(howManyDeposited))
@@ -220,17 +205,20 @@ public class ResourceChestFeature implements Listener {
 
         return actuallyAdded;
     }
+
     private String makeNamePretty(Material material) {
         String rawName = material.name().replace('_', ' ').toLowerCase();
         return Arrays.stream(rawName.split(" "))
                 .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
                 .collect(Collectors.joining(" "));
     }
+
     private void tellOtherPlugins(Player player, IArena arena, ItemStack item,
                                   Inventory inv, boolean isEnder) {
         Bukkit.getPluginManager().callEvent(
                 new PlayerItemDepositEvent(player, arena, item, inv, isEnder));
     }
+
     private void loadAllChunks(IArena arena) {
         for (ITeam team : arena.getTeams()) {
             if (team.getSpawn() != null) {
@@ -248,6 +236,7 @@ public class ResourceChestFeature implements Listener {
             arena.getSpectatorLocation().getChunk().load(true);
         }
     }
+
     private void createAllHolograms(IArena arena) {
         for (Chunk chunk : arena.getWorld().getLoadedChunks()) {
             for (BlockState block : chunk.getTileEntities()) {
@@ -259,14 +248,24 @@ public class ResourceChestFeature implements Listener {
     }
 
     private void makeHologramForChest(IArena arena, Location chestLoc) {
-        Location holoPosition = chestLoc.clone().add(0.5, 1.2, 0.5);
+        double xOffset = BedWars.config.getYml().getDouble("resource-chest.hologram.x-offset", 0.5);
+        double yOffset = BedWars.config.getYml().getDouble("resource-chest.hologram.y-offset", 1.5);
+        double zOffset = BedWars.config.getYml().getDouble("resource-chest.hologram.z-offset", 0.5);
+        double spacing = BedWars.config.getYml().getDouble("resource-chest.hologram.spacing", 0.25);
+
+        String title = BedWars.config.getYml().getString("resource-chest.hologram.title", "&e&l⚡ STORAGE CHEST");
+        String subtitle = BedWars.config.getYml().getString("resource-chest.hologram.subtitle", "&7Left-click to deposit");
+
+        Location holoPosition = chestLoc.clone().add(xOffset, yOffset, zOffset);
 
         IHologram hologram = hologramManager.createHologram(
                 arena.getPlayers(),
                 holoPosition,
-                "&e&l⚡ STORAGE CHEST",
-                "&7Left-click to deposit"
+                ChatColor.translateAlternateColorCodes('&', title),
+                ChatColor.translateAlternateColorCodes('&', subtitle)
         );
+
+        hologram.setGap(spacing);
 
         List<IHologram> holosInArena = arenaHolograms.get(arena);
         if (holosInArena != null) {
@@ -279,7 +278,7 @@ public class ResourceChestFeature implements Listener {
         if (holosInArena == null) return;
         for (IHologram holo : holosInArena) {
             if (holo.getLocation().distance(chestLoc) < 2.0) {
-                return; // We found one, no need to make another
+                return;
             }
         }
 
@@ -327,7 +326,6 @@ public class ResourceChestFeature implements Listener {
         return instance;
     }
 
-    // Old Minecraft versions used different names for some materials
     static {
         OLD_MATERIAL_NAMES.put("WOODEN_SWORD", "WOOD_SWORD");
         OLD_MATERIAL_NAMES.put("WOODEN_PICKAXE", "WOOD_PICKAXE");

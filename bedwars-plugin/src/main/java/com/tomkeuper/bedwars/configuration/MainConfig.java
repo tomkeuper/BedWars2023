@@ -57,6 +57,12 @@ public class MainConfig extends ConfigManager {
         yml.addDefault("click-in-chest-to-deposit-feature.enable", true);
         yml.addDefault("click-in-chest-to-deposit-feature.blocked-items", Arrays.asList(BedWars.getForCurrentVersion("WOOD_SWORD", "WOODEN_SWORD", "WOODEN_SWORD"), "SHEARS", "COMPASS"));
         yml.addDefault("resource-chest.hologram.enabled", true);
+        yml.addDefault("resource-chest.hologram.x-offset", 0.5);
+        yml.addDefault("resource-chest.hologram.y-offset", 1.5);
+        yml.addDefault("resource-chest.hologram.z-offset", 0.5);
+        yml.addDefault("resource-chest.hologram.spacing", 0.25);
+        yml.addDefault("resource-chest.hologram.title", "&e&l⚡ STORAGE CHEST");
+        yml.addDefault("resource-chest.hologram.subtitle", "&7Left-click to deposit");
         yml.addDefault(ConfigPath.GENERAL_CHAT_GLOBAL, yml.get("globalChat", false));
         yml.addDefault(ConfigPath.GENERAL_CHAT_FORMATTING, yml.get("formatChat", true));
         yml.addDefault("debug", false);
