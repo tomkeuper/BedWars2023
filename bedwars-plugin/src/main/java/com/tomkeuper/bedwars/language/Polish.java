@@ -94,6 +94,9 @@ public class Polish extends Language{
                 "&e/party accept <player> &7- &bAkceptuje zaproszenie do party",
                 "&e/party disband &7- &bRozwiazuje party")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cNie możesz umieścić &f{item} &cw skrzyni zasobów!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cSkrzynia zasobów jest pełna!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aWpłacono &f{amount} {item} &ado {chest}!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUzyj: &7/party invite <nick>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eZaprosiles gracza &7%bw_player%&6.");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT_TARGET_RECEIVE_MSG, "%bw_lang_prefix%&b%bw_player% &ezaprosil cie do swojego party! &o&7(Kliknijaby dolaczyc)");

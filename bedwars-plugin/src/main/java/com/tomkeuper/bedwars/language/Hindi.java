@@ -100,6 +100,9 @@ public class Hindi extends Language {
                 "&e/party accept <player> &7- &bParty invite accept karte hai",
                 "&e/party disband &7- &bParty disband karte hai")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cAap &f{item} &cresource chest mein deposit nahi kar sakte!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cResource chest full ho gaya hai!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aAapne &f{amount} {item} &a{chest} mein deposit kar diya hai!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUsage: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eonline nahi hai!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&7%bw_player% &ako party pe invite kiye&6.");

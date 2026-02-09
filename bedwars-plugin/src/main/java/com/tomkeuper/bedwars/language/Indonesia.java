@@ -100,6 +100,9 @@ public class Indonesia extends Language {
                 "&e/party accept <player> &7- &bTerima undangan party",
                 "&e/party disband &7- &bBubarkan party")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cAnda tidak dapat menyimpan &f{item} &cdi peti sumber daya!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cPeti sumber daya sudah penuh!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aAnda memasukkan &f{amount} {item} &ake dalam {chest}!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eGunakan: &7/party invite <pemain>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eInvite sent to &7%bw_player%&6.");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT_TARGET_RECEIVE_MSG, "%bw_lang_prefix%&b%bw_player% &ehas invited you to a party! &o&7(Click to accept)");

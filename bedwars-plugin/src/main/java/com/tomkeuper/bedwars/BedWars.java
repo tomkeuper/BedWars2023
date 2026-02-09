@@ -276,6 +276,7 @@ public class BedWars extends JavaPlugin {
         this.getLogger().info("Loading support for paper/spigot: " + minecraftVersion);
 
         // Setup languages
+        new Arabic();
         new English();
         new Romanian();
         new Italian();

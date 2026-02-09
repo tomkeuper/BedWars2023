@@ -86,6 +86,9 @@ public class SimplifiedChinese extends Language {
                 "&e/party accept <玩家> &7- &b接受队伍邀请",
                 "&e/party disband &7- &bD解散队伍")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&c你不能在资源箱中存入 &f{item}&c!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&c资源箱已满!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&a你已在 {chest} 中存入 &f{amount} {item}&a!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&e用法：&7/party invite <玩家>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player%&e不在线！");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&e已向&7%bw_player%&e发送邀请&6。");

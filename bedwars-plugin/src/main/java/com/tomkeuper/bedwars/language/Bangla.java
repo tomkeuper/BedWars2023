@@ -100,6 +100,9 @@ public class Bangla extends Language {
                 "&e/party accept <player> &7- &bParty accept koren",
                 "&e/party disband &7- &bParty disband koren")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cAapni resource chest-e &f{item} &crakhte parben na!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cResource chest full hoye gese!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aApni &f{amount} {item} &a{chest}-e joma korechen!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUsage: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eonline nei!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&7%bw_player% &e party invite dewa holo&6.");

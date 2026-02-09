@@ -101,6 +101,9 @@ public class Turkish extends Language {
                 "&e/party accept <player> &7- &bParti davetini kabul eder",
                 "&e/party disband &7- &bPartiyi dağıtır")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cKaynak sandığına &f{item} &ckoyamazsınız!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cKaynak sandığı dolu!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&a{chest} &aiçine &f{amount} {item} &abıkatınız!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eKullanım: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eoyunda değil!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&7%bw_player%&6 adlı oyuncuya parti daveti gönderildi.");

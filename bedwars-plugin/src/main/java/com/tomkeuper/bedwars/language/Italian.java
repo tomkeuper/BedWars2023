@@ -98,6 +98,9 @@ public class Italian extends Language {
                 "&e/party accept <player> &7- &bAccetta un invito al party",
                 "&e/party disband &7- &bScioglie il tuo party")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cNon puoi depositare &f{item} &cnella cesta delle risorse!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cLa cesta delle risorse è piena!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aHai depositato &f{amount} {item} &anella {chest}!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUtilizzo: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &enon è online!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eInvito inviato a &7%bw_player%&6.");

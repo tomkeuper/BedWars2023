@@ -99,6 +99,9 @@ public class Portuguese extends Language {
                 "&e/party accept <jogador> &7- &bAceite um pedido de party",
                 "&e/party disband &7- &bRecuse um pedido de party")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cVocê não pode depositar &f{item} &cno baú de recursos!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cO baú de recursos está cheio!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aVocê depositou &f{amount} {item} &ano {chest}!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUse: &7/party invite <jogador>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &enão está online.");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&ePedido enviado para &7%bw_player%&6.");

@@ -101,6 +101,9 @@ public class Persian extends Language {
                 "&e/party accept <player> &7- &bGhabool kardan yek invite",
                 "&e/party disband &7- &bAz bein bordan party")
         );
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cShoma nemitavanid &f{item} &cra dar resource chest deposit konid!");
+        yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cResource chest fool ast!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aShoma &f{amount} {item} &ara dar {chest} deposit kordid!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eRavesh Estefade: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eonline nist!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eInvite be &7%bw_player% &eersal shod&6.");
