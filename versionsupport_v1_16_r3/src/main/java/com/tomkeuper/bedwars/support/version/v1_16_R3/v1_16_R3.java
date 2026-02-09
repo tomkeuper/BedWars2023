@@ -381,11 +381,11 @@ public class v1_16_R3 extends VersionSupport {
     @Override
     public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
         try {
-            // Convert Bukkit block to NMS Block
-            Block nmsBlock = (Block) CraftMagicNumbers.getBlock(bukkitBlock.getType());
+            // Get the NMS Block instance from the Bukkit Block
+            net.minecraft.server.v1_16_R3.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
 
-            // Access the 'durability' field
-            Field durabilityField = Block.class.getDeclaredField("durability");
+            // Access the private "durability" field using reflection
+            Field durabilityField = net.minecraft.server.v1_16_R3.BlockBase.class.getDeclaredField("durability");
             durabilityField.setAccessible(true);
 
             return durabilityField.getFloat(nmsBlock);
