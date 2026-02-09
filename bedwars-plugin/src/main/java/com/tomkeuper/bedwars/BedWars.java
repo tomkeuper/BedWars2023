@@ -289,6 +289,7 @@ public class BedWars extends JavaPlugin {
         new Portuguese();
         new SimplifiedChinese();
         new Turkish();
+        new French();
 
         config = new MainConfig(this, "config");
         hologramUpdateDistance = config.getInt(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE);
