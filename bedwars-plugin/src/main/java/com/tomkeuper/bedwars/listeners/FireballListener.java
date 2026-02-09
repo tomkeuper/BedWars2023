@@ -206,26 +206,6 @@ public class FireballListener implements Listener {
             }
         }
     }
-
-    @EventHandler
-    public void onFireballExplode(EntityExplodeEvent event) {
-        if (!(event.getEntity() instanceof Fireball)) return;
-
-        ProjectileSource projectileSource = ((Fireball) event.getEntity()).getShooter();
-        if (!(projectileSource instanceof Player)) return;
-
-        Player source = (Player) projectileSource;
-        IArena arena = Arena.getArenaByPlayer(source);
-
-        if (arena == null || arena.getStatus() != GameState.playing)  return;
-
-        Location explosionLocation = event.getLocation();
-        World world = explosionLocation.getWorld();
-        if (world == null) return;
-
-        event.blockList().removeIf( block -> explosionProofMaterials.contains(block.getType().toString()));
-    }
-
     private void damagePlayer(Player player, double damageTeammates) {
         if (damageTeammates > 0) {
             EntityDamageEvent damageEvent = new EntityDamageEvent(
@@ -258,5 +238,22 @@ public class FireballListener implements Listener {
         if (!(shooter instanceof Player) || !Arena.isInArena((Player) shooter))  return;
 
         e.setFire(fireballMakeFire);
+    }
+    @EventHandler
+    public void fireballExplosion(EntityExplodeEvent e) {
+        if (!(e.getEntity() instanceof Fireball)){
+            return;
+        }
+        ProjectileSource projectileSource = ((Fireball) e.getEntity()).getShooter();
+        if (!(projectileSource instanceof Player)) {
+            return;
+        }
+        Player source = (Player) projectileSource;
+        IArena arena = Arena.getArenaByPlayer(source);
+        if (arena == null || arena.getStatus() != GameState.playing) {
+            return;
+        }
+        List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
+        e.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
     }
 }
