@@ -18,11 +18,16 @@ public class InvisConfig extends ConfigManager {
         YamlConfiguration yml = this.getYml();
         yml.options().header(plugin.getDescription().getName() + "Create by abbflaabb \n" +
                 "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023\n");
-        yml.addDefault("enable-wood-sowrd-disappearance", true);
+        yml.addDefault("enable-wood-sword-disappearance", true);
         yml.addDefault("enable-respawn-session-invisibility", true);
-        yml.addDefault("disable-death-anmation", true);
+        yml.addDefault("disable-death-animation", true);
         yml.addDefault("kill-sound-settings.enabled", true);
-        yml.addDefault("kill-sound-settings.sound", Sounds.getSounds().getString(Sounds.getSounds().getString("kill-sound")));
+        String defaultSound = Sounds.getSounds().getString("kill-sound");
+        if (defaultSound == null || defaultSound.isEmpty()) {
+            defaultSound = "ENTITY_PLAYER_LEVELUP"; // Safety Default
+        }
+        yml.addDefault("kill-sound-settings.sound", defaultSound);
+
         yml.addDefault("kill-sound-settings.volume", (double)1.0F);
         yml.addDefault("kill-sound-settings.pitch", (double)1.0F);
         yml.options().copyDefaults(true);
@@ -31,7 +36,7 @@ public class InvisConfig extends ConfigManager {
     // -- GETTER --
     //  Get whether the wood sword disappearance feature is enabled
     public boolean isWoodSwordDisappearanceEnabled() {
-        return this.getYml().getBoolean("enable-wood-sowrd-disappearance", true);
+        return this.getYml().getBoolean("enable-wood-sword-disappearance", true);
     }
     // get whether the respawn session invisibility feature is enabled
     public boolean isRespawnSessionInvisibilityEnabled() {
@@ -39,7 +44,7 @@ public class InvisConfig extends ConfigManager {
     }
     // get whether the death animation is disabled
     public boolean isDeathAnimationDisabled() {
-        return this.getYml().getBoolean("disable-death-anmation", true);
+        return this.getYml().getBoolean("disable-death-animation", true);
     }
      // get whether the kill sound is enabled
     public boolean isKillSoundEnabled() {
