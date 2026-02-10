@@ -24,7 +24,7 @@ public class InvisConfig extends ConfigManager {
         yml.addDefault("kill-sound-settings.enabled", true);
         String defaultSound = Sounds.getSounds().getString("kill-sound");
         if (defaultSound == null || defaultSound.isEmpty()) {
-            defaultSound = "ENTITY_PLAYER_LEVELUP"; // Safety Default
+            defaultSound = "LEVEL_UP"; // Safety Default
         }
         yml.addDefault("kill-sound-settings.sound", defaultSound);
 
@@ -52,8 +52,12 @@ public class InvisConfig extends ConfigManager {
     }
     // get the kill sound
     public Sound getKillSound() {
-        String soundName = this.getYml().getString("kill-sound-settings.sound", Sounds.getSounds().getString("kill-sound"));
-        return Sound.valueOf(soundName.toUpperCase());
+        String soundName = this.getYml().getString("kill-sound-settings.sound", "LEVEL_UP");
+        try {
+            return Sound.valueOf(soundName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Sound.LEVEL_UP;
+        }
     }
     // get the kill sound volume
     public float getKillSoundVolume() {
