@@ -18,4 +18,5 @@ repositories {
     maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // bungeecord-chat (dep of spigot-api)
     maven { url = uri('https://repo.infernalsuite.com/repository/maven-snapshots/') } // ASWM:api
+    maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // Flow NBT
 }
