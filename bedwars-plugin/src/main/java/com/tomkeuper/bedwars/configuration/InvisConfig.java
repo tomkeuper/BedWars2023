@@ -20,7 +20,6 @@ public class InvisConfig extends ConfigManager {
                 "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023\n");
         yml.addDefault("enable-wood-sword-disappearance", true);
         yml.addDefault("enable-respawn-session-invisibility", true);
-        yml.addDefault("disable-death-animation", true);
         yml.addDefault("kill-sound-settings.enabled", true);
         String defaultSound = Sounds.getSounds().getString("kill-sound");
         if (defaultSound == null || defaultSound.isEmpty()) {
@@ -41,10 +40,6 @@ public class InvisConfig extends ConfigManager {
     // get whether the respawn session invisibility feature is enabled
     public boolean isRespawnSessionInvisibilityEnabled() {
         return this.getYml().getBoolean("enable-respawn-session-invisibility", true);
-    }
-    // get whether the death animation is disabled
-    public boolean isDeathAnimationDisabled() {
-        return this.getYml().getBoolean("disable-death-animation", true);
     }
      // get whether the kill sound is enabled
     public boolean isKillSoundEnabled() {
