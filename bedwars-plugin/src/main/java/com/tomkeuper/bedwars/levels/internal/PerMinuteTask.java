@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.LevelsConfig;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -46,7 +47,8 @@ public class PerMinuteTask {
         task = Bukkit.getScheduler().runTaskTimer(BedWars.plugin, () -> {
             for (Player p : arena.getPlayers()) {
                 PlayerLevel.getLevelByPlayer ( p.getUniqueId () ).addXp ( xp, PlayerXpGainEvent.XpSource.PER_MINUTE );
-                p.sendMessage ( Language.getMsg ( p, Messages.XP_REWARD_PER_MINUTE ).replace ( "%bw_xp%", String.valueOf ( xp ) ) );
+                String msg = Language.getMsg ( p, Messages.XP_REWARD_PER_MINUTE ).replace ( "%bw_xp%", String.valueOf ( xp ) );
+                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(msg));
             }
         }, 60 * 20, 60 * 20);
     }

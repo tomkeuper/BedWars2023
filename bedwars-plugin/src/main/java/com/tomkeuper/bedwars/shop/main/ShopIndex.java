@@ -137,6 +137,9 @@ public class ShopIndex extends AbstractInventoryLayout implements IShopIndex {
 
         player.openInventory(inv);
 
+        if (!indexViewers.contains(player.getUniqueId())) {
+            indexViewers.add(player.getUniqueId());
+        } // Check again since players can be removed from the list during the event
     }
 
 
