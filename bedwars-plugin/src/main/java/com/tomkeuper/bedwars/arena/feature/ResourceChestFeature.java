@@ -313,11 +313,5 @@ public class ResourceChestFeature implements Listener {
         makeHologramForChest(arena, chestLoc);
     }
 
-    static {
-        OLD_MATERIAL_NAMES.put("WOODEN_SWORD", "WOOD_SWORD");
-        OLD_MATERIAL_NAMES.put("WOODEN_PICKAXE", "WOOD_PICKAXE");
-        OLD_MATERIAL_NAMES.put("WOODEN_AXE", "WOOD_AXE");
-        OLD_MATERIAL_NAMES.put("WOODEN_SHOVEL", "WOOD_SPADE");
-        OLD_MATERIAL_NAMES.put("WOODEN_HOE", "WOOD_HOE");
-    }
+
 }
