@@ -26,6 +26,7 @@ import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.NextEvent;
 import com.tomkeuper.bedwars.api.arena.generator.GeneratorType;
+import com.tomkeuper.bedwars.api.arena.generator.IGenHolo;
 import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
@@ -1256,6 +1257,23 @@ public class Arena implements IArena {
         sc = new ShopCache(p.getUniqueId());
         for (ShopCache.CachedItem ci : reJoin.getPermanentsAndNonDowngradables()) {
             sc.getCachedItems().add(ci);
+        }
+
+        String iso = Language.getPlayerLanguage(p).getIso();
+
+        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+        for (ShopHolo holo : holos) {
+            holo.getHologram().addPlayer(p);
+            holo.update(p);
+        }
+
+        for (IGenerator o : getOreGenerators()) {
+            HashMap<String, IGenHolo> genHolos = o.getLanguageHolograms();
+            IGenHolo holo = genHolos.get(iso);
+            if (holo != null) {
+                holo.addPlayer(p);
+                holo.update(p);
+            }
         }
 
         reJoin.getBedWarsTeam().reJoin(p, ev.getRespawnTime());
