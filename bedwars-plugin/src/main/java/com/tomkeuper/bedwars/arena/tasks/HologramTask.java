@@ -36,13 +36,13 @@ public class HologramTask implements Runnable {
                     String iso = Language.getPlayerLanguage(p).getIso();
                     Location pLoc = p.getLocation();
                     List<ShopHolo> shopHolos = a.getShopHolograms(iso);
-                    if (shopHolos == null || shopHolos.isEmpty()) continue;
+                    if (shopHolos == null)  continue;
                     for (ShopHolo shopHolo : shopHolos) {
                         if (shopHolo == null) continue;
                         IHologram hologram = shopHolo.getHologram();
                         Location holoLoc = hologram.getLocation();
                         double distance = pLoc.distance(holoLoc);
-                        if (distance > BedWars.hologramUpdateDistance) continue;
+                        if (distance <= BedWars.hologramUpdateDistance) continue;
                         shopHolo.update(p);
                     }
                 }
@@ -53,12 +53,12 @@ public class HologramTask implements Runnable {
                         if (p.getWorld() != world) continue;
                         String iso = Language.getPlayerLanguage(p).getIso();
                         IBedHolo bedHolo = team.getBedHologram(iso);
-                        if (bedHolo == null || bedHolo.getHologram() == null) continue;
+                        if (bedHolo == null) continue;
                         Location bedLoc = bedHolo.getHologram().getLocation();
                         Location pLoc = p.getLocation();
                         double distance = pLoc.distance(bedLoc);
 
-                        if (distance > BedWars.hologramUpdateDistance) continue;
+                        if (distance <= 4) bedHolo.hide(p);
                         else if (distance > 4 && distance <= 8) bedHolo.show(p);
 
                         if (distance >= BedWars.hologramUpdateDistance) bedHolo.update(p);
@@ -78,7 +78,7 @@ public class HologramTask implements Runnable {
                         GeneratorHolder holder = generator.getHologramHolder();
                         Location pLoc = p.getLocation();
                         double distance = pLoc.distance(genLoc);
-                        if (distance > BedWars.hologramUpdateDistance) continue;
+                        if (distance <= BedWars.hologramUpdateDistance) continue;
                         holo.update(p);
                         if (holder == null) continue;
                         holder.update(p);
