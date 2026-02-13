@@ -15,7 +15,6 @@ tasks.named('compileJava', JavaCompile) {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven { url = uri('https://mvnrepository.com/artifact/com.flowpowered/flow-nbt/') } // Maven
     maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // bungeecord-chat (dep of spigot-api)
     maven { url = uri('https://repo.bg-software.com/repository/dependencies/') } // slimeworldmanager-api

@@ -1,14 +1,14 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        mavenLocal()
-        mavenCentral()
         maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // SlimJar
+        mavenLocal()
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 
 plugins {
-     id 'io.alcide.gradle-semantic-build-versioning' version '4.2.2'
+    id 'io.alcide.gradle-semantic-build-versioning' version '4.2.2'
 }
 
 rootProject.name = 'BedWars2023'

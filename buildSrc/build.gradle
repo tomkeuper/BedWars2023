@@ -6,9 +6,3 @@ dependencies {
     implementation 'com.gradleup.shadow:shadow-gradle-plugin:9.1.0'
     implementation 'io.freefair.gradle:lombok-plugin:8.6'
 }
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
-}
