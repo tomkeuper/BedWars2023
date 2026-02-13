@@ -93,9 +93,9 @@ public class Romanian extends Language {
                 "&e/party accept <player> &7- &bAccepta o invitatie",
                 "&e/party disband &7- &bSterge party-ul")
         );
-        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cNu poți depozita &f{item} &cîn cufărul de resurse!");
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cNu poți depozita &f%item% &cîn cufărul de resurse!");
         yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cCufărul de resurse este plin!");
-        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aAi depozitat &f{amount} {item} &aîn {chest}!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aAi depozitat &f%amount} %item% &aîn %chest%!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eFolosire: &7/party invite <jucator>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &enu este online!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eInvitatia a fost trimisa lui &7%bw_player%&6.");

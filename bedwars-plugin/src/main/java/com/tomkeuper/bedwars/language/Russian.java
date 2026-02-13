@@ -432,9 +432,9 @@ public class Russian extends Language{
                 "&e/party accept <игрок> &7- &bПринять приглашение в пати",
                 "&e/party disband &7- &bРасфирмировать текующую группу")
         );
-        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cВы не можете положить &f{item} &cв сундук ресурсов!");
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cВы не можете положить &f%item% &cв сундук ресурсов!");
         yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cСундук ресурсов полон!");
-        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aВы положили &f{amount} {item} &aв {chest}!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aВы положили &f%amount% %item% &aв %chest}!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eИспользуйте: &7/party invite <игрок>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eне онлайн!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eПриглашение отправлено &7%bw_player%&6.");

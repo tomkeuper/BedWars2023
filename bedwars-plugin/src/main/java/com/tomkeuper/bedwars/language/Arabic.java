@@ -80,9 +80,9 @@ public class Arabic extends Language {
                 "&e/party accept <player> &7- &bقبول دعوة الحزمة",
                 "&e/party disband &7- &bحل الحزمة"
         ));
-        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cلا يمكنك وضع &f{item} &cفي صندوق الموارد!");
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&cلا يمكنك وضع &f%item% &cفي صندوق الموارد!");
         yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&cصندوق الموارد ممتلئ!");
-        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aلقد وضعت &f{amount} {item} &aفي {chest}!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&aلقد وضعت &f%amount% %item% &aفي %chest%!");
 
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eالاستخدام: &7/party invite <player>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eغير متصل!");

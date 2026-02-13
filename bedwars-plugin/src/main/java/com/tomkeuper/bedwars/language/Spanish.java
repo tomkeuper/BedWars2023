@@ -318,9 +318,9 @@ public class Spanish extends Language {
                 "&e/party accept <player> &7- &bAcepta la invitacion a una party",
                 "&e/party disband &7- &bRompe una party")
         );
-        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&c¡No puedes depositar &f{item} &cen el cofre de recursos!");
+        yml.addDefault(Messages.RESOURCE_CHEST_BLOCKED_ITEM, "&c¡No puedes depositar &f%item% &cen el cofre de recursos!");
         yml.addDefault(Messages.RESOURCE_CHEST_FULL, "&c¡El cofre de recursos está lleno!");
-        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&a¡Has depositado &f{amount} {item} &aen el {chest}!");
+        yml.addDefault(Messages.RESOURCE_CHEST_DEPOSITED, "&a¡Has depositado &f%amount% %item% &aen el %chest%!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_USAGE, "%bw_lang_prefix%&eUso: &7/party invite <jugador>");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_DENIED_PLAYER_OFFLINE, "%bw_lang_prefix%&7%bw_player% &eno está conectado!");
         yml.addDefault(Messages.COMMAND_PARTY_INVITE_SENT, "%bw_lang_prefix%&eInvitación enviada a &7%bw_player%&6.");
