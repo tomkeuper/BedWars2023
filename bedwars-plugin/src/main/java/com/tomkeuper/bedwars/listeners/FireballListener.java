@@ -241,19 +241,15 @@ public class FireballListener implements Listener {
     }
     @EventHandler
     public void fireballExplosion(EntityExplodeEvent e) {
-        if (!(e.getEntity() instanceof Fireball)){
-            return;
-        }
+        if (!(e.getEntity() instanceof Fireball)) return;
+
         ProjectileSource projectileSource = ((Fireball) e.getEntity()).getShooter();
-        if (!(projectileSource instanceof Player)) {
-            return;
-        }
+        if (!(projectileSource instanceof Player)) return;
+
         Player source = (Player) projectileSource;
         IArena arena = Arena.getArenaByPlayer(source);
-        if (arena == null || arena.getStatus() != GameState.playing) {
-            return;
-        }
-        List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
+        if (arena == null || arena.getStatus() != GameState.playing) return;
+
         e.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
     }
 }
