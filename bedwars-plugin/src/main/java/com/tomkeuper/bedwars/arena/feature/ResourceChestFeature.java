@@ -1,9 +1,30 @@
+/*
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Contact e-mail: contact@fyreblox.com
+ */
+
 package com.tomkeuper.bedwars.arena.feature;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerItemDepositEvent;
 import com.tomkeuper.bedwars.api.hologram.IHologramManager;
@@ -17,7 +38,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
@@ -34,23 +54,26 @@ import java.util.stream.Collectors;
 public class ResourceChestFeature implements Listener {
 
     private static ResourceChestFeature instance;
+
     private final Set<Material> blockedItems;
     private final Map<IArena, List<IHologram>> arenaHolograms = new HashMap<>();
     private final Map<IArena, Map<Location, ITeam>> teamChests = new HashMap<>();
     private final IHologramManager hologramManager;
+
     private static final Map<String, String> OLD_MATERIAL_NAMES = new HashMap<>();
 
     private ResourceChestFeature() {
         this.blockedItems = BedWars.config.getYml()
-                .getStringList("click-in-chest-to-deposit-feature.blocked-items")
+                .getStringList(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED)
                 .stream()
                 .map(String::toUpperCase)
-                .map(itemName -> OLD_MATERIAL_NAMES.getOrDefault(itemName, itemName))
+                .map(name -> OLD_MATERIAL_NAMES.getOrDefault(name, name))
                 .map(Material::valueOf)
                 .collect(Collectors.toSet());
 
         this.hologramManager = BedWars.getAPI().getHologramsUtil();
         Bukkit.getPluginManager().registerEvents(this, BedWars.plugin);
+
         try {
             Sounds.addDefSound("ChestOpen",
                     BedWars.getForCurrentVersion("CHEST_OPEN", "BLOCK_CHEST_OPEN", "BLOCK_CHEST_OPEN"));
@@ -60,7 +83,8 @@ public class ResourceChestFeature implements Listener {
     }
 
     public static void init() {
-        if (BedWars.config.getBoolean("click-in-chest-to-deposit-feature.enable") && instance == null) {
+        if (BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED)
+                && instance == null) {
             instance = new ResourceChestFeature();
         }
     }
@@ -68,6 +92,7 @@ public class ResourceChestFeature implements Listener {
     @EventHandler
     public void onArenaStateChange(GameStateChangeEvent e) {
         IArena arena = e.getArena();
+
         if (e.getNewState() == GameState.restarting) {
             if (arenaHolograms.containsKey(arena)) {
                 arenaHolograms.get(arena).forEach(IHologram::remove);
@@ -78,33 +103,36 @@ public class ResourceChestFeature implements Listener {
         } else if (e.getNewState() == GameState.playing) {
             arenaHolograms.put(arena, new ArrayList<>());
             teamChests.put(arena, new HashMap<>());
+
             if (BedWars.config.getBoolean("resource-chest.hologram.enabled")) {
                 loadAllChunks(arena);
-                Bukkit.getScheduler().runTaskLater(BedWars.plugin,
-                        () -> createAllHolograms(arena), 20L);
+                Bukkit.getScheduler().runTaskLater(
+                        BedWars.plugin,
+                        () -> createAllHolograms(arena),
+                        20L
+                );
             }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onLeftClickChest(PlayerInteractEvent e) {
+        if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
+
         IArena arena = Arena.getArenaByPlayer(e.getPlayer());
         if (arena == null) return;
 
-        if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
+        if (e.getClickedBlock() == null) return;
 
-        Block clickedBlock = e.getClickedBlock();
-        if (clickedBlock == null) return;
-
-        boolean normalChest = clickedBlock.getType() == Material.CHEST;
-        boolean enderChest = clickedBlock.getType() == Material.ENDER_CHEST;
+        boolean normalChest = e.getClickedBlock().getType() == Material.CHEST;
+        boolean enderChest = e.getClickedBlock().getType() == Material.ENDER_CHEST;
         if (!normalChest && !enderChest) return;
 
         Player player = e.getPlayer();
         ITeam playerTeam = arena.getTeam(player);
         if (playerTeam == null) return;
 
-        if (normalChest && !canUseThisChest(arena, player, clickedBlock.getLocation())) {
+        if (normalChest && !canUseThisChest(arena, player, e.getClickedBlock().getLocation())) {
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_BLOCKED_ITEM)
                     .replace("{item}", "this team chest");
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
@@ -113,15 +141,16 @@ public class ResourceChestFeature implements Listener {
         }
 
         if (BedWars.config.getBoolean("resource-chest.hologram.enabled")) {
-            makeHologramIfNeeded(arena, clickedBlock.getLocation());
+            makeHologramIfNeeded(arena, e.getClickedBlock().getLocation());
         }
 
         ItemStack itemInHand = e.getItem();
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return;
 
+        String customData = BedWars.nms.getCustomData(itemInHand);
         if (blockedItems.contains(itemInHand.getType())
                 || BedWars.nms.isTool(itemInHand)
-                || BedWars.nms.getCustomData(itemInHand).equalsIgnoreCase("DEFAULT_ITEM")) {
+                || (customData != null && customData.equalsIgnoreCase("DEFAULT_ITEM"))) {
 
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_BLOCKED_ITEM)
                     .replace("{item}", itemInHand.getType().name().toLowerCase());
@@ -130,7 +159,7 @@ public class ResourceChestFeature implements Listener {
         }
 
         Inventory chestInventory = normalChest
-                ? ((Chest) clickedBlock.getState()).getBlockInventory()
+                ? ((Chest) e.getClickedBlock().getState()).getBlockInventory()
                 : player.getEnderChest();
 
         if (chestInventory.firstEmpty() == -1) {
@@ -139,11 +168,11 @@ public class ResourceChestFeature implements Listener {
             return;
         }
 
-        int howManyDeposited = tryDepositItems(player, itemInHand, chestInventory);
+        int deposited = tryDepositItems(player, itemInHand, chestInventory);
 
-        if (howManyDeposited > 0) {
+        if (deposited > 0) {
             if (normalChest) {
-                markChestAsOwned(arena, clickedBlock.getLocation(), playerTeam);
+                markChestAsOwned(arena, e.getClickedBlock().getLocation(), playerTeam);
             }
 
             if (itemInHand.getType().name().contains("SWORD")) {
@@ -152,26 +181,32 @@ public class ResourceChestFeature implements Listener {
 
             String chestType = enderChest ? "ender chest" : "team chest";
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_DEPOSITED)
-                    .replace("{amount}", String.valueOf(howManyDeposited))
+                    .replace("{amount}", String.valueOf(deposited))
                     .replace("{item}", makeNamePretty(itemInHand.getType()))
                     .replace("{chest}", chestType);
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 
+            player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
             Sounds.playSound("ChestOpen", player);
 
             tellOtherPlugins(player, arena, itemInHand.clone(), chestInventory, enderChest);
         }
     }
+    private String makeNamePretty(Material material) {
+        return Arrays.stream(material.name().toLowerCase().split("_"))
+                .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
+                .collect(Collectors.joining(" "));
+    }
+
 
     private boolean canUseThisChest(IArena arena, Player player, Location chestLoc) {
         Map<Location, ITeam> chestsInArena = teamChests.get(arena);
         if (chestsInArena == null) return true;
 
-        ITeam chestOwner = chestsInArena.get(chestLoc);
-        if (chestOwner == null) return true;
+        ITeam owner = chestsInArena.get(chestLoc);
+        if (owner == null) return true;
 
         ITeam playerTeam = arena.getTeam(player);
-        return playerTeam != null && playerTeam.equals(chestOwner);
+        return playerTeam != null && playerTeam.equals(owner);
     }
 
     private void markChestAsOwned(IArena arena, Location chestLoc, ITeam team) {
@@ -182,54 +217,46 @@ public class ResourceChestFeature implements Listener {
     }
 
     private int tryDepositItems(Player player, ItemStack hand, Inventory chest) {
-        ItemStack itemsToStore = hand.clone();
-        Map<Integer, ItemStack> leftoverItems = chest.addItem(itemsToStore);
+        ItemStack clone = hand.clone();
+        Map<Integer, ItemStack> leftovers = chest.addItem(clone);
 
-        int triedToAdd = itemsToStore.getAmount();
-        int couldntFit = leftoverItems.values().stream()
+        int tried = clone.getAmount();
+        int couldntFit = leftovers.values().stream()
                 .mapToInt(ItemStack::getAmount)
                 .sum();
-        int actuallyAdded = triedToAdd - couldntFit;
 
-        if (actuallyAdded <= 0) {
+        int added = tried - couldntFit;
+        if (added <= 0) {
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_FULL);
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
             return 0;
         }
 
         ItemStack toRemove = hand.clone();
-        toRemove.setAmount(actuallyAdded);
+        toRemove.setAmount(added);
         player.getInventory().removeItem(toRemove);
 
-        leftoverItems.values().forEach(item -> player.getInventory().addItem(item));
-
-        return actuallyAdded;
+        leftovers.values().forEach(item -> player.getInventory().addItem(item));
+        return added;
     }
 
-    private String makeNamePretty(Material material) {
-        String rawName = material.name().replace('_', ' ').toLowerCase();
-        return Arrays.stream(rawName.split(" "))
-                .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
-                .collect(Collectors.joining(" "));
-    }
-
-    private void tellOtherPlugins(Player player, IArena arena, ItemStack item,
-                                  Inventory inv, boolean isEnder) {
+    private void tellOtherPlugins(Player player, IArena arena, ItemStack hand,
+                                  Inventory inv, boolean isEnderChest) {
         Bukkit.getPluginManager().callEvent(
-                new PlayerItemDepositEvent(player, arena, item, inv, isEnder));
+                new PlayerItemDepositEvent(
+                        player,
+                        arena,
+                        hand,
+                        inv,
+                        isEnderChest ? Material.ENDER_CHEST : Material.CHEST
+                )
+        );
     }
-
     private void loadAllChunks(IArena arena) {
         for (ITeam team : arena.getTeams()) {
-            if (team.getSpawn() != null) {
-                team.getSpawn().getChunk().load(true);
-            }
-            if (team.getShop() != null) {
-                team.getShop().getChunk().load(true);
-            }
-            if (team.getTeamUpgrades() != null) {
-                team.getTeamUpgrades().getChunk().load(true);
-            }
+            if (team.getSpawn() != null) team.getSpawn().getChunk().load(true);
+            if (team.getShop() != null) team.getShop().getChunk().load(true);
+            if (team.getTeamUpgrades() != null) team.getTeamUpgrades().getChunk().load(true);
         }
 
         if (arena.getSpectatorLocation() != null) {
@@ -248,82 +275,38 @@ public class ResourceChestFeature implements Listener {
     }
 
     private void makeHologramForChest(IArena arena, Location chestLoc) {
-        double xOffset = BedWars.config.getYml().getDouble("resource-chest.hologram.x-offset", 0.5);
-        double yOffset = BedWars.config.getYml().getDouble("resource-chest.hologram.y-offset", 1.5);
-        double zOffset = BedWars.config.getYml().getDouble("resource-chest.hologram.z-offset", 0.5);
+        double x = BedWars.config.getYml().getDouble("resource-chest.hologram.x-offset", 0.5);
+        double y = BedWars.config.getYml().getDouble("resource-chest.hologram.y-offset", 1.5);
+        double z = BedWars.config.getYml().getDouble("resource-chest.hologram.z-offset", 0.5);
         double spacing = BedWars.config.getYml().getDouble("resource-chest.hologram.spacing", 0.25);
 
-        String title = BedWars.config.getYml().getString("resource-chest.hologram.title", "&e&l⚡ STORAGE CHEST");
-        String subtitle = BedWars.config.getYml().getString("resource-chest.hologram.subtitle", "&7Left-click to deposit");
+        String title = BedWars.config.getYml().getString(
+                "resource-chest.hologram.title", "&e&l⚡ STORAGE CHEST");
+        String subtitle = BedWars.config.getYml().getString(
+                "resource-chest.hologram.subtitle", "&7Left-click to deposit");
 
-        Location holoPosition = chestLoc.clone().add(xOffset, yOffset, zOffset);
+        Location pos = chestLoc.clone().add(x, y, z);
 
-        IHologram hologram = hologramManager.createHologram(
+        IHologram holo = hologramManager.createHologram(
                 arena.getPlayers(),
-                holoPosition,
+                pos,
                 ChatColor.translateAlternateColorCodes('&', title),
                 ChatColor.translateAlternateColorCodes('&', subtitle)
         );
 
-        hologram.setGap(spacing);
-
-        List<IHologram> holosInArena = arenaHolograms.get(arena);
-        if (holosInArena != null) {
-            holosInArena.add(hologram);
-        }
+        holo.setGap(spacing);
+        arenaHolograms.get(arena).add(holo);
     }
 
     private void makeHologramIfNeeded(IArena arena, Location chestLoc) {
-        List<IHologram> holosInArena = arenaHolograms.get(arena);
-        if (holosInArena == null) return;
-        for (IHologram holo : holosInArena) {
-            if (holo.getLocation().distance(chestLoc) < 2.0) {
-                return;
-            }
+        List<IHologram> holos = arenaHolograms.get(arena);
+        if (holos == null) return;
+
+        for (IHologram holo : holos) {
+            if (holo.getLocation().distance(chestLoc) < 2.0) return;
         }
 
         makeHologramForChest(arena, chestLoc);
-    }
-
-    public List<IHologram> getArenaHolograms(IArena arena) {
-        return arenaHolograms.getOrDefault(arena, new ArrayList<>());
-    }
-
-    public void removeArenaHolograms(IArena arena) {
-        List<IHologram> holosInArena = arenaHolograms.get(arena);
-        if (holosInArena != null) {
-            holosInArena.forEach(IHologram::remove);
-            arenaHolograms.remove(arena);
-        }
-    }
-
-    public List<IHologram> getHologramsNearLocation(IArena arena, Location spot, double howClose) {
-        List<IHologram> nearby = new ArrayList<>();
-        List<IHologram> allHolos = arenaHolograms.get(arena);
-
-        if (allHolos != null) {
-            for (IHologram holo : allHolos) {
-                if (holo.getLocation().distance(spot) <= howClose) {
-                    nearby.add(holo);
-                }
-            }
-        }
-
-        return nearby;
-    }
-
-    public void updateChestHologram(IArena arena, Location chestLoc,
-                                    String topLine, String bottomLine) {
-        for (IHologram holo : getHologramsNearLocation(arena, chestLoc, 2.0)) {
-            if (holo.getLines().size() >= 2) {
-                holo.setLine(0, topLine, true);
-                holo.setLine(1, bottomLine, true);
-            }
-        }
-    }
-
-    public static ResourceChestFeature getInstance() {
-        return instance;
     }
 
     static {
