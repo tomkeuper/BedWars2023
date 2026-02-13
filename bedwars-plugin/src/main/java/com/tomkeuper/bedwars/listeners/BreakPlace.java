@@ -131,13 +131,6 @@ public class BreakPlace implements Listener {
         }
         Player p = e.getPlayer();
         IArena a = Arena.getArenaByPlayer(p);
-        // added this check here to prevent sending the message if the player is not in an arena, as the rest of the checks will be skipped in that case
-        if (a != null){
-            if (a.getStatus() == GameState.playing && e.getBlockPlaced().getLocation().getBlockY() >= a.getConfig().getInt("max-build-y")) {
-                e.setCancelled(true);
-                e.getPlayer().sendMessage(String.valueOf(ChatColor.RED) + "Build height limit reached!");
-            }
-        }
         if (a != null) {
             if (a.isSpectator(p)) {
                 e.setCancelled(true);
