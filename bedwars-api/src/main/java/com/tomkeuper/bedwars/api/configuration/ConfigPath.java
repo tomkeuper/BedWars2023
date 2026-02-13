@@ -83,10 +83,21 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_PREFIX = "click-in-chest-to-deposit-feature.";
     public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED = GENERAL_CONFIGURATION_RESOURCE_CHEST_PREFIX + "enable";
     public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED = GENERAL_CONFIGURATION_RESOURCE_CHEST_PREFIX + "blocked-items";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_ENABLED = "resource-chest.hologram.enabled";
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_X_OFFSET = "resource-chest.hologram.x-offset";
+
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_Y_OFFSET = "resource-chest.hologram.y-offset";
+
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_Z_OFFSET = "resource-chest.hologram.z-offset";
+
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SPACING = "resource-chest.hologram.spacing";
+
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_TITLE = "resource-chest.hologram.title";
+
+    public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SUBTITLE = "resource-chest.hologram.subtitle";
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
     public static final String GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER = "use-experimental-team-assigner";
-
     // Replace %path% with name
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_MATERIAL = GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH + ".%path%.material";
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_DATA = GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH + ".%path%.data";

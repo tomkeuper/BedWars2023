@@ -73,13 +73,6 @@ public class ResourceChestFeature implements Listener {
 
         this.hologramManager = BedWars.getAPI().getHologramsUtil();
         Bukkit.getPluginManager().registerEvents(this, BedWars.plugin);
-
-        try {
-            Sounds.addDefSound("ChestOpen",
-                    BedWars.getForCurrentVersion("CHEST_OPEN", "BLOCK_CHEST_OPEN", "BLOCK_CHEST_OPEN"));
-        } catch (Exception e) {
-            BedWars.plugin.getLogger().info("Using default sound configuration for ChestOpen");
-        }
     }
 
     public static void init() {
@@ -104,8 +97,11 @@ public class ResourceChestFeature implements Listener {
             arenaHolograms.put(arena, new ArrayList<>());
             teamChests.put(arena, new HashMap<>());
 
-            if (BedWars.config.getBoolean("resource-chest.hologram.enabled")) {
+            if (BedWars.config.getBoolean(
+                    ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_ENABLED)) {
+
                 loadAllChunks(arena);
+
                 Bukkit.getScheduler().runTaskLater(
                         BedWars.plugin,
                         () -> createAllHolograms(arena),
@@ -118,11 +114,10 @@ public class ResourceChestFeature implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onLeftClickChest(PlayerInteractEvent e) {
         if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
+        if (e.getClickedBlock() == null) return;
 
         IArena arena = Arena.getArenaByPlayer(e.getPlayer());
         if (arena == null) return;
-
-        if (e.getClickedBlock() == null) return;
 
         boolean normalChest = e.getClickedBlock().getType() == Material.CHEST;
         boolean enderChest = e.getClickedBlock().getType() == Material.ENDER_CHEST;
@@ -134,13 +129,14 @@ public class ResourceChestFeature implements Listener {
 
         if (normalChest && !canUseThisChest(arena, player, e.getClickedBlock().getLocation())) {
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_BLOCKED_ITEM)
-                    .replace("{item}", "this team chest");
+                    .replace("%item%", "this team chest");
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
             e.setCancelled(true);
             return;
         }
 
-        if (BedWars.config.getBoolean("resource-chest.hologram.enabled")) {
+        if (BedWars.config.getBoolean(
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_ENABLED)) {
             makeHologramIfNeeded(arena, e.getClickedBlock().getLocation());
         }
 
@@ -148,12 +144,14 @@ public class ResourceChestFeature implements Listener {
         if (itemInHand == null || itemInHand.getType() == Material.AIR) return;
 
         String customData = BedWars.nms.getCustomData(itemInHand);
+
         if (blockedItems.contains(itemInHand.getType())
                 || BedWars.nms.isTool(itemInHand)
                 || (customData != null && customData.equalsIgnoreCase("DEFAULT_ITEM"))) {
 
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_BLOCKED_ITEM)
-                    .replace("{item}", itemInHand.getType().name().toLowerCase());
+                    .replace("%item%", itemInHand.getType().name().toLowerCase());
+
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
             return;
         }
@@ -181,22 +179,30 @@ public class ResourceChestFeature implements Listener {
 
             String chestType = enderChest ? "ender chest" : "team chest";
             String message = Language.getMsg(player, Messages.RESOURCE_CHEST_DEPOSITED)
-                    .replace("{amount}", String.valueOf(deposited))
-                    .replace("{item}", makeNamePretty(itemInHand.getType()))
-                    .replace("{chest}", chestType);
+                    .replace("%amount%", String.valueOf(deposited))
+                    .replace("%item%", makeNamePretty(itemInHand.getType()))
+                    .replace("%chest%", chestType);
 
             player.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
-            Sounds.playSound("ChestOpen", player);
+            Sounds.playSound("chest-open", player);
 
-            tellOtherPlugins(player, arena, itemInHand.clone(), chestInventory, enderChest);
+            Bukkit.getPluginManager().callEvent(
+                    new PlayerItemDepositEvent(
+                            player,
+                            arena,
+                            itemInHand.clone(),
+                            chestInventory,
+                            enderChest ? Material.ENDER_CHEST : Material.CHEST
+                    )
+            );
         }
     }
+
     private String makeNamePretty(Material material) {
         return Arrays.stream(material.name().toLowerCase().split("_"))
                 .map(word -> word.substring(0, 1).toUpperCase() + word.substring(1))
                 .collect(Collectors.joining(" "));
     }
-
 
     private boolean canUseThisChest(IArena arena, Player player, Location chestLoc) {
         Map<Location, ITeam> chestsInArena = teamChests.get(arena);
@@ -240,18 +246,6 @@ public class ResourceChestFeature implements Listener {
         return added;
     }
 
-    private void tellOtherPlugins(Player player, IArena arena, ItemStack hand,
-                                  Inventory inv, boolean isEnderChest) {
-        Bukkit.getPluginManager().callEvent(
-                new PlayerItemDepositEvent(
-                        player,
-                        arena,
-                        hand,
-                        inv,
-                        isEnderChest ? Material.ENDER_CHEST : Material.CHEST
-                )
-        );
-    }
     private void loadAllChunks(IArena arena) {
         for (ITeam team : arena.getTeams()) {
             if (team.getSpawn() != null) team.getSpawn().getChunk().load(true);
@@ -275,15 +269,25 @@ public class ResourceChestFeature implements Listener {
     }
 
     private void makeHologramForChest(IArena arena, Location chestLoc) {
-        double x = BedWars.config.getYml().getDouble("resource-chest.hologram.x-offset", 0.5);
-        double y = BedWars.config.getYml().getDouble("resource-chest.hologram.y-offset", 1.5);
-        double z = BedWars.config.getYml().getDouble("resource-chest.hologram.z-offset", 0.5);
-        double spacing = BedWars.config.getYml().getDouble("resource-chest.hologram.spacing", 0.25);
+        double x = BedWars.config.getYml().getDouble(
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_X_OFFSET, 0.5);
+
+        double y = BedWars.config.getYml().getDouble(
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_Y_OFFSET, 1.5);
+
+        double z = BedWars.config.getYml().getDouble(
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_Z_OFFSET, 0.5);
+
+        double spacing = BedWars.config.getYml().getDouble(
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SPACING, 0.25);
 
         String title = BedWars.config.getYml().getString(
-                "resource-chest.hologram.title", "&e&l⚡ STORAGE CHEST");
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_TITLE,
+                "&e&l⚡ STORAGE CHEST");
+
         String subtitle = BedWars.config.getYml().getString(
-                "resource-chest.hologram.subtitle", "&7Left-click to deposit");
+                ConfigPath.GENERAL_CONFIGURATION_RESOURCE_CHEST_HOLOGRAM_SUBTITLE,
+                "&7Left-click to deposit");
 
         Location pos = chestLoc.clone().add(x, y, z);
 

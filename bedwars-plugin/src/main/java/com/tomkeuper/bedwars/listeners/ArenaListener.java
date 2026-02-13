@@ -1,3 +1,22 @@
+/*
+ * BedWars2023 - A bed wars mini-game.
+ * Copyright (C) 2024 Tomas Keuper
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Contact e-mail: contact@fyreblox.com
+ */
 package com.tomkeuper.bedwars.listeners;
 
 import com.tomkeuper.bedwars.api.arena.GameState;
@@ -32,26 +51,22 @@ public class ArenaListener implements Listener {
         IArena arena = event.getArena();
         if (arena != null) {
             List<Player> list = arena.getPlayers();
-            if (list != null) {
-                // Remove wooden swords from players' inventories if the config option is enabled, to prevent them from being used as a weapon. This is done because wooden swords are often used as a cheap weapon in BedWars, and they can be easily obtained by players. By removing them, it encourages players to use other weapons and adds more variety to the gameplay.
-                if (event.getNewState() == GameState.playing) {
-                    if (this.invisConfig.isWoodSwordDisappearanceEnabled()) {
-                        Bukkit.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
-                            list.stream()
-                                    .filter(arena::isPlayer)
-                                    .forEach(p -> {
-                                        if (p.getInventory().contains(Material.WOOD_SWORD) &&
-                                                (p.getInventory().contains(Material.STONE_SWORD) ||
-                                                        p.getInventory().contains(Material.GOLD_SWORD) ||
-                                                        p.getInventory().contains(Material.IRON_SWORD) ||
-                                                        p.getInventory().contains(Material.DIAMOND_SWORD))) {
-                                            p.getInventory().remove(Material.WOOD_SWORD);
-                                        }
-                                    });
-                        }, 20L, 10L);
-                    }
+            if (list != null && event.getNewState() == GameState.playing) {
+                if (this.invisConfig.isWoodSwordDisappearanceEnabled()) {
+                    Bukkit.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
+                        list.stream()
+                                .filter(arena::isPlayer)
+                                .forEach(p -> {
+                                    if (p.getInventory().contains(Material.WOOD_SWORD) &&
+                                            (p.getInventory().contains(Material.STONE_SWORD) ||
+                                                    p.getInventory().contains(Material.GOLD_SWORD) ||
+                                                    p.getInventory().contains(Material.IRON_SWORD) ||
+                                                    p.getInventory().contains(Material.DIAMOND_SWORD))) {
+                                        p.getInventory().remove(Material.WOOD_SWORD);
+                                    }
+                                });
+                    }, 20L, 10L);
                 }
-                // Apply invisibility effect to players who are currently in the respawn session or spectator mode, if the config option is enabled. This is done to prevent other players from seeing them and to allow them to move around freely without being targeted by enemies. The invisibility effect is applied every 10 ticks (0.5 seconds) to ensure that it remains active as long as the player is in the respawn session or spectator mode.
                 if (this.invisConfig.isRespawnSessionInvisibilityEnabled()) {
                     Bukkit.getServer().getScheduler().runTaskTimer(this.plugin, () -> {
                         list.stream()
@@ -71,7 +86,6 @@ public class ArenaListener implements Listener {
                                 });
                     }, 20L, 10L);
                 }
-                // Apply invisibility effect to players who are currently in the spectator mode, if the config option is enabled. This is done to prevent other players from seeing them and to allow them to move around freely without being targeted by enemies. The invisibility effect is applied every 10 ticks (0.5 seconds) to ensure that it remains active as long as the player is in the spectator mode.
                 if (event.getNewState() == GameState.restarting) {
                     Bukkit.getServer().getScheduler().runTaskLater(this.plugin, () -> {
                         list.stream()
@@ -92,7 +106,6 @@ public class ArenaListener implements Listener {
             }
         }
     }
-    // this for removing invisibility effect from players when they respawn, to ensure that they are visible to other players and can be targeted by enemies. The invisibility effect is removed 3 ticks (0.15 seconds) after the player respawns to allow them to fully respawn and be ready for combat before becoming visible again.
     @EventHandler
     public void onRespawning(PlayerReSpawnEvent event) {
         Player player = event.getPlayer();
@@ -101,15 +114,15 @@ public class ArenaListener implements Listener {
             player.removePotionEffect(PotionEffectType.INVISIBILITY);
         }, 3L);
     }
-    // This event handler is responsible for handling player kills in the arena. If the config option to disable death animation is enabled, it removes the victim's entity from the game immediately after they are killed, preventing any death animation from playing. Additionally, if the config option to enable kill sound is enabled and the killer is not null, it plays a specified sound at the killer's location with the configured volume and pitch. This enhances the gameplay experience by providing audio feedback for kills and allowing players to customize their experience based on their preferences.
     @EventHandler
     public void onKill(PlayerKillEvent event) {
         if (this.invisConfig.isKillSoundEnabled() && event.getKiller() != null) {
-            event.getKiller().playSound(event.getKiller().getLocation(), this.invisConfig.getKillSound(), this.invisConfig.getKillSoundVolume(), this.invisConfig.getKillSoundPitch());
-        }
-        Player victim = event.getVictim();
-        if (victim != null) {
-            victim.removePotionEffect(PotionEffectType.INVISIBILITY);
+            event.getKiller().playSound(
+                    event.getKiller().getLocation(),
+                    this.invisConfig.getKillSound(),
+                    this.invisConfig.getKillSoundVolume(),
+                    this.invisConfig.getKillSoundPitch()
+            );
         }
     }
 }
