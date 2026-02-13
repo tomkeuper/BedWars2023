@@ -22,4 +22,5 @@ repositories {
     maven { url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/') } // Spigot
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // bungeecord-chat (dep of spigot-api)
     maven { url = uri('https://repo.infernalsuite.com/repository/maven-releases/') } // ASP:api
+    maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // Flow NBT
 }
