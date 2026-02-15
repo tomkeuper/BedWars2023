@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.listeners;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
@@ -28,6 +29,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.upgrades.BaseListener;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -135,7 +137,7 @@ public class HungerWeatherSpawn implements Listener {
 
                 int task = Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     Arena.magicMilk.remove(p.getUniqueId());
-                    p.sendMessage(getMsg(p, Messages.INTERACT_MAGIC_MILK_REMOVED));
+                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_MAGIC_MILK_REMOVED)));
                     debug("PlayerItemConsumeEvent player " + p + " was removed from magicMilk");
                 }, 20L * Arena.getArenaByPlayer(p).getMagicMilkTime()).getTaskId();
 

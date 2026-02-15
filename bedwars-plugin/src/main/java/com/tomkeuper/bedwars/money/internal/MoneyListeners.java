@@ -30,6 +30,7 @@ import com.tomkeuper.bedwars.api.events.player.PlayerMoneyGainEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.configuration.MoneyConfig;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,7 +54,7 @@ public class MoneyListeners implements Listener {
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 BedWars.getEconomy().giveMoney(player, event.getAmount());
-                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_WIN).replace("%bw_money%", String.valueOf(event.getAmount())));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.MONEY_REWARD_WIN).replace("%bw_money%", String.valueOf(event.getAmount()))));
             }
             ITeam bwt = e.getArena().getExTeam(player.getUniqueId());
             IArena arena = e.getArena();
@@ -65,7 +66,7 @@ public class MoneyListeners implements Listener {
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
                         BedWars.getEconomy().giveMoney(player, event.getAmount());
-                        player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(event.getAmount())));
+                        BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(event.getAmount()))));
                     }
                 }
             }
@@ -83,7 +84,7 @@ public class MoneyListeners implements Listener {
                         Bukkit.getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
                         BedWars.getEconomy().giveMoney(player, event.getAmount());
-                        player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(event.getAmount())));
+                        BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.MONEY_REWARD_PER_TEAMMATE).replace("%bw_money%", String.valueOf(event.getAmount()))));
                     }
                 }
             }
@@ -103,7 +104,7 @@ public class MoneyListeners implements Listener {
             Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
             BedWars.getEconomy().giveMoney(player, event.getAmount());
-            player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_BED_DESTROYED).replace("%bw_money%", String.valueOf(event.getAmount())));
+            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.MONEY_REWARD_BED_DESTROYED).replace("%bw_money%", String.valueOf(event.getAmount()))));
         }
     }
 
@@ -123,7 +124,7 @@ public class MoneyListeners implements Listener {
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 BedWars.getEconomy().giveMoney(player, event.getAmount());
-                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_FINAL_KILL).replace("%bw_money%", String.valueOf(event.getAmount())));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.MONEY_REWARD_FINAL_KILL).replace("%bw_money%", String.valueOf(event.getAmount()))));
             }
         } else {
             if (regularKill > 0) {
@@ -131,7 +132,7 @@ public class MoneyListeners implements Listener {
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 BedWars.getEconomy().giveMoney(player, event.getAmount());
-                player.sendMessage(Language.getMsg(player, Messages.MONEY_REWARD_REGULAR_KILL).replace("%bw_money%", String.valueOf(event.getAmount())));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.MONEY_REWARD_REGULAR_KILL).replace("%bw_money%", String.valueOf(event.getAmount()))));
             }
         }
     }
