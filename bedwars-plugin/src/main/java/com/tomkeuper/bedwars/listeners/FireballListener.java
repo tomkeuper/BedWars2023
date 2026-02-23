@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -96,8 +97,9 @@ public class FireballListener implements Listener {
         long timeDifference = System.currentTimeMillis() - arena.getFireballCooldowns().getOrDefault(player.getUniqueId(), 0L);
         if (timeDifference <= cooldown) {
             if (fireballCooldown >= 1.0) {
-                player.sendMessage(Language.getMsg(player, Messages.ARENA_FIREBALL_COOLDOWN)
-                        .replace("%bw_cooldown%", String.valueOf((cooldown - timeDifference)/1000)));
+                String msg = Language.getMsg(player, Messages.ARENA_FIREBALL_COOLDOWN)
+                        .replace("%bw_cooldown%", String.valueOf((cooldown - timeDifference)/1000));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(msg));
             }
             return;
         }

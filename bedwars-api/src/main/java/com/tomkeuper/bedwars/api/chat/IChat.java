@@ -39,4 +39,11 @@ public interface IChat {
      */
     String getSuffix(Player p);
 
+    /**
+     * Sends a message to a player with adventure minimessage formating
+     * @param player the player to receive the message
+     * @param msg the message that will be sent to the player
+     */
+    void sendMessage(Player player, String msg);
+
 }

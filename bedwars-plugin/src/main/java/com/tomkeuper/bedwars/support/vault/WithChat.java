@@ -20,7 +20,9 @@
 
 package com.tomkeuper.bedwars.support.vault;
 
+import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.chat.IChat;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -36,6 +38,11 @@ public class WithChat implements IChat {
     @Override
     public String getSuffix(Player p) {
         return ChatColor.translateAlternateColorCodes('&', chat.getPlayerSuffix(p));
+    }
+
+    @Override
+    public void sendMessage(Player player, String msg) {
+        BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(msg));
     }
 
     public static void setChat(net.milkbowl.vault.chat.Chat chat) {

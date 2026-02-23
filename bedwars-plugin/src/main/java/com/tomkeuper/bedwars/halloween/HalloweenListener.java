@@ -33,6 +33,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Misc;
 import com.tomkeuper.bedwars.levels.internal.PlayerLevel;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -98,7 +99,7 @@ public class HalloweenListener implements Listener {
             if (level != null) {
                 e.getBlock().getDrops().clear();
                 level.addXp(5, PlayerXpGainEvent.XpSource.OTHER);
-                e.getPlayer().sendMessage(Language.getMsg(e.getPlayer(), Messages.XP_REWARD_HALLOWEEN));
+                BedWars.plugin.adventure().player(e.getPlayer()).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(e.getPlayer(), Messages.XP_REWARD_HALLOWEEN)));
             }
         }
     }
