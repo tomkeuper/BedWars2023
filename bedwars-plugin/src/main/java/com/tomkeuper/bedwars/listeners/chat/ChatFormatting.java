@@ -135,6 +135,11 @@ public class ChatFormatting implements Listener {
                 return;
             }
 
+            // for golden GG
+            if (a.getWinners().contains(p.getUniqueId()) && msg.equalsIgnoreCase("gg")) {
+                e.setMessage(ChatColor.GOLD + e.getMessage());
+            }
+
             // player team chat
             if (a.getMaxInTeam() == 1) {
                 setRecipients(e, a.getPlayers(), a.getSpectators());

@@ -809,4 +809,12 @@ public interface IArena {
      * @return The time when the magic milk effect will expire.
      */
     int getMagicMilkTime();
+
+
+    /**
+     * Get the UUids of players who won
+     *
+     * @return UUIDs of players who won
+     */
+    List<UUID> getWinners();
 }
