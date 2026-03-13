@@ -148,8 +148,6 @@ public class Arena implements IArena {
 
     private final List<Player> leaving = new ArrayList<>();
 
-    public List<UUID> winners = new ArrayList<>(), losers = new ArrayList<>(), aliveWinners = new ArrayList<>();
-
     /**
      * Current event, used at scoreboard
      */
@@ -2116,6 +2114,7 @@ public class Arena implements IArena {
                 changeStatus(GameState.restarting);
 
                 //Game end event
+                List<UUID> winners = new ArrayList<>(), losers = new ArrayList<>(), aliveWinners = new ArrayList<>();
                 for (Player p : getPlayers()) {
                     aliveWinners.add(p.getUniqueId());
                 }
@@ -2947,11 +2946,5 @@ public class Arena implements IArena {
             dragonBossbars.add(bb);
         }
     }
-
-    @Override
-    public List<UUID> getWinners() {
-        return winners;
-    }
-
 
 }

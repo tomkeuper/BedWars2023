@@ -42,7 +42,8 @@ public class Permissions {
     public static final String PERMISSION_LEVEL = BedWars.mainCmd+".level";
     public static final String PERMISSION_CHAT_COLOR = BedWars.mainCmd+".chatcolor";
     public static final String PERMISSION_VIP = BedWars.mainCmd+".vip";
-
+    public static final String PERMISSION_AUTO_GG = BedWars.mainCmd+".autogg";
+    public static final String PERMISSION_GOLDEN_GG = BedWars.mainCmd+".goldengg";
     /**
      * Check if player has one of the given permissions.
      */
