@@ -829,11 +829,9 @@ public class Arena implements IArena {
      *                       player is the owner.
      */
     public void removePlayer(@NotNull Player p, boolean disconnect, boolean skipPartyCheck) {
-        if (leaving.contains(p)) {
-            return;
-        } else {
-            leaving.add(p);
-        }
+        if (leaving.contains(p)) return;
+        else leaving.add(p);
+
         debug("Player removed: " + p.getName() + " arena: " + getArenaName());
         respawnSessions.remove(p);
 
@@ -993,6 +991,12 @@ public class Arena implements IArena {
         String iso = Language.getPlayerLanguage(p).getIso();
         List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
         for (ShopHolo holo : holos) holo.clearForPlayer(p);
+
+        for (IGenerator o : getOreGenerators()) {
+            HashMap<String, IGenHolo> genHolos = o.getLanguageHolograms();
+            IGenHolo holo = genHolos.get(iso);
+            if (holo != null) holo.removePlayer(p);
+        }
 
         /**
          * Below is *only* executed if serverType != BUNGEE
@@ -1262,26 +1266,32 @@ public class Arena implements IArena {
 
         String iso = Language.getPlayerLanguage(p).getIso();
 
-        List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
-        for (ShopHolo holo : holos) {
-            holo.getHologram().addPlayer(p);
-            holo.update(p);
-        }
-
-        for (IGenerator o : getOreGenerators()) {
-            HashMap<String, IGenHolo> genHolos = o.getLanguageHolograms();
-            IGenHolo holo = genHolos.get(iso);
-            if (holo != null) {
-                holo.addPlayer(p);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            List<ShopHolo> holos = shopHolosIso.getOrDefault(iso, Collections.emptyList());
+            for (ShopHolo holo : holos) {
+                if (holo == null) {
+                    debug("ShopHolo is null for iso " + iso);
+                    continue;
+                }
+                holo.getHologram().addPlayer(p);
+                holo.getHologram().getLines().forEach(l -> l.reveal(p));
                 holo.update(p);
             }
-        }
+
+            for (IGenerator o : getOreGenerators()) {
+                HashMap<String, IGenHolo> genHolos = o.getLanguageHolograms();
+                IGenHolo holo = genHolos.get(iso);
+                if (holo != null) {
+                    holo.addPlayer(p);
+                    holo.getHologram().getLines().forEach(l -> l.reveal(p));
+                    holo.update(p);
+                } else debug("No gen holo for iso " + iso);
+            }
+        }, 10L);
 
         reJoin.getBedWarsTeam().reJoin(p, ev.getRespawnTime());
         reJoin.destroy(false);
-        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
-            BoardManager.getInstance().giveTabFeatures(p, this, true);
-        }, 10L);//todo check if can be pulled out to listeners.
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> BoardManager.getInstance().giveTabFeatures(p, this, true), 10L);//todo check if can be pulled out to listeners.
         return true;
     }
 
