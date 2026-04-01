@@ -47,6 +47,7 @@ public class GGFeature implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
+        if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CONFIGURATION_AUTO_GG_ENABLED)) return;
         Player player = event.getPlayer();
         String message = event.getMessage();
         if (!player.hasPermission(Permissions.PERMISSION_GOLDEN_GG)) return;
