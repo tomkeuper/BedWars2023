@@ -76,6 +76,15 @@ public class ConfigPath {
 
     public static final String GENERAL_CONFIGURATION_ALLOW_FIRE_EXTINGUISH = "allow-fire-extinguish";
     public static final String GENERAL_CONFIGURATION_ENABLE_HALLOWEEN = "enable-halloween-feature";
+
+    public static final String GENERAL_CONFIGURATION_GOLDEN_GG_PREFIX = "golden-gg-feature.";
+    public static final String GENERAL_CONFIGURATION_GOLDEN_GG_ENABLED = GENERAL_CONFIGURATION_GOLDEN_GG_PREFIX + "enable";
+    public static final String GENERAL_CONFIGURATION_GOLDEN_GG_COLOR = GENERAL_CONFIGURATION_GOLDEN_GG_PREFIX + "color";
+
+    public static final String GENERAL_CONFIGURATION_AUTO_GG_PREFIX = "auto-gg-feature.";
+    public static final String GENERAL_CONFIGURATION_AUTO_GG_ENABLED = GENERAL_CONFIGURATION_AUTO_GG_PREFIX + "enable";
+    public static final String GENERAL_CONFIGURATION_AUTO_GG_TEXT= GENERAL_CONFIGURATION_AUTO_GG_PREFIX + "text";
+
     public static final String GENERAL_CONFIGURATION_ENABLE_ANTI_DROP = "enable-anti-drop-feature";
     public static final String GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE = "hologram-update-distance";
     public static final String GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR = "enable-teammate-tracking-action-bar";

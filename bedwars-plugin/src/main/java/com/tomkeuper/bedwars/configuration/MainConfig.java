@@ -51,6 +51,10 @@ public class MainConfig extends ConfigManager {
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_DISABLED_LANGUAGES, Collections.singletonList("your language iso here"));
         yml.addDefault("storeLink", "https://example.com/");
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_HALLOWEEN, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_GOLDEN_GG_ENABLED, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_GOLDEN_GG_COLOR, "GOLD");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_AUTO_GG_ENABLED, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_AUTO_GG_TEXT, "FORMATTING_CHAT_TEAM");
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_ANTI_DROP, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE, 50);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR, false);
