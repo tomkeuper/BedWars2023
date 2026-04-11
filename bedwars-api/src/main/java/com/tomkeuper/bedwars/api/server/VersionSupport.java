@@ -527,4 +527,12 @@ public abstract class VersionSupport {
     public abstract void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder);
 
     public abstract void callPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newLevel, String deathMessage);
+
+    /**
+     * Returns the absorption health of a player.
+     *
+     * @param player The player to get the absorption health from.
+     * @return The absorption health of the player.
+     */
+    public abstract float getAbsorption(Player player);
 }
