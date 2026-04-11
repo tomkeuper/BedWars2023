@@ -326,7 +326,7 @@ public class BoardManager implements IScoreboardService {
                 }
             }
 
-            assert lines != null;
+            if (lines == null) {return "";}
             titleLine = lines.get(0);
             String[] titleArray = titleLine.split(",");
 
