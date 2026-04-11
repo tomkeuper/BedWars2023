@@ -142,7 +142,7 @@ jobs:
         run: |
           echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa
       - name: Deploy JavaDoc 🚀
-        uses: wangyucode/sftp-upload-action@v2.0.2
+        uses: wangyucode/sftp-upload-action@v2.0.4
         with:
           host: ${{ secrets.JDC_IP_ADDRESS }}
           username: ${{ secrets.JDC_USER }}
