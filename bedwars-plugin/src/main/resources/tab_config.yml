@@ -39,9 +39,9 @@ scoreboard-teams:
   disable-condition: '%world%=disabledworld'
 belowname-objective:
   enabled: true
-  value: '%health%'
+  value: '%bw_player_health%'
   title: '&cHealth'
-  fancy-value: '&f%health%'
+  fancy-value: '&f%bw_player_health%'
   fancy-value-default: NPC
   disable-condition: '%bw_arena_status%!=playing'
 prevent-spectator-effect:
