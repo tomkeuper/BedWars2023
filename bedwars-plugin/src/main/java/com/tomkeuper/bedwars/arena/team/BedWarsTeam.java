@@ -389,6 +389,7 @@ public class BedWarsTeam implements ITeam {
         } else {
             reSpawnInvulnerability.put(p.getUniqueId(), System.currentTimeMillis() + config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY));
         }
+        p.setFallDistance(0f);
         PaperSupport.teleportC(p, getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
         p.setVelocity(new Vector(0, 0, 0));
         p.removePotionEffect(PotionEffectType.INVISIBILITY);
