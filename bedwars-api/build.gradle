@@ -11,6 +11,8 @@ dependencies {
     compileOnly 'com.iridium:IridiumColorAPI:1.0.9'
     compileOnly 'org.apache.commons:commons-lang3:3.14.0' // Used by IridiumColorAPI
     compileOnly 'com.github.NEZNAMY:TAB-API:5.0.7'
+    compileOnly 'net.kyori:adventure-api:4.17.0'
+    compileOnly 'net.kyori:adventure-text-minimessage:4.17.0'
 }
 
 // Re-enable javadoc for this module (global convention disables it for performance)
