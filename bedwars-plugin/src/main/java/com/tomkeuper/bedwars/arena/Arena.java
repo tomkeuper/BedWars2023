@@ -206,6 +206,7 @@ public class Arena implements IArena {
     private int yKillHeight;
     private Instant startTime;
     private ITeamAssigner teamAssigner = new TeamAssigner();
+    private String mapName;
 
     /**
      * Load an arena.
@@ -232,14 +233,20 @@ public class Arena implements IArena {
             }
         }
         this.arenaName = name;
+        cm = new ArenaConfig(BedWars.plugin, name, plugin.getDataFolder().getPath() + "/Arenas");
+
+        yml = cm.getYml();
+        this.mapName = yml.getString(ConfigPath.ARENA_USE_MAP);
+        if (this.mapName == null || this.mapName.isEmpty()) {
+            this.mapName = arenaName;
+        }
+
         if (autoscale) {
             this.worldName = BedWars.arenaManager.generateGameID();
         } else {
             this.worldName = arenaName;
         }
-        cm = new ArenaConfig(BedWars.plugin, name, plugin.getDataFolder().getPath() + "/Arenas");
 
-        yml = cm.getYml();
         if (yml.get("Team") == null) {
             if (p != null) p.sendMessage("You didn't set any team for arena: " + name);
             plugin.getLogger().severe("You didn't set any team for arena: " + name);
@@ -265,9 +272,9 @@ public class Arena implements IArena {
         }
 
 
-        if (!BedWars.getAPI().getRestoreAdapter().isWorld(name)) {
-            if (p != null) p.sendMessage(ChatColor.RED + "There isn't any map called " + name);
-            plugin.getLogger().log(Level.WARNING, "There isn't any map called " + name);
+        if (!BedWars.getAPI().getRestoreAdapter().isWorld(this.mapName)) {
+            if (p != null) p.sendMessage(ChatColor.RED + "There isn't any map called " + this.mapName);
+            plugin.getLogger().log(Level.WARNING, "There isn't any map called " + this.mapName);
             return;
         }
 
@@ -1489,6 +1496,11 @@ public class Arena implements IArena {
     @Override
     public String getArenaName() {
         return arenaName;
+    }
+
+    @Override
+    public String getMapName() {
+        return mapName;
     }
 
     @Override

@@ -94,6 +94,15 @@ public interface IArena {
     String getArenaName();
 
     /**
+     * Get the source map name used to restore the world.
+     *
+     * @return The map name.
+     */
+    default String getMapName() {
+        return getArenaName();
+    }
+
+    /**
      * Initialize the arena after loading the world.
      * This needs to be called in order to allow players to join.
      *

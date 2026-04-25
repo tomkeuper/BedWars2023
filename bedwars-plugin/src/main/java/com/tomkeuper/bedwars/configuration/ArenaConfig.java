@@ -38,6 +38,7 @@ public class ArenaConfig extends ConfigManager {
                 "Documentation here: https://wiki.tomkeuper.com/docs/BedWars2023/configuration/Arena-Configuration\n");
         yml.addDefault("group", "Default");
         yml.addDefault(ConfigPath.ARENA_DISPLAY_NAME, "");
+        yml.addDefault(ConfigPath.ARENA_USE_MAP, "");
         yml.addDefault("minPlayers", 2);
         yml.addDefault("maxInTeam", 1);
         yml.addDefault("allowSpectate", true);

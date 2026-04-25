@@ -95,7 +95,7 @@ public class AdvancedSlimeAdapter extends RestoreAdapter {
                 // Note that this method should be called asynchronously
                 SlimeWorld world = slime.loadWorld(
                         flat,
-                        a.getArenaName(),
+                        a.getMapName(),
                         true,
                         getCreateProperties(
                                 (int) Double.parseDouble(spawn[0]),
@@ -104,7 +104,7 @@ public class AdvancedSlimeAdapter extends RestoreAdapter {
                         )
                 );
 
-                if (api.getServerType() == ServerType.BUNGEE && api.isAutoScale()) {
+                if (!a.getMapName().equalsIgnoreCase(a.getWorldName())) {
                     world = world.clone(a.getWorldName());
                 }
 
@@ -113,7 +113,7 @@ public class AdvancedSlimeAdapter extends RestoreAdapter {
                 Bukkit.getScheduler().runTask(getOwner(), () -> {
                     slime.generateWorld(finalWorld);
 
-                    World w = Bukkit.getWorld(a.getArenaName());
+                    World w = Bukkit.getWorld(a.getWorldName());
                     if (w == null) {
                         api.getArenaUtil().removeFromEnableQueue(a);
                         getOwner().getLogger().severe("Something wrong... removing arena " + a.getArenaName() + " from queue.");

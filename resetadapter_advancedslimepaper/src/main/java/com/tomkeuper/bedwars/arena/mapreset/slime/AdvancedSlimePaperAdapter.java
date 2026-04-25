@@ -102,8 +102,8 @@ public class AdvancedSlimePaperAdapter extends RestoreAdapter {
             try {
                 // Note that this method should be called asynchronously
 
-                SlimeWorld world = slime.readWorld(loader, a.getArenaName(), true, spm);
-                if (api.getServerType() == ServerType.BUNGEE && api.isAutoScale()) {
+                SlimeWorld world = slime.readWorld(loader, a.getMapName(), true, spm);
+                if (!a.getMapName().equalsIgnoreCase(a.getWorldName())) {
                     world = world.clone(a.getWorldName());
                 }
 

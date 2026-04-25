@@ -63,13 +63,13 @@ public class InternalAdapter extends RestoreAdapter {
                 return;
             }
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                File bf = new File(backupFolder, a.getArenaName() + ".zip"), af = new File(Bukkit.getWorldContainer(), a.getArenaName());
+                File bf = new File(backupFolder, a.getMapName() + ".zip"), af = new File(Bukkit.getWorldContainer(), a.getMapName());
                 if (bf.exists()) {
                     FileUtil.delete(af);
                 }
 
                 if (!bf.exists()) {
-                    new WorldZipper(a.getArenaName(), true);
+                    new WorldZipper(a.getMapName(), true);
                 } else {
                     try {
                         ZipFileUtil.unzipFileIntoDirectory(bf, new File(Bukkit.getWorldContainer(), a.getWorldName()));
@@ -122,7 +122,7 @@ public class InternalAdapter extends RestoreAdapter {
                 }
                 Bukkit.getScheduler().runTaskLater(plugin, () -> new Arena(a.getArenaName(), null), 80L);
             }
-            if (!a.getWorldName().equals(a.getArenaName())) {
+            if (!a.getWorldName().equals(a.getMapName())) {
                 deleteWorld(a.getWorldName());
             }
         });
