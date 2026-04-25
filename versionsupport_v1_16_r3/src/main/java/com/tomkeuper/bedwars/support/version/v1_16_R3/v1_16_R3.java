@@ -870,6 +870,11 @@ public class v1_16_R3 extends VersionSupport {
     }
 
     @Override
+    public float getAbsorption(Player player) {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
+
+    @Override
     public void destroyPacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players) {
         ArmorStand armorStand = generatorHolder.getArmorStand();
         PacketPlayOutEntityDestroy destroy = new PacketPlayOutEntityDestroy(armorStand.getEntityId());

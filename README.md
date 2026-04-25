@@ -135,7 +135,7 @@ If you get disconnected, or if you leave a game (configurable) you can re-join i
 - [IridiumColorAPI](https://nexus.iridiumdevelopment.net/#browse/browse:maven-releases:com%2Firidium%2FIridiumColorAP)
 - [SlimJar](https://github.com/slimjar/slimjar)
 - [SLF4J](http://www.slf4j.org/)
-- [Flow-NBT](https://repo.rapture.pw/#browse/browse:maven-releases:com%2Fflowpowered%2Fflow-nbt)
+- [Flow-NBT](https://github.com/SpongePowered/nbt)
 - [Jedis](https://github.com/redis/jedis)
 - [CloudNet](https://cloudnetservice.eu/docs/3.3/api/start/)
 - [H2](https://www.h2database.com/html/main.html)

@@ -113,14 +113,14 @@ public class ChatFormatting implements Listener {
             if (isShouting(msg, language)) {
                 if (!(p.hasPermission(Permissions.PERMISSION_SHOUT_COMMAND) || p.hasPermission(Permissions.PERMISSION_ALL))) {
                     e.setCancelled(true);
-                    p.sendMessage(Language.getMsg(p, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS));
+                    BedWars.plugin.adventure().player(p).sendMessage(parseLegacyMini(Language.getMsg(p, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS)));
                     return;
                 }
                 if (ShoutCommand.isShoutCooldown(p)) {
                     e.setCancelled(true);
-                    p.sendMessage(language.m(Messages.COMMAND_COOLDOWN)
+                    BedWars.plugin.adventure().player(p).sendMessage(parseLegacyMini(language.m(Messages.COMMAND_COOLDOWN)
                             .replace("%bw_seconds%", String.valueOf(Math.round(ShoutCommand.getShoutCooldown(p))))
-                    );
+                    ));
                     return;
                 }
                 ShoutCommand.updateShout(p);

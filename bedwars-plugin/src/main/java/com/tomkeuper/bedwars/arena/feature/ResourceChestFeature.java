@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.api.events.player.PlayerItemDepositEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -128,7 +129,7 @@ public class ResourceChestFeature implements Listener {
         int inserted = attempted - notInserted;
 
         if (inserted <= 0) {
-            player.sendMessage(Language.getMsg(player, Messages.INTERACT_FULL_CHEST));
+            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.INTERACT_FULL_CHEST)));
             return;
         }
 

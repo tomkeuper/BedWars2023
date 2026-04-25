@@ -4,7 +4,7 @@ dependencies {
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
         exclude group: 'commons-lang', module: 'commons-lang'
     }
-    compileOnly 'com.grinderwolf:slimeworldmanager-api:2.8.0-SNAPSHOT'
+    compileOnly 'com.grinderwolf:slimeworldmanager-api:2.10.0'
     compileOnly 'commons-io:commons-io:2.11.0'
 }
 
@@ -15,8 +15,8 @@ tasks.named('compileJava', JavaCompile) {
 repositories {
     mavenCentral()
     mavenLocal()
-    maven { url = uri('https://repo.rapture.pw/repository/maven-releases/') } // Flow-NBT
     maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
     maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // bungeecord-chat (dep of spigot-api)
-    maven { url = uri('https://repo.rapture.pw/repository/maven-snapshots/') } // slimeworldmanager-api
+    maven { url = uri('https://repo.bg-software.com/repository/dependencies/') } // slimeworldmanager-api
+    maven { url = uri('https://repo.tomkeuper.com/repository/releases/') } // Flow NBT
 }

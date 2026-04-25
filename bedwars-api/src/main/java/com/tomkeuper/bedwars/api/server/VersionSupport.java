@@ -50,22 +50,59 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class VersionSupport {
 
+    /**
+     * Map of entities that are going to despawn based on a timer.
+     */
     private static final ConcurrentHashMap<UUID, Despawnable> despawnables = new ConcurrentHashMap<>();
+
+    /**
+     * Generic plugin tag key.
+     */
     public static String PLUGIN_TAG_GENERIC_KEY = "BedWars2023";
+
+    /**
+     * Tier identifier tag key.
+     */
     public static String PLUGIN_TAG_TIER_KEY = "tierIdentifier";
+
+    /**
+     * The name of the version.
+     */
     private static String name2;
+
+    /**
+     * The plugin instance.
+     */
     private final Plugin plugin;
+
+    /**
+     * The egg bridge effect.
+     */
     private Effect eggBridge;
 
+    /**
+     * Create a new version support instance.
+     *
+     * @param plugin      the plugin instance
+     * @param versionName the version name
+     */
     public VersionSupport(Plugin plugin, String versionName) {
         name2 = versionName;
         this.plugin = plugin;
     }
 
+    /**
+     * Get the version name.
+     *
+     * @return the version name
+     */
     public static String getName() {
         return name2;
     }
 
+    /**
+     * Load default effects.
+     */
     protected void loadDefaultEffects() {
         try {
             setEggBridgeEffect("MOBSPAWNER_FLAMES");
@@ -266,16 +303,30 @@ public abstract class VersionSupport {
     public abstract void setCollide(Player p, IArena a, boolean value);
 
     /**
-     * Add custom data to an ItemStack
+     * Add custom data to an ItemStack.
+     *
+     * @param i    the item stack
+     * @param data the data string
+     * @return the modified item stack
      */
     public abstract ItemStack addCustomData(ItemStack i, String data);
 
+    /**
+     * Set a custom NBT tag.
+     *
+     * @param itemStack the item stack
+     * @param key       the tag key
+     * @param value     the tag value
+     * @return the modified item stack
+     */
     public abstract ItemStack setTag(ItemStack itemStack, String key, String value);
 
     /**
      * Get a custom item tag.
      *
-     * @return null if not present.
+     * @param itemStack the item stack
+     * @param key       the tag key
+     * @return the tag value or null if not present
      */
     @SuppressWarnings("unused")
     public abstract String getTag(ItemStack itemStack, String key);
@@ -295,6 +346,14 @@ public abstract class VersionSupport {
      */
     public abstract ItemStack colourItem(ItemStack itemStack, ITeam bedWarsTeam);
 
+    /**
+     * Create an item stack.
+     *
+     * @param material the material name
+     * @param amount   the amount
+     * @param data     the data value (for legacy versions)
+     * @return the item stack
+     */
     public abstract ItemStack createItemStack(String material, int amount, short data);
 
     /**
@@ -369,6 +428,11 @@ public abstract class VersionSupport {
      */
     public abstract Material materialEnchantingTable();
 
+    /**
+     * End stone material.
+     *
+     * @return the end stone material
+     */
     public abstract Material materialEndStone();
 
     /**
@@ -434,7 +498,9 @@ public abstract class VersionSupport {
     /**
      * Get player head with skin.
      *
+     * @param player      the player
      * @param copyTagFrom will copy nbt tag from this item.
+     * @return the player head item stack
      */
     public abstract ItemStack getPlayerHead(Player player, @Nullable ItemStack copyTagFrom);
 
@@ -462,12 +528,25 @@ public abstract class VersionSupport {
         return despawnables;
     }
 
+    /**
+     * Get the major version.
+     *
+     * @return the major version (e.g., 8, 12, 16, 21)
+     */
     public abstract int getVersion();
 
+    /**
+     * Get the plugin instance.
+     *
+     * @return the plugin instance
+     */
     public Plugin getPlugin() {
         return plugin;
     }
 
+    /**
+     * Register version-specific listeners.
+     */
     public abstract void registerVersionListeners();
 
     /**
@@ -475,14 +554,32 @@ public abstract class VersionSupport {
      */
     public abstract String getMainLevel();
 
+    /**
+     * Get compressed angle for packets.
+     *
+     * @param value the angle value
+     * @return the compressed angle
+     */
     public byte getCompressedAngle(float value) {
         return (byte) ((value * 256.0F) / 360.0F);
     }
 
+    /**
+     * Show a player to another player using spigot-specific methods if necessary.
+     *
+     * @param victim   the player to show
+     * @param receiver the player who will see the victim
+     */
     public void spigotShowPlayer(Player victim, Player receiver) {
         receiver.showPlayer(victim);
     }
 
+    /**
+     * Hide a player from another player using spigot-specific methods if necessary.
+     *
+     * @param victim   the player to hide
+     * @param receiver the player who will no longer see the victim
+     */
     public void spigotHidePlayer(Player victim, Player receiver) {
         receiver.hidePlayer(victim);
     }
@@ -496,35 +593,159 @@ public abstract class VersionSupport {
      */
     public abstract Fireball setFireballDirection(Fireball fireball, Vector vector);
 
+    /**
+     * Play redstone dot particle at player location.
+     *
+     * @param player the player
+     */
     public abstract void playRedStoneDot(Player player);
 
+    /**
+     * Clear arrows from player body.
+     *
+     * @param player the player
+     */
     public abstract void clearArrowsFromPlayerBody(Player player);
 
+    /**
+     * Place tower blocks.
+     *
+     * @param b     the base block
+     * @param a     the arena
+     * @param color the team color
+     * @param x     the x offset
+     * @param y     the y offset
+     * @param z     the z offset
+     * @return the last placed block
+     */
     public abstract Block placeTowerBlocks(Block b, IArena a, TeamColor color, int x, int y, int z);
 
+    /**
+     * Place a ladder.
+     *
+     * @param b          the block
+     * @param x          the x coordinate
+     * @param y          the y coordinate
+     * @param z          the z coordinate
+     * @param a          the arena
+     * @param ladderdata the ladder data
+     * @return the placed block
+     */
     public abstract Block placeLadder(Block b, int x, int y, int z, IArena a, int ladderdata);
 
+    /**
+     * Play villager effect at location.
+     *
+     * @param player   the player
+     * @param location the location
+     */
     public abstract void playVillagerEffect(Player player, Location location);
 
+    /**
+     * Create a hologram.
+     *
+     * @param p        the player who can see the hologram
+     * @param location the location
+     * @param lines    the lines of text
+     * @return the hologram instance
+     */
     public abstract IHologram createHologram(Player p, Location location, String... lines);
 
+    /**
+     * Create a hologram.
+     *
+     * @param p        the player who can see the hologram
+     * @param location the location
+     * @param lines    the hologram lines
+     * @return the hologram instance
+     */
     public abstract IHologram createHologram(Player p, Location location, IHoloLine... lines);
 
+    /**
+     * Create a hologram.
+     *
+     * @param players  the players who can see the hologram
+     * @param location the location
+     * @param lines    the lines of text
+     * @return the hologram instance
+     */
     public abstract IHologram createHologram(Iterable<Player> players, Location location, String... lines);
 
+    /**
+     * Create a hologram.
+     *
+     * @param players  the players who can see the hologram
+     * @param location the location
+     * @param lines    the hologram lines
+     * @return the hologram instance
+     */
     public abstract IHologram createHologram(Iterable<Player> players, Location location, IHoloLine... lines);
 
+    /**
+     * Create a hologram line from text.
+     *
+     * @param text     the text
+     * @param hologram the hologram instance
+     * @return the hologram line
+     */
     public abstract IHoloLine lineFromText(String text, @Nonnull IHologram hologram);
 
+    /**
+     * Create default generator animation.
+     *
+     * @param armorStand the armor stand
+     * @return the generator animation instance
+     */
     public abstract IGeneratorAnimation createDefaultGeneratorAnimation(ArmorStand armorStand);
 
+    /**
+     * Destroy packet armor stand.
+     *
+     * @param generatorHolder the generator holder
+     * @param players         the players who can see the armor stand
+     */
     public abstract void destroyPacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players);
 
+    /**
+     * Create packet armor stand.
+     *
+     * @param loc     the location
+     * @param players the players who can see the armor stand
+     * @return the armor stand instance
+     */
     public abstract ArmorStand createPacketArmorStand(@Nonnull Location loc, Iterable<Player> players);
 
+    /**
+     * Update packet armor stand.
+     *
+     * @param generatorHolder the generator holder
+     * @param players         the players who can see the armor stand
+     */
     public abstract void updatePacketArmorStand(GeneratorHolder generatorHolder, Iterable<Player> players);
 
+    /**
+     * Update packet armor stand equipment.
+     *
+     * @param generatorHolder the generator holder
+     */
     public abstract void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder);
 
+    /**
+     * Call player death event.
+     *
+     * @param player       the player
+     * @param drops        the item drops
+     * @param droppedExp   the dropped exp
+     * @param newLevel     the new level
+     * @param deathMessage the death message
+     */
     public abstract void callPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newLevel, String deathMessage);
+
+    /**
+     * Returns the absorption health of a player.
+     *
+     * @param player The player to get the absorption health from.
+     * @return The absorption health of the player.
+     */
+    public abstract float getAbsorption(Player player);
 }

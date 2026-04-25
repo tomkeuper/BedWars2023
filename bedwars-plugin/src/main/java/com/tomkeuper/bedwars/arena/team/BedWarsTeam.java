@@ -41,6 +41,7 @@ import com.tomkeuper.bedwars.api.upgrades.EnemyBaseEnterTrap;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.OreGenerator;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import lombok.Getter;
@@ -388,6 +389,7 @@ public class BedWarsTeam implements ITeam {
         } else {
             reSpawnInvulnerability.put(p.getUniqueId(), System.currentTimeMillis() + config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_INVULNERABILITY));
         }
+        p.setFallDistance(0f);
         PaperSupport.teleportC(p, getSpawn(), PlayerTeleportEvent.TeleportCause.PLUGIN);
         p.setVelocity(new Vector(0, 0, 0));
         p.removePotionEffect(PotionEffectType.INVISIBILITY);
@@ -411,7 +413,7 @@ public class BedWarsTeam implements ITeam {
         }, 8L);
 
         nms.sendTitle(p, getMsg(p, Messages.PLAYER_DIE_RESPAWNED_TITLE), "", 0, 20, 10);
-        p.sendMessage(getMsg(p, Messages.PLAYER_DIE_RESPAWNED_TEXT));
+        BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.PLAYER_DIE_RESPAWNED_TEXT)));
 
         sendDefaultInventory(p, false);
         ShopCache sc = ShopCache.getInstance().getShopCache(p.getUniqueId());

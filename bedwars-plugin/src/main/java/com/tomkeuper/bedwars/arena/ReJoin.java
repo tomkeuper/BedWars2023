@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.tasks.ReJoinTask;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
@@ -170,12 +171,12 @@ public class ReJoin {
             bwt.setBedDestroyed(true);
             if (bwt != null) {
                 for (Player p2 : arena.getPlayers()) {
-                    p2.sendMessage(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
-                            .replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p2))));
+                    BedWars.plugin.adventure().player(p2).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
+                            .replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p2)))));
                 }
                 for (Player p2 : arena.getSpectators()) {
-                    p2.sendMessage(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
-                            .replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p2))));
+                    BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
+                            .replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p2)))));
                 }
             }
             arena.checkWinner();
