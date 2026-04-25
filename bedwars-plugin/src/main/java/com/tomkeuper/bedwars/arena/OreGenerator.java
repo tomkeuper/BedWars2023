@@ -238,9 +238,9 @@ public class OreGenerator implements IGenerator {
 
     @SuppressWarnings("WeakerAccess")
     public class HoloGram implements IGenHolo {
-        String iso;
-        IHologram hologram;
-        IHoloLine tier, timer, name;
+        private String iso;
+        private IHologram hologram;
+        private IHoloLine tier, timer, name;
 
         public HoloGram(List<Player> players, String iso) {
             this.iso = iso;
@@ -304,6 +304,11 @@ public class OreGenerator implements IGenerator {
         @Override
         public void update(Player player) {
             hologram.update(player);
+        }
+
+        @Override
+        public IHologram getHologram() {
+            return hologram;
         }
 
         @Override
