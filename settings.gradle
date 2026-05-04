@@ -34,12 +34,10 @@ include ':versionsupport_v1_20_6'
 include ':versionsupport_v1_21_r1'
 include ':versionsupport_v1_21_r2'
 include ':versionsupport_v1_21_r3'
+include ':versionsupport_v1_21_r5'
+include ':versionsupport_v1_21_r7'
 include ':versionsupport_common'
 
 
 // Enable type-safe project accessors for Kotlin DSL usages that remain
 enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
-
-
-// Include missing module for v1_21_r5
-include ':versionsupport_v1_21_r5'
