@@ -363,10 +363,10 @@ public final class v1_21_R7 extends VersionSupport {
             field.set(Blocks.aX, glassBlast);
 
             var coloredGlass = new net.minecraft.world.level.block.Block[]{
-                    Blocks.ez, Blocks.eA, Blocks.eB, Blocks.eC,
-                    Blocks.eD, Blocks.eE, Blocks.eF, Blocks.eG,
-                    Blocks.eH, Blocks.eI, Blocks.eJ, Blocks.eK,
-                    Blocks.eL, Blocks.eM, Blocks.eN, Blocks.eO,
+                    Blocks.eN, Blocks.eO, Blocks.eP, Blocks.eQ,
+                    Blocks.eR, Blocks.eS, Blocks.eT, Blocks.eU,
+                    Blocks.eV, Blocks.eW, Blocks.eX, Blocks.eY,
+                    Blocks.eZ, Blocks.fa, Blocks.fb, Blocks.fc,
 
                     Blocks.aX,
             };
