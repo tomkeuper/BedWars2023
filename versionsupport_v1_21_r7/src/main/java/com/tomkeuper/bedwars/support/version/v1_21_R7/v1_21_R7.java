@@ -337,15 +337,43 @@ public final class v1_21_R7 extends VersionSupport {
     }
 
     @Override
-    public void colorBed(ITeam bwt) {
+    public void colorBed(ITeam team) {
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
-                BlockState bed = bwt.getBed().clone().add(x, 0, z).getBlock().getState();
-                if (bed instanceof Bed) {
-                    bed.setType(bwt.getColor().bedMaterial());
-                    bed.update();
+                Location bedLoc = team.getBed().clone().add(x, 0, z);
+                Block bedBlock = bedLoc.getBlock();
+                BlockState blockState = bedBlock.getState();
+
+                if (blockState.getBlockData() instanceof Bed bedData) {
+                    Material bedMaterial = team.getColor().bedMaterial();
+                    if (bedMaterial == null) continue;
+
+                    // Identify head and foot parts
+                    Block headPart;
+                    Block footPart;
+
+                    if (bedData.getPart() == Bed.Part.HEAD) {
+                        headPart = bedBlock;
+                        footPart = bedBlock.getRelative(bedData.getFacing().getOppositeFace());
+                    } else {
+                        footPart = bedBlock;
+                        headPart = bedBlock.getRelative(bedData.getFacing());
+                    }
+
+                    // Update both parts
+                    updateBedBlock(headPart, bedMaterial, bedData.getFacing(), Bed.Part.HEAD);
+                    updateBedBlock(footPart, bedMaterial, bedData.getFacing(), Bed.Part.FOOT);
                 }
             }
+        }
+    }
+
+    private void updateBedBlock(Block block, Material material, BlockFace facing, Bed.Part part) {
+        block.setType(material, false);
+        if (block.getBlockData() instanceof Bed bed) {
+            bed.setFacing(facing);
+            bed.setPart(part);
+            block.setBlockData(bed, true);
         }
     }
 
