@@ -228,7 +228,7 @@ public class DamageDeathMove implements Listener {
                 .replace("%bw_player%", player.getDisplayName())
                 .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang))
                 .replace("%bw_health_remaining%", new DecimalFormat("#.#").format(Math.max(((Player) e.getEntity()).getHealth() - e.getFinalDamage(), 0)));
-        BedWars.plugin.adventure().player(damager).sendMessage(ChatFormatting.parseLegacyMini(message));
+        BedWars.plugin.sendMessage(damager, ChatFormatting.parseLegacyMini(message));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -352,7 +352,7 @@ public class DamageDeathMove implements Listener {
                                 a.getShowTime().remove(p);
                                 p.removePotionEffect(PotionEffectType.INVISIBILITY);
                                 ITeam team = a.getTeam(p);
-                                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN)));
+                                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN)));
                                 Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
                             });
                         }
@@ -390,7 +390,7 @@ public class DamageDeathMove implements Listener {
                             a.getShowTime().remove(p);
                             p.removePotionEffect(PotionEffectType.INVISIBILITY);
                             ITeam team = a.getTeam(p);
-                            BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN)));
+                            BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN)));
                             Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
                         });
                     }
@@ -591,7 +591,7 @@ public class DamageDeathMove implements Listener {
                     .replace("%bw_killer_playername%", killer == null ? "" : killer.getName())
                     .replace("%bw_killer_name%", killer == null ? "" : killer.getDisplayName())
                     .replace("%bw_killer_team_name%", killersTeam == null ? "" : killersTeam.getDisplayName(lang));
-            BedWars.plugin.adventure().player(on).sendMessage(ChatFormatting.parseLegacyMini(msg));
+            BedWars.plugin.sendMessage(on, ChatFormatting.parseLegacyMini(msg));
         }
 
         // increase stats to killer
@@ -624,14 +624,14 @@ public class DamageDeathMove implements Listener {
         if (victimsTeamBedDestroyed) {
             arena.addSpectator(victim, true, null);
             victimsTeam.getMembers().remove(victim);
-            BedWars.plugin.adventure().player(victim).sendMessage(ChatFormatting.parseLegacyMini(getMsg(victim, Messages.PLAYER_DIE_ELIMINATED_CHAT)));
+            BedWars.plugin.sendMessage(victim, ChatFormatting.parseLegacyMini(getMsg(victim, Messages.PLAYER_DIE_ELIMINATED_CHAT)));
             if (victimsTeam.getMembers().isEmpty()) {
                 Bukkit.getPluginManager().callEvent(new TeamEliminatedEvent(arena, victimsTeam));
                 for (Player p : arena.getWorld().getPlayers()) {
                     String msg = getMsg(p, Messages.TEAM_ELIMINATED_CHAT).replace(
                             "%bw_team_color%", victimsTeam.getColor().chat().toString()).replace("%bw_team_name%",
                             victimsTeam.getDisplayName(Language.getPlayerLanguage(p)));
-                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(msg));
+                    BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(msg));
                 }
                 Bukkit.getScheduler().runTask(plugin, arena::checkWinner); // Does not really need to be async but since intensive better safe than sorry
             }

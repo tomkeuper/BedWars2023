@@ -83,7 +83,7 @@ public class GameAnnouncementTask implements Runnable, AnnouncementTask {
         for (Player player : arena.getPlayers()) {
             if (arena.getStatus() == GameState.playing) {
                 try {
-                    BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(messages.get(player).get(index % messages.get(player).size())));
+                    BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(messages.get(player).get(index % messages.get(player).size())));
                 } catch (NullPointerException e){
                     // Player might lose data when rejoining after getting disconnected
                     loadMessagesForPlayer(player, Messages.ARENA_IN_GAME_ANNOUNCEMENT);

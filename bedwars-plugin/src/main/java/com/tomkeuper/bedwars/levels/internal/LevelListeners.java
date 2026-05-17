@@ -77,7 +77,7 @@ public class LevelListeners implements Listener {
                 int xpAmount = LevelsConfig.levels.getInt("xp-rewards.game-win");
                 if (xpAmount > 0) {
                     PlayerLevel.getLevelByPlayer(p).addXp(xpAmount, PlayerXpGainEvent.XpSource.GAME_WIN);
-                    BedWars.plugin.adventure().player(p1).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.XP_REWARD_WIN).replace("%bw_xp%", String.valueOf(xpAmount))));
+                    BedWars.plugin.sendMessage(p1, ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.XP_REWARD_WIN).replace("%bw_xp%", String.valueOf(xpAmount))));
                 }
                 ITeam bwt = e.getArena().getExTeam(p1.getUniqueId());
                 if (bwt != null) {
@@ -86,7 +86,7 @@ public class LevelListeners implements Listener {
                         if (xpAmountPerTmt > 0) {
                             int tr = xpAmountPerTmt * bwt.getMembersCache().size();
                             PlayerLevel.getLevelByPlayer(p).addXp(tr, PlayerXpGainEvent.XpSource.PER_TEAMMATE);
-                            BedWars.plugin.adventure().player(p1).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p1, "xp-reward-per-teammate").replace("%bw_xp%", String.valueOf(tr))));
+                            BedWars.plugin.sendMessage(p1, ChatFormatting.parseLegacyMini(Language.getMsg(p1, "xp-reward-per-teammate").replace("%bw_xp%", String.valueOf(tr))));
                         }
                     }
                 }
@@ -103,7 +103,7 @@ public class LevelListeners implements Listener {
                         if (xpAmountPerTmt > 0) {
                             int tr = LevelsConfig.levels.getInt("xp-rewards.per-teammate") * bwt.getMembersCache().size();
                             PlayerLevel.getLevelByPlayer(p).addXp(tr, PlayerXpGainEvent.XpSource.PER_TEAMMATE);
-                            BedWars.plugin.adventure().player(p1).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.XP_REWARD_PER_TEAMMATE).replace("%bw_xp%", String.valueOf(tr))));
+                            BedWars.plugin.sendMessage(p1, ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.XP_REWARD_PER_TEAMMATE).replace("%bw_xp%", String.valueOf(tr))));
                         }
                     }
                 }
@@ -129,7 +129,7 @@ public class LevelListeners implements Listener {
         int bedDestroy = LevelsConfig.levels.getInt("xp-rewards.bed-destroyed");
         if (bedDestroy > 0) {
             PlayerLevel.getLevelByPlayer(player.getUniqueId()).addXp(bedDestroy, PlayerXpGainEvent.XpSource.BED_DESTROYED);
-            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.XP_REWARD_BED_DESTROY).replace("%bw_xp%", String.valueOf(bedDestroy))));
+            BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.XP_REWARD_BED_DESTROY).replace("%bw_xp%", String.valueOf(bedDestroy))));
         }
     }
 
@@ -145,12 +145,12 @@ public class LevelListeners implements Listener {
         if (e.getCause().isFinalKill()) {
             if (finalKill > 0) {
                 PlayerLevel.getLevelByPlayer(player.getUniqueId()).addXp(finalKill, PlayerXpGainEvent.XpSource.FINAL_KILL);
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.XP_REWARD_FINAL_KILL).replace("%bw_xp%", String.valueOf(finalKill))));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.XP_REWARD_FINAL_KILL).replace("%bw_xp%", String.valueOf(finalKill))));
             }
         } else {
             if (regularKill > 0) {
                 PlayerLevel.getLevelByPlayer(player.getUniqueId()).addXp(regularKill, PlayerXpGainEvent.XpSource.REGULAR_KILL);
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.XP_REWARD_REGULAR_KILL).replace("%bw_xp%", String.valueOf(regularKill))));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.XP_REWARD_REGULAR_KILL).replace("%bw_xp%", String.valueOf(regularKill))));
             }
         }
     }
@@ -165,7 +165,7 @@ public class LevelListeners implements Listener {
 
         List<String> messages = Language.getList(player, Messages.PLAYER_LEVEL_UP);
         for (String message : messages) {
-            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(message.replace("%bw_level%", newLevel)));
+            BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(message.replace("%bw_level%", newLevel)));
         }
     }
 }

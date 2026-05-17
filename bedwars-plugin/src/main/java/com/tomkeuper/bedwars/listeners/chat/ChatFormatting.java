@@ -113,12 +113,12 @@ public class ChatFormatting implements Listener {
             if (isShouting(msg, language)) {
                 if (!(p.hasPermission(Permissions.PERMISSION_SHOUT_COMMAND) || p.hasPermission(Permissions.PERMISSION_ALL))) {
                     e.setCancelled(true);
-                    BedWars.plugin.adventure().player(p).sendMessage(parseLegacyMini(Language.getMsg(p, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS)));
+                    BedWars.plugin.sendMessage(p, parseLegacyMini(Language.getMsg(p, Messages.COMMAND_NOT_FOUND_OR_INSUFF_PERMS)));
                     return;
                 }
                 if (ShoutCommand.isShoutCooldown(p)) {
                     e.setCancelled(true);
-                    BedWars.plugin.adventure().player(p).sendMessage(parseLegacyMini(language.m(Messages.COMMAND_COOLDOWN)
+                    BedWars.plugin.sendMessage(p, parseLegacyMini(language.m(Messages.COMMAND_COOLDOWN)
                             .replace("%bw_seconds%", String.valueOf(Math.round(ShoutCommand.getShoutCooldown(p))))
                     ));
                     return;
@@ -200,9 +200,20 @@ public class ChatFormatting implements Listener {
     }
 
     public static Component parseLegacyMini(String s) {
-        s = s.replaceAll("§", "&");
+        if (s == null || s.isEmpty()) {
+            return Component.empty();
+        }
+
+        s = s.replace("§", "&");
+
+        if (BedWars.getServerVersion().equals("v1_16_R3")) {
+            return LegacyComponentSerializer.legacyAmpersand().deserialize(s);
+        }
+
         Component deserializedLegacy = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
-        String miniSerializedLegacy = MiniMessage.miniMessage().serialize(deserializedLegacy).replace("\\<", "<");
+        String miniSerializedLegacy = MiniMessage.miniMessage()
+                .serialize(deserializedLegacy)
+                .replace("\\<", "<");
 
         return MiniMessage.miniMessage().deserialize(miniSerializedLegacy);
     }
@@ -210,15 +221,20 @@ public class ChatFormatting implements Listener {
     @SuppressWarnings("resource")
     public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team){
         e.setCancelled(true);
-        BedWars.plugin.adventure().sender(Bukkit.getConsoleSender())
-                .sendMessage(parsePHolders(format, msg, eventTriggerPlayer,null, team)
-                        .replaceText(b -> b.match("%").replacement("%%"))); // Used for console message only.
+
+        Component consoleMessage = parsePHolders(format, msg, eventTriggerPlayer,null, team)
+                .replaceText(b -> b.match("%").replacement("%%")); // Used for console message only.
         // Create a copy to avoid ConcurrentModificationException
         List<Player> recipientsCopy = new ArrayList<>(recipients);
-        for (Player player : recipientsCopy) {
-            if (player == null) continue;
-            var adventurePlayer = BedWars.plugin.adventure().player(player);
-            adventurePlayer.sendMessage(parsePHolders(format, msg, eventTriggerPlayer, player, team));
-        }
+
+        // AsyncPlayerChatEvent can run async, so send messages safely on the main thread.
+        Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
+            BedWars.plugin.sendMessage(Bukkit.getConsoleSender(), consoleMessage);
+            for (Player player : recipientsCopy){
+                if (player == null) continue;
+                Component playerMessage = parsePHolders(format, msg, eventTriggerPlayer, player, team);
+                BedWars.plugin.sendMessage(player, playerMessage);
+            }
+        });
     }
 }

@@ -129,7 +129,7 @@ public class ResourceChestFeature implements Listener {
         int inserted = attempted - notInserted;
 
         if (inserted <= 0) {
-            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.INTERACT_FULL_CHEST)));
+            BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.INTERACT_FULL_CHEST)));
             return;
         }
 

@@ -48,7 +48,7 @@ public class PerMinuteTask {
             for (Player p : arena.getPlayers()) {
                 PlayerLevel.getLevelByPlayer ( p.getUniqueId () ).addXp ( xp, PlayerXpGainEvent.XpSource.PER_MINUTE );
                 String msg = Language.getMsg ( p, Messages.XP_REWARD_PER_MINUTE ).replace ( "%bw_xp%", String.valueOf ( xp ) );
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(msg));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(msg));
             }
         }, 60 * 20, 60 * 20);
     }

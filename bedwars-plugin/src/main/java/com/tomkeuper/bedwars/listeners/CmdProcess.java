@@ -41,12 +41,12 @@ public class CmdProcess implements Listener {
         Player p = e.getPlayer();
 
         if (e.getMessage().equals("/party sethome")){
-            BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_NOT_ALLOWED_IN_GAME)));
+            BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_NOT_ALLOWED_IN_GAME)));
             e.setCancelled(true);
         }
 
         if (e.getMessage().equals("/party home")){
-            BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_NOT_ALLOWED_IN_GAME)));
+            BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_NOT_ALLOWED_IN_GAME)));
             e.setCancelled(true);
         }
 
@@ -55,7 +55,7 @@ public class CmdProcess implements Listener {
         if (cmd.length == 0) return;
         if (Arena.isInArena(p)) {
             if (!BedWars.config.getList(ConfigPath.GENERAL_CONFIGURATION_ALLOWED_COMMANDS).contains(cmd[0])) {
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_NOT_ALLOWED_IN_GAME)));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_NOT_ALLOWED_IN_GAME)));
                 e.setCancelled(true);
             }
         }

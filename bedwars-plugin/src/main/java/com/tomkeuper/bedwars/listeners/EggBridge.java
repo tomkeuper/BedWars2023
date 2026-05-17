@@ -110,7 +110,7 @@ public class EggBridge implements Listener {
 
             if ((isCloseToMaxBuildLimit && isLookingUp) || (isCloseToMinBuildLimit && isLookingDown) || isUnderBuildLimit || isAboveLimit) {
                 if (config.getBoolean(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER)) {
-                    BedWars.plugin.adventure().player(shooter).sendMessage(ChatFormatting.parseLegacyMini(getMsg(shooter, Messages.EGGBRIDGE_BUILD_LIMIT_WARNING)));
+                    BedWars.plugin.sendMessage(shooter, ChatFormatting.parseLegacyMini(getMsg(shooter, Messages.EGGBRIDGE_BUILD_LIMIT_WARNING)));
                 }
                 if (config.getBoolean(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE)) {
                     if (shooter.getGameMode() != GameMode.CREATIVE) {

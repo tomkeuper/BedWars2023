@@ -55,14 +55,14 @@ public class CmdJoin extends SubCommand {
         if (s instanceof ConsoleCommandSender) return false;
         Player p = (Player) s;
         if (args.length < 1) {
-            BedWars.plugin.adventure().sender(s)
-                    .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_USAGE)));
+            BedWars.plugin
+                    .sendMessage(s, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_USAGE)));
             return true;
         }
         if (args[0].equalsIgnoreCase("random")){
             if (!Arena.joinRandomArena(p)){
-                BedWars.plugin.adventure().sender(s)
-                        .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND)));
+                BedWars.plugin
+                        .sendMessage(s, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND)));
                 Sounds.playSound("join-denied", p);
             } else {
                 Sounds.playSound("join-allowed", p);
@@ -71,8 +71,8 @@ public class CmdJoin extends SubCommand {
         }
         if (MainCommand.isArenaGroup(args[0]) || args[0].contains("+")) {
             if (!Arena.joinRandomFromGroup(p, args[0])) {
-                BedWars.plugin.adventure().sender(s)
-                        .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND)));
+                BedWars.plugin
+                        .sendMessage(s, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_NO_EMPTY_FOUND)));
                 Sounds.playSound("join-denied", p);
             } else {
                 Sounds.playSound("join-allowed", p);
@@ -94,8 +94,8 @@ public class CmdJoin extends SubCommand {
             return true;
         }
 
-        BedWars.plugin.adventure().sender(s)
-                .sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND).replace("%bw_name%", args[0])));
+        BedWars.plugin
+                .sendMessage(s, ChatFormatting.parseLegacyMini(getMsg(p, Messages.COMMAND_JOIN_GROUP_OR_ARENA_NOT_FOUND).replace("%bw_name%", args[0])));
         return true;
     }
 

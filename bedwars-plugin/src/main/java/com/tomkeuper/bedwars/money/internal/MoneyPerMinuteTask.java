@@ -54,7 +54,7 @@ public class MoneyPerMinuteTask {
                 Bukkit.getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 BedWars.getEconomy().giveMoney(p, event.getAmount());
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.MONEY_REWARD_PER_MINUTE).replace("%bw_money%", String.valueOf(event.getAmount()))));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.MONEY_REWARD_PER_MINUTE).replace("%bw_money%", String.valueOf(event.getAmount()))));
             }
         }, 60 * 20, 60 * 20);
     }

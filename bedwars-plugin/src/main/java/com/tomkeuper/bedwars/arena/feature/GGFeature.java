@@ -74,8 +74,8 @@ public class GGFeature implements Listener {
                         .replace("%bw_player%", winner.getName())
                         .replace("%bw_level%", BedWars.getAPI().getLevelsUtil().getLevel(winner))
                         .replace("%bw_team_color%", team.getColor().chat() + "[" + team.getDisplayName(Language.getPlayerLanguage(winner)).toUpperCase() + "]"));
-                BedWars.plugin.adventure().player(player).sendMessage(message);
-                BedWars.plugin.adventure().player(winner).sendMessage(message);
+                BedWars.plugin.sendMessage(player, message);
+                BedWars.plugin.sendMessage(winner, message);
                 winners.remove(player.getUniqueId());
                 winners.remove(winner.getUniqueId());
             }
@@ -92,8 +92,8 @@ public class GGFeature implements Listener {
                         .replace("%bw_player%", winner.getName())
                         .replace("%bw_level%", BedWars.getAPI().getLevelsUtil().getLevel(winner))
                         .replace("%bw_team_color%", team.getColor().chat() + "[" + team.getDisplayName(Language.getPlayerLanguage(winner)).toUpperCase() + "]"));
-                BedWars.plugin.adventure().player(player).sendMessage(message);
-                BedWars.plugin.adventure().player(winner).sendMessage(message);
+                BedWars.plugin.sendMessage(player, message);
+                BedWars.plugin.sendMessage(winner, message);
                 winners.remove(player.getUniqueId());
                 winners.remove(winner.getUniqueId());
             }

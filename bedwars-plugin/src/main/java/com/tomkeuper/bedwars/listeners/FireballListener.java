@@ -99,7 +99,7 @@ public class FireballListener implements Listener {
             if (fireballCooldown >= 1.0) {
                 String msg = Language.getMsg(player, Messages.ARENA_FIREBALL_COOLDOWN)
                         .replace("%bw_cooldown%", String.valueOf((cooldown - timeDifference)/1000));
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(msg));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(msg));
             }
             return;
         }

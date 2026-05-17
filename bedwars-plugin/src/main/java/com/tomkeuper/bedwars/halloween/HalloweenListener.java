@@ -99,7 +99,7 @@ public class HalloweenListener implements Listener {
             if (level != null) {
                 e.getBlock().getDrops().clear();
                 level.addXp(5, PlayerXpGainEvent.XpSource.OTHER);
-                BedWars.plugin.adventure().player(e.getPlayer()).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(e.getPlayer(), Messages.XP_REWARD_HALLOWEEN)));
+                BedWars.plugin.sendMessage(e.getPlayer() ,ChatFormatting.parseLegacyMini(Language.getMsg(e.getPlayer(), Messages.XP_REWARD_HALLOWEEN)));
             }
         }
     }

@@ -162,7 +162,7 @@ public class CategoryContent implements ICategoryContent {
 
         //check weight
         if (shopCache.getCategoryWeight(father) > weight) {
-            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_ALREADY_HIGHER_TIER)));
+            BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_ALREADY_HIGHER_TIER)));
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
             return false;
         }
@@ -175,7 +175,7 @@ public class CategoryContent implements ICategoryContent {
         //check if can re-buy
         if (shopCache.getContentTier(getIdentifier()) == contentTiers.size()) {
             if (isPermanent() && shopCache.hasCachedItem(this)) {
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_ALREADY_BOUGHT)));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_ALREADY_BOUGHT)));
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
                 return false;
             }
@@ -189,7 +189,7 @@ public class CategoryContent implements ICategoryContent {
         // Check money
         int money = calculateMoney(player, ct.getCurrency());
         if (money < ct.getPrice()) {
-            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY).replace("%bw_currency%", getMsg(player, getCurrencyMsgPath(ct))).
+            BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY).replace("%bw_currency%", getMsg(player, getCurrencyMsgPath(ct))).
                     replace("%bw_amount%", String.valueOf(ct.getPrice() - money))));
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
             return false;
@@ -203,7 +203,7 @@ public class CategoryContent implements ICategoryContent {
         // Check inventory has space
         if (player.getInventory().firstEmpty() == -1){
             Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-            BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.UPGRADES_LORE_REPLACEMENT_INSUFFICIENT_SPACE)));
+            BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.UPGRADES_LORE_REPLACEMENT_INSUFFICIENT_SPACE)));
             return false;
         }
 
@@ -223,15 +223,15 @@ public class CategoryContent implements ICategoryContent {
         if (itemNamePath == null || Language.getPlayerLanguage(player).getYml().get(itemNamePath) == null) {
             ItemStack displayItem = ct.getItemStack();
             if (displayItem.getItemMeta() != null && displayItem.getItemMeta().hasDisplayName()) {
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", displayItem.getItemMeta().getDisplayName())));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", displayItem.getItemMeta().getDisplayName())));
             }
         } else {
             if (isUpgradable()) {
                 int tierI = ct.getValue();
                 String tier = getRomanNumber(tierI);
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", tier)));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", tier)));
             } else {
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", "")));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(getMsg(player, Messages.SHOP_NEW_PURCHASE).replace("%bw_item%", ChatColor.stripColor(getMsg(player, itemNamePath))).replace("%bw_color%", "").replace("%bw_tier%", "")));
             }
         }
         shopCache.setCategoryWeight(father, weight);

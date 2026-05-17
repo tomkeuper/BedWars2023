@@ -44,7 +44,7 @@ public class WithChat implements IChat {
 
     @Override
     public void sendMessage(Player player, String msg) {
-        BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(msg));
+        BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(msg));
     }
 
     @Override

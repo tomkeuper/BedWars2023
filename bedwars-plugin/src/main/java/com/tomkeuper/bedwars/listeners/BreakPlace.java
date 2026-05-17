@@ -147,19 +147,19 @@ public class BreakPlace implements Listener {
             }
             if (e.getBlockPlaced().getLocation().getBlockY() >= a.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y)) {
                 e.setCancelled(true);
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(e.getPlayer(), Messages.ARENA_MAX_BUILD_LIMIT_REACHED)));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(e.getPlayer(), Messages.ARENA_MAX_BUILD_LIMIT_REACHED)));
                 return;
             }
             if (e.getBlockPlaced().getLocation().getBlockY() <= a.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MIN_BUILD_Y)) {
                 e.setCancelled(true);
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(e.getPlayer(), Messages.ARENA_MIN_BUILD_LIMIT_REACHED)));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(e.getPlayer(), Messages.ARENA_MIN_BUILD_LIMIT_REACHED)));
                 return;
             }
 
             for (Region r : a.getRegionsList()) {
                 if (r.isInRegion(e.getBlock().getLocation()) && r.isProtected()) {
                     e.setCancelled(true);
-                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_PLACE_BLOCK)));
+                    BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_PLACE_BLOCK)));
                     return;
                 }
             }
@@ -345,7 +345,7 @@ public class BreakPlace implements Listener {
                                 if (t.getBed().getBlockX() == x && t.getBed().getBlockY() == y && t.getBed().getBlockZ() == z) {
                                     if (!t.isBedDestroyed()) {
                                         if (t.isMember(p)) {
-                                            BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_BREAK_OWN_BED)));
+                                            BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_BREAK_OWN_BED)));
                                             e.setCancelled(true);
                                             if (e.getPlayer().getLocation().getBlock().getType().toString().contains("BED")) {
                                                 PaperSupport.teleport(e.getPlayer(), e.getPlayer().getLocation().add(0, 0.5, 0));
@@ -384,7 +384,7 @@ public class BreakPlace implements Listener {
                                                             .replace("%bw_player_color%", a.getTeam(p).getColor().chat().toString())
                                                             .replace("%bw_player%", p.getDisplayName())
                                                             .replace("%bw_playername%", p.getName());
-                                                    BedWars.plugin.adventure().player(on).sendMessage(ChatFormatting.parseLegacyMini(msg));
+                                                    BedWars.plugin.sendMessage(on, ChatFormatting.parseLegacyMini(msg));
                                                 }
                                                 if (breakEvent.getTitle() != null && breakEvent.getSubTitle() != null) {
                                                     nms.sendTitle(on, breakEvent.getTitle().apply(on), breakEvent.getSubTitle().apply(on), 0, 40, 10);
@@ -406,14 +406,14 @@ public class BreakPlace implements Listener {
             for (Region r : a.getRegionsList()) {
                 if (r.isInRegion(e.getBlock().getLocation()) && r.isProtected()) {
                     e.setCancelled(true);
-                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_BREAK_BLOCK)));
+                    BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_BREAK_BLOCK)));
                     return;
                 }
             }
 
             if (!a.isMapBreakable()) {
                 if (!a.isBlockPlaced(e.getBlock())) {
-                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_BREAK_BLOCK)));
+                    BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_BREAK_BLOCK)));
                     e.setCancelled(true);
                 }
             }
@@ -521,19 +521,19 @@ public class BreakPlace implements Listener {
                 return;
             }
             if (e.getBlockClicked().getRelative(e.getBlockFace()).getLocation().getBlockY() >= a.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MAX_BUILD_Y)) {
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.ARENA_MAX_BUILD_LIMIT_REACHED)));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.ARENA_MAX_BUILD_LIMIT_REACHED)));
                 e.setCancelled(true);
                 return;
             }
             if (e.getBlockClicked().getRelative(e.getBlockFace()).getLocation().getBlockY() <= a.getConfig().getInt(ConfigPath.ARENA_CONFIGURATION_MIN_BUILD_Y)) {
                 e.setCancelled(true);
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.ARENA_MIN_BUILD_LIMIT_REACHED)));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.ARENA_MIN_BUILD_LIMIT_REACHED)));
             }
 
             for (Region r : a.getRegionsList()) {
                 if (r.isInRegion(e.getBlockClicked().getRelative(e.getBlockFace()).getLocation()) && r.isProtected()) {
                     e.setCancelled(true);
-                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_PLACE_BLOCK)));
+                    BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CANNOT_PLACE_BLOCK)));
                     return;
                 }
             }

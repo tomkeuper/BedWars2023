@@ -234,7 +234,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         if (queueLimit <= team.getActiveTraps().size()) {
             if (announceAlreadyUnlocked){
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT)));
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.UPGRADES_TRAP_QUEUE_LIMIT)));
             }
             return false;
         }
@@ -268,7 +268,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
             int money = BedWars.getUpgradeManager().getMoney(player, currency);
             if (money < cost) {
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
+                BedWars.plugin.sendMessage(player, ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
                         .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, cost, currency))
                         .replace("%bw_amount%", String.valueOf(cost - money))));
                 player.closeInventory();
@@ -303,7 +303,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
 
         if (announcePurchase){
             for (Player p1 : team.getMembers()) {
-                BedWars.plugin.adventure().player(p1).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_upgrade_name%",
+                BedWars.plugin.sendMessage(p1, ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_upgrade_name%",
                         ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_BASE_TRAP_ITEM_NAME_PATH + getName().replace("base-trap-", "")).replace("%bw_color%", "")))));
             }
         }
@@ -359,7 +359,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
             for (Player p : trapTeam.getMembers()) {
                 String trapName = ChatColor.stripColor(Language.getMsg(p, getNameMsgPath())).replace("%bw_color%", "");
                 String enemy = trapTeam.getArena().getTeam(player) == null ? "NULL" : trapTeam.getArena().getTeam(player).getDisplayName(Language.getPlayerLanguage(p));
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.UPGRADES_TRAP_CUSTOM_MSG + name2).replace("%bw_trap%", trapName)
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.UPGRADES_TRAP_CUSTOM_MSG + name2).replace("%bw_trap%", trapName)
                         .replace("%bw_playername%", player.getName()).replace("%bw_player%", player.getDisplayName()).replace("%bw_team%", enemy).replace("%bw_color%", color)));
                 BedWars.nms.sendTitle(p, Language.getMsg(p, Messages.UPGRADES_TRAP_CUSTOM_TITLE + name2)
                                 .replace("%bw_trap%", trapName).replace("%bw_playername%", player.getName()).replace("%bw_team%", enemy).replace("%bw_color%", color),
@@ -369,7 +369,7 @@ public class MenuBaseTrap implements MenuContent, EnemyBaseEnterTrap, TeamUpgrad
         } else {
             for (Player p : trapTeam.getMembers()) {
                 String trapName = ChatColor.stripColor(Language.getMsg(p, getNameMsgPath())).replace("%bw_color%", "");
-                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.UPGRADES_TRAP_DEFAULT_MSG).replace("%bw_trap%", trapName)));
+                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(Language.getMsg(p, Messages.UPGRADES_TRAP_DEFAULT_MSG).replace("%bw_trap%", trapName)));
                 BedWars.nms.sendTitle(p, Language.getMsg(p, Messages.UPGRADES_TRAP_DEFAULT_TITLE)
                         .replace("%bw_trap%", trapName), Language.getMsg(p, Messages.UPGRADES_TRAP_DEFAULT_SUBTITLE)
                         .replace("%bw_trap%", trapName), 15, 35, 10);

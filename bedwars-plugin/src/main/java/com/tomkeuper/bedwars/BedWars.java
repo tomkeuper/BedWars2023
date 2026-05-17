@@ -108,9 +108,12 @@ import de.dytanic.cloudnet.wrapper.Wrapper;
 import io.github.slimjar.app.builder.ApplicationBuilder;
 import me.neznamy.tab.api.TabAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.*;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -308,7 +311,12 @@ public class BedWars extends JavaPlugin {
             return;
         }
 
-        this.adventure = BukkitAudiences.create(this);
+        if (Objects.equals(getServerVersion(), "v1_16_R3")) {
+            // Do not initialize BukkitAudiences on 1.16
+            this.adventure = null;
+        } else {
+            this.adventure = BukkitAudiences.create(this);
+        }
 
         nms.registerVersionListeners();
 
@@ -1245,5 +1253,15 @@ public class BedWars extends JavaPlugin {
 
     public BukkitAudiences adventure() {
         return this.adventure;
+    }
+
+    public void sendMessage(CommandSender sender, Component component) {
+        if (this.adventure != null) {
+            this.adventure.sender(sender).sendMessage(component);
+        } else {
+            sender.sendMessage(
+                    LegacyComponentSerializer.legacySection().serialize(component)
+            );
+        }
     }
 }

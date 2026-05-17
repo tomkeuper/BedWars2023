@@ -171,11 +171,11 @@ public class ReJoin {
             bwt.setBedDestroyed(true);
             if (bwt != null) {
                 for (Player p2 : arena.getPlayers()) {
-                    BedWars.plugin.adventure().player(p2).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
+                    BedWars.plugin.sendMessage(p2,ChatFormatting.parseLegacyMini(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
                             .replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p2)))));
                 }
                 for (Player p2 : arena.getSpectators()) {
-                    BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
+                    BedWars.plugin.sendMessage(p2,ChatFormatting.parseLegacyMini(getMsg(p2, Messages.TEAM_ELIMINATED_CHAT).replace("%bw_team_color%", bwt.getColor().chat().toString())
                             .replace("%bw_team_name%", bwt.getDisplayName(Language.getPlayerLanguage(p2)))));
                 }
             }

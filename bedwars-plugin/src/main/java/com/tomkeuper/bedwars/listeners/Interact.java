@@ -176,7 +176,7 @@ public class Interact implements Listener {
                         if (!owner.isMember(p)) {
                             if (!(owner.getMembers().isEmpty() && owner.isBedDestroyed())) {
                                 e.setCancelled(true);
-                                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED)));
+                                BedWars.plugin.sendMessage(p, ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED)));
                             }
                         }
                     }
