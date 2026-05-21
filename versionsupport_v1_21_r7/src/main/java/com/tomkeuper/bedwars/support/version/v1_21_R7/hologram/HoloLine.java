@@ -52,7 +52,6 @@ public class HoloLine implements IHoloLine {
         entity.p(true); // setCustomNameVisible
         entity.l(true); // setInvisible
         entity.ag = true; // noPhysics (no gravity)
-        //entity.v(true); // setMarker - removes hitbox
         entity.a_(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
 
         PacketPlayOutSpawnEntity packet = v1_21_R7.newPacketPlayOutSpawnEntity(entity);
