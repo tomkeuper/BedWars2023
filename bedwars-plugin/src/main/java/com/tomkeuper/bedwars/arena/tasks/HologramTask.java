@@ -40,10 +40,15 @@ public class HologramTask implements Runnable {
                     for (ShopHolo shopHolo : shopHolos) {
                         if (shopHolo == null) continue;
                         IHologram hologram = shopHolo.getHologram();
-                        Location holoLoc = hologram.getLocation();
-                        double distance = pLoc.distance(holoLoc);
-                        if (distance <= BedWars.hologramUpdateDistance) continue;
-                        shopHolo.update(p);
+                    if (hologram == null) continue;
+
+                    Location holoLoc = hologram.getLocation();
+                    if (holoLoc == null || holoLoc.getWorld() != pLoc.getWorld()) continue;
+
+                    double distance = pLoc.distance(holoLoc);
+                    if (distance > BedWars.hologramUpdateDistance) continue;
+
+                    shopHolo.update(p);
                     }
                 }
 
@@ -52,16 +57,24 @@ public class HologramTask implements Runnable {
                         if (p == null || !p.isOnline()) continue;
                         if (p.getWorld() != world) continue;
                         String iso = Language.getPlayerLanguage(p).getIso();
-                        IBedHolo bedHolo = team.getBedHologram(iso);
-                        if (bedHolo == null) continue;
-                        Location bedLoc = bedHolo.getHologram().getLocation();
-                        Location pLoc = p.getLocation();
-                        double distance = pLoc.distance(bedLoc);
+                    IBedHolo bedHolo = team.getBedHologram(iso);
+                    if (bedHolo == null || bedHolo.getHologram() == null) continue;
 
-                        if (distance <= 4) bedHolo.hide(p);
-                        else if (distance > 4 && distance <= 8) bedHolo.show(p);
+                    Location bedLoc = bedHolo.getHologram().getLocation();
+                    Location pLoc = p.getLocation();
+                    if (bedLoc == null || bedLoc.getWorld() != pLoc.getWorld()) continue;
 
-                        if (distance >= BedWars.hologramUpdateDistance) bedHolo.update(p);
+                    double distance = pLoc.distance(bedLoc);
+
+                    if (distance <= 4) {
+                        bedHolo.hide(p);
+                    } else if (distance <= 8) {
+                        bedHolo.show(p);
+                    }
+
+                    if (distance <= BedWars.hologramUpdateDistance) {
+                        bedHolo.update(p);
+                    }
                     }
                 }
 
@@ -72,21 +85,28 @@ public class HologramTask implements Runnable {
                     Location genLoc = generator.getLocation();
                     for (Player p : world.getPlayers()) {
                         if (p == null || !p.isOnline()) continue;
-                        String iso = Language.getPlayerLanguage(p).getIso();
-                        IGenHolo holo = generator.getLanguageHolograms().get(iso);
-                        if (holo == null) continue;
-                        GeneratorHolder holder = generator.getHologramHolder();
-                        Location pLoc = p.getLocation();
-                        double distance = pLoc.distance(genLoc);
-                        if (distance <= BedWars.hologramUpdateDistance) continue;
+
+                    Location pLoc = p.getLocation();
+                    if (pLoc.getWorld() != genLoc.getWorld()) continue;
+
+                    double distance = pLoc.distance(genLoc);
+                    if (distance > BedWars.hologramUpdateDistance) continue;
+
+                    String iso = Language.getPlayerLanguage(p).getIso();
+                    IGenHolo holo = generator.getLanguageHolograms().get(iso);
+                    if (holo != null) {
                         holo.update(p);
-                        if (holder == null) continue;
+                    }
+
+                    GeneratorHolder holder = generator.getHologramHolder();
+                    if (holder != null) {
                         holder.update(p);
                     }
                 }
             }
-        } catch (Exception e) {
-            BedWars.debug("An error occurred while updating holograms: " + e.getMessage());
         }
+    } catch (Exception e) {
+        BedWars.debug("An error occurred while updating holograms: " + e.getMessage());
+    }
     }
 }
