@@ -488,6 +488,18 @@ public class BedWarsTeam implements ITeam {
             //
         }, 10L);
 
+        //fix for invisible wapens in other players #440
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+            for (Player other : arena.getWorld().getPlayers()) {
+                if (other.equals(p)) continue;
+                if (getArena().isSpectator(other)) continue;
+                if (getArena().isReSpawning(other)) continue;
+
+                refreshHandItem(other);
+            }
+        }, 20L);
+
+        p.updateInventory();
 
         String iso = Language.getPlayerLanguage(p).getIso();
         List<ShopHolo> shopHolos = getArena().getShopHolograms(iso);
@@ -932,5 +944,51 @@ public class BedWarsTeam implements ITeam {
     @Override
     public Player getBedDestroyer() {
         return bedDestroyer;
+    }
+
+    private void refreshHandItem(Player player) {
+        ItemStack item = getMainHandItem(player);
+
+        if (item == null || item.getType() == Material.AIR) {
+            return;
+        }
+
+        setMainHandItem(player, null);
+
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
+            setMainHandItem(player, item);
+            player.updateInventory();
+        }, 1L);
+    }
+
+    private ItemStack getMainHandItem(Player player) {
+        if (getServerVersion().equals("v1_8_R3")) {
+            return player.getItemInHand();
+        } else {
+            try {
+                return (ItemStack) player.getInventory()
+                        .getClass()
+                        .getMethod("getItemInMainHand")
+                        .invoke(player.getInventory());
+            } catch (Exception e) {
+                debug("Failed to get main hand item for player: " + player.getName() + e.getMessage());
+                return null;
+            }
+        }
+    }
+
+    private void setMainHandItem(Player player, ItemStack item) {
+        if (getServerVersion().equals("v1_8_R3")) {
+            player.setItemInHand(item);
+        } else {
+            try {
+                player.getInventory()
+                        .getClass()
+                        .getMethod("setItemInMainHand", ItemStack.class)
+                        .invoke(player.getInventory(), item);
+            } catch (Exception e) {
+                debug("Failed to set main hand item for player: " + player.getName() + e.getMessage());
+            }
+        }
     }
 }
