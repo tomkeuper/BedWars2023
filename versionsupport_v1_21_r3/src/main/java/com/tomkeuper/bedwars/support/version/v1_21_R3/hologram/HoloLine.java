@@ -103,7 +103,7 @@ public class HoloLine implements IHoloLine {
     public void update() {
         entity.b(CraftChatMessage.fromStringOrNull(text));
         int position = hologram.getLines().indexOf(this);
-        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        entity.o(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
         if (isDestroyed()) return;
 
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
@@ -123,7 +123,7 @@ public class HoloLine implements IHoloLine {
         if (!hologram.getPlayers().contains(player)) return;
         entity.b(CraftChatMessage.fromStringOrNull(text));
         int position = hologram.getLines().indexOf(this);
-        entity.p(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
+        entity.o(hologram.getLocation().getX(), hologram.getLocation().getY() + position * hologram.getGap(), hologram.getLocation().getZ());
         if (isDestroyed()) return;
 
         PacketPlayOutEntityMetadata metadataPacket = new PacketPlayOutEntityMetadata(entity.ar(), entity.au().c());
