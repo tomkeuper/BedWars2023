@@ -67,6 +67,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Ladder;
 import org.bukkit.block.data.type.WallSign;
@@ -338,42 +339,25 @@ public final class v1_21_R7 extends VersionSupport {
 
     @Override
     public void colorBed(ITeam team) {
+        Location bedLoc = team.getBed();
+        if (bedLoc == null) return;
+        Material bedMaterial = team.getColor().bedMaterial();
+        if (bedMaterial == null) return;
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
-                Location bedLoc = team.getBed().clone().add(x, 0, z);
-                Block bedBlock = bedLoc.getBlock();
-                BlockState blockState = bedBlock.getState();
-
-                if (blockState.getBlockData() instanceof Bed bedData) {
-                    Material bedMaterial = team.getColor().bedMaterial();
-                    if (bedMaterial == null) continue;
-
-                    // Identify head and foot parts
-                    Block headPart;
-                    Block footPart;
-
-                    if (bedData.getPart() == Bed.Part.HEAD) {
-                        headPart = bedBlock;
-                        footPart = bedBlock.getRelative(bedData.getFacing().getOppositeFace());
-                    } else {
-                        footPart = bedBlock;
-                        headPart = bedBlock.getRelative(bedData.getFacing());
-                    }
-
-                    // Update both parts
-                    updateBedBlock(headPart, bedMaterial, bedData.getFacing(), Bed.Part.HEAD);
-                    updateBedBlock(footPart, bedMaterial, bedData.getFacing(), Bed.Part.FOOT);
+                Block bedBlock = bedLoc.clone().add(x, 0, z).getBlock();
+                BlockData blockData = bedBlock.getBlockData();
+                if (!(blockData instanceof org.bukkit.block.data.type.Bed)) continue;
+                BlockFace facing = ((org.bukkit.block.data.type.Bed) blockData).getFacing();
+                org.bukkit.block.data.type.Bed.Part part = ((org.bukkit.block.data.type.Bed) blockData).getPart();
+                bedBlock.setType(bedMaterial, false);
+                blockData = bedBlock.getBlockData();
+                if (blockData instanceof org.bukkit.block.data.type.Bed bed) {
+                    bed.setFacing(facing);
+                    bed.setPart(part);
+                    bedBlock.setBlockData(bed, false);
                 }
             }
-        }
-    }
-
-    private void updateBedBlock(Block block, Material material, BlockFace facing, Bed.Part part) {
-        block.setType(material, false);
-        if (block.getBlockData() instanceof Bed bed) {
-            bed.setFacing(facing);
-            bed.setPart(part);
-            block.setBlockData(bed, true);
         }
     }
 
