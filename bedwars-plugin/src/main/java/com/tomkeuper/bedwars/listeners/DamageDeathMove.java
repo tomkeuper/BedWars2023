@@ -143,21 +143,30 @@ public class DamageDeathMove implements Listener {
         if (finalHealth < 0.5) {
             e.setCancelled(true);
 
-            // Additional check to prevent multiple death events during re-spawn
             if (arena.isReSpawning(player)) return;
 
-            // Update LastHit BEFORE death event if this is entity damage
-            // This ensures the killing blow is properly attributed
+            if (e instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
+                if (!(edbe.getDamager() instanceof TNTPrimed)) {
+                    Player friendlyFireDamager = getPlayer(edbe.getDamager());
+                    if (friendlyFireDamager != null && arena.isPlayer(friendlyFireDamager)) {
+                        ITeam victimTeam = arena.getTeam(player);
+                        ITeam attackerTeam = arena.getTeam(friendlyFireDamager);
+                        if (victimTeam != null && victimTeam == attackerTeam) {
+                            return;
+                        }
+                    }
+                }
+            }
+
             if (e instanceof EntityDamageByEntityEvent) {
                 EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
                 Entity damagerEntity = edbe.getDamager();
                 Player damagerPlayer = getPlayer(damagerEntity);
 
-                // Update LastHit for the killing blow
                 if (damagerPlayer != null && arena.isPlayer(damagerPlayer) && !arena.isReSpawning(damagerPlayer)) {
                     ITeam victimTeam = arena.getTeam(player);
                     ITeam damagerTeam = arena.getTeam(damagerPlayer);
-                    // Only update if not teammates (except for TNT)
                     if (victimTeam != damagerTeam || damagerEntity instanceof TNTPrimed) {
                         LastHit lh = LastHit.getLastHit(player);
                         if (lh != null) {
@@ -168,7 +177,6 @@ public class DamageDeathMove implements Listener {
                         }
                     }
                 } else if (damagerEntity instanceof Silverfish || damagerEntity instanceof IronGolem) {
-                    // Update for despawnable entities
                     LastHit lh = LastHit.getLastHit(player);
                     if (lh != null) {
                         lh.setDamager(damagerEntity);
@@ -299,11 +307,8 @@ public class DamageDeathMove implements Listener {
         }
     }
 
-    // Handler 2: Track LastHit AFTER damage is calculated (MONITOR priority)
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDamageByEntity(EntityDamageByEntityEvent e) {
-        // Critical: Don't track cancelled damage (could be cancelled by death detection)
-        // This prevents overwriting LastHit after PlayerDeathEvent has been called
         if (e.isCancelled()) return;
 
         if (e.getEntity() instanceof Player) {
@@ -315,7 +320,6 @@ public class DamageDeathMove implements Listener {
                     e.setCancelled(true);
                     return;
                 }
-                // Don't update LastHit if player is already dead/respawning
                 if (a.isSpectator(p) || a.isReSpawning(p)) return;
 
                 Player damager = null;
@@ -332,14 +336,12 @@ public class DamageDeathMove implements Listener {
                         damager = (Player) tnt.getSource();
                     } else return;
                 } else if (e.getDamager() instanceof Silverfish || e.getDamager() instanceof IronGolem) {
-                    // Handle silverfish/golem LastHit tracking
                     LastHit lh = LastHit.getLastHit(p);
                     if (lh != null) {
                         lh.setDamager(e.getDamager());
                         lh.setTime(System.currentTimeMillis());
                     } else new LastHit(p, e.getDamager(), System.currentTimeMillis());
 
-                    // Handle invisibility removal
                     if (a.getShowTime().containsKey(p)) {
                         boolean shouldRemove = (e.getDamager() instanceof Silverfish && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY)) ||
                                 (e.getDamager() instanceof IronGolem && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY));
@@ -363,25 +365,21 @@ public class DamageDeathMove implements Listener {
                 if (damager != null) {
                     if (a.isSpectator(damager) || a.isReSpawning(damager.getUniqueId())) return;
 
-                    // Cancel teammate damage (except TNT)
                     if (a.getTeam(p) == a.getTeam(damager)) {
                         if (!(e.getDamager() instanceof TNTPrimed)) {
                             e.setCancelled(true);
                         }
-                        return; // Don't track teammate hits
+                        return;
                     }
 
-                    // Update LastHit for valid enemy damage
                     LastHit lh = LastHit.getLastHit(p);
                     if (lh != null) {
                         lh.setDamager(damager);
                         lh.setTime(System.currentTimeMillis());
                     } else new LastHit(p, damager, System.currentTimeMillis());
 
-                    // Remove respawn protection from attacker
                     BedWarsTeam.reSpawnInvulnerability.remove(damager.getUniqueId());
 
-                    // Handle invisibility removal
                     if (a.getShowTime().containsKey(p)) {
                         Bukkit.getScheduler().runTask(plugin, () -> {
                             for (Player on : a.getWorld().getPlayers()) {
@@ -419,7 +417,6 @@ public class DamageDeathMove implements Listener {
             if (a == null) return;
 
             if (a.isPlayer(damager)) {
-                // do not hurt own mobs
                 Despawnable despawnable = BedWars.nms.getDespawnablesList().get(e.getEntity().getUniqueId());
                 if (despawnable != null && a.getTeam(damager) == despawnable.getTeam()) {
                     e.setCancelled(true);
@@ -427,7 +424,6 @@ public class DamageDeathMove implements Listener {
             }
         }
     }
-
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
@@ -471,16 +467,13 @@ public class DamageDeathMove implements Listener {
 
         BedWars.nms.clearArrowsFromPlayerBody(victim);
 
-        // Logic for determining the cause of death
         boolean victimsTeamBedDestroyed = victimsTeam.isBedDestroyed();
         String message = victimsTeamBedDestroyed ? Messages.PLAYER_DIE_UNKNOWN_REASON_FINAL_KILL : Messages.PLAYER_DIE_UNKNOWN_REASON_REGULAR;
         PlayerKillEvent.PlayerKillCause cause = victimsTeamBedDestroyed ? PlayerKillEvent.PlayerKillCause.UNKNOWN_FINAL_KILL : PlayerKillEvent.PlayerKillCause.UNKNOWN;
 
-
         if (damageEvent != null) {
             if (damageEvent.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION ||
                     damageEvent.getCause() == EntityDamageEvent.DamageCause.BLOCK_EXPLOSION) {
-                // Reset killer for explosion deaths - only attribute if within time window
                 killer = null;
                 if (lh != null) {
                     if (lh.getTime() >= System.currentTimeMillis() - 15000) {
@@ -500,7 +493,6 @@ public class DamageDeathMove implements Listener {
 
             } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.VOID ||
                     damageEvent.getCause() == EntityDamageEvent.DamageCause.CUSTOM) {
-                // Reset killer for void deaths - only attribute if within time window
                 killer = null;
                 if (lh != null) {
                     if (lh.getTime() >= System.currentTimeMillis() - 15000) {
@@ -540,7 +532,6 @@ public class DamageDeathMove implements Listener {
                 }
             } else if (damageEvent.getCause() == EntityDamageEvent.DamageCause.FALL) {
                 if (lh != null) {
-                    // check if kicked off in the last 10 seconds
                     if (lh.getTime() >= System.currentTimeMillis() - 10000) {
                         if (lh.getDamager() instanceof Player) killer = (Player) lh.getDamager();
                         if (killer != null && killer.getUniqueId().equals(victim.getUniqueId())) killer = null;
@@ -568,8 +559,6 @@ public class DamageDeathMove implements Listener {
             }
         }
 
-        // End of death determine logic
-
         String finalMessage = message;
         PlayerKillEvent playerKillEvent = new PlayerKillEvent(arena, victim, killer, p -> Language.getMsg(p, finalMessage), cause);
         Bukkit.getPluginManager().callEvent(playerKillEvent);
@@ -594,12 +583,10 @@ public class DamageDeathMove implements Listener {
             BedWars.plugin.adventure().player(on).sendMessage(ChatFormatting.parseLegacyMini(msg));
         }
 
-        // increase stats to killer
         if ((killer != null && !victimsTeam.equals(killersTeam)) && !victim.equals(killer)) {
             arena.addPlayerKill(killer, cause.isFinalKill(), victim);
         }
 
-        // handle drops
         if (PlayerDrops.handlePlayerDrops(arena, victim, killer, victimsTeam, killersTeam, cause, drops)) {
             BedWars.debug("PlayerDeathEvent: Drops handled by PlayerDrops module.");
             drops.clear();
@@ -633,22 +620,17 @@ public class DamageDeathMove implements Listener {
                             victimsTeam.getDisplayName(Language.getPlayerLanguage(p)));
                     BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(msg));
                 }
-                Bukkit.getScheduler().runTask(plugin, arena::checkWinner); // Does not really need to be async but since intensive better safe than sorry
+                Bukkit.getScheduler().runTask(plugin, arena::checkWinner);
             }
         } else {
-            // Respawn session
             int respawnTime = BedWars.config.getInt(ConfigPath.GENERAL_CONFIGURATION_RE_SPAWN_COUNTDOWN);
             if (respawnTime > 1) arena.startReSpawnSession(victim, respawnTime);
             else victimsTeam.respawnMember(victim);
         }
 
-
-        // send respawn packet
-        // Needs a delay to prevent hit delay but after respawning (mainly caused by projectile hits)
         Bukkit.getScheduler().runTask(plugin, () -> victim.spigot().respawn());
         arena.addPlayerDeath(victim);
 
-        // reset last damager
         LastHit lastHit = LastHit.getLastHit(victim);
         if (lastHit != null) lastHit.setDamager(null);
 
@@ -658,7 +640,6 @@ public class DamageDeathMove implements Listener {
         }
         e.setDeathMessage(null);
     }
-
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onRespawn(PlayerRespawnEvent e) {
@@ -713,10 +694,7 @@ public class DamageDeathMove implements Listener {
             IArena a = Arena.getArenaByPlayer(player);
             if (a == null) return;
             if (e.getFrom().getChunk() != e.getTo().getChunk()) {
-                /* update armor-stands hidden by nms */
-                // hide armor for those with invisibility potions
                 if (!a.getShowTime().isEmpty()) {
-                    // generic hide packets
                     for (Map.Entry<Player, Integer> entry : a.getShowTime().entrySet()) {
                         if (entry.getValue() > 1) {
                             if (!a.getTeam(entry.getKey()).equals(a.getTeam(player))) {
@@ -724,14 +702,12 @@ public class DamageDeathMove implements Listener {
                             }
                         }
                     }
-                    // if the moving player has invisible armor
                     if (a.getShowTime().containsKey(player)) {
                         for (Player p : a.getPlayers()) {
                             if (a.getTeam(player).equals(a.getTeam(p))) continue;
                             BedWars.nms.hideArmor(player, p);
                         }
                     }
-                    /* hide players from spectators */
                     if (a.getShowTime().containsKey(player)) {
                         for (Player p : a.getSpectators()) {
                             BedWars.nms.hideArmor(player, p);
@@ -745,7 +721,6 @@ public class DamageDeathMove implements Listener {
                     PaperSupport.teleportC(player, a.isSpectator(player) ? a.getSpectatorLocation() : a.getReSpawnLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
                     player.setAllowFlight(true);
                     player.setFlying(true);
-                    // how to remove fall velocity?
                 }
             } else {
                 if (a.getStatus() == GameState.playing) {
@@ -812,7 +787,6 @@ public class DamageDeathMove implements Listener {
             }
         }
 
-        // clean if necessary
         BedWars.nms.getDespawnablesList().remove(e.getEntity().getUniqueId());
     }
 
