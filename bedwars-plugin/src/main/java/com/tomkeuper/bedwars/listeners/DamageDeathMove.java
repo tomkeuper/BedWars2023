@@ -139,9 +139,28 @@ public class DamageDeathMove implements Listener {
             else BedWarsTeam.reSpawnInvulnerability.remove(player.getUniqueId());
         }
 
+        // a hi from 1xo :3, do you enjoy reading the code ? , don't forget the star wink wink.
+
         double finalHealth = player.getHealth() - e.getFinalDamage();
         if (finalHealth < 0.5) {
-            e.setCancelled(true);
+            // Block friendly fire kills before death sequence is triggered.
+           // Must be checked here (DEFAULT priority) because the teammate check
+          // in onDamageByEntity (MONITOR priority) runs too late.
+         if (e instanceof EntityDamageByEntityEvent) {
+             EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
+             if (!(edbe.getDamager() instanceof TNTPrimed)) {
+                 Player friendlyFireDamager = getPlayer(edbe.getDamager());
+                 if (friendlyFireDamager != null && arena.isPlayer(friendlyFireDamager)) {
+                     ITeam victimTeam = arena.getTeam(player);
+                     ITeam attackerTeam = arena.getTeam(friendlyFireDamager);
+                     if (victimTeam != null && victimTeam == attackerTeam) {
+                         e.setCancelled(true);
+                        return;
+                     }
+                 }
+             }
+         }
+         e.setCancelled(true);
 
             // Additional check to prevent multiple death events during re-spawn
             if (arena.isReSpawning(player)) return;
@@ -428,7 +447,7 @@ public class DamageDeathMove implements Listener {
         }
     }
 
-
+    
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player victim = e.getEntity();
