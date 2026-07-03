@@ -63,6 +63,9 @@ public class English extends Language {
         yml.addDefault(Messages.COMMAND_TP_NOT_IN_ARENA, "%bw_lang_prefix%&cThis player is not in a bedwars arena!");
         yml.addDefault(Messages.COMMAND_TP_NOT_STARTED, "%bw_lang_prefix%&cThe arena where the player is didn't start yet!");
         yml.addDefault(Messages.COMMAND_TP_USAGE, "%bw_lang_prefix%&cUsage: /bw tp <username>");
+        yml.addDefault(Messages.COMMAND_MAP_DISPLAY, "%bw_lang_prefix%&a&lYou are in arena! the map name is %bw_map%");
+        yml.addDefault(Messages.COMMAND_MAP_NOT_IN_GAME, "%bw_lang_prefix%&cYou are not in game!");
+        yml.addDefault(Messages.COMMAND_MAP_CONSOLE_DENIED, "%bw_lang_prefix%&e&lThis command can't use in console");
         yml.addDefault(Messages.REJOIN_NO_ARENA, "%bw_lang_prefix%&cThere is no arena to rejoin!");
         yml.addDefault(Messages.REJOIN_DENIED, "%bw_lang_prefix%&cYou can't rejoin the arena anymore. Game ended or bed destroyed.");
         yml.addDefault(Messages.REJOIN_ALLOWED, "%bw_lang_prefix%&eJoining arena &a%bw_arena%&e!");
@@ -571,6 +574,16 @@ public class English extends Language {
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_MSG + "3", "&c&lAlarm trap set off by &7&l%bw_player% &c&lfrom %bw_color%&l%bw_team% &c&lteam!");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_TITLE + "3", "&c&lALARM!!!");
         yml.addDefault(Messages.UPGRADES_TRAP_CUSTOM_SUBTITLE + "3", "&fAlarm trap set off by %bw_color%%bw_team% &fteam!");
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", "cushioned-boots").replace("%bw_tier%", "tier-1"), "%bw_color%Cushioned Boots I");
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("%bw_name%", "cushioned-boots"),
+                Arrays.asList("&7Your team permanently gains", "&7Feather Falling on your boots!", "",
+                        "{tier_1_color}Tier 1: Feather Falling I, &b{tier_1_cost} {tier_1_currency}",
+                        "{tier_2_color}Tier 2: Feather Falling II, &b{tier_2_cost} {tier_2_currency}", ""));
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", "cushioned-boots").replace("%bw_tier%", "tier-2"), "%bw_color%Cushioned Boots II");
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", "iron-skin").replace("%bw_tier%", "tier-1"), "%bw_color%Iron Skin");
+        yml.addDefault(Messages.UPGRADES_UPGRADE_TIER_ITEM_LORE.replace("%bw_name%", "iron-skin"),
+                Arrays.asList("&7Your team permanently gains", "&7Resistance I, reducing damage", "&7taken by 20%!", "", "{tier_1_color}Cost: &b{tier_1_cost} {tier_1_currency}", ""));
+
         generateNPCMessages(yml, "default");
         save();
         setPrefix(m(Messages.PREFIX));

@@ -40,8 +40,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class ArenaGUI {
@@ -49,6 +51,9 @@ public class ArenaGUI {
     private static final YamlConfiguration yml = BedWars.config.getYml();
 
     private static final HashMap<UUID, Long> antiCalledTwice = new HashMap<>();
+
+    // Label shown in the lore for recently played arenas (supports color codes)
+    private static final String RECENTLY_PLAYED_LABEL = ChatColor.GRAY + "" + ChatColor.ITALIC + "(لعبت هنا مؤخراً)";
 
     public static void refreshInv(Player player, IArena arena, int players) {
         if (player == null || player.getOpenInventory() == null || !(player.getOpenInventory().getTopInventory().getHolder() instanceof ArenaSelectorHolder)) {
@@ -68,6 +73,15 @@ public class ArenaGUI {
 
         arenas = Arena.getSorted(arenas);
 
+        // ── Recently Played Sort ──────────────────────────────────────────────
+        // Arenas the player recently left are moved to the bottom of the list
+        // so they're nudged toward trying a different map.
+        Set<String> recentArenas = RecentlyPlayedTracker.getRecentArenas(player.getUniqueId());
+        if (!recentArenas.isEmpty()) {
+            arenas.sort(Comparator.comparingInt(a -> recentArenas.contains(a.getArenaName()) ? 1 : 0));
+        }
+        // ─────────────────────────────────────────────────────────────────────
+
         List<Integer> usedSlots = getUsedSlots();
         for (int i = 0; i < usedSlots.size() && i < arenas.size(); i++) {
             IArena currentArena = arenas.get(i);
@@ -84,9 +98,11 @@ public class ArenaGUI {
                 item.setItemMeta(im);
             }
 
-
             ItemMeta im = item.getItemMeta();
-            im.setDisplayName(Language.getMsg(player, Messages.ARENA_GUI_ARENA_CONTENT_NAME).replace("%bw_name%", arenas.get(i).getDisplayName()).replace("%bw_map_name%", arenas.get(i).getArenaName()));
+            im.setDisplayName(Language.getMsg(player, Messages.ARENA_GUI_ARENA_CONTENT_NAME)
+                    .replace("%bw_name%", arenas.get(i).getDisplayName())
+                    .replace("%bw_map_name%", arenas.get(i).getArenaName()));
+
             List<String> lore = new ArrayList<>();
             for (String loreLine : Language.getList(player, Messages.ARENA_GUI_ARENA_CONTENT_LORE)) {
                 if (!(loreLine.contains("%bw_group%") && currentArena.getGroup().equalsIgnoreCase("default"))) {
@@ -101,6 +117,16 @@ public class ArenaGUI {
                     );
                 }
             }
+
+            // ── Recently Played Label ─────────────────────────────────────────
+            // Append a subtle italic label at the bottom of the lore if the
+            // player has played in this arena within the last 30 minutes.
+            if (recentArenas.contains(currentArena.getArenaName())) {
+                lore.add(""); // blank spacer line
+                lore.add(RECENTLY_PLAYED_LABEL);
+            }
+            // ─────────────────────────────────────────────────────────────────
+
             im.setLore(lore);
             item.setItemMeta(im);
             item = BedWars.nms.addCustomData(item, ArenaSelectorListener.ARENA_SELECTOR_GUI_IDENTIFIER + currentArena.getArenaName());
@@ -116,8 +142,8 @@ public class ArenaGUI {
         updateCalledTwice(player);
 
         int size = BedWars.config.getYml().getInt(ConfigPath.GENERAL_CONFIGURATION_ARENA_SELECTOR_SETTINGS_SIZE);
-        if (size % 9 != 0) size = 27; // Ensure size is a multiple of 9 otherwise set to 27
-        if (size > 54) size = 54; // Limit size to maximum 54
+        if (size % 9 != 0) size = 27;
+        if (size > 54) size = 54;
         ArenaSelectorHolder arenaSelectorHolder = new ArenaSelectorHolder(group);
         Inventory inventory = Bukkit.createInventory(arenaSelectorHolder, size, Language.getMsg(player, Messages.ARENA_GUI_INV_NAME));
 
@@ -166,7 +192,7 @@ public class ArenaGUI {
 
         private final String group;
 
-        public ArenaSelectorHolder(String group){
+        public ArenaSelectorHolder(String group) {
             this.group = group;
         }
 
@@ -178,7 +204,6 @@ public class ArenaGUI {
         public Inventory getInventory() {
             return null;
         }
-
     }
 
     @NotNull

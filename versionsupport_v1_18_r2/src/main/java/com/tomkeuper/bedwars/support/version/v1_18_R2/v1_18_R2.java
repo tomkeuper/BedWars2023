@@ -133,7 +133,10 @@ public class v1_18_R2 extends VersionSupport {
         new Despawnable(IGolem.spawn(loc, bedWarsTeam, speed, health, despawn, pathFindingTicks), bedWarsTeam, despawn, Messages.SHOP_UTILITY_NPC_IRON_GOLEM_NAME,
                 PlayerKillEvent.PlayerKillCause.IRON_GOLEM_FINAL_KILL, PlayerKillEvent.PlayerKillCause.IRON_GOLEM);
     }
-
+    @Override
+    public float getAbsorption(Player player) {
+        return (float) player.getAbsorptionAmount();
+    }
     @Override
     public void playAction(Player p, String text) {
         CraftPlayer cPlayer = (CraftPlayer) p;

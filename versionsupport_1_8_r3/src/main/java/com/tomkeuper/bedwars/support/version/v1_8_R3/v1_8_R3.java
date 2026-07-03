@@ -83,6 +83,10 @@ public class v1_8_R3 extends VersionSupport {
         new Despawnable(com.tomkeuper.bedwars.support.version.v1_8_R3.Silverfish.spawn(loc, bedWarsTeam, speed, health, despawn, damage, pathFindingTicks), bedWarsTeam, despawn,
                 Messages.SHOP_UTILITY_NPC_SILVERFISH_NAME, PlayerKillEvent.PlayerKillCause.SILVERFISH_FINAL_KILL, PlayerKillEvent.PlayerKillCause.SILVERFISH);
     }
+    @Override
+    public float getAbsorption(Player player) {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
 
     @Override
     public void spawnIronGolem(Location loc, ITeam bedWarsTeam, double speed, double health, int despawn, int pathFindingTicks) {

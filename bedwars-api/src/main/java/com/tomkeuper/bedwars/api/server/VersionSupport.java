@@ -527,4 +527,6 @@ public abstract class VersionSupport {
     public abstract void updatePacketArmorStandEquipment(GeneratorHolder generatorHolder);
 
     public abstract void callPlayerDeathEvent(Player player, List<ItemStack> drops, int droppedExp, int newLevel, String deathMessage);
+
+    public abstract float getAbsorption(Player player);
 }

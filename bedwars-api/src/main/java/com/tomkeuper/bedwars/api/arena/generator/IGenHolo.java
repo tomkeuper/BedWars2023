@@ -20,6 +20,7 @@
 
 package com.tomkeuper.bedwars.api.arena.generator;
 
+import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Set;
@@ -75,4 +76,5 @@ public interface IGenHolo {
      * This must be called when disabling the generator {@link IGenerator#disable()}
      */
     void destroy();
+    IHologram getHologram();
 }

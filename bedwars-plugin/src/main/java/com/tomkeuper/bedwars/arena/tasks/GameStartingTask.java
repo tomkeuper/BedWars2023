@@ -36,6 +36,7 @@ import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.LegacyTeamAssigner;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import lombok.Getter;
 import lombok.Setter;
@@ -160,7 +161,7 @@ public class GameStartingTask implements Runnable, StartingTask {
                 Language playerLang = Language.getPlayerLanguage(player);
                 String[] titleSubtitle = Language.getCountDownTitle(playerLang, getCountdown());
                 BedWars.nms.sendTitle(player, titleSubtitle[0], titleSubtitle[1], 0, 20, 10);
-                player.sendMessage(getMsg(player, Messages.ARENA_STATUS_START_COUNTDOWN_CHAT).replace("%bw_time%", String.valueOf(getCountdown())));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(getMsg(player, Messages.ARENA_STATUS_START_COUNTDOWN_CHAT).replace("%bw_time%", String.valueOf(getCountdown()))));
             }
         }
         countdown--;
@@ -190,7 +191,7 @@ public class GameStartingTask implements Runnable, StartingTask {
                 Sounds.playSound(ConfigPath.SOUND_GAME_START, p);
                 BedWars.nms.sendTitle(p, getMsg(p, Messages.ARENA_STATUS_START_PLAYER_TITLE), null, 0, 30, 10);
                 for (String tut : getList(p, Messages.ARENA_STATUS_START_PLAYER_TUTORIAL)) {
-                    p.sendMessage(SupportPAPI.getSupportPAPI().replace(p, tut));
+                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(SupportPAPI.getSupportPAPI().replace(p, tut)));
                 }
             }
         }

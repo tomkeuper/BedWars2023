@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -96,8 +97,9 @@ public class FireballListener implements Listener {
         long timeDifference = System.currentTimeMillis() - arena.getFireballCooldowns().getOrDefault(player.getUniqueId(), 0L);
         if (timeDifference <= cooldown) {
             if (fireballCooldown >= 1.0) {
-                player.sendMessage(Language.getMsg(player, Messages.ARENA_FIREBALL_COOLDOWN)
-                        .replace("%bw_cooldown%", String.valueOf((cooldown - timeDifference)/1000)));
+                String msg = Language.getMsg(player, Messages.ARENA_FIREBALL_COOLDOWN)
+                        .replace("%bw_cooldown%", String.valueOf((cooldown - timeDifference)/1000));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(msg));
             }
             return;
         }
@@ -206,6 +208,26 @@ public class FireballListener implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void onFireballExplode(EntityExplodeEvent event) {
+        if (!(event.getEntity() instanceof Fireball)) return;
+
+        ProjectileSource projectileSource = ((Fireball) event.getEntity()).getShooter();
+        if (!(projectileSource instanceof Player)) return;
+
+        Player source = (Player) projectileSource;
+        IArena arena = Arena.getArenaByPlayer(source);
+
+        if (arena == null || arena.getStatus() != GameState.playing)  return;
+
+        Location explosionLocation = event.getLocation();
+        World world = explosionLocation.getWorld();
+        if (world == null) return;
+
+        event.blockList().removeIf( block -> explosionProofMaterials.contains(block.getType().toString()));
+    }
+
     private void damagePlayer(Player player, double damageTeammates) {
         if (damageTeammates > 0) {
             EntityDamageEvent damageEvent = new EntityDamageEvent(
@@ -238,22 +260,5 @@ public class FireballListener implements Listener {
         if (!(shooter instanceof Player) || !Arena.isInArena((Player) shooter))  return;
 
         e.setFire(fireballMakeFire);
-    }
-    @EventHandler
-    public void fireballExplosion(EntityExplodeEvent e) {
-        if (!(e.getEntity() instanceof Fireball)){
-            return;
-        }
-        ProjectileSource projectileSource = ((Fireball) e.getEntity()).getShooter();
-        if (!(projectileSource instanceof Player)) {
-            return;
-        }
-        Player source = (Player) projectileSource;
-        IArena arena = Arena.getArenaByPlayer(source);
-        if (arena == null || arena.getStatus() != GameState.playing) {
-            return;
-        }
-        List<String> explosionProofMaterials = config.getList(ConfigPath.GENERAL_FIREBALL_EXPLOSION_PROOF_BLOCKS);
-        e.blockList().removeIf(block -> explosionProofMaterials.contains(block.getType().toString()));
     }
 }

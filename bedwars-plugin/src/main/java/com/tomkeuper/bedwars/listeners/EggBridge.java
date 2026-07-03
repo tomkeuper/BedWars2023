@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.arena.tasks.EggBridgeTask;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -109,7 +110,7 @@ public class EggBridge implements Listener {
 
             if ((isCloseToMaxBuildLimit && isLookingUp) || (isCloseToMinBuildLimit && isLookingDown) || isUnderBuildLimit || isAboveLimit) {
                 if (config.getBoolean(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_WARN_PLAYER)) {
-                    shooter.sendMessage(getMsg(shooter, Messages.EGGBRIDGE_BUILD_LIMIT_WARNING));
+                    BedWars.plugin.adventure().player(shooter).sendMessage(ChatFormatting.parseLegacyMini(getMsg(shooter, Messages.EGGBRIDGE_BUILD_LIMIT_WARNING)));
                 }
                 if (config.getBoolean(ConfigPath.GENERAL_EGGBRIDGE_BUILD_LIMIT_CANCEL_USAGE)) {
                     if (shooter.getGameMode() != GameMode.CREATIVE) {

@@ -139,6 +139,10 @@ public final class v1_21_R5 extends VersionSupport {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         sendPacket(p, packet);
     }
+    @Override
+    public float getAbsorption(Player player) {
+        return (float) player.getAbsorptionAmount();
+    }
 
     @Override
     public void fakeDamagePlayer(Player e) {

@@ -121,7 +121,10 @@ public class MainConfig extends ConfigManager {
         //heal pool category
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_ENABLE, true);
         yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_HEAL_POOL_SEEN_TEAM_ONLY, true);
-
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_GOLDEN_GG_ENABLED, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_GOLDEN_GG_COLOR, "GOLD");
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_AUTO_GG_ENABLED, true);
+        yml.addDefault(ConfigPath.GENERAL_CONFIGURATION_AUTO_GG_TEXT, "FORMATTING_CHAT_TEAM");
         // tnt jump category
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION, 5);
         yml.addDefault(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION, 2);

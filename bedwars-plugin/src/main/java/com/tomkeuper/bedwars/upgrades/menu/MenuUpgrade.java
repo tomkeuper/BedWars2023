@@ -32,6 +32,7 @@ import com.tomkeuper.bedwars.api.upgrades.UpgradeAction;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
 import com.google.common.collect.ImmutableMap;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -136,7 +137,7 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
         if (highest) {
             if (announceAlreadyUnlocked){
                 Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                player.sendMessage(Language.getMsg(player, Messages.UPGRADES_UPGRADE_ALREADY_CHAT));
+                BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.UPGRADES_UPGRADE_ALREADY_CHAT)));
             }
             return false;
         }
@@ -148,9 +149,9 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
                 int money = BedWars.getUpgradeManager().getMoney(player, ut.getCurrency());
                 if (money < ut.getCost()) {
                     Sounds.playSound(ConfigPath.SOUNDS_INSUFF_MONEY, player);
-                    player.sendMessage(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
+                    BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.SHOP_INSUFFICIENT_MONEY)
                             .replace("%bw_currency%", BedWars.getUpgradeManager().getCurrencyMsg(player, ut))
-                            .replace("%bw_amount%", String.valueOf(ut.getCost() - money)));
+                            .replace("%bw_amount%", String.valueOf(ut.getCost() - money))));
                     player.closeInventory();
                     return false;
                 }
@@ -180,9 +181,9 @@ public class MenuUpgrade implements MenuContent, TeamUpgrade {
 
             if (announcePurchase){
                 for (Player p1 : team.getMembers()) {
-                    p1.sendMessage(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_player%", player.getName()).replace("%bw_playername%", player.getDisplayName()).replace("%bw_upgrade_name%",
+                    BedWars.plugin.adventure().player(p1).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_BOUGHT_CHAT).replace("%bw_player%", player.getName()).replace("%bw_playername%", player.getDisplayName()).replace("%bw_upgrade_name%",
                             ChatColor.stripColor(Language.getMsg(p1, Messages.UPGRADES_UPGRADE_TIER_ITEM_NAME.replace("%bw_name%", getName()
-                                    .replace("upgrade-", "")).replace("%bw_tier%", ut.getName())))).replace("%bw_color%", ""));
+                                    .replace("upgrade-", "")).replace("%bw_tier%", ut.getName())).replace("%bw_color%", "")))));
                 }
             }
 

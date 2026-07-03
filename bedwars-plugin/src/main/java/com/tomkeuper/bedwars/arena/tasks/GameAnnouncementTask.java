@@ -28,6 +28,7 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.tasks.AnnouncementTask;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -82,8 +83,7 @@ public class GameAnnouncementTask implements Runnable, AnnouncementTask {
         for (Player player : arena.getPlayers()) {
             if (arena.getStatus() == GameState.playing) {
                 try {
-                    player.sendMessage(messages.get(player).get(index % messages.get(player).size()));
-                } catch (NullPointerException e){
+                    BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(messages.get(player).get(index % messages.get(player).size())));                } catch (NullPointerException e){
                     // Player might lose data when rejoining after getting disconnected
                     loadMessagesForPlayer(player, Messages.ARENA_IN_GAME_ANNOUNCEMENT);
                 }

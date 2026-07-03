@@ -29,6 +29,7 @@ import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.ServerType;
 import com.tomkeuper.bedwars.arena.Arena;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.shop.listeners.InventoryListener;
 import org.bukkit.Bukkit;
@@ -175,7 +176,7 @@ public class Interact implements Listener {
                         if (!owner.isMember(p)) {
                             if (!(owner.getMembers().isEmpty() && owner.isBedDestroyed())) {
                                 e.setCancelled(true);
-                                p.sendMessage(getMsg(p, Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED));
+                                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED)));
                             }
                         }
                     }

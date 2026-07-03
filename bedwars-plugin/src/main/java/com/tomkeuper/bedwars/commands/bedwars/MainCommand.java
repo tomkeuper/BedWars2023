@@ -79,6 +79,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         }
         new SetupArena(this, "setupArena"); //priority 2
         new ArenaList(this, "arenaList"); //priority 3
+        new CmdRecentArenas(this, "recentarenas");
         new DelArena(this, "delArena"); //priority 4
         new EnableArena(this, "enableArena"); //priority 5
         new DisableArena(this, "disableArena"); //priority 6

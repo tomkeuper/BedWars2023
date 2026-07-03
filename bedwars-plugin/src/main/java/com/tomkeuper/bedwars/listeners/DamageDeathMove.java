@@ -20,8 +20,6 @@
 
 package com.tomkeuper.bedwars.listeners;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
@@ -42,6 +40,7 @@ import com.tomkeuper.bedwars.arena.LastHit;
 import com.tomkeuper.bedwars.arena.SetupSession;
 import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
 import com.tomkeuper.bedwars.listeners.dropshandler.PlayerDrops;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import org.bukkit.Bukkit;
@@ -65,8 +64,10 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import static com.tomkeuper.bedwars.BedWars.plugin;
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -79,12 +80,7 @@ public class DamageDeathMove implements Listener {
     private final double tntDamageSelf;
     private final double tntDamageTeammates;
     private final double tntDamageOthers;
-    private final boolean tntJumpTakeFallDamage;
-    private final double tntJumpVelocityMultiplier;
-    private final double tntJumpYMultiplier;
-    private final Cache<UUID, Long> tntJumping = CacheBuilder.newBuilder()
-            .expireAfterWrite(10, TimeUnit.SECONDS)
-            .build();
+
     public DamageDeathMove() {
         this.tntJumpStrengthReductionConstant = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_STRENGTH_REDUCTION);
         this.tntJumpYAxisReductionConstant = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_REDUCTION);
@@ -92,9 +88,6 @@ public class DamageDeathMove implements Listener {
         this.tntDamageSelf = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_SELF);
         this.tntDamageTeammates = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_TEAMMATES);
         this.tntDamageOthers = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_DAMAGE_OTHERS);
-        this.tntJumpTakeFallDamage = BedWars.config.getYml().getBoolean(ConfigPath.GENERAL_TNT_JUMP_TAKE_FALL_DAMAGE);
-        this.tntJumpVelocityMultiplier = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_VELOCITY_MULTIPLIER);
-        this.tntJumpYMultiplier = BedWars.config.getYml().getDouble(ConfigPath.GENERAL_TNT_JUMP_Y_MULTIPLIER);
     }
 
     @EventHandler
@@ -129,15 +122,17 @@ public class DamageDeathMove implements Listener {
             e.setCancelled(true);
             return;
         }
-        // update LastHit for void damage and other non-entity causes
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            if (tntJumping.getIfPresent(player.getUniqueId()) != null) {
-                if (!tntJumpTakeFallDamage) {
+
+        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+            if (e instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
+                if (edbe.getDamager() instanceof Fireball) {
                     e.setCancelled(true);
+                    return;
                 }
-                tntJumping.invalidate(player.getUniqueId());
             }
         }
+
         // protection after re-spawn
         if (BedWarsTeam.reSpawnInvulnerability.containsKey(player.getUniqueId())) {
             if (BedWarsTeam.reSpawnInvulnerability.get(player.getUniqueId()) > System.currentTimeMillis()) e.setCancelled(true);
@@ -233,7 +228,7 @@ public class DamageDeathMove implements Listener {
                 .replace("%bw_player%", player.getDisplayName())
                 .replace("%bw_team%", team.getColor().chat() + team.getDisplayName(lang))
                 .replace("%bw_health_remaining%", new DecimalFormat("#.#").format(Math.max(((Player) e.getEntity()).getHealth() - e.getFinalDamage(), 0)));
-        damager.sendMessage(message);
+        BedWars.plugin.adventure().player(damager).sendMessage(ChatFormatting.parseLegacyMini(message));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -270,9 +265,8 @@ public class DamageDeathMove implements Listener {
             double horizontalDistanceSquared = Math.pow(directionToPlayer.getX(), 2) + Math.pow(directionToPlayer.getZ(), 2);
 
             if (horizontalDistanceSquared < 0.25) {
-                // If player is very close to TNT center, apply a strong vertical boost instead of horizontal knockback
-                double baseForce = ((tnt.getYield() * tnt.getYield()) / tntJumpStrengthReductionConstant) * tntJumpVelocityMultiplier;
-                double verticalForce = (baseForce / (0.1 + tntJumpYAxisReductionConstant)) * tntJumpYMultiplier;
+                double baseForce = (tnt.getYield() * tnt.getYield()) / tntJumpStrengthReductionConstant;
+                double verticalForce = baseForce / (0.1 + tntJumpYAxisReductionConstant);
                 resultingForce = new Vector(0, verticalForce, 0);
             } else {
                 originalDistance = Math.max(originalDistance, 0.1);
@@ -285,13 +279,11 @@ public class DamageDeathMove implements Listener {
                 double force = ((tnt.getYield() * tnt.getYield()) / (tntJumpStrengthReductionConstant + originalDistance));
                 resultingForce = direction.clone().multiply(force);
 
-                // Apply TNT jump velocity multiplier
-                double calculatedY = (resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant)) * tntJumpYMultiplier;
-                double minimumY = (force * 0.3) * tntJumpYMultiplier; // Ensure a minimum vertical boost
+                double calculatedY = resultingForce.getY() / (originalDistance + tntJumpYAxisReductionConstant);
+                double minimumY = force * 0.3;
                 resultingForce.setY(Math.max(calculatedY, minimumY));
             }
-            // Mark player as TNT jumping for fall damage handling
-            tntJumping.put(p.getUniqueId(), System.currentTimeMillis());
+
             Vector finalForce = resultingForce;
             Bukkit.getScheduler().runTask(BedWars.plugin, () -> {
                 if (damaged.isValid() && !damaged.isDead()) {
@@ -360,7 +352,7 @@ public class DamageDeathMove implements Listener {
                                 a.getShowTime().remove(p);
                                 p.removePotionEffect(PotionEffectType.INVISIBILITY);
                                 ITeam team = a.getTeam(p);
-                                p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                                BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN)));
                                 Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
                             });
                         }
@@ -398,7 +390,7 @@ public class DamageDeathMove implements Listener {
                             a.getShowTime().remove(p);
                             p.removePotionEffect(PotionEffectType.INVISIBILITY);
                             ITeam team = a.getTeam(p);
-                            p.sendMessage(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN));
+                            BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(getMsg(p, Messages.INTERACT_INVISIBILITY_REMOVED_DAMGE_TAKEN)));
                             Bukkit.getPluginManager().callEvent(new PlayerInvisibilityPotionEvent(PlayerInvisibilityPotionEvent.Type.REMOVED, team, p, a));
                         });
                     }
@@ -590,7 +582,7 @@ public class DamageDeathMove implements Listener {
 
         for (Player on : arena.getWorld().getPlayers()) {
             Language lang = Language.getPlayerLanguage(on);
-            on.sendMessage(playerKillEvent.getMessage().apply(on).
+            String msg = playerKillEvent.getMessage().apply(on).
                     replace("%bw_player_color%", victimsTeam.getColor().chat().toString())
                     .replace("%bw_player%", victim.getDisplayName())
                     .replace("%bw_playername%", victim.getName())
@@ -598,7 +590,8 @@ public class DamageDeathMove implements Listener {
                     .replace("%bw_killer_color%", killersTeam == null ? "" : killersTeam.getColor().chat().toString())
                     .replace("%bw_killer_playername%", killer == null ? "" : killer.getName())
                     .replace("%bw_killer_name%", killer == null ? "" : killer.getDisplayName())
-                    .replace("%bw_killer_team_name%", killersTeam == null ? "" : killersTeam.getDisplayName(lang)));
+                    .replace("%bw_killer_team_name%", killersTeam == null ? "" : killersTeam.getDisplayName(lang));
+            BedWars.plugin.adventure().player(on).sendMessage(ChatFormatting.parseLegacyMini(msg));
         }
 
         // increase stats to killer
@@ -617,7 +610,7 @@ public class DamageDeathMove implements Listener {
             World w = victim.getWorld();
             for (ItemStack inventoryItem : drops) {
                 w.dropItemNaturally(victim.getLocation(), inventoryItem);
-            }            
+            }
             drops.clear();
         }
 
@@ -631,13 +624,14 @@ public class DamageDeathMove implements Listener {
         if (victimsTeamBedDestroyed) {
             arena.addSpectator(victim, true, null);
             victimsTeam.getMembers().remove(victim);
-            victim.sendMessage(getMsg(victim, Messages.PLAYER_DIE_ELIMINATED_CHAT));
+            BedWars.plugin.adventure().player(victim).sendMessage(ChatFormatting.parseLegacyMini(getMsg(victim, Messages.PLAYER_DIE_ELIMINATED_CHAT)));
             if (victimsTeam.getMembers().isEmpty()) {
                 Bukkit.getPluginManager().callEvent(new TeamEliminatedEvent(arena, victimsTeam));
                 for (Player p : arena.getWorld().getPlayers()) {
-                    p.sendMessage(getMsg(p, Messages.TEAM_ELIMINATED_CHAT).replace(
+                    String msg = getMsg(p, Messages.TEAM_ELIMINATED_CHAT).replace(
                             "%bw_team_color%", victimsTeam.getColor().chat().toString()).replace("%bw_team_name%",
-                            victimsTeam.getDisplayName(Language.getPlayerLanguage(p))));
+                            victimsTeam.getDisplayName(Language.getPlayerLanguage(p)));
+                    BedWars.plugin.adventure().player(p).sendMessage(ChatFormatting.parseLegacyMini(msg));
                 }
                 Bukkit.getScheduler().runTask(plugin, arena::checkWinner); // Does not really need to be async but since intensive better safe than sorry
             }

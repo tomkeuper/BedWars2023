@@ -80,9 +80,24 @@ public class ConfigPath {
     public static final String GENERAL_CONFIGURATION_HOLOGRAM_UPDATE_DISTANCE = "hologram-update-distance";
     public static final String GENERAL_CONFIGURATION_ENABLE_TEAMMATE_TRACKING_ACTION_BAR = "enable-teammate-tracking-action-bar";
 
+    public static final String GENERAL_CONFIGURATION_GOLDEN_GG_PREFIX = "golden-gg-feature.";
+    public static final String GENERAL_CONFIGURATION_GOLDEN_GG_ENABLED = GENERAL_CONFIGURATION_GOLDEN_GG_PREFIX + "enable";
+    public static final String GENERAL_CONFIGURATION_GOLDEN_GG_COLOR = GENERAL_CONFIGURATION_GOLDEN_GG_PREFIX + "color";
+
+    public static final String GENERAL_CONFIGURATION_AUTO_GG_PREFIX = "auto-gg-feature.";
+    public static final String GENERAL_CONFIGURATION_AUTO_GG_ENABLED = GENERAL_CONFIGURATION_AUTO_GG_PREFIX + "enable";
+    public static final String GENERAL_CONFIGURATION_AUTO_GG_TEXT= GENERAL_CONFIGURATION_AUTO_GG_PREFIX + "text";
+
     public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_PREFIX = "click-in-chest-to-deposit-feature.";
     public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_ENABLED = GENERAL_CONFIGURATION_RESOURCE_CHEST_PREFIX + "enable";
     public static final String GENERAL_CONFIGURATION_RESOURCE_CHEST_BLOCKED = GENERAL_CONFIGURATION_RESOURCE_CHEST_PREFIX + "blocked-items";
+
+
+
+    public static final String COMMAND_MAP_CONSOLE_DENIED = "cmd-map-console-denied";
+    public static final String COMMAND_MAP_DISPLAY = "command-map-display";
+    public static final String COMMAND_MAP_NOT_IN_GAME = "command-map-not-in-game";
+
 
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH = "lobby-items";
     public static final String GENERAL_CONFIGURATION_EXPERIMENTAL_TEAM_ASSIGNER = "use-experimental-team-assigner";

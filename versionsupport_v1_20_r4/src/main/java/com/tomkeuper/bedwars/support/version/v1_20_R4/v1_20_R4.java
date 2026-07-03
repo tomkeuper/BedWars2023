@@ -131,6 +131,10 @@ public final class v1_20_R4 extends VersionSupport {
     public org.bukkit.inventory.ItemStack getItemInHand(@NotNull Player p) {
         return p.getInventory().getItemInMainHand();
     }
+    @Override
+    public float getAbsorption(Player player) {
+        return (float) player.getAbsorptionAmount();
+    }
 
     @Override
     public void hideEntity(Entity e, Player p) {

@@ -161,7 +161,10 @@ public class v1_19_R3 extends VersionSupport {
                 )
         );
     }
-
+    @Override
+    public float getAbsorption(Player player) {
+        return (float) player.getAbsorptionAmount();
+    }
     @Override
     public boolean isBukkitCommandRegistered(String name) {
         return ((CraftServer) getPlugin().getServer()).getCommandMap().getCommand(name) != null;

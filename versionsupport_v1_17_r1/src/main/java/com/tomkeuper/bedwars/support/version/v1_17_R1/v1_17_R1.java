@@ -115,6 +115,11 @@ public class v1_17_R1 extends VersionSupport {
     public void registerCommand(String name, Command clasa) {
         ((CraftServer) getPlugin().getServer()).getCommandMap().register(name, clasa);
     }
+    @Override
+    public float getAbsorption(Player player) {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
+
 
     @Override
     public String getTag(org.bukkit.inventory.ItemStack itemStack, String key) {

@@ -22,6 +22,7 @@ package com.tomkeuper.bedwars.arena.feature;
 
 import com.tomkeuper.bedwars.BedWars;
 import com.tomkeuper.bedwars.api.arena.GameState;
+import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.arena.Arena;
 import org.bukkit.Bukkit;
@@ -30,6 +31,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import java.util.ArrayList;
@@ -52,14 +54,18 @@ public class AntiDropFeature implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onItemDrop(PlayerDropItemEvent e) {
         Player player = e.getPlayer();
-        if (!BedWars.getAPI().getArenaUtil().isPlaying(player)) {
-            return;
-        }
-        if (!Arena.getArenaByPlayer(player).getStatus().equals(GameState.playing)) {
-            return;
-        }
-        if (player.getVelocity().getY() < -0.5) {
-            e.setCancelled(true); // Cancel the item drop if the player is falling
-        }
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena == null) return;
+        if (arena.getStatus() != GameState.playing) return;
+        if (player.getVelocity().getY() < -0.5) e.setCancelled(true); // Cancel the item drop if the player is falling
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryInteract(InventoryClickEvent e) {
+        Player player = (Player) e.getWhoClicked();
+        IArena arena = Arena.getArenaByPlayer(player);
+        if (arena == null) return;
+        if (arena.getStatus() != GameState.playing) return;
+        if (player.getVelocity().getY() < -0.5) e.setCancelled(true); // Cancel the inventory interaction if the player is falling
     }
 }

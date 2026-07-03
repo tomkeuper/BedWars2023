@@ -18,25 +18,29 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.vault;
+package com.tomkeuper.bedwars.listeners;
 
-import com.tomkeuper.bedwars.BedWars;
-import com.tomkeuper.bedwars.api.chat.IChat;
-import com.tomkeuper.bedwars.listeners.chat.ChatFormatting;
-import org.bukkit.entity.Player;
+import com.tomkeuper.bedwars.arena.RecentlyPlayedTracker;
+import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 
-public class NoChat implements IChat {
-    @Override
-    public String getPrefix(Player p) {
-        return "";
+public class RecentlyPlayedListener implements Listener {
+
+
+    @EventHandler
+    public void onLeaveArena(PlayerLeaveArenaEvent event) {
+        if (event.isSpectator()) return; // ignore spectators
+        RecentlyPlayedTracker.record(
+                event.getPlayer().getUniqueId(),
+                event.getArena().getArenaName()
+        );
     }
 
-    @Override
-    public String getSuffix(Player p) {
-        return "";
-    }
-    @Override
-    public void sendMessage(Player player, String msg) {
-        BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(msg));
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        RecentlyPlayedTracker.clear(event.getPlayer().getUniqueId());
     }
 }

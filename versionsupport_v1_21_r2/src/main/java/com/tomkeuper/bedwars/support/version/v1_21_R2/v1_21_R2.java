@@ -134,6 +134,10 @@ public final class v1_21_R2 extends VersionSupport {
     }
 
     @Override
+    public float getAbsorption(Player player) {
+        return (float) player.getAbsorptionAmount();
+    }
+    @Override
     public void hideEntity(Entity e, Player p) {
         PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(e.getEntityId());
         sendPacket(p, packet);

@@ -94,7 +94,10 @@ public class UpgradesManager {
             }
         }
 
-        BedWars.registerEvents(new InventoryListener(), new UpgradeOpenListener());
+        BedWars.registerEvents(
+                new InventoryListener(),
+                new UpgradeOpenListener()
+        );
     }
 
     /**

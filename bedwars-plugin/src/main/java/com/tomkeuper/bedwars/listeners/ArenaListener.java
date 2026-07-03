@@ -16,8 +16,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Stream;
 
 public class ArenaListener implements Listener {
     private final Plugin plugin;

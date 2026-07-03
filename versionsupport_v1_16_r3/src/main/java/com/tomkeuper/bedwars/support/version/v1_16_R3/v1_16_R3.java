@@ -99,6 +99,10 @@ public class v1_16_R3 extends VersionSupport {
         NBTTagCompound tag = i.getTag();
         return tag == null ? null : tag.hasKey(key) ? tag.getString(key) : null;
     }
+    @Override
+    public float getAbsorption(Player player) {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
 
     @Override
     public void sendTitle(Player p, String title, String subtitle, int fadeIn, int stay, int fadeOut) {

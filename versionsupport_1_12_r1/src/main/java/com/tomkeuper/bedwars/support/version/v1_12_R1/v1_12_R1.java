@@ -701,6 +701,11 @@ public class v1_12_R1 extends VersionSupport {
             }
         }
     }
+    @Override
+    public float getAbsorption(Player player) {
+        return ((CraftPlayer) player).getHandle().getAbsorptionHearts();
+    }
+
 
     @Override
     public String getInventoryName(InventoryEvent e) {

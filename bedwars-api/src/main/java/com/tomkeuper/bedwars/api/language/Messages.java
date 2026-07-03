@@ -421,6 +421,10 @@ public class Messages {
     public static final String SHOP_CAN_BUY_COLOR = SHOP_PATH+ ".can-buy-color";
     public static final String SHOP_CANT_BUY_COLOR = SHOP_PATH+ ".cant-buy-color";
 
+    public static final String COMMAND_MAP_CONSOLE_DENIED = "cmd-map-console-denied";
+    public static final String COMMAND_MAP_DISPLAY = "command-map-display";
+    public static final String COMMAND_MAP_NOT_IN_GAME = "command-map-not-in-game";
+
     /* MultiArena Lobby Item Messages */
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_NAME = ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH+"-%path%-name";
     public static final String GENERAL_CONFIGURATION_LOBBY_ITEMS_LORE = ConfigPath.GENERAL_CONFIGURATION_LOBBY_ITEMS_PATH+"-%path%-lore";

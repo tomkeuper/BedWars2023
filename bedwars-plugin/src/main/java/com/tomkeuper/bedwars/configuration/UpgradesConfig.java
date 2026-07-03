@@ -34,9 +34,13 @@ public class UpgradesConfig extends ConfigManager {
     public UpgradesConfig(String name, String dir) {
         super(plugin, name, dir);
         YamlConfiguration yml = this.getYml();
-        List<String> elements = Arrays.asList("upgrade-swords,10", "upgrade-armor,11", "upgrade-miner,12", "upgrade-forge,13",
-                "upgrade-heal-pool,14", "upgrade-dragon,15", "category-traps,16", "separator-glass,18,19,20,21,22,23,24,25,26",
-                "trap-slot-first,30", "trap-slot-second,31", "trap-slot-third,32");
+        List<String> elements = Arrays.asList(
+                "upgrade-swords,10", "upgrade-armor,11", "upgrade-miner,12", "upgrade-forge,13",
+                "upgrade-heal-pool,14", "upgrade-dragon,15", "upgrade-cushioned-boots,17", // Added here
+                "category-traps,16", "separator-glass,18,19,20,21,22,23,24,25,26","upgrade-iron-skin,27",
+                "trap-slot-first,30", "trap-slot-second,31", "trap-slot-third,32"
+        );
+
         yml.addDefault("default-upgrades-settings.menu-size", 45);
         yml.addDefault("default-upgrades-settings.menu-content", elements);
         yml.addDefault("default-upgrades-settings.trap-start-price", 1);
@@ -70,6 +74,21 @@ public class UpgradesConfig extends ConfigManager {
             yml.addDefault("upgrade-armor.tier-4.cost", 16);
             addDefaultDisplayItem("upgrade-armor.tier-4", "IRON_CHESTPLATE", 0, 4, false);
             yml.addDefault("upgrade-armor.tier-4.receive", Collections.singletonList("enchant-item: PROTECTION_ENVIRONMENTAL,4,armor"));
+
+            yml.addDefault("upgrade-cushioned-boots.tier-1.cost", 1);
+            yml.addDefault("upgrade-cushioned-boots.tier-1.currency", "diamond");
+            addDefaultDisplayItem("upgrade-cushioned-boots.tier-1", BedWars.getForCurrentVersion("LEATHER_BOOTS", "LEATHER_BOOTS", "LEATHER_BOOTS"), 0, 1, false);
+            yml.addDefault("upgrade-cushioned-boots.tier-1.receive", Collections.singletonList("enchant-item: PROTECTION_FALL,1,armor"));
+
+            yml.addDefault("upgrade-cushioned-boots.tier-2.cost", 2);
+            yml.addDefault("upgrade-cushioned-boots.tier-2.currency", "diamond");
+            addDefaultDisplayItem("upgrade-cushioned-boots.tier-2", BedWars.getForCurrentVersion("LEATHER_BOOTS", "LEATHER_BOOTS", "LEATHER_BOOTS"), 0, 2, false);
+            yml.addDefault("upgrade-cushioned-boots.tier-2.receive", Collections.singletonList("enchant-item: PROTECTION_FALL,2,armor"));
+
+            yml.addDefault("upgrade-iron-skin.tier-1.cost", 12);
+            yml.addDefault("upgrade-iron-skin.tier-1.currency", "diamond");
+            addDefaultDisplayItem("upgrade-iron-skin.tier-1", "IRON_CHESTPLATE", 0, 1, true);
+            yml.addDefault("upgrade-iron-skin.tier-1.receive", Collections.singletonList("player-effect: DAMAGE_RESISTANCE,0,0,team"));
 
             yml.addDefault("upgrade-miner.tier-1.currency", "diamond");
             yml.addDefault("upgrade-miner.tier-1.cost", 2);
