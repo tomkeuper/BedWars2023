@@ -142,6 +142,19 @@ public class DamageDeathMove implements Listener {
         double finalHealth = player.getHealth() - e.getFinalDamage();
         if (finalHealth < 0.5) {
             e.setCancelled(true);
+            if (e instanceof EntityDamageByEntityEvent) {
+                EntityDamageByEntityEvent edbe = (EntityDamageByEntityEvent) e;
+                if (!(edbe.getDamager() instanceof TNTPrimed)) {
+                    Player friendlyFireDamager = getPlayer(edbe.getDamager());
+                    if (friendlyFireDamager != null && arena.isPlayer(friendlyFireDamager)) {
+                        ITeam victimTeam = arena.getTeam(player);
+                        ITeam attackerTeam = arena.getTeam(friendlyFireDamager);
+                        if (victimTeam != null && victimTeam == attackerTeam) {
+                            return;
+                        }
+                    }
+                }
+            }
 
             // Additional check to prevent multiple death events during re-spawn
             if (arena.isReSpawning(player)) return;
@@ -428,7 +441,7 @@ public class DamageDeathMove implements Listener {
         }
     }
 
-
+    
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
         Player victim = e.getEntity();
