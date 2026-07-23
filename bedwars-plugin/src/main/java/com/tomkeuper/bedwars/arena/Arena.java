@@ -375,9 +375,9 @@ public class Arena implements IArena {
             bwt.spawnGenerators();
         }
 
-        //Load diamond/ emerald generators
+        //Load diamond / emerald / iron / gold generators
         Location location;
-        for (String type : Arrays.asList("Diamond", "Emerald")) {
+        for (String type : Arrays.asList("Diamond", "Emerald", "Iron", "Gold")) {
             if (yml.get("generator." + type) != null) {
                 for (String s : yml.getStringList("generator." + type)) {
                     location = cm.convertStringToArenaLocation(s);
