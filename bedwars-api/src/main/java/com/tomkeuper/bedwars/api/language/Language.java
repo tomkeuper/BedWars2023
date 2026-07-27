@@ -20,11 +20,11 @@
 
 package com.tomkeuper.bedwars.api.language;
 
+import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import com.tomkeuper.bedwars.api.BedWars;
 import com.tomkeuper.bedwars.api.configuration.ConfigManager;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
 import com.tomkeuper.bedwars.api.events.player.PlayerLangChangeEvent;
-import com.iridium.iridiumcolorapi.IridiumColorAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;

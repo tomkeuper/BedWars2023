@@ -28,7 +28,7 @@ repositories {
 dependencies {
     api 'io.papermc:paperlib:1.0.8'
     api 'org.bstats:bstats-bukkit:3.0.2'
-    implementation 'com.iridium:IridiumColorAPI:1.0.9' // used by BedWars - API
+    implementation 'com.iridium:IridiumColorAPI:1.0.11' // used by BedWars - API
     slim 'org.apache.commons:commons-lang3:3.14.0' // Used by IridiumColorAPI
 
     slim 'net.kyori:adventure-text-minimessage:4.23.0'
@@ -87,15 +87,15 @@ bukkit {
     load = 'STARTUP'
     depend = ['TAB']
     softDepend = [
-        'Vault',
-        'PlaceholderAPI',
-        'Citizens',
-        'Parties',
-        'SlimeWorldManager',
-        'VipFeatures',
-        'Enhanced-SlimeWorldManager',
-        'PartyAndFriends',
-        'Spigot-Party-API-PAF',
+            'Vault',
+            'PlaceholderAPI',
+            'Citizens',
+            'Parties',
+            'SlimeWorldManager',
+            'VipFeatures',
+            'Enhanced-SlimeWorldManager',
+            'PartyAndFriends',
+            'Spigot-Party-API-PAF',
     ]
 }
 
@@ -109,24 +109,24 @@ tasks.named('processResources') {
 
 // Projects to merge into the shaded jar
 def versions = [
-    ':versionsupport_common',
-    ':versionsupport_1_8_r3',
-    ':versionsupport_1_12_r1',
-    ':versionsupport_v1_16_r3',
-    ':versionsupport_v1_17_r1',
-    ':versionsupport_v1_18_r2',
-    ':versionsupport_v1_19_r3',
-    ':versionsupport_v1_20_r4',
-    ':versionsupport_v1_20_6',
-    ':versionsupport_v1_21_r1',
-    ':versionsupport_v1_21_r2',
-    ':versionsupport_v1_21_r3',
-    ':versionsupport_v1_21_r5',
-    ':versionsupport_v1_21_r7',
-    ':resetadapter_slime',
-    ':resetadapter_slimepaper',
-    ':resetadapter_advancedslimepaper',
-    ':resetadapter_aswm'
+        ':versionsupport_common',
+        ':versionsupport_1_8_r3',
+        ':versionsupport_1_12_r1',
+        ':versionsupport_v1_16_r3',
+        ':versionsupport_v1_17_r1',
+        ':versionsupport_v1_18_r2',
+        ':versionsupport_v1_19_r3',
+        ':versionsupport_v1_20_r4',
+        ':versionsupport_v1_20_6',
+        ':versionsupport_v1_21_r1',
+        ':versionsupport_v1_21_r2',
+        ':versionsupport_v1_21_r3',
+        ':versionsupport_v1_21_r5',
+        ':versionsupport_v1_21_r7',
+        ':resetadapter_slime',
+        ':resetadapter_slimepaper',
+        ':resetadapter_advancedslimepaper',
+        ':resetadapter_aswm'
 ] as Set
 
 slimJar {
