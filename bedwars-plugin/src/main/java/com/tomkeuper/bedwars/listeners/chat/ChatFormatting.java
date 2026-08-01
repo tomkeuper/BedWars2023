@@ -34,8 +34,8 @@ import com.tomkeuper.bedwars.commands.shout.ShoutCommand;
 import com.tomkeuper.bedwars.configuration.Permissions;
 import com.tomkeuper.bedwars.support.papi.SupportPAPI;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -46,7 +46,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import static com.tomkeuper.bedwars.api.language.Language.getMsg;
@@ -55,6 +54,65 @@ import static com.tomkeuper.bedwars.api.language.Language.getPlayerLanguage;
 public class ChatFormatting implements Listener {
 
     private static final List<Player> recipients = new ArrayList<>();
+
+    private static Component parsePHolders(String format, String msg, Player eventTriggerPlayer, Player recipientPlayer, @Nullable ITeam team) {
+        format = format
+                .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(eventTriggerPlayer))
+                .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(eventTriggerPlayer))
+                .replace("%bw_playername%", eventTriggerPlayer.getName())
+                .replace("%bw_level%", BedWars.getLevelSupport().getLevel(eventTriggerPlayer))
+                .replace("%bw_player%", eventTriggerPlayer.getDisplayName());
+        if (team != null) {
+            String teamFormat = getMsg(recipientPlayer, Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM)
+                    .replace("%bw_team_color%", String.valueOf(team.getColor().chat()))
+                    .replace("%bw_team_name%", team.getDisplayName(Language.getPlayerLanguage(recipientPlayer)).toUpperCase())
+                    .replace("%bw_team_name_raw%", team.getDisplayName(Language.getPlayerLanguage(recipientPlayer)));
+            format = format.replace("%bw_team_format%", teamFormat);
+        }
+        format = SupportPAPI.getSupportPAPI().replace(eventTriggerPlayer, format);
+        if (Permissions.hasPermission(eventTriggerPlayer, Permissions.PERMISSION_CHAT_COLOR, Permissions.PERMISSION_VIP, Permissions.PERMISSION_ALL))
+            return parseLegacyMini(format.replace("%bw_message%", msg));
+        else return parseLegacyMini(format).replaceText(builder ->
+                builder.match("%bw_message%").replacement(msg)
+        );
+    }
+
+    private static boolean isShouting(String msg, Language lang) {
+        return msg.startsWith("!") || msg.startsWith("shout") ||
+                msg.startsWith("SHOUT") || msg.startsWith(lang.m(Messages.MEANING_SHOUT));
+    }
+
+    private static String clearShout(String msg, Language lang) {
+        if (msg.startsWith("!")) msg = msg.replaceFirst("!", "");
+        if (msg.startsWith("SHOUT")) msg = msg.replaceFirst("SHOUT", "");
+        if (msg.startsWith("shout")) msg = msg.replaceFirst("shout", "");
+        if (msg.startsWith(lang.m(Messages.MEANING_SHOUT))) {
+            msg = msg.replaceFirst(lang.m(Messages.MEANING_SHOUT), "");
+        }
+        return msg.trim();
+    }
+
+    @SafeVarargs
+    public static void setRecipients(AsyncPlayerChatEvent event, List<Player>... target) {
+        if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CHAT_GLOBAL)) {
+            recipients.clear();
+            for (List<Player> list : target) {
+                recipients.addAll(list);
+            }
+        } else {
+            recipients.clear();
+            recipients.addAll(event.getRecipients());
+        }
+        event.getRecipients().clear(); // Used for console message only.
+    }
+
+    public static Component parseLegacyMini(String s) {
+        s = s.replaceAll("§", "&");
+        Component deserializedLegacy = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
+        String miniSerializedLegacy = MiniMessage.miniMessage().serialize(deserializedLegacy).replace("\\<", "<");
+
+        return MiniMessage.miniMessage().deserialize(miniSerializedLegacy);
+    }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChat(AsyncPlayerChatEvent e) {
@@ -149,69 +207,11 @@ public class ChatFormatting implements Listener {
         sendMessage(e, language.m(Messages.FORMATTING_CHAT_LOBBY), e.getMessage(), p, null);
     }
 
-    private static Component parsePHolders(String format, String msg, Player eventTriggerPlayer, Player recipientPlayer, @Nullable ITeam team) {
-        format = format
-                .replace("%bw_v_prefix%", BedWars.getChatSupport().getPrefix(eventTriggerPlayer))
-                .replace("%bw_v_suffix%", BedWars.getChatSupport().getSuffix(eventTriggerPlayer))
-                .replace("%bw_playername%", eventTriggerPlayer.getName())
-                .replace("%bw_level%", BedWars.getLevelSupport().getLevel(eventTriggerPlayer))
-                .replace("%bw_player%", eventTriggerPlayer.getDisplayName());
-        if (team != null) {
-            String teamFormat = getMsg(recipientPlayer, Messages.FORMAT_PAPI_PLAYER_TEAM_TEAM)
-                    .replace("%bw_team_color%", String.valueOf(team.getColor().chat()))
-                    .replace("%bw_team_name%", team.getDisplayName(Language.getPlayerLanguage(recipientPlayer)).toUpperCase());
-            format = format.replace("%bw_team_format%", teamFormat);
-        }
-        format = SupportPAPI.getSupportPAPI().replace(eventTriggerPlayer, format);
-        if (Permissions.hasPermission(eventTriggerPlayer, Permissions.PERMISSION_CHAT_COLOR, Permissions.PERMISSION_VIP, Permissions.PERMISSION_ALL))
-            return parseLegacyMini(format.replace("%bw_message%", msg));
-        else return parseLegacyMini(format).replaceText(builder ->
-                builder.match("%bw_message%").replacement(msg)
-        );
-    }
-
-    private static boolean isShouting(String msg, Language lang) {
-        return msg.startsWith("!") || msg.startsWith("shout") ||
-                msg.startsWith("SHOUT") || msg.startsWith(lang.m(Messages.MEANING_SHOUT));
-    }
-
-    private static String clearShout(String msg, Language lang) {
-        if (msg.startsWith("!")) msg = msg.replaceFirst("!", "");
-        if (msg.startsWith("SHOUT")) msg = msg.replaceFirst("SHOUT", "");
-        if (msg.startsWith("shout")) msg = msg.replaceFirst("shout", "");
-        if (msg.startsWith(lang.m(Messages.MEANING_SHOUT))) {
-            msg = msg.replaceFirst(lang.m(Messages.MEANING_SHOUT), "");
-        }
-        return msg.trim();
-    }
-
-    @SafeVarargs
-    public static void setRecipients(AsyncPlayerChatEvent event, List<Player>... target) {
-        if (!BedWars.config.getBoolean(ConfigPath.GENERAL_CHAT_GLOBAL)) {
-            recipients.clear();
-            for (List<Player> list : target) {
-                recipients.addAll(list);
-            }
-        } else {
-            recipients.clear();
-            recipients.addAll(event.getRecipients());
-        }
-        event.getRecipients().clear(); // Used for console message only.
-    }
-
-    public static Component parseLegacyMini(String s) {
-        s = s.replaceAll("§", "&");
-        Component deserializedLegacy = LegacyComponentSerializer.legacyAmpersand().deserialize(s);
-        String miniSerializedLegacy = MiniMessage.miniMessage().serialize(deserializedLegacy).replace("\\<", "<");
-
-        return MiniMessage.miniMessage().deserialize(miniSerializedLegacy);
-    }
-
     @SuppressWarnings("resource")
-    public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team){
+    public void sendMessage(AsyncPlayerChatEvent e, String format, String msg, Player eventTriggerPlayer, ITeam team) {
         e.setCancelled(true);
         BedWars.plugin.adventure().sender(Bukkit.getConsoleSender())
-                .sendMessage(parsePHolders(format, msg, eventTriggerPlayer,null, team)
+                .sendMessage(parsePHolders(format, msg, eventTriggerPlayer, null, team)
                         .replaceText(b -> b.match("%").replacement("%%"))); // Used for console message only.
         // Create a copy to avoid ConcurrentModificationException
         List<Player> recipientsCopy = new ArrayList<>(recipients);
