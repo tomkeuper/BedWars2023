@@ -10,8 +10,10 @@ dependencies {
     compileOnly 'commons-io:commons-io:2.11.0'
 }
 
-// Target Java 21 bytecode for this module
-tasks.named('compileJava', JavaCompile) {
+// Target Java 21 bytecode for this module.
+// Must cover compileTestJava too: ASP 4.0.0 is an `implementation` dependency, so it lands on the
+// test runtime classpath, and its metadata requires org.gradle.jvm.version 21.
+tasks.withType(JavaCompile).configureEach {
     options.release = 21
 }
 
