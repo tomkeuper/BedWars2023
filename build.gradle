@@ -12,30 +12,30 @@ allprojects {
 
 // Projects that should use the versioned shaded jar conventions
 def versions = [
-    ':versionsupport_common',
-    ':versionsupport_1_8_r3',
-    ':versionsupport_1_12_r1',
-    ':versionsupport_v1_16_r3',
-    ':versionsupport_v1_17_r1',
-    ':versionsupport_v1_18_r2',
-    ':versionsupport_v1_19_r3',
-    ':versionsupport_v1_20_r4',
-    ':versionsupport_v1_20_6',
-    ':versionsupport_v1_21_r1',
-    ':versionsupport_v1_21_r2',
-    ':versionsupport_v1_21_r3',
-    ':versionsupport_v1_21_r5',
-    ':versionsupport_v1_21_r7',
-    ':resetadapter_slime',
-    ':resetadapter_slimepaper',
-    ':resetadapter_advancedslimepaper',
-    ':resetadapter_aswm',
-    ':bedwars-api'
+        ':versionsupport_common',
+        ':versionsupport_1_8_r3',
+        ':versionsupport_1_12_r1',
+        ':versionsupport_v1_16_r3',
+        ':versionsupport_v1_17_r1',
+        ':versionsupport_v1_18_r2',
+        ':versionsupport_v1_19_r3',
+        ':versionsupport_v1_20_r4',
+        ':versionsupport_v1_20_6',
+        ':versionsupport_v1_21_r1',
+        ':versionsupport_v1_21_r2',
+        ':versionsupport_v1_21_r3',
+        ':versionsupport_v1_21_r5',
+        ':versionsupport_v1_21_r7',
+        ':resetadapter_slime',
+        ':resetadapter_slimepaper',
+        ':resetadapter_advancedslimepaper',
+        ':resetadapter_aswm',
+        ':bedwars-api'
 ] as Set
 
 // Projects with special conventions
 def special = [
-    ':bedwars-plugin'
+        ':bedwars-plugin'
 ] as Set
 
 subprojects {

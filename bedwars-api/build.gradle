@@ -8,7 +8,7 @@ dependencies {
     compileOnly('org.spigotmc:spigot-api:1.8.8-R0.1-SNAPSHOT') {
         exclude group: 'commons-lang', module: 'commons-lang'
     }
-    compileOnly 'com.iridium:IridiumColorAPI:1.0.9'
+    compileOnly 'com.iridium:IridiumColorAPI:1.0.11'
     compileOnly 'org.apache.commons:commons-lang3:3.14.0' // Used by IridiumColorAPI
     compileOnly 'com.github.NEZNAMY:TAB-API:5.0.7'
     compileOnly 'net.kyori:adventure-api:4.17.0'
