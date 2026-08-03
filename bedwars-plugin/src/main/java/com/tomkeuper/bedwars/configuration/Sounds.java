@@ -100,8 +100,8 @@ public class Sounds {
     public static void playSound(String path, Iterable<Player> players) {
         if(path.equalsIgnoreCase("none")) return;
         final Sound sound = getSound(path);
-        int volume = getSounds().getInt(path + ".volume");
-        int pitch = getSounds().getInt(path + ".pitch");
+        float volume = (float) getSounds().getDouble(path + ".volume");
+        float pitch = (float) getSounds().getDouble(path + ".pitch");
         if (sound != null) {
             players.forEach(p -> p.playSound(p.getLocation(), sound, volume, pitch));
         }
