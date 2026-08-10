@@ -56,7 +56,7 @@ dependencies {
     }
     compileOnly 'de.simonsator:DevelopmentPAFSpigot:1.0.67'
     compileOnly 'com.alessiodp.parties:parties-api:3.2.9'
-    compileOnly('net.citizensnpcs:citizens-main:2.0.30-SNAPSHOT') {
+    compileOnly('net.citizensnpcs:citizens-main:2.0.35-SNAPSHOT') {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.bstats', module: 'bstats-bukkit'
     }
