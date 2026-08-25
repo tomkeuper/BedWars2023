@@ -27,6 +27,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -57,6 +58,21 @@ public class PlayerDropListener implements Listener {
             if (i.getType() == Material.AIR) continue;
             identifier = BedWars.nms.getShopUpgradeIdentifier(i);
             if (identifier.isEmpty() || identifier.equals(" ")) return;
+        }
+    }
+
+    @EventHandler
+    public void onInventoryDrop(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
+        IArena a = Arena.getArenaByPlayer(player);
+        if (a == null) return;
+        if (event.getSlot() == -999 && event.getCurrentItem() == null) {
+            int swordCount = 0;
+            for (ItemStack is : player.getInventory().getContents()) {
+                if (BedWars.nms.isSword(is)) swordCount++;
+            }
+            BedWars.debug("swordCount:" + swordCount);
+            if (swordCount == 0) event.setCancelled(true); // there must always be a sword in you inventory
         }
     }
 }
