@@ -97,6 +97,7 @@ public class MainCommand extends BukkitCommand implements ParentCommand {
         new AutoCreateTeams(this, "autoCreateTeams");
         new SetWaitingSpawn(this, "setWaitingSpawn");
         new SetSpectatorPos(this, "setSpectSpawn");
+        new SetDragonSpawn(this, "setDragonSpawn");
         new CreateTeam(this, "createTeam");
         new WaitingPos(this, "waitingPos");
         new RemoveTeam(this, "removeTeam");

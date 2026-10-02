@@ -818,4 +818,32 @@ public interface IArena {
      * @return The time when the magic milk effect will expire.
      */
     int getMagicMilkTime();
+
+    /**
+     * Get the dragon spawn location.
+     *
+     * @return The dragon spawn location.
+     */
+    Location getDragonSpawnLocation();
+
+    /**
+     * Set the dragon spawn location.
+     *
+     * @param location The dragon spawn location.
+     */
+    void setDragonSpawnLocation(Location location);
+
+    /**
+     * Check if dragons should spawn above the team base instead of the dragon location.
+     *
+     * @return true if dragons should spawn above team base, false otherwise.
+     */
+    boolean isSpawnDragonsAtBase();
+
+    /**
+     * Set whether dragons should spawn above the team base instead of the dragon location.
+     *
+     * @param spawnDragonsAtBase true if dragons should spawn above team base, false otherwise.
+     */
+    void setSpawnDragonsAtBase(boolean spawnDragonsAtBase);
 }

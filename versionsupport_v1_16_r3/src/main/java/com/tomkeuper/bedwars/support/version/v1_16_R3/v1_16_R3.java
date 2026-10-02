@@ -241,6 +241,9 @@ public class v1_16_R3 extends VersionSupport {
 
         types.put("minecraft:bwgolem", types.get("minecraft:iron_golem"));
         EntityTypes.Builder.a(IGolem::new, EnumCreatureType.AMBIENT).a("bwgolem");
+
+        types.put("minecraft:bwdragon", types.get("minecraft:ender_dragon"));
+        EntityTypes.Builder.a(DBWDragon::new, EnumCreatureType.MONSTER).a("bwdragon");
     }
 
     @Override
@@ -328,9 +331,7 @@ public class v1_16_R3 extends VersionSupport {
             getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
             return null;
         }
-        EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
-        ed.setPhase(EnderDragon.Phase.CIRCLING);
-        return ed;
+        return DBWDragon.spawn(l, bwt);
     }
 
     @Override

@@ -336,6 +336,57 @@ public final class v1_21_R5 extends VersionSupport {
         }
         EnderDragon ed = (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
         ed.setPhase(EnderDragon.Phase.CIRCLING);
+
+        new org.bukkit.scheduler.BukkitRunnable() {
+            private final Random random = new Random();
+            private int behaviorTicks = 0;
+            private boolean isAttacking = false;
+
+            @Override
+            public void run() {
+                if (!ed.isValid() || ed.isDead()) {
+                    this.cancel();
+                    return;
+                }
+
+                behaviorTicks--;
+                if (behaviorTicks <= 0) {
+                    isAttacking = random.nextBoolean();
+                    behaviorTicks = 5 + random.nextInt(10); // Check every 5-15 seconds
+                    if (isAttacking) {
+                        ed.setPhase(EnderDragon.Phase.FLY_TO_PORTAL);
+                    } else {
+                        ed.setPhase(EnderDragon.Phase.CIRCLING);
+                    }
+                }
+
+                if (isAttacking) {
+                    Player target = null;
+                    double minDist = Double.MAX_VALUE;
+                    for (Player p : ed.getWorld().getPlayers()) {
+                        if (p.getGameMode() == GameMode.SPECTATOR) continue;
+                        if (team.wasMember(p.getUniqueId())) continue;
+                        if (team.getArena().isReSpawning(p.getUniqueId())) continue;
+
+                        double dist = p.getLocation().distanceSquared(ed.getLocation());
+                        if (dist < minDist) {
+                            minDist = dist;
+                            target = p;
+                        }
+                    }
+
+                    if (target != null) {
+                        Location loc = target.getLocation();
+                        Vector direction = loc.toVector().subtract(ed.getLocation().toVector()).normalize();
+                        ed.setVelocity(direction.multiply(0.5));
+
+                        if (minDist < 9.0) {
+                            target.damage(10.0, ed);
+                        }
+                    }
+                }
+            }
+        }.runTaskTimer(getPlugin(), 20L, 20L);
         return ed;
     }
 

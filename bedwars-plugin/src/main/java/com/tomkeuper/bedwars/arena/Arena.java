@@ -202,7 +202,8 @@ public class Arena implements IArena {
 
     private static final LinkedList<IArena> enableQueue = new LinkedList<>();
 
-    private Location respawnLocation, spectatorLocation, waitingLocation;
+    private Location respawnLocation, spectatorLocation, waitingLocation, dragonSpawnLocation;
+    private boolean spawnDragonsAtBase;
     private int yKillHeight;
     private Instant startTime;
     private ITeamAssigner teamAssigner = new TeamAssigner();
@@ -262,6 +263,7 @@ public class Arena implements IArena {
         minPlayers = yml.getInt("minPlayers");
         allowSpectate = yml.getBoolean("allowSpectate");
         enderDragonDestory = yml.getBoolean(ConfigPath.ARENA_ALLOW_DRAGON_DESTROY_WHEN_PROTECTED);
+        spawnDragonsAtBase = yml.getBoolean(ConfigPath.ARENA_SPAWN_DRAGONS_AT_BASE);
         allowMapBreak = yml.getBoolean(ConfigPath.ARENA_ALLOW_MAP_BREAK);
         magicMilkTime = yml.getInt(ConfigPath.ARENA_MAGIC_MILK_TIME);
         islandRadius = yml.getInt(ConfigPath.ARENA_ISLAND_RADIUS);
@@ -433,6 +435,16 @@ public class Arena implements IArena {
         waitingLocation = cm.getArenaLoc("waiting.Loc");
         if (waitingLocation == null) {
             waitingLocation = world.getSpawnLocation();
+        }
+        //
+
+        // Dragon location
+        dragonSpawnLocation = cm.getArenaLoc(ConfigPath.ARENA_DRAGON_SPAWN_LOC);
+        if (dragonSpawnLocation == null) {
+            dragonSpawnLocation = cm.getArenaLoc("waiting.Loc");
+        }
+        if (dragonSpawnLocation == null) {
+            dragonSpawnLocation = world.getSpawnLocation();
         }
         //
 
@@ -2777,6 +2789,26 @@ public class Arena implements IArena {
     @Override
     public Location getWaitingLocation() {
         return waitingLocation;
+    }
+
+    @Override
+    public Location getDragonSpawnLocation() {
+        return dragonSpawnLocation;
+    }
+
+    @Override
+    public void setDragonSpawnLocation(Location dragonSpawnLocation) {
+        this.dragonSpawnLocation = dragonSpawnLocation;
+    }
+
+    @Override
+    public boolean isSpawnDragonsAtBase() {
+        return spawnDragonsAtBase;
+    }
+
+    @Override
+    public void setSpawnDragonsAtBase(boolean spawnDragonsAtBase) {
+        this.spawnDragonsAtBase = spawnDragonsAtBase;
     }
 
     @Override

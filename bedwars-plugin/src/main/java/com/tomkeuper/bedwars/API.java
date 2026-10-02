@@ -639,6 +639,16 @@ public class API implements com.tomkeuper.bedwars.api.BedWars {
         return itemUtil;
     }
 
+    @Override
+    public boolean isDebug() {
+        return BedWars.debug;
+    }
+
+    @Override
+    public void debug(String message) {
+        BedWars.debug(message);
+    }
+
     private final ItemUtil itemUtil = new ItemUtil() {
         @SuppressWarnings("unused")
         @Override

@@ -545,6 +545,22 @@ public abstract class VersionSupport {
     }
 
     /**
+     * Log a debug message if BedWars debug mode is enabled.
+     *
+     * @param message The message to log.
+     */
+    public static void debug(String message) {
+        try {
+            org.bukkit.plugin.RegisteredServiceProvider<com.tomkeuper.bedwars.api.BedWars> rsp =
+                    org.bukkit.Bukkit.getServicesManager().getRegistration(com.tomkeuper.bedwars.api.BedWars.class);
+            if (rsp != null && rsp.getProvider() != null && rsp.getProvider().isDebug()) {
+                rsp.getProvider().debug(message);
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
      * Register version-specific listeners.
      */
     public abstract void registerVersionListeners();
