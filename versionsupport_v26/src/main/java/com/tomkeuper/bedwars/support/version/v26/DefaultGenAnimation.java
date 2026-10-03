@@ -76,7 +76,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         setArmorStandYAW(sinusoidalYaw);
         addArmorStandMotY(sinusoidalMotY);
 
-        armorStand.dismountTo(loc.getX(), loc.getY(), loc.getZ()); // SETTING NEW LOCATION
+        armorStand.teleportTo(loc.getX(), loc.getY(), loc.getZ()); // SETTING NEW LOCATION
         armorStand.onGround = false; // SETTING ON GROUND TO FALSE
 
         final var delta = new Vec3(0,0,0);
