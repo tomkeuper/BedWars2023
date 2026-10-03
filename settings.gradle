@@ -36,6 +36,9 @@ include ':versionsupport_v1_21_r2'
 include ':versionsupport_v1_21_r3'
 include ':versionsupport_v1_21_r5'
 include ':versionsupport_v1_21_r7'
+
+include ':versionsupport_v26'
+
 include ':versionsupport_common'
 
 
