@@ -22,12 +22,15 @@ package com.tomkeuper.bedwars.support.version.v1_17_R1;
 
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
-import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.server.level.WorldServer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityLiving;
 import net.minecraft.world.entity.EntityTypes;
+import net.minecraft.world.entity.EnumMoveType;
+import net.minecraft.world.entity.boss.EntityComplexPart;
 import net.minecraft.world.entity.boss.enderdragon.EntityEnderDragon;
+import net.minecraft.world.entity.player.EntityHuman;
 import net.minecraft.world.level.World;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
@@ -40,8 +43,13 @@ import java.util.Random;
 public class DBWDragon extends EntityEnderDragon {
 
     private final ITeam team;
-    private int behaviorTicks = 0;
-    private boolean isAttacking = true;
+    private int retargetTicks = 0;
+    private int repositionTicks = 0;
+    private int targetChaseTicks = 0;
+    private EntityLiving currentEnemy = null;
+    private double targetPosX = 0.0;
+    private double targetPosY = 80.0;
+    private double targetPosZ = 0.0;
     private static final Random random = new Random();
 
     public DBWDragon(EntityTypes<? extends EntityEnderDragon> entitytypes, World world, ITeam team) {
@@ -54,107 +62,204 @@ public class DBWDragon extends EntityEnderDragon {
         this.team = null;
     }
 
+    private void reposition() {
+        currentEnemy = null;
+        targetChaseTicks = 0;
+        repositionTicks = 60 + random.nextInt(60); // Reposition for 3-6s
+        retargetTicks = repositionTicks;
+
+        Location dragonLoc = team != null && team.getArena() != null ? team.getArena().getDragonSpawnLocation() : null;
+        double centerX = dragonLoc != null ? dragonLoc.getX() : this.locX();
+        double centerZ = dragonLoc != null ? dragonLoc.getZ() : this.locZ();
+        double centerY = dragonLoc != null ? dragonLoc.getY() : 80.0;
+
+        double angle = random.nextDouble() * 2 * Math.PI;
+        double dist = 40.0 + random.nextDouble() * 40.0;
+        this.targetPosX = centerX + Math.cos(angle) * dist;
+        this.targetPosZ = centerZ + Math.sin(angle) * dist;
+        this.targetPosY = centerY + 15.0 + (random.nextDouble() * 20.0);
+        if (team != null) {
+            VersionSupport.debug("Dragon [" + team.getName() + "]: Flying away to reposition");
+        }
+    }
+
     @Override
     protected void mobTick() {
-        if (team == null) {
+        if (team == null || team.getArena() == null) {
             super.mobTick();
             return;
         }
 
-        behaviorTicks--;
-        if (behaviorTicks <= 0) {
-            isAttacking = random.nextBoolean();
-            behaviorTicks = 100 + random.nextInt(200); // 5-15 seconds
+        // Handle active repositioning phase
+        if (repositionTicks > 0) {
+            repositionTicks--;
+            moveTowards(this.targetPosX, this.targetPosY, this.targetPosZ, 0.45);
+            return;
         }
 
-        if (isAttacking) {
-            EntityLiving target = getNearestTarget();
-            if (target != null) {
-                VersionSupport.debug("Dragon [" + team.getName() + "]: Attacking enemy " + target.getName());
-                double dx = target.locX() - this.locX();
-                double dy = target.locY() + target.getHeadHeight() - this.locY();
-                double dz = target.locZ() - this.locZ();
-                double distSq = dx * dx + dy * dy + dz * dz;
-                double dist = Math.sqrt(distSq);
-
-                if (dist > 0.1) {
-                    double speed = 0.5;
-                    this.setMot(dx / dist * speed, dy / dist * speed, dz / dist * speed);
+        // Validate current target
+        if (currentEnemy != null) {
+            if (currentEnemy.getBukkitEntity().isDead() || !currentEnemy.isAlive() || currentEnemy.t != this.t) {
+                currentEnemy = null;
+                targetChaseTicks = 0;
+            } else if (currentEnemy instanceof EntityHuman) {
+                EntityHuman human = (EntityHuman) currentEnemy;
+                if (team.wasMember(human.getUniqueID()) || team.getArena().isSpectator(human.getUniqueID()) || team.getArena().isReSpawning(human.getUniqueID())) {
+                    currentEnemy = null;
+                    targetChaseTicks = 0;
                 }
-
-                this.y = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0F;
-                this.setXRot((float) (-(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * 180.0 / Math.PI)));
-                this.setHeadRotation(this.y);
-
-                if (dist < 3.0) {
-                    target.damageEntity(DamageSource.mobAttack(this), 10.0F);
-                }
-                return;
             }
         }
 
-        // Default behavior (circling center or staying still)
-        Location dragonLoc = team.getArena().getDragonSpawnLocation();
-        double centerX = dragonLoc != null ? dragonLoc.getX() : 0.0;
-        double centerZ = dragonLoc != null ? dragonLoc.getZ() : 0.0;
-        double centerY = dragonLoc != null ? dragonLoc.getY() : 80; // Default height
+        // Acquire target if none
+        if (currentEnemy == null) {
+            retargetTicks--;
+            if (retargetTicks <= 0) {
+                retargetTicks = 20 + random.nextInt(20);
+                EntityLiving newTarget = getNearestTarget();
+                if (newTarget != null) {
+                    currentEnemy = newTarget;
+                    targetChaseTicks = 0;
+                    VersionSupport.debug("Dragon [" + team.getName() + "]: Acquired target " + currentEnemy.getName() + " at [" + (int) currentEnemy.locX() + ", " + (int) currentEnemy.locY() + ", " + (int) currentEnemy.locZ() + "]");
+                }
+            }
+        }
 
-        double dx = centerX - this.locX();
-        double dy = centerY - this.locY();
-        double dz = centerZ - this.locZ();
+        if (currentEnemy != null) {
+            targetChaseTicks++;
+
+            // Target lock and dive towards the player (aiming below player height so the dragon sweeps low through the island)
+            double targetX = currentEnemy.locX();
+            double targetY = currentEnemy.locY() - 4.0;
+            double targetZ = currentEnemy.locZ();
+
+            moveTowards(targetX, targetY, targetZ, 0.6);
+
+            // Check if dragon reached / hit the player (or bounding box collision)
+            double tdx = currentEnemy.locX() - this.locX();
+            double tdy = currentEnemy.locY() - this.locY();
+            double tdz = currentEnemy.locZ() - this.locZ();
+            double distSq = tdx * tdx + tdy * tdy + tdz * tdz;
+            boolean hitPlayer = this.getBoundingBox().grow(4.0, 4.0, 4.0).c(currentEnemy.getBoundingBox()) || distSq <= 49.0;
+
+            if (hitPlayer) {
+                currentEnemy.damageEntity(DamageSource.mobAttack(this), 10.0F);
+                VersionSupport.debug("Dragon [" + team.getName() + "]: Hit target " + currentEnemy.getName() + ", repositioning");
+                reposition();
+            } else if (targetChaseTicks >= 400) { // 20 seconds at 20 ticks/sec
+                VersionSupport.debug("Dragon [" + team.getName() + "]: Could not reach target " + currentEnemy.getName() + " within 20s, repositioning");
+                reposition();
+            }
+        } else {
+            targetChaseTicks = 0;
+            Location dragonLoc = team.getArena().getDragonSpawnLocation();
+            double centerX = dragonLoc != null ? dragonLoc.getX() : 0.0;
+            double centerZ = dragonLoc != null ? dragonLoc.getZ() : 0.0;
+            double centerY = dragonLoc != null ? dragonLoc.getY() : 80.0;
+
+            double dx = this.targetPosX - centerX;
+            double dz = this.targetPosZ - centerZ;
+            double distSq = dx * dx + dz * dz;
+
+            if (distSq > 3600.0 || (this.targetPosX == 0.0 && this.targetPosZ == 0.0) || this.A) {
+                this.targetPosX = centerX + (random.nextDouble() * 60.0 - 30.0);
+                this.targetPosZ = centerZ + (random.nextDouble() * 60.0 - 30.0);
+                this.targetPosY = centerY + (random.nextDouble() * 20.0 - 10.0);
+            }
+
+            moveTowards(this.targetPosX, this.targetPosY, this.targetPosZ, 0.35);
+        }
+    }
+
+    private void moveTowards(double targetX, double targetY, double targetZ, double speed) {
+        double dx = targetX - this.locX();
+        double dy = targetY - this.locY();
+        double dz = targetZ - this.locZ();
         double distSq = dx * dx + dy * dy + dz * dz;
         double dist = Math.sqrt(distSq);
 
-        if (dist > 10.0) {
-            double speed = 0.3;
+        if (dist > 0.1) {
             this.setMot(dx / dist * speed, dy / dist * speed, dz / dist * speed);
-        } else {
-            // Circling logic
-            double angle = (System.currentTimeMillis() / 1000.0) % (2 * Math.PI);
-            double targetX = centerX + Math.cos(angle) * 10.0;
-            double targetZ = centerZ + Math.sin(angle) * 10.0;
-            dx = targetX - this.locX();
-            dz = targetZ - this.locZ();
-            dist = Math.sqrt(dx * dx + dz * dz);
-            if (dist > 0.1) {
-                this.setMot(dx / dist * 0.3, 0, dz / dist * 0.3);
-            }
         }
-        net.minecraft.world.phys.Vec3D mot = this.getMot();
-        this.setMot(mot.b, mot.c + 0.01 * (centerY - this.locY()), mot.d);
 
-        this.y = (float) (Math.atan2(this.getMot().d, this.getMot().b) * 180.0 / Math.PI) - 90.0F;
+        this.y = (float) (Math.atan2(dz, dx) * 180.0 / Math.PI) - 90.0F;
+        this.setXRot((float) (-(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)) * 180.0 / Math.PI)));
         this.setHeadRotation(this.y);
+
+        this.move(EnumMoveType.a, this.getMot());
+    }
+
+    @Override
+    public boolean a(EntityComplexPart entitycomplexpart, DamageSource damagesource, float f) {
+        if (checkDamage(damagesource)) {
+            return false;
+        }
+        return super.a(entitycomplexpart, damagesource, f);
     }
 
     @Override
     public boolean damageEntity(DamageSource damagesource, float f) {
-        if (damagesource.getEntity() instanceof net.minecraft.world.entity.player.EntityHuman) {
-            net.minecraft.world.entity.player.EntityHuman human = (net.minecraft.world.entity.player.EntityHuman) damagesource.getEntity();
-            if (team != null && (team.wasMember(human.getUniqueID()) || team.getArena().isSpectator(human.getUniqueID()))) {
-                return false;
-            }
-        }
-        if (damagesource.getEntity() instanceof DBWDragon) {
-            DBWDragon other = (DBWDragon) damagesource.getEntity();
-            if (team != null && other.team != null && team.equals(other.team)) {
-                return false;
-            }
+        if (checkDamage(damagesource)) {
+            return false;
         }
         return super.damageEntity(damagesource, f);
     }
 
+    private boolean checkDamage(DamageSource damagesource) {
+        Entity damager = damagesource.getEntity();
+        if (damager instanceof EntityHuman) {
+            EntityHuman human = (EntityHuman) damager;
+            if (team != null && (team.wasMember(human.getUniqueID()) || (team.getArena() != null && team.getArena().isSpectator(human.getUniqueID())))) {
+                return true;
+            }
+        }
+        if (damager instanceof DBWDragon) {
+            DBWDragon other = (DBWDragon) damager;
+            if (team != null && other.team != null && team.equals(other.team)) {
+                return true;
+            }
+        }
+
+        // If hit by the team it is currently targeting (or the target itself), chance of losing target
+        if (currentEnemy != null && damager != null && team != null && team.getArena() != null) {
+            boolean hitByTargetTeam = false;
+            if (damager.equals(currentEnemy)) {
+                hitByTargetTeam = true;
+            } else if (damager instanceof EntityHuman) {
+                ITeam enemyTeam = team.getArena().getTeam((org.bukkit.entity.Player) damager.getBukkitEntity());
+                if (enemyTeam != null && currentEnemy instanceof EntityHuman) {
+                    ITeam targetTeam = team.getArena().getTeam((org.bukkit.entity.Player) currentEnemy.getBukkitEntity());
+                    if (enemyTeam.equals(targetTeam)) {
+                        hitByTargetTeam = true;
+                    }
+                }
+            }
+
+            if (hitByTargetTeam && random.nextInt(2) == 0) { // 50% chance
+                VersionSupport.debug("Dragon [" + team.getName() + "]: Hit by target/target team, scared away from " + currentEnemy.getName());
+                reposition();
+            }
+        }
+
+        return false;
+    }
+
     @Nullable
     private EntityLiving getNearestTarget() {
-        if (team == null) return null;
-        List<? extends net.minecraft.world.entity.player.EntityHuman> players = this.t.getPlayers();
-        net.minecraft.world.entity.player.EntityHuman nearest = null;
+        if (team == null || team.getArena() == null) return null;
+        List<? extends EntityHuman> players = this.t.getPlayers();
+        EntityHuman nearest = null;
         double minDist = Double.MAX_VALUE;
 
-        for (net.minecraft.world.entity.player.EntityHuman human : players) {
-            if (human.isAlive() && !team.wasMember(human.getUniqueID()) && !team.getArena().isReSpawning(human.getUniqueID())
+        for (EntityHuman human : players) {
+            if (human.isAlive()
+                    && !team.wasMember(human.getUniqueID())
+                    && !team.getArena().isReSpawning(human.getUniqueID())
                     && !team.getArena().isSpectator(human.getUniqueID())) {
-                double dist = human.f(this);
+                double tdx = human.locX() - this.locX();
+                double tdy = human.locY() - this.locY();
+                double tdz = human.locZ() - this.locZ();
+                double dist = tdx * tdx + tdy * tdy + tdz * tdz;
                 if (dist < minDist) {
                     minDist = dist;
                     nearest = human;
