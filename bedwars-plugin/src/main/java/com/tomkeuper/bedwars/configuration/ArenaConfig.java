@@ -58,6 +58,7 @@ public class ArenaConfig extends ConfigManager {
         yml.addDefault(ConfigPath.ARENA_USE_BED_HOLO, true);
         yml.addDefault(ConfigPath.ARENA_ALLOW_MAP_BREAK, false);
         yml.addDefault(ConfigPath.ARENA_ALLOW_DRAGON_DESTROY_WHEN_PROTECTED, true);
+        yml.addDefault(ConfigPath.ARENA_SPAWN_DRAGONS_AT_BASE, false);
         yml.addDefault(ConfigPath.ARENA_MAGIC_MILK_TIME, 30);
         ArrayList<String> rules = new ArrayList<>();
         rules.add("doDaylightCycle:false");

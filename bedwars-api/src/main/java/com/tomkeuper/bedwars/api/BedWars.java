@@ -856,6 +856,20 @@ public interface BedWars {
     ItemUtil getItemUtil();
 
     /**
+     * Check if debug mode is enabled.
+     *
+     * @return true if debug mode is active
+     */
+    boolean isDebug();
+
+    /**
+     * Print a debug message if debug mode is enabled.
+     *
+     * @param message the debug message to print
+     */
+    void debug(String message);
+
+    /**
      * Utility interface for managing lobby items.
      */
     interface ItemUtil {

@@ -217,6 +217,8 @@ public class ConfigPath {
     public static final String ARENA_MAGIC_MILK_TIME = "magicMilkTime";
     public static final String ARENA_GAME_RULES = "game-rules";
     public static final String ARENA_SPEC_LOC = "spectator-loc";
+    public static final String ARENA_DRAGON_SPAWN_LOC = "dragon-spawn-loc";
+    public static final String ARENA_SPAWN_DRAGONS_AT_BASE = "spawn-dragons-at-base";
     public static final String ARENA_TEAM_KILL_DROPS_LOC = "kill-drops-loc";
     public static final String ARENA_Y_LEVEL_KILL = "y-kill-height";
 

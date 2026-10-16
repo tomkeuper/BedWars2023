@@ -148,8 +148,15 @@ public class GamePlayingTask implements Runnable, PlayingTask {
                     getArena().updateNextEvent();
                     for (ITeam t : getArena().getTeams()) {
                         if (t.getMembers().isEmpty()) continue;
+                        Location dragonSpawn;
+                        if (getArena().isSpawnDragonsAtBase() && t.getSpawn() != null) {
+                            dragonSpawn = t.getSpawn().clone().add(0, 10, 0);
+                        } else {
+                            Location baseLoc = getArena().getDragonSpawnLocation();
+                            dragonSpawn = (baseLoc != null ? baseLoc.clone() : getArena().getWaitingLocation().clone()).add(0, 10, 0);
+                        }
                         for (int x = 0; x < t.getDragonAmount(); x++) {
-                            EnderDragon dragon = BedWars.nms.spawnDragon(getArena().getConfig().getArenaLoc("waiting.Loc").add(0, 10, 0), t);
+                            EnderDragon dragon = BedWars.nms.spawnDragon(dragonSpawn, t);
                             if (dragon != null){
                                 t.addDragon(dragon);
                                 if (BedWars.nms.getVersion() == 0){
