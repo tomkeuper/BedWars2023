@@ -43,6 +43,7 @@ import com.tomkeuper.bedwars.support.version.v1_21_R1.despawnable.DespawnableFac
 import com.tomkeuper.bedwars.support.version.v1_21_R1.despawnable.DespawnableType;
 import com.tomkeuper.bedwars.support.version.v1_21_R1.hologram.HoloLine;
 import com.tomkeuper.bedwars.support.version.v1_21_R1.hologram.Hologram;
+import com.tomkeuper.bedwars.utils.ReflectionUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.ParticleParamRedstone;
@@ -363,8 +364,7 @@ public final class v1_21_R1 extends VersionSupport {
     public void registerTntWhitelist(float endStoneBlast, float glassBlast) {
         try {
             // blast resistance
-            Field field = BlockBase.class.getDeclaredField("aH");
-            field.setAccessible(true);
+            Field field = ReflectionUtils.findField(BlockBase.class, "aH", "explosionResistance"); // Spigot, Paper (Mojang-mapped)
             // end stone
             field.set(Blocks.fz, endStoneBlast);
             // obsidian
@@ -398,20 +398,10 @@ public final class v1_21_R1 extends VersionSupport {
 
     @Override
     public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
-        try {
-            // Convert Bukkit block to NMS Block
-            net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
-
-            // Access the 'durability' field
-            Field durabilityField = BlockBase.class.getDeclaredField("aH");
-            durabilityField.setAccessible(true);
-
-            return durabilityField.getFloat(nmsBlock);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return 0; // Default if something fails
+        net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
+        if (nmsBlock == null) return 0;
+        // getExplosionResistance(): a regular method call, which Paper remaps for Spigot-mapped plugins
+        return nmsBlock.e();
     }
 
     @Override
