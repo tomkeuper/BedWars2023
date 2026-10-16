@@ -51,7 +51,7 @@ public class HoloLine implements IHoloLine {
         entity.b(CraftChatMessage.fromStringOrNull(text)); // setCustomName
         entity.p(true); // setCustomNameVisible
         entity.l(true); // setInvisible
-        entity.ag = true; // noPhysics (no gravity)
+        entity.ar = true; // noPhysics (no gravity)
         entity.a_(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
 
         PacketPlayOutSpawnEntity packet = v1_21_R7.newPacketPlayOutSpawnEntity(entity);
