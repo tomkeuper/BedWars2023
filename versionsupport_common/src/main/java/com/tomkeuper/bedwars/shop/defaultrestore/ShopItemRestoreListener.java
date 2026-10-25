@@ -147,35 +147,4 @@ public class ShopItemRestoreListener {
         }
         return false;
     }
-
-
-    public static class DefaultRestoreInvClose implements Listener {
-
-        /**
-         * If the player moves a default sword or bow into another inventory
-         * and he remains with a less powerful weapon restore the lost one.
-         */
-        @EventHandler
-        public void onInventoryClose(InventoryCloseEvent e) {
-            if (e.getInventory().getType() == InventoryType.PLAYER) return;
-            if (VersionCommon.api.getArenaUtil().getArenaByPlayer((Player) e.getPlayer()) == null) return;
-            IArena a = VersionCommon.api.getArenaUtil().getArenaByPlayer((Player) e.getPlayer());
-            if (a.getStatus() != GameState.playing) return;
-            if (!a.isPlayer((Player) e.getPlayer())) return;
-
-            boolean sword = false;
-            for (ItemStack is : e.getPlayer().getInventory()) {
-                if (is == null) continue;
-                if (is.getType() == Material.AIR) continue;
-                if (VersionCommon.api.getVersionSupport().isSword(is)) sword = true;
-            }
-
-            if (!sword) {
-                ITeam team = a.getTeam((Player) e.getPlayer());
-                if (team != null && !a.isReSpawning((Player) e.getPlayer())) {
-                    team.defaultSword((Player) e.getPlayer(), true);
-                }
-            }
-        }
-    }
 }
