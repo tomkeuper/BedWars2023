@@ -138,15 +138,17 @@ jobs:
         run: ./gradlew clean publishToMavenLocal --no-daemon --stacktrace
       - name: Build JavaDoc
         run: ./gradlew javadoc --no-daemon --stacktrace
-      - name: Create key for Deploy
-        run: |
-          echo "${{ secrets.JDC_PRIVATE_KEY }}" > ./id_rsa
       - name: Deploy JavaDoc 🚀
-        uses: wangyucode/sftp-upload-action@v2.0.4
+        uses: eiserv/easySFTP@v3
         with:
           host: ${{ secrets.JDC_IP_ADDRESS }}
           username: ${{ secrets.JDC_USER }}
-          privateKey: './id_rsa'
-          localDir: 'bedwars-api/build/docs/javadoc'
-          remoteDir: '/var/www/tomkeuper.com/javadocs'
-          removeExtraFilesOnServer: true
+          private-key: ${{ secrets.JDC_PRIVATE_KEY }}
+          source: 'bedwars-api/build/docs/javadoc'
+          target: '/var/www/tomkeuper.com/javadocs'
+          # Replaces removeExtraFilesOnServer: uploads changed files and
+          # deletes the ones a previous run put there and that are now gone.
+          mode: sync
+          # Same trust model as before. Once a JDC_KNOWN_HOSTS secret exists,
+          # replace this with: known-hosts: ${{ secrets.JDC_KNOWN_HOSTS }}
+          allow-any-host-key: true
