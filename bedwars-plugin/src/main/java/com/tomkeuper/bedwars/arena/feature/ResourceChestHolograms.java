@@ -76,14 +76,15 @@ public final class ResourceChestHolograms {
         if (chest == null) return;
         String path = full ? Messages.RESOURCE_CHEST_HOLOGRAM_FULL : Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT;
         for (String iso : new ArrayList<>(chest.holograms.keySet())) {
-            show(chest, iso, message(path, amount, item), null);
+            Language language = Language.getLang(iso);
+            show(chest, iso, message(language, path, amount, item), null);
         }
         if (chest.reset != null) chest.reset.cancel();
         chest.reset = Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> {
             chest.reset = null;
             if (!BY_ARENA.containsKey(arena)) return;
             for (String iso : new ArrayList<>(chest.holograms.keySet())) {
-                show(chest, iso, idle(), null);
+                show(chest, iso, idle(Language.getLang(iso)), null);
             }
         }, 40L);
     }
@@ -92,13 +93,14 @@ public final class ResourceChestHolograms {
         if (!enabled()) return;
         List<ChestHolo> chests = BY_ARENA.get(arena);
         if (chests == null || player == null || !player.isOnline()) return;
-        String iso = Language.getPlayerLanguage(player).getIso();
+        Language language = Language.getPlayerLanguage(player);
+        String iso = language.getIso();
         List<Player> alone = new ArrayList<>();
         alone.add(player);
         for (ChestHolo chest : chests) {
             IHologram hologram = chest.holograms.get(iso);
             if (hologram == null) {
-                show(chest, iso, idle(), alone);
+                show(chest, iso, idle(language), alone);
                 continue;
             }
             if (hologram.getPlayers().contains(player)) continue;
@@ -153,7 +155,7 @@ public final class ResourceChestHolograms {
         for (Language language : Language.getLanguages()) {
             List<Player> players = viewers(arena, language);
             if (players.isEmpty()) continue;
-            for (ChestHolo chest : chests) show(chest, language.getIso(), idle(), players);
+            for (ChestHolo chest : chests) show(chest, language.getIso(), idle(language), players);
         }
     }
 
@@ -208,12 +210,11 @@ public final class ResourceChestHolograms {
         return player != null && player.isOnline() && Language.getPlayerLanguage(player).getIso().equals(language.getIso());
     }
 
-    private static String[] idle() {
-        return Language.getLang("en").l(Messages.RESOURCE_CHEST_HOLOGRAM).toArray(new String[0]);
+    private static String[] idle(Language language) {
+        return language.l(Messages.RESOURCE_CHEST_HOLOGRAM).toArray(new String[0]);
     }
 
-    private static String[] message(String path, int amount, ItemStack item) {
-        Language language = Language.getLang("en");
+    private static String[] message(Language language, String path, int amount, ItemStack item) {
         String name = itemName(language, item, amount);
         String line = language.m(path)
                 .replace("%bw_amount%", Integer.toString(amount))
