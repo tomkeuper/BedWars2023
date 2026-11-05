@@ -397,20 +397,9 @@ public final class v26 extends VersionSupport {
 
     @Override
     public float getBlastResistance(org.bukkit.block.Block bukkitBlock) {
-        try {
-            // Convert Bukkit block to NMS Block
-            net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
-
-            // Access the 'durability' field
-            Field durabilityField = BlockBehaviour.class.getDeclaredField("explosionResistance");
-            durabilityField.setAccessible(true);
-
-            return durabilityField.getFloat(nmsBlock);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return 0; // Default if something fails
+        net.minecraft.world.level.block.Block nmsBlock = CraftMagicNumbers.getBlock(bukkitBlock.getType());
+        if (nmsBlock == null) return 0;
+        return nmsBlock.getExplosionResistance();
     }
 
     @Override
