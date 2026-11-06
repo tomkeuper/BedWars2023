@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v26;
+package com.tomkeuper.bedwars.support.version.v26_1;
 
 import com.mojang.datafixers.util.Pair;
 import com.saicone.rtag.RtagItem;
@@ -38,11 +38,11 @@ import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.api.server.VersionSupport;
 import com.tomkeuper.bedwars.support.version.common.VersionCommon;
-import com.tomkeuper.bedwars.support.version.v26.despawnable.DespawnableAttributes;
-import com.tomkeuper.bedwars.support.version.v26.despawnable.DespawnableFactory;
-import com.tomkeuper.bedwars.support.version.v26.despawnable.DespawnableType;
-import com.tomkeuper.bedwars.support.version.v26.hologram.HoloLine;
-import com.tomkeuper.bedwars.support.version.v26.hologram.Hologram;
+import com.tomkeuper.bedwars.support.version.v26_1.despawnable.DespawnableAttributes;
+import com.tomkeuper.bedwars.support.version.v26_1.despawnable.DespawnableFactory;
+import com.tomkeuper.bedwars.support.version.v26_1.despawnable.DespawnableType;
+import com.tomkeuper.bedwars.support.version.v26_1.hologram.HoloLine;
+import com.tomkeuper.bedwars.support.version.v26_1.hologram.Hologram;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.core.particles.DustParticleOptions;
@@ -90,11 +90,11 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
 
-public final class v26 extends VersionSupport {
+public final class v26_1 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
 
-    public v26(Plugin plugin, String name) {
+    public v26_1(Plugin plugin, String name) {
         super(plugin, name);
         loadDefaultEffects();
         this.despawnableFactory = new DespawnableFactory(this);

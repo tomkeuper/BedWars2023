@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v26.despawnable;
+package com.tomkeuper.bedwars.support.version.v26_1.despawnable;
 
 public record DespawnableAttributes(DespawnableType type, double speed, double health, double damage, int despawnSeconds) {
 

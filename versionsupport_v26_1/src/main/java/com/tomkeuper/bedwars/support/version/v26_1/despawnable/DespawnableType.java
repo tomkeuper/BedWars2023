@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v26.despawnable;
+package com.tomkeuper.bedwars.support.version.v26_1.despawnable;
 
 public enum DespawnableType {
     IRON_GOLEM,

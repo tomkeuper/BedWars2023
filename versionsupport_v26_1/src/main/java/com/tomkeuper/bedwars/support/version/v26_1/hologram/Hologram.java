@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v26.hologram;
+package com.tomkeuper.bedwars.support.version.v26_1.hologram;
 
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;

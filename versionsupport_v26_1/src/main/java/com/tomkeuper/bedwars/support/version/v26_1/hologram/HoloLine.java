@@ -18,11 +18,11 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v26.hologram;
+package com.tomkeuper.bedwars.support.version.v26_1.hologram;
 
 import com.tomkeuper.bedwars.api.hologram.containers.IHoloLine;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
-import com.tomkeuper.bedwars.support.version.v26.v26;
+import com.tomkeuper.bedwars.support.version.v26_1.v26_1;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
@@ -54,7 +54,7 @@ public class HoloLine implements IHoloLine {
         entity.noPhysics = true; // noPhysics (no gravity)
         entity.setPos(loc.getX(), loc.getY() + hologram.size() * hologram.getGap(), loc.getZ());
 
-        ClientboundAddEntityPacket packet = v26.newAddEntityPacket(entity);
+        ClientboundAddEntityPacket packet = v26_1.newAddEntityPacket(entity);
 
         int entityId = entity.getId();
         var metadata = entity.getEntityData().getNonDefaultValues();
@@ -68,7 +68,7 @@ public class HoloLine implements IHoloLine {
         ClientboundTeleportEntityPacket teleportPacket = new ClientboundTeleportEntityPacket(entityId, positionMoveRotation, new HashSet<>(), false);
 
         for (var player : hologram.getPlayers()) {
-            v26.sendPackets(player, packet, metadataPacket, teleportPacket);
+            v26_1.sendPackets(player, packet, metadataPacket, teleportPacket);
         }
     }
 
@@ -123,7 +123,7 @@ public class HoloLine implements IHoloLine {
         ClientboundTeleportEntityPacket teleportPacket = new ClientboundTeleportEntityPacket(entityId, positionMoveRotation, new HashSet<>(), false);
 
         for (var player : hologram.getPlayers()) {
-            v26.sendPackets(player, metadataPacket, teleportPacket);
+            v26_1.sendPackets(player, metadataPacket, teleportPacket);
         }
     }
 
@@ -148,16 +148,16 @@ public class HoloLine implements IHoloLine {
 
         ClientboundTeleportEntityPacket teleportPacket = new ClientboundTeleportEntityPacket(entityId, positionMoveRotation, new HashSet<>(), false);
 
-        v26.sendPackets(player, metadataPacket, teleportPacket);
+        v26_1.sendPackets(player, metadataPacket, teleportPacket);
     }
 
     @Override
     public void reveal() {
         destroyed = false;
 
-        ClientboundAddEntityPacket packet = v26.newAddEntityPacket(entity);
+        ClientboundAddEntityPacket packet = v26_1.newAddEntityPacket(entity);
         for (var player : hologram.getPlayers()) {
-            v26.sendPacket(player, packet);
+            v26_1.sendPacket(player, packet);
         }
 
         if (!hologram.getLines().contains(this)) hologram.addLine(this);
@@ -168,22 +168,22 @@ public class HoloLine implements IHoloLine {
     public void reveal(Player player) {
         destroyed = false;
 
-        ClientboundAddEntityPacket packet = v26.newAddEntityPacket(entity);
-        v26.sendPacket(player, packet);
+        ClientboundAddEntityPacket packet = v26_1.newAddEntityPacket(entity);
+        v26_1.sendPacket(player, packet);
     }
 
     @Override
     public void remove() {
         ClientboundRemoveEntitiesPacket packet = new ClientboundRemoveEntitiesPacket(entity.getId());
         for (var player : hologram.getPlayers()) {
-            v26.sendPacket(player, packet);
+            v26_1.sendPacket(player, packet);
         }
     }
 
     @Override
     public void remove(Player player) {
         ClientboundRemoveEntitiesPacket packet = new ClientboundRemoveEntitiesPacket(entity.getId());
-        v26.sendPacket(player, packet);
+        v26_1.sendPacket(player, packet);
     }
 
     @Override

@@ -35,4 +35,4 @@ repositories {
     maven { url = uri('https://jitpack.io') } // Jitpack (RTag)
 }
 
-description = 'versionsupport_v26'
+description = 'versionsupport_v26_1'

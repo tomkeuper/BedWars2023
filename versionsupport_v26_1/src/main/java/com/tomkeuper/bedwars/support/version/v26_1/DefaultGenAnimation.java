@@ -18,7 +18,7 @@
  * Contact e-mail: contact@fyreblox.com
  */
 
-package com.tomkeuper.bedwars.support.version.v26;
+package com.tomkeuper.bedwars.support.version.v26_1;
 
 import com.tomkeuper.bedwars.api.arena.generator.IGeneratorAnimation;
 import net.minecraft.network.protocol.game.ClientboundMoveEntityPacket;
@@ -88,7 +88,7 @@ public class DefaultGenAnimation implements IGeneratorAnimation {
         ClientboundMoveEntityPacket.PosRot moveLookPacket = new ClientboundMoveEntityPacket.PosRot(armorStand.getId(), (short) 0, (short) ((getArmorStandMotY() - lastMotY)*128), (short) 0, (byte) getArmorStandYAW(), (byte) 0, false);
 
         for (Player p : loc.getWorld().getPlayers()) {
-            v26.sendPackets(p, teleportPacket, moveLookPacket);
+            v26_1.sendPackets(p, teleportPacket, moveLookPacket);
         }
         tickCount++;
     }
