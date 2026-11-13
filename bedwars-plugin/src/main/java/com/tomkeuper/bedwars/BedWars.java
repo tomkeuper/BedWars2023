@@ -134,6 +134,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("WeakerAccess")
 public class BedWars extends JavaPlugin {
@@ -158,7 +160,9 @@ public class BedWars extends JavaPlugin {
     protected static Level level;
     private static IEconomy economy;
     private static String nmsVersion = Bukkit.getServer().getClass().getName().split("\\.")[3];
-    private static final String minecraftVersion = Bukkit.getServer().getBukkitVersion().split("-")[0];
+    // Must be declared before minecraftVersion: static fields are initialized in declaration order
+    private static final Pattern MINECRAFT_VERSION_PATTERN = Pattern.compile("^\\d+\\.\\d+(?:\\.\\d+)?");
+    private static final String minecraftVersion = parseMinecraftVersion(Bukkit.getServer().getBukkitVersion());
     private static String lobbyWorld = "";
     private static boolean shuttingDown = false;
 
@@ -248,6 +252,12 @@ public class BedWars extends JavaPlugin {
                 break;
             case "1.21.11":
                 nmsVersion = "v1_21_R7";
+                break;
+            case "26.1":
+            case "26.1.1":
+            case "26.1.2":
+                nmsVersion = "v26_1";
+                break;
             default:
                 break;
         }
@@ -904,6 +914,16 @@ public class BedWars extends JavaPlugin {
      */
     public static String getServerVersion() {
         return nmsVersion;
+    }
+
+    /**
+     * Extracts the Minecraft version (e.g. "1.21.11", "26.1.2") from {@link org.bukkit.Server#getBukkitVersion()}.
+     * Spigot returns "1.21.11-R0.1-SNAPSHOT", while Paper 26.1+ returns "26.1.2.build.45-stable"
+     * (or "26.1.2.local-SNAPSHOT" for local builds), so only the leading numeric part is kept.
+     */
+    static String parseMinecraftVersion(String bukkitVersion) {
+        Matcher matcher = MINECRAFT_VERSION_PATTERN.matcher(bukkitVersion);
+        return matcher.find() ? matcher.group() : bukkitVersion.split("-")[0];
     }
 
     public static String getLobbyWorld() {
