@@ -35,6 +35,10 @@ import java.util.Set;
  * integer rule {@code fire_spread_radius_around_player}. Since then {@link World#setGameRuleValue(String, String)}
  * returns {@code false} for the old names, without any error. This class translates between both naming
  * schemes in either direction, so arena configs keep working whichever names they use.
+ * <p>
+ * Based on the game rule aliases of
+ * <a href="https://github.com/OXipro/cmu-versionsupport">cmu-versionsupport</a> ({@code World_v1_21_R7},
+ * AGPL-3.0) by andrei1058, tomkeuper and OXipro.
  */
 public final class GameRuleUtil {
 
