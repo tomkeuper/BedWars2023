@@ -59,6 +59,7 @@ import com.tomkeuper.bedwars.arena.team.BedWarsTeam;
 import com.tomkeuper.bedwars.arena.team.TeamAssigner;
 import com.tomkeuper.bedwars.configuration.ArenaConfig;
 import com.tomkeuper.bedwars.configuration.Sounds;
+import com.tomkeuper.bedwars.utils.GameRuleUtil;
 import com.tomkeuper.bedwars.levels.internal.InternalLevel;
 import com.tomkeuper.bedwars.levels.internal.PerMinuteTask;
 import com.tomkeuper.bedwars.listeners.blockstatus.BlockStatusListener;
@@ -351,8 +352,13 @@ public class Arena implements IArena {
                 .filter(e -> e.getType() != EntityType.PAINTING).filter(e -> e.getType() != EntityType.ITEM_FRAME)
                 .forEach(Entity::remove);
         for (String s : getConfig().getList(ConfigPath.ARENA_GAME_RULES)) {
-            String[] rule = s.split(":");
-            if (rule.length == 2) world.setGameRuleValue(rule[0], rule[1]);
+            // Split on the last ':' so namespaced ids like "minecraft:advance_time:false" also work
+            int separator = s.lastIndexOf(':');
+            if (separator <= 0 || separator == s.length() - 1
+                    || !GameRuleUtil.apply(world, s.substring(0, separator), s.substring(separator + 1))) {
+                plugin.getLogger().warning("Could not apply game rule '" + s + "' on arena " + getArenaName()
+                        + ": unknown rule or invalid value for this server version.");
+            }
         }
         world.setAutoSave(false);
 
