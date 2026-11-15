@@ -27,6 +27,7 @@ def versions = [
         ':versionsupport_v1_21_r5',
         ':versionsupport_v1_21_r7',
         ':versionsupport_v26_1',
+        ':versionsupport_v26_3',
         ':resetadapter_slime',
         ':resetadapter_slimepaper',
         ':resetadapter_advancedslimepaper',

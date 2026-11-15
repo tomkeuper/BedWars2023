@@ -1,0 +1,33 @@
+dependencies {
+    compileOnly project(':bedwars-api')
+    compileOnly project(':versionsupport_v26_1')
+    compileOnly('org.spigotmc:spigot:26.3-R0.1-SNAPSHOT') {
+        exclude group: 'commons-lang', module: 'commons-lang'
+    }
+}
+
+// Minecraft 26.x requires Java 25
+lombok {
+    version = '1.18.48' // first Lombok line that runs on javac 25
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+tasks.named('compileJava', JavaCompile) {
+    options.release = 25
+}
+
+repositories {
+    // Important Repos
+    mavenCentral()
+    mavenLocal()
+    maven { url = uri('https://repo.codemc.io/repository/nms/') } // Spigot
+    maven { url = uri('https://repo.papermc.io/repository/maven-public/') } // com.mojang (dep of Spigot)
+    maven { url = uri('https://jitpack.io') } // Jitpack (RTag)
+}
+
+description = 'versionsupport_v26_3'

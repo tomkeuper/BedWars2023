@@ -35,9 +35,22 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Field;
 import java.util.Objects;
 
 public abstract class DespawnableProvider<T> {
+
+    private static final Field GOAL_SELECTOR = goalSelectorField();
+
+    private static Field goalSelectorField() {
+        try {
+            Field field = Mob.class.getDeclaredField("goalSelector");
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     abstract DespawnableType getType();
 
@@ -55,12 +68,16 @@ public abstract class DespawnableProvider<T> {
     }
 
     protected GoalSelector getGoalSelector(@NotNull PathfinderMob entityLiving) {
-        return entityLiving.goalSelector;
+        try {
+            return (GoalSelector) GOAL_SELECTOR.get(entityLiving);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     protected void clearSelectors(@NotNull PathfinderMob entityLiving) {
         entityLiving.targetSelector.getAvailableGoals().clear();
-        entityLiving.goalSelector.getAvailableGoals().clear();
+        getGoalSelector(entityLiving).getAvailableGoals().clear();
     }
 
     protected Goal getTargetGoal(Mob entity, ITeam team, VersionSupport api, int pathFindingTicks) {

@@ -90,7 +90,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.logging.Level;
 
-public final class v26_1 extends VersionSupport {
+public class v26_1 extends VersionSupport {
 
     private final DespawnableFactory despawnableFactory;
 
