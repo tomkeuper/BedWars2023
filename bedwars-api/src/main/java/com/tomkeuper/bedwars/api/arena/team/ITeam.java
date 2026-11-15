@@ -282,6 +282,14 @@ public interface ITeam {
     Location getTeamUpgrades();
 
     /**
+     * Chests and ender chests around this team's spawn, inside the arena island radius.
+     * The island is searched at most once. Later calls return the same result.
+     *
+     * @return {@link TeamChests#NONE} when the spawn world is not available yet.
+     */
+    @NotNull TeamChests getTeamChests();
+
+    /**
      * This will also disable team generators if true.
      *
      * @param bedDestroyed team members will no longer be able to respawn if you set this to true.

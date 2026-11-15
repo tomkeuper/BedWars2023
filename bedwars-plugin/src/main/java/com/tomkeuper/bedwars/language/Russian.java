@@ -173,6 +173,9 @@ public class Russian extends Language{
         yml.addDefault(Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED, "&cТы не можешь открыть этот сундук, так как команда уничтожена!");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cВы не можете ставить блоки здесь!");
         yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM, Arrays.asList("&e&lУДАРЬ", "&e&lСДАЙ"));
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT, "&a+%bw_amount% %bw_item%");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_FULL, "&cПолон");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cВы можете ломать блоки только игроков!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cВы не можете разрушить свою кровать!");
         yml.addDefault(Messages.TEAM_ELIMINATED_CHAT, "\n&f&lУНИЧТОЖЕНИЕ КОММАНДЫ > %bw_team_color%%bw_team_name% команда &cбыла уничтожена!\n");

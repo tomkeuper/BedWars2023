@@ -242,6 +242,9 @@ public class Romanian extends Language {
         yml.addDefault(Messages.INTERACT_CHEST_CANT_OPEN_TEAM_ELIMINATED, "&cNu poti deschide acest cufar pentru ca echipa nu a fost eliminata!");
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cNu poti pune blocuri aici!");
         yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM, Arrays.asList("&e&lBATE", "&e&lDEPUNE"));
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT, "&a+%bw_amount% %bw_item%");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_FULL, "&cCufar plin");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cYou can only break blocks placed by a player!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cNu iti poti distruge propriul pat!");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lPAT DISTRUS > %bw_team_color%Patul Echipei %bw_team_name% &7a fost distrus de %bw_player_color%%bw_player%&7!\n");

@@ -248,6 +248,9 @@ public class French extends Language {
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cVous ne pouvez pas placer de bloc ici!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cVous pouvez casser uniquement les blocs posé par un joueur!");
         yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cLe coffre est plein!");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM, Arrays.asList("&e&lFRAPPE", "&e&lDÉPOSE"));
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT, "&a+%bw_amount% %bw_item%");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_FULL, "&cCoffre plein");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cVous ne pouvez pas casser votre propre lit!");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lDESTRUCTION DE LIT > %bw_team_color%%bw_team_name% Lit &7a été frit par %bw_player_color%%bw_player%&7!\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&cDESTRUCTION DE LIT!");

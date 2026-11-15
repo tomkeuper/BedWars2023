@@ -273,6 +273,9 @@ public class Messages {
     public static String INTERACT_CANNOT_PLACE_BLOCK = "interact-cant-place";
     public static String INTERACT_CANNOT_BREAK_BLOCK = "interact-cant-break";
     public static String INTERACT_FULL_CHEST = "interact-full-chest";
+    public static String RESOURCE_CHEST_HOLOGRAM = "resource-chest-hologram";
+    public static String RESOURCE_CHEST_HOLOGRAM_DEPOSIT = "resource-chest-hologram-deposit";
+    public static String RESOURCE_CHEST_HOLOGRAM_FULL = "resource-chest-hologram-full";
     public static String INTERACT_CANNOT_BREAK_OWN_BED = "interact-cant-destroy-bed";
     public static String INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT = "interact-bed-destroy-chat";
     public static String INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT = "interact-bed-destroy-title";

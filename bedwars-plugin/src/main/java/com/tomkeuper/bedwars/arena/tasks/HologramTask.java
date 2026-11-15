@@ -13,6 +13,7 @@ import com.tomkeuper.bedwars.api.entity.GeneratorHolder;
 import com.tomkeuper.bedwars.api.hologram.containers.IHologram;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.arena.Arena;
+import com.tomkeuper.bedwars.arena.feature.ResourceChestHolograms;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -33,6 +34,7 @@ public class HologramTask implements Runnable {
 
                 for (Player p : world.getPlayers()) {
                     if (p == null || !p.isOnline()) continue;
+                    ResourceChestHolograms.refresh(a, p);
                     String iso = Language.getPlayerLanguage(p).getIso();
                     Location pLoc = p.getLocation();
                     List<ShopHolo> shopHolos = a.getShopHolograms(iso);

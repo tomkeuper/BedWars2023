@@ -27,6 +27,7 @@ import com.tomkeuper.bedwars.api.arena.generator.IGenerator;
 import com.tomkeuper.bedwars.api.arena.shop.ShopHolo;
 import com.tomkeuper.bedwars.api.arena.team.IBedHolo;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
+import com.tomkeuper.bedwars.api.arena.team.TeamChests;
 import com.tomkeuper.bedwars.api.arena.team.TeamColor;
 import com.tomkeuper.bedwars.api.arena.team.TeamEnchant;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
@@ -46,6 +47,7 @@ import com.tomkeuper.bedwars.shop.ShopCache;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
 import lombok.Getter;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
@@ -137,6 +139,8 @@ public class BedWarsTeam implements ITeam {
     // Fall invulnerability when teammates respawn
     public static HashMap<UUID, Long> reSpawnInvulnerability = new HashMap<>();
 
+    private TeamChests teamChests;
+
     public BedWarsTeam(String name, TeamColor color, Location spawn, Location bed, Location shop, Location teamUpgrades, Arena arena) {
         if (arena == null) return;
         this.name = name;
@@ -152,6 +156,14 @@ public class BedWarsTeam implements ITeam {
         Location drops = getArena().getConfig().getArenaLoc("Team." + getName() + "." + ConfigPath.ARENA_TEAM_KILL_DROPS_LOC);
         if (drops != null) {
             setKillDropsLocation(drops);
+        }
+
+        getTeamChests();
+        if (teamChests.getEnderChests().isEmpty()) {
+            plugin.getLogger().warning("No ender chests found for team: " + getName());
+        }
+        if (teamChests.getChests().isEmpty()) {
+            plugin.getLogger().warning("No team chests found for team: " + getName());
         }
     }
 
@@ -865,6 +877,7 @@ public class BedWarsTeam implements ITeam {
         membersCache = null;
         dragonEntities = null;
         bedDestroyer = null;
+        teamChests = null;
     }
 
     @Override
@@ -883,6 +896,34 @@ public class BedWarsTeam implements ITeam {
     @Override
     public LinkedList<EnemyBaseEnterTrap> getActiveTraps() {
         return enemyBaseEnterTraps;
+    }
+
+    @Override
+    public @NotNull TeamChests getTeamChests() {
+        if (teamChests != null) return teamChests;
+        if (spawn == null || spawn.getWorld() == null || arena == null) return TeamChests.NONE;
+        teamChests = locateTeamChests();
+        return teamChests;
+    }
+
+    private TeamChests locateTeamChests() {
+        World world = spawn.getWorld();
+        int radius = Math.max(1, arena.getConfig().getInt(ConfigPath.ARENA_ISLAND_RADIUS));
+        int minY = Math.max(0, spawn.getBlockY() - radius);
+        int maxY = Math.min(world.getMaxHeight() - 1, spawn.getBlockY() + radius);
+        List<Block> chests = new ArrayList<>();
+        List<Block> enderChests = new ArrayList<>();
+        for (int x = spawn.getBlockX() - radius; x <= spawn.getBlockX() + radius; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = spawn.getBlockZ() - radius; z <= spawn.getBlockZ() + radius; z++) {
+                    Block block = world.getBlockAt(x, y, z);
+                    Material type = block.getType();
+                    if (type == Material.CHEST) chests.add(block);
+                    else if (type == Material.ENDER_CHEST) enderChests.add(block);
+                }
+            }
+        }
+        return new TeamChests(chests, enderChests);
     }
 
     @Override

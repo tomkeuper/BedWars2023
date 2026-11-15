@@ -21,10 +21,15 @@
 package com.tomkeuper.bedwars.arena.feature;
 
 import com.tomkeuper.bedwars.BedWars;
+import com.tomkeuper.bedwars.api.arena.GameState;
 import com.tomkeuper.bedwars.api.arena.IArena;
 import com.tomkeuper.bedwars.api.arena.team.ITeam;
 import com.tomkeuper.bedwars.api.configuration.ConfigPath;
+import com.tomkeuper.bedwars.api.events.gameplay.GameStateChangeEvent;
 import com.tomkeuper.bedwars.api.events.player.PlayerItemDepositEvent;
+import com.tomkeuper.bedwars.api.events.player.PlayerJoinArenaEvent;
+import com.tomkeuper.bedwars.api.events.player.PlayerLeaveArenaEvent;
+import com.tomkeuper.bedwars.api.events.player.PlayerReJoinEvent;
 import com.tomkeuper.bedwars.api.language.Language;
 import com.tomkeuper.bedwars.api.language.Messages;
 import com.tomkeuper.bedwars.arena.Arena;
@@ -73,6 +78,7 @@ public class ResourceChestFeature implements Listener {
     public void onLeftClickChest(PlayerInteractEvent e) {
         IArena arena = Arena.getArenaByPlayer(e.getPlayer());
         if (arena == null) return;
+        if (arena.getStatus() != GameState.playing) return;
         if (e.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
         // get the clicked block and verify it's a chest or ender chest
@@ -108,7 +114,9 @@ public class ResourceChestFeature implements Listener {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) return;
 
-        safeDeposit(event.getPlayer(), event.getItem(), event.getTargetInventory());
+        ItemStack snapshot = event.getItem().clone();
+        int inserted = safeDeposit(event.getPlayer(), event.getItem(), event.getTargetInventory());
+        ResourceChestHolograms.feedback(arena, block, snapshot, inserted, inserted <= 0);
 
         ITeam team2 = arena.getTeam(event.getPlayer());
         if (team2 == null) return;
@@ -117,7 +125,33 @@ public class ResourceChestFeature implements Listener {
 
     }
 
-    private void safeDeposit(Player player, ItemStack hand, Inventory inventory) {
+    @EventHandler
+    public void onGameState(GameStateChangeEvent event) {
+        if (event.getNewState() == GameState.playing) {
+            ResourceChestHolograms.start(event.getArena());
+            return;
+        }
+        ResourceChestHolograms.clear(event.getArena());
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinArenaEvent event) {
+        if (event.isCancelled() || event.getArena().getStatus() != GameState.playing) return;
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> ResourceChestHolograms.addViewer(event.getArena(), event.getPlayer()), 10L);
+    }
+
+    @EventHandler
+    public void onRejoin(PlayerReJoinEvent event) {
+        if (event.isCancelled()) return;
+        Bukkit.getScheduler().runTaskLater(BedWars.plugin, () -> ResourceChestHolograms.addViewer(event.getArena(), event.getPlayer()), 10L);
+    }
+
+    @EventHandler
+    public void onLeave(PlayerLeaveArenaEvent event) {
+        ResourceChestHolograms.removeViewer(event.getArena(), event.getPlayer());
+    }
+
+    private int safeDeposit(Player player, ItemStack hand, Inventory inventory) {
         ItemStack toStore = hand.clone();
 
         Map<Integer, ItemStack> leftovers = inventory.addItem(toStore);
@@ -130,7 +164,7 @@ public class ResourceChestFeature implements Listener {
 
         if (inserted <= 0) {
             BedWars.plugin.adventure().player(player).sendMessage(ChatFormatting.parseLegacyMini(Language.getMsg(player, Messages.INTERACT_FULL_CHEST)));
-            return;
+            return 0;
         }
 
         int newAmount = hand.getAmount() - inserted;
@@ -140,6 +174,6 @@ public class ResourceChestFeature implements Listener {
         } else {
             player.getInventory().setItem(player.getInventory().getHeldItemSlot(), null);
         }
-
+        return inserted;
     }
 }
