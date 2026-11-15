@@ -248,6 +248,9 @@ public class Turkish extends Language {
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cBuraya blok koyamazsın!");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cSadece oyuncular tarafından yerleştirilen blokları kırabilirsin!");
         yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM, Arrays.asList("&e&lVUR", "&e&lKOY"));
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT, "&a+%bw_amount% %bw_item%");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_FULL, "&cDolu");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cKendi yatağını kıramazsın!");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lYATAK KIRMA > %bw_team_color%%bw_team_name% Yatak&7, %bw_player_color%%bw_player%&7 tarafından parçalandı!\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&cYATAK KIRILDI");

@@ -247,6 +247,9 @@ public class SimplifiedChinese extends Language {
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&c你不能在这里放置方块！");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&c你只能破坏由玩家放置的方块！");
         yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM, Arrays.asList("&e&l点击", "&e&l存入"));
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT, "&a+%bw_amount% %bw_item%");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_FULL, "&c已满");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&c你不能破坏自己的床！");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&l床被破坏 > %bw_team_color%%bw_team_name%的床&7被%bw_player_color%%bw_player%&7破坏了！\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&c床被破坏！");

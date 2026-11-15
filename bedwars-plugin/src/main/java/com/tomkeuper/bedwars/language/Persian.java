@@ -248,6 +248,9 @@ public class Persian extends Language {
         yml.addDefault(Messages.INTERACT_CANNOT_PLACE_BLOCK, "%bw_lang_prefix%&cShoma Nemitavanid Inja Block Bezarid.");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_BLOCK, "%bw_lang_prefix%&cFaghat Block Hayi Ke Player Ha Gozashtan Ghabele Kandan Ast.");
         yml.addDefault(Messages.INTERACT_FULL_CHEST, "%bw_lang_prefix%&cThe chest is full!");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM, Arrays.asList("&e&lBEZAN", "&e&lBEZAR"));
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_DEPOSIT, "&a+%bw_amount% %bw_item%");
+        yml.addDefault(Messages.RESOURCE_CHEST_HOLOGRAM_FULL, "&cPor");
         yml.addDefault(Messages.INTERACT_CANNOT_BREAK_OWN_BED, "&cShoma Nemitavanid Bed Khodetoon Ra Bekanid.");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_CHAT_ANNOUNCEMENT, "\n&f&lBED AZ BEYN RAFT > %bw_team_color%%bw_team_name% Bed &7Tavasote %bw_player_color%%bw_player% &7Az Beyn Raft!\n");
         yml.addDefault(Messages.INTERACT_BED_DESTROY_TITLE_ANNOUNCEMENT, "&cBED AZ BEYN RAFT!");
