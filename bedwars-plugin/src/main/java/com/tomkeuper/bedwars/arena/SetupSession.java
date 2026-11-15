@@ -33,6 +33,7 @@ import com.tomkeuper.bedwars.api.server.SetupType;
 import com.tomkeuper.bedwars.commands.bedwars.MainCommand;
 import com.tomkeuper.bedwars.configuration.ArenaConfig;
 import com.tomkeuper.bedwars.support.paper.PaperSupport;
+import com.tomkeuper.bedwars.utils.GameRuleUtil;
 import net.md_5.bungee.api.chat.ClickEvent;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -247,7 +248,7 @@ public class SetupSession implements ISetupSession {
                 .filter(e -> e.getType() != EntityType.PLAYER).filter(e -> e.getType() != EntityType.PAINTING)
                 .filter(e -> e.getType() != EntityType.ITEM_FRAME).forEach(Entity::remove), 30L);
         w.setAutoSave(false);
-        w.setGameRuleValue("doMobSpawning", "false");
+        GameRuleUtil.apply(w, "doMobSpawning", "false");
         Bukkit.getPluginManager().callEvent(new SetupSessionStartEvent(this));
         setStarted(true);
 
