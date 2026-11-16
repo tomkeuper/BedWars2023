@@ -139,6 +139,7 @@ public class CmdList extends SubCommand {
             String setUpgrade = ss.dot() + ((upgradeNotSet.toString().length() == 0) ? ChatColor.STRIKETHROUGH : "") + "setUpgrade" + ChatColor.RESET + " " + ((upgradeNotSet.length() == 0) ? ChatColor.GREEN + "(ALL SET)" : ChatColor.RED + "(Remaining: " + upgradeNotSet + ChatColor.RED + ")");
             String addGenerator = ss.dot() + "addGenerator " + ((generatorNotSet.toString().length() == 0) ? "" : ChatColor.RED + "(Remaining: " + generatorNotSet + ChatColor.RED + ") ") + ChatColor.YELLOW + "(" + ChatColor.DARK_GREEN + "E" + emGen + " " + ChatColor.AQUA + "D" + dmGen + ChatColor.YELLOW + ")";
             String setSpectatorSpawn = ss.dot() + (ss.getConfig().getYml().get(ConfigPath.ARENA_SPEC_LOC) == null ? "" : ChatColor.STRIKETHROUGH) + "setSpectSpawn" + ChatColor.RESET + " " + (ss.getConfig().getYml().get(ConfigPath.ARENA_SPEC_LOC) == null ? ChatColor.RED + "(NOT SET)" : ChatColor.GRAY + "(SET)");
+            String setDragonSpawn = ss.dot() + (ss.getConfig().getYml().get(ConfigPath.ARENA_DRAGON_SPAWN_LOC) == null ? "" : ChatColor.STRIKETHROUGH) + "setDragonSpawn" + ChatColor.RESET + " " + (ss.getConfig().getYml().get(ConfigPath.ARENA_DRAGON_SPAWN_LOC) == null ? ChatColor.GRAY + "(NOT SET) " + ChatColor.ITALIC + "OPTIONAL" : ChatColor.GRAY + "(SET)");
 
             s.sendMessage("");
             s.sendMessage(ChatColor.GRAY + "" + ChatColor.BOLD + MainCommand.getDot() + ChatColor.GOLD + plugin.getDescription().getName() + " v" + plugin.getDescription().getVersion() + ChatColor.GRAY + '-' + " " + ChatColor.GREEN + ss.getWorldName() + " commands");
@@ -146,6 +147,7 @@ public class CmdList extends SubCommand {
             p.spigot().sendMessage(Misc.msgHoverClick(waitingPos, ChatColor.WHITE + "Make it so the waiting lobby will disappear at start.\n" + ChatColor.WHITE + "Select it as a world edit region.", "/" + getParent().getName() + " waitingPos ", ClickEvent.Action.SUGGEST_COMMAND));
             if (ss.getSetupType() == SetupType.ADVANCED) {
                 p.spigot().sendMessage(Misc.msgHoverClick(setSpectatorSpawn, ChatColor.WHITE + "Set where to spawn spectators.", "/" + getParent().getName() + " setSpectSpawn", ClickEvent.Action.RUN_COMMAND));
+                p.spigot().sendMessage(Misc.msgHoverClick(setDragonSpawn, ChatColor.WHITE + "Set where dragons will spawn / center fly.", "/" + getParent().getName() + " setDragonSpawn", ClickEvent.Action.RUN_COMMAND));
             }
             p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "autoCreateTeams " + ChatColor.YELLOW + "(auto detect)", ChatColor.WHITE + "Create teams based on islands colors.", "/" + getParent().getName() + " autoCreateTeams", ClickEvent.Action.SUGGEST_COMMAND));
             p.spigot().sendMessage(Misc.msgHoverClick(ss.dot() + "createTeam <name> <color> " + ChatColor.YELLOW + "(" + teams + " CREATED)", ChatColor.WHITE + "Create a team.", "/" + getParent().getName() + " createTeam ", ClickEvent.Action.SUGGEST_COMMAND));

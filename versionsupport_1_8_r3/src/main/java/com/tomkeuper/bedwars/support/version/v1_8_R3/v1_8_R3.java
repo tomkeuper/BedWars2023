@@ -220,6 +220,7 @@ public class v1_8_R3 extends VersionSupport {
         registerEntity("Silverfish2", 60, Silverfish.class);
         registerEntity("IGolem", 99, IGolem.class);
         registerEntity("BwVilager", 120, VillagerShop.class);
+        registerEntity("bwdragon", 63, DBWDragon.class);
     }
 
     @Override
@@ -430,7 +431,7 @@ public class v1_8_R3 extends VersionSupport {
             getPlugin().getLogger().log(Level.WARNING, "Could not spawn Dragon. Location is null");
             return null;
         }
-        return (EnderDragon) l.getWorld().spawnEntity(l, EntityType.ENDER_DRAGON);
+        return DBWDragon.spawn(l, bwt);
     }
 
     @Override

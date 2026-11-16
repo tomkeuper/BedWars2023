@@ -344,18 +344,34 @@ public class DamageDeathMove implements Listener {
                     if (tnt.getSource() instanceof Player) {
                         damager = (Player) tnt.getSource();
                     } else return;
-                } else if (e.getDamager() instanceof Silverfish || e.getDamager() instanceof IronGolem) {
-                    // Handle silverfish/golem LastHit tracking
+                } else if (e.getDamager() instanceof Silverfish || e.getDamager() instanceof IronGolem || e.getDamager() instanceof EnderDragon) {
+                    // Handle silverfish/golem/dragon LastHit tracking
                     LastHit lh = LastHit.getLastHit(p);
                     if (lh != null) {
                         lh.setDamager(e.getDamager());
                         lh.setTime(System.currentTimeMillis());
                     } else new LastHit(p, e.getDamager(), System.currentTimeMillis());
 
+                    // Handle team protection for dragons
+                    if (e.getDamager() instanceof EnderDragon) {
+                        ITeam victimTeam = a.getTeam(p);
+                        if (victimTeam != null) {
+                            for (ITeam team : a.getTeams()) {
+                                if (team.getDragons().contains(e.getDamager())) {
+                                    if (team.equals(victimTeam)) {
+                                        e.setCancelled(true);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
                     // Handle invisibility removal
                     if (a.getShowTime().containsKey(p)) {
                         boolean shouldRemove = (e.getDamager() instanceof Silverfish && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_SILVERFISH_REMOVES_INVISIBILITY)) ||
-                                (e.getDamager() instanceof IronGolem && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY));
+                                (e.getDamager() instanceof IronGolem && BedWars.shop.getBoolean(ConfigPath.SHOP_SPECIAL_IRON_GOLEM_REMOVES_INVISIBILITY)) ||
+                                (e.getDamager() instanceof EnderDragon);
 
                         if (shouldRemove) {
                             Bukkit.getScheduler().runTask(plugin, () -> {
@@ -375,6 +391,17 @@ public class DamageDeathMove implements Listener {
 
                 if (damager != null) {
                     if (a.isSpectator(damager) || a.isReSpawning(damager.getUniqueId())) return;
+
+                    // Handle team protection for dragons being attacked by players
+                    if (e.getEntity() instanceof EnderDragon) {
+                        ITeam damagerTeam = a.getTeam(damager);
+                        if (damagerTeam != null) {
+                            if (damagerTeam.getDragons().contains(e.getEntity())) {
+                                e.setCancelled(true);
+                                return;
+                            }
+                        }
+                    }
 
                     // Cancel teammate damage (except TNT)
                     if (a.getTeam(p) == a.getTeam(damager)) {
